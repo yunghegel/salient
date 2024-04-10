@@ -1,4 +1,4 @@
-package org.yunghegel.salient.engine
+package org.yunghegel.salient.engine.api
 
 import com.badlogic.gdx.graphics.g3d.Renderable
 import org.yunghegel.salient.engine.helpers.Pools

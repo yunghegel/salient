@@ -1,8 +1,7 @@
-package org.yunghegel.salient.modules.graphics.shared.config
+package org.yunghegel.salient.editor.app.configs.graphics
 
 import com.badlogic.gdx.Gdx
-import org.yunghegel.salient.modules.ui.edit.EditorFactory
-import org.yunghegel.salient.modules.ui.edit.widgets.EnumWidget
+
 
 enum class Resolution(val width: Int, val height: Int) {
 

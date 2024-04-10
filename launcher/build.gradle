@@ -1,0 +1,56 @@
+apply plugin:'application'
+apply plugin:'edu.sc.seis.launch4j'
+
+ext.artifactId = "$artifactId"
+ext.mainClassName = "$mainClassName"
+
+dependencies {
+    implementation project(":editor")
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = ['assets']
+        }
+    }
+
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': "$mainClassName"
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+run {
+    doFirst {
+        setIgnoreExitValue(true)
+        if (os.contains("mac")) {
+            jvmArgs += "-XstartOnFirstThread"
+        }
+    }
+    mainClass = "$mainClassName"
+}
+
+launch4j {
+    mainClassName = "$mainClassName"
+    jarTask = jar
+    icon = "${rootProject.projectDir}/assets/icon.png"
+    outfile = "${artifactId}.exe"
+}
+
+distributions {
+    main {
+        contents {
+            from jar
+            into file("release")
+        }
+    }
+}

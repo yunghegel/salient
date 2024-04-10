@@ -3,8 +3,11 @@ package org.yunghegel.salient.editor.plugins.selection.lib
 import com.badlogic.gdx.graphics.g3d.Attribute
 
 class PickerIDAttribute : Attribute {
+
     var r: Int = 255
+
     var g: Int = 255
+
     var b: Int = 255
 
     constructor() : super(Type)

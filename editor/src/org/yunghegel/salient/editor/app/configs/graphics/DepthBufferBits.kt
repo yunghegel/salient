@@ -1,4 +1,4 @@
-package org.yunghegel.salient.modules.graphics.shared.config
+package org.yunghegel.salient.editor.app.configs.graphics
 
 enum class DepthBufferBits(val value: Int) {
     _16(16), _24(24), _32(32);

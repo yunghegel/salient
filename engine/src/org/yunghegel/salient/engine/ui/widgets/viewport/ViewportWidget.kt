@@ -3,12 +3,12 @@ package org.yunghegel.salient.engine.ui.widgets.viewport
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.scenes.scene2d.Group
+import com.badlogic.gdx.math.collision.BoundingBox
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.Widget
-import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import org.yunghegel.gdx.utils.ext.MathUtils
+import org.yunghegel.salient.engine.io.singleton
 
 
 class ViewportWidget(var viewport: Viewport) : Widget() {
@@ -23,6 +23,8 @@ class ViewportWidget(var viewport: Viewport) : Widget() {
 
     init {
         touchable=Touchable.disabled
+
+        singleton(bounds)
 
     }
 

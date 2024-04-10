@@ -9,9 +9,9 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
 import org.yunghegel.salient.engine.events.lifecycle.onShutdown
-import org.yunghegel.salient.engine.reflection.Type
-import org.yunghegel.salient.engine.reflection.annotation.Key
-import org.yunghegel.salient.engine.sys.Paths
+import org.yunghegel.salient.engine.helpers.reflect.Type
+import org.yunghegel.salient.engine.helpers.reflect.annotation.Key
+import org.yunghegel.salient.engine.io.Paths
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 class Persistence<Any,T> (val key:String, var value: T): ReadWriteProperty<Any, T> {
@@ -96,21 +96,8 @@ class Persistence<Any,T> (val key:String, var value: T): ReadWriteProperty<Any, 
 }
 
 @OptIn(ExperimentalSerializationApi::class)
-@Serializer(forClass = HashMap::class)
-object HashMapSerializer : KSerializer<java.util.HashMap<String, String>> {
 
-    override fun serialize(encoder: Encoder, value: java.util.HashMap<String, String>) {
-        val jsonMap = value.mapValues { JsonPrimitive(it.value) }
-        encoder.encodeSerializableValue(JsonObject.serializer(), JsonObject(jsonMap))
-    }
 
-    override fun deserialize(decoder: Decoder): java.util.HashMap<String, String> {
-        val jsonObject = decoder.decodeSerializableValue(JsonObject.serializer())
-        return jsonObject
-            .map { entry -> entry.key to entry.value.jsonPrimitive.content }
-            .toMap() as java.util.HashMap<String, String>
-    }
-}
 fun <T> persistent(key:String,value: T) : ReadWriteProperty<Any, T> {
     val persistence = Persistence<Any,T>(key,value) as ReadWriteProperty<Any, T>
     return persistence

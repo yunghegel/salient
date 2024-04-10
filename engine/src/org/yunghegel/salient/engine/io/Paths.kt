@@ -6,7 +6,11 @@ object Paths {
 
     val USER_HOME: String =  System.getProperty("user.home")
 
+
+
     val SALIENT_HOME : Filepath = "$USER_HOME/.salient".pathOf()
+
+    val CONFIG_FILEPATH : Filepath = "${SALIENT_HOME.path}/salient.config".pathOf()
 
     val SALIENT_METAFILE : Filepath = "${SALIENT_HOME.path}/.salient.meta".pathOf()
 

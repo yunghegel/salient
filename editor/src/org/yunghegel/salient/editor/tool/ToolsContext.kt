@@ -3,7 +3,7 @@ package org.yunghegel.salient.editor.tool
 import com.badlogic.gdx.utils.ObjectSet
 import org.yunghegel.salient.editor.plugins.BaseSystem
 
-class ToolSystem : BaseSystem(0), ToolManager{
+class ToolsContext : ToolManager {
 
     override val toolRegistry : ObjectSet<Class<out Tool>> = ObjectSet()
 

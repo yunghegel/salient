@@ -1,10 +1,10 @@
-package org.yunghegel.salient.engine.scene3d.graph
+package org.yunghegel.salient.engine.graphics.scene3d.graph
 
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector3
 
-open class Spatial<T:Spatial<T>>(name:String) : BaseNode<T>(name) {
+open class Spatial<T: Spatial<T>>(name:String) : BaseNode<T>(name) {
 
     private val tempMat = Matrix4()
     private val tempQuat = Quaternion()
@@ -13,7 +13,8 @@ open class Spatial<T:Spatial<T>>(name:String) : BaseNode<T>(name) {
     private val localRotation: Quaternion
     private val localScale: Vector3
 
-    protected val combined: Matrix4
+    internal val combined: Matrix4
+
 
     init {
         combined = Matrix4()

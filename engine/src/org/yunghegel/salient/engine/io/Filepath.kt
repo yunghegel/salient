@@ -1,9 +1,7 @@
-package org.yunghegel.salient.engine.sys
+package org.yunghegel.salient.engine.io
 
 import com.badlogic.gdx.files.FileHandle
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
-import ktx.collections.toGdxMap
 import java.io.Writer
 
 @JvmInline
@@ -23,7 +21,7 @@ value class Filepath(val path:String) {
     val parent: Filepath
         get() = Filepath(path.substringBeforeLast("/"))
 
-    val child : (String)->Filepath
+    val child : (String)-> Filepath
         get() = { name: String -> Filepath("$path/$name") }
 
     val children : ()->Map<Filepath,FileHandle>

@@ -1,13 +1,14 @@
-package org.yunghegel.salient.engine.scene3d.graph
+package org.yunghegel.salient.engine.graphics.scene3d.graph
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.utils.Array
 import org.yunghegel.salient.engine.api.ID
 import org.yunghegel.salient.engine.api.Named
-import org.yunghegel.salient.engine.ecs.SpatialEntity
+import org.yunghegel.salient.engine.api.ecs.SpatialEntity
 
 @Suppress("UNCHECKED_CAST")
-abstract class BaseNode<T: GraphNode<T>>(override val name:String, uuid:String?=null, id:Int?=null ) : SpatialEntity(), GraphNode<T>, ID, Named  {
+abstract class BaseNode<T: GraphNode<T>>(override val name:String, uuid:String?=null, id:Int?=null ) : SpatialEntity(),
+    GraphNode<T>, ID, Named  {
 
     override val uuid: String =uuid ?: generateUUID()
 

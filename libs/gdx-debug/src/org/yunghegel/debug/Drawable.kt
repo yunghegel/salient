@@ -1,14 +1,11 @@
 package org.yunghegel.debug
 
-import com.badlogic.gdx.graphics.Camera
-import com.badlogic.gdx.graphics.g3d.ModelBatch
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import org.yunghegel.gdx.utils.data.Mask
 
-interface DebugDrawable : Mask {
+interface Drawable : Mask {
 
-    val shouldDebugDraw : Boolean
-        get() = has(ENABLED)
+    val shouldDraw : Boolean
+        get() = has(RENDER)
 
     fun renderDebug(debugContext: DebugContext)
 

@@ -1,8 +1,10 @@
-package org.yunghegel.gdx.utils.primitives
+package org.yunghegel.gdx.utils.shapes.primitives
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder
+import org.yunghegel.gdx.utils.shapes.BuilderUtils
+import org.yunghegel.gdx.utils.shapes.InstanceSupplier
 
 open class BoxSupplier @JvmOverloads constructor(
     private val width: Float,

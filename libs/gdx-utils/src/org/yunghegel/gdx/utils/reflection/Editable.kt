@@ -1,7 +1,8 @@
-package org.yunghegel.salient.common.reflect
+package org.yunghegel.gdx.utils.reflection
 
-import org.yunghegel.salient.core.ui.reflection.DefaultFieldEditor
-import org.yunghegel.salient.core.ui.reflection.FieldEditor
+
+import org.yunghegel.gdx.utils.ui.DefaultFieldEditor
+import org.yunghegel.gdx.utils.ui.FieldEditor
 import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.RUNTIME)

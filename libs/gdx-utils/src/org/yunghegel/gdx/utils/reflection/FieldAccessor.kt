@@ -1,4 +1,4 @@
-package org.yunghegel.salient.common.reflect
+package org.yunghegel.gdx.utils.reflection
 
 import java.lang.reflect.Field
 

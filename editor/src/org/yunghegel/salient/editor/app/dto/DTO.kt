@@ -1,9 +1,14 @@
-package org.yunghegel.salient.engine.api.model.dto
+package org.yunghegel.salient.editor.app.dto
 
-interface DTO<T> {
+import kotlinx.serialization.Serializable
 
-    fun fromDTO(dto: T)
+interface DTOAdapter<Source,Model> {
 
-    fun toDTO(): T
+    fun fromDTO(dto: Model) : Source
+
+    fun toDTO(model: Source): Model
+
+
 
 }
+

@@ -1,4 +1,7 @@
 package org.yunghegel.salient.engine.api
 
-interface Default {
+interface Default<T> {
+
+    fun createDefault() : T
+
 }

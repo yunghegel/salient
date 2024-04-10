@@ -1,4 +1,4 @@
-package org.yunghegel.salient.core.util
+package org.yunghegel.salient.engine.graphics
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
@@ -22,6 +22,7 @@ class GenFrameBuffer : Disposable {
     var fboPixmap: Pixmap? = null
     var fbb: FrameBufferBuilder? = null
     var frameBuffer: FrameBuffer? = null
+
 
 
     constructor(hasDepth: Boolean) {

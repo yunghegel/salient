@@ -1,7 +1,9 @@
-package org.yunghegel.salient.modules.input.shared.config
+package org.yunghegel.salient.editor.app.configs.camera
 
 import kotlinx.serialization.*
-import kotlinx.serialization.modules.*
+import org.yunghegel.salient.editor.app.configs.camera.CameraKeybinds
+import org.yunghegel.salient.editor.app.configs.camera.CameraModes
+import org.yunghegel.salient.editor.app.configs.camera.CameraParameters
 
 @Serializable
 data class CameraConfiguration(

@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 
-class TabPane(protected var style: TabPaneStyle) : Table() {
+class TabPane(private var style: TabPaneStyle) : Table() {
     override fun layout() {
         super.layout()
     }

@@ -1,9 +1,10 @@
-package org.yunghegel.salient.modules.graphics.shared.config
+package org.yunghegel.salient.editor.app.configs.graphics
 
 import com.badlogic.gdx.*
-import org.yunghegel.salient.modules.graphics.shared.config.Resolution.*
-import org.yunghegel.salient.modules.io.*
+import org.yunghegel.salient.editor.app.configs.graphics.Resolution.*
+
 import kotlinx.serialization.Serializable
+import org.yunghegel.salient.engine.events.lifecycle.onStartup
 
 @Serializable
 data class WindowConfig(

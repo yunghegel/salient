@@ -1,4 +1,6 @@
-package org.yunghegel.salient.common.reflect
+package org.yunghegel.gdx.utils.reflection
+
+import org.yunghegel.gdx.utils.reflection.Accessor
 
 abstract class AccessorWrapper(protected var original: Accessor) : AccessorBase() {
 

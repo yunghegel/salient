@@ -1,4 +1,4 @@
-package org.yunghegel.gdx.utils.graphics.model;
+package org.yunghegel.gdx.utils.shapes;
 
 public enum Primitive {
     Sphere,
@@ -7,5 +7,14 @@ public enum Primitive {
     Cone,
     Cylinder,
     Cube,
-    Plane
+    Plane,
+    Arc,
+    Circle,
+    Disc,
+    DoubleCone,
+    FlatTopPyramid,
+    Pyramid,
+    Torus,
+    UVSphere,
+    Wedge
 }

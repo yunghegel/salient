@@ -1,4 +1,20 @@
 package org.yunghegel.salient.engine.api.undo
 
-interface Action {
+import org.yunghegel.salient.engine.io.inject
+
+abstract class Action {
+
+    open var userdata : Any = Any()
+
+    open var name = "Unnamed"
+
+    abstract fun undo()
+
+    abstract fun exec()
+
+    fun add() {
+        val actionHistory : ActionHistory = inject()
+        actionHistory.add(this)
+    }
+
 }

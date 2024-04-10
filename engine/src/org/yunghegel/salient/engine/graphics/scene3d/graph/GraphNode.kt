@@ -1,4 +1,4 @@
-package org.yunghegel.salient.engine.scene3d.graph
+package org.yunghegel.salient.engine.graphics.scene3d.graph
 
 import com.badlogic.gdx.utils.Array
 

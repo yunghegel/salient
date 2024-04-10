@@ -1,8 +1,10 @@
 package org.yunghegel.salient.editor.app.dto
 
 import com.badlogic.gdx.math.Matrix4
+import kotlinx.serialization.Serializable
 import org.yunghegel.salient.editor.app.dto.datatypes.Matrix4Data
 
+@Serializable
 class GameObjectDTO {
     var name: String = "unconfigured"
 

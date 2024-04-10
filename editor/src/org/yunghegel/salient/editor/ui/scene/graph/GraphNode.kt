@@ -1,6 +1,7 @@
 package org.yunghegel.salient.editor.ui.scene.graph
 
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle
 import com.badlogic.gdx.scenes.scene2d.ui.Tree
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.graphics.scene3d.GameObject
@@ -11,7 +12,7 @@ import org.yunghegel.salient.engine.graphics.scene3d.component.TransformComponen
 import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 
-abstract class SNode<T, A: Actor>(actor:A) : Tree.Node<SNode<T, A>,T,A>(actor) {
+abstract class SNode<T, A: Actor,V>(actor:A,val obj:V) : Tree.Node<SNode<T, A,V>,T,A>(actor) {
 
     abstract val name : String
     abstract val iconName : String
@@ -30,7 +31,13 @@ abstract class SNode<T, A: Actor>(actor:A) : Tree.Node<SNode<T, A>,T,A>(actor) {
     companion object {
 
         fun loadIcon(name: String): SImageButton {
-            return SImageButton(name)
+            val icon =  SImageButton(name)
+            val copy = ImageButtonStyle(icon.style)
+            copy.up = null
+            copy.down = null
+            copy.checked = null
+            icon.style = copy
+            return icon
         }
 
         fun resolveComponentIcon(component: EntityComponent<*>) : String {
@@ -38,7 +45,7 @@ abstract class SNode<T, A: Actor>(actor:A) : Tree.Node<SNode<T, A>,T,A>(actor) {
                 MaterialsComponent::class -> "material_object"
                 ModelComponent::class -> "model-geometry"
                 TransformComponent::class -> "transform_object"
-                MeshComponent::class -> "wireframe_icon"
+                MeshComponent::class -> "mesh_object"
                 else -> "cube"
             }
         }
@@ -50,7 +57,7 @@ abstract class SNode<T, A: Actor>(actor:A) : Tree.Node<SNode<T, A>,T,A>(actor) {
 
                 if (go.taggedAny("point_light", "spot_light", "directional_light")) return "light_object"
                 if (go tagged "camera") return "camera_object"
-                if (go tagged "model") return "mesh_object"
+                if (go tagged "model") return "geometry"
                 if (go tagged "camera") return "camera_object"
                 if (go tagged "root") return "scene_tree"
                 else return "transform_object"
@@ -63,7 +70,7 @@ abstract class SNode<T, A: Actor>(actor:A) : Tree.Node<SNode<T, A>,T,A>(actor) {
 
 }
 
-open class GameObjectNode(val go:GameObject) : SNode<SNode<*, *>, STable>(STable()) {
+open class GameObjectNode(val go:GameObject) : SNode<SNode<*, *,GameObject>, STable,GameObject>(STable(),go) {
 
     override val name: String = go.name
 
@@ -78,7 +85,8 @@ open class GameObjectNode(val go:GameObject) : SNode<SNode<*, *>, STable>(STable
 
 }
 
-class ComponentNode(val component: EntityComponent<*>,val go:GameObject) : SNode<SNode<*, *>, STable>(STable()) {
+class ComponentNode(val component: EntityComponent<*>,val go:GameObject) : SNode<SNode<*, *,GameObject>, STable,GameObject>(
+    STable(),go) {
 
         override val name: String = "${component::class.simpleName}"
 

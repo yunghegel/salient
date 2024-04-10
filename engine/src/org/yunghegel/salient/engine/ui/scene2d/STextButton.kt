@@ -1,4 +1,4 @@
-package org.yunghegel.gdx.utils.ui.scene2d
+package org.yunghegel.salient.engine.ui.scene2d
 
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import ktx.actors.onChange

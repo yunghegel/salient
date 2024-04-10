@@ -1,12 +1,16 @@
-package org.yunghegel.salient.engine.scene3d.component
+package org.yunghegel.salient.engine.graphics.scene3d.component
 
 import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.utils.Array
 import ktx.collections.GdxArray
-import org.yunghegel.salient.engine.ecs.EntityComponent
+import org.yunghegel.salient.engine.api.Icon
+import org.yunghegel.salient.engine.api.ecs.EntityComponent
+import org.yunghegel.salient.engine.graphics.scene3d.GameObject
 
-class MaterialsComponent(val materials: GdxArray<Material>) : EntityComponent<GdxArray<Material>>(null, materials) {
+class MaterialsComponent(val materials: GdxArray<Material>,go: GameObject) : EntityComponent<GdxArray<Material>>(null, materials,go) ,Icon {
 
-    constructor(material: Material) : this(GdxArray.with(material))
+    override val iconDrawableName: String = "material"
+
+    constructor(material: Material,go: GameObject) : this(GdxArray.with(material),go)
 
 }

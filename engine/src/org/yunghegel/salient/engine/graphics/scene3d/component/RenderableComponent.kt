@@ -1,22 +1,17 @@
-package org.yunghegel.salient.engine.scene3d.component
+package org.yunghegel.salient.engine.graphics.scene3d.component
 
-import com.badlogic.ashley.core.Component
 import com.badlogic.gdx.graphics.Camera
-import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.Renderable
 import com.badlogic.gdx.graphics.g3d.RenderableProvider
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Pool
-import org.yunghegel.salient.engine.RendererRoutine
-import org.yunghegel.salient.engine.UpdateRoutine
 import org.yunghegel.salient.engine.api.scene.EditorScene
-import org.yunghegel.salient.engine.ecs.EntityComponent
-import org.yunghegel.salient.engine.scene3d.GameObject
-import org.yunghegel.salient.engine.scene3d.SceneContext
-import org.yunghegel.salient.engine.sys.inject
+import org.yunghegel.salient.engine.api.ecs.EntityComponent
+import org.yunghegel.salient.engine.graphics.scene3d.GameObject
+import org.yunghegel.salient.engine.graphics.scene3d.SceneContext
 
-class RenderableComponent (val renderableProvider: RenderableProvider) : EntityComponent<RenderableProvider>(RenderableProvider::class.java,renderableProvider),RenderableProvider by renderableProvider {
+class RenderableComponent (val renderableProvider: RenderableProvider,go: GameObject) : EntityComponent<RenderableProvider>(RenderableProvider::class.java,renderableProvider,go),RenderableProvider by renderableProvider {
 
     override val renderer: Boolean = true
 

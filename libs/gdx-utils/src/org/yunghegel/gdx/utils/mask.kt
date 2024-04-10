@@ -1,4 +1,6 @@
 package org.yunghegel.gdx.utils
 
-class mask {
+fun mask(value: Int, mask: Int): Int {
+    return value and mask
 }
+

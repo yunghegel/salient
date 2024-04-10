@@ -20,10 +20,10 @@ import ktx.collections.GdxArray
 
 class Compass(val camera: PerspectiveCamera) :InputListener()  {
 
-    private val ARROW_LENGTH = 0.08f
+    private val ARROW_LENGTH = 0.05f
     private val ARROW_THIKNESS = .3f
-    private val ARROW_CAP_SIZE = .14f
-    private val SPHERE_SIZE = 0.014f
+    private val ARROW_CAP_SIZE = .1f
+    private val SPHERE_SIZE = 0.008f
     private val ARROW_DIVISIONS = 15
 
     private val COLOR_X = Color(.8f, 0f, 0f, 1f)
@@ -87,9 +87,12 @@ class Compass(val camera: PerspectiveCamera) :InputListener()  {
         localCam.far = 1000f
     }
 
-    fun setCompassPosition(x: Float, y: Float) {
+    fun setPos(x:Float,y:Float){
         position.x = x
         position.y = y
+    }
+
+    private fun setCompassPosition() {
         position.z = -0.5f
         handles.forEach { handle ->
             handle.modelInstance.transform.setTranslation(position)
@@ -140,7 +143,7 @@ class Compass(val camera: PerspectiveCamera) :InputListener()  {
     fun update(delta: Float,width:Float,height:Float) {
         localCam.viewportWidth = width
         localCam.viewportHeight = height
-        setCompassPosition(.90f, .88f)
+        setCompassPosition()
         handles.forEach { handle ->
             handle.modelInstance.transform.getTranslation(tempv3)
             handle.modelInstance.transform.set(camera.view)
@@ -148,7 +151,6 @@ class Compass(val camera: PerspectiveCamera) :InputListener()  {
         }
         val intersection = checkIntersection()
         if (intersection != -1) {
-            println("intersection: $intersection")
             intersectedIdx = intersection
             hoveredHandle = handles.firstOrNull { handle -> handle.id == intersection }
             if (hoveredHandle != null) {

@@ -1,4 +1,4 @@
-package org.yunghegel.salient.core.util
+package org.yunghegel.salient.engine.graphics
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
@@ -13,8 +13,8 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import net.mgsx.gltf.scene3d.lights.PointLightEx
 import net.mgsx.gltf.scene3d.lights.SpotLightEx
-import org.yunghegel.salient.core.app.Salient
-import org.yunghegel.salient.core.app.inject
+import org.yunghegel.salient.engine.io.inject
+
 
 import kotlin.math.cbrt
 import kotlin.math.cos
@@ -22,9 +22,11 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 class DebugDrawer {
-    val renderer: ShapeRenderer by lazy {inject()}
-    val font: BitmapFont   by lazy { inject()}
+
+    val renderer: ShapeRenderer by lazy { inject() }
+    val font: BitmapFont   by lazy { inject() }
     var batch: SpriteBatch = SpriteBatch()
+
     fun drawWireDisc(position: Vector3, axis: Vector3, radius: Float) {
         begin()
         drawWireDiscInternal(position, axis, radius)

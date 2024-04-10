@@ -3,23 +3,36 @@ package org.yunghegel.salient.editor.ui.scene.graph
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.ui.Tree
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import com.badlogic.gdx.scenes.scene2d.utils.Selection
 import com.badlogic.gdx.utils.IntMap
+import ktx.actors.onChange
 import ktx.collections.isNotEmpty
+import ktx.collections.toGdxArray
 import org.yunghegel.salient.editor.input.Input
 import org.yunghegel.salient.editor.scene.SceneGraph
+import org.yunghegel.salient.engine.api.ecs.EntityComponent
+import org.yunghegel.salient.engine.events.Bus.post
+import org.yunghegel.salient.engine.events.scene.GameObjectDeselectedEvent
+import org.yunghegel.salient.engine.events.scene.GameObjectSelectedEvent
 import org.yunghegel.salient.engine.graphics.scene3d.GameObject
 import org.yunghegel.salient.engine.graphics.scene3d.events.onGameObjectAdded
 import org.yunghegel.salient.engine.io.debug
 import org.yunghegel.salient.engine.io.info
+import org.yunghegel.salient.engine.io.singleton
 import org.yunghegel.salient.engine.ui.UI
 
-class SceneGraphTree(private var graph: SceneGraph) : Tree<SNode<*, *>, Any>(UI.skin) {
+class SceneGraphTree(private var graph: SceneGraph) : Tree<SNode<*, *,GameObject>, Any>(UI.skin) {
+
+
 
     val nodeMap = mutableMapOf<GameObject, GameObjectNode>()
 
-    val visualIndices : IntMap<SNode<*, *>> = IntMap()
+    val visualIndices : IntMap<SNode<*, *,GameObject>> = IntMap()
 
     var root : GameObjectNode
+
+    val goSelection : Selection<GameObject> = Selection<GameObject>()
+
 
     init {
         setIconSpacing(5f, 2f)
@@ -33,6 +46,19 @@ class SceneGraphTree(private var graph: SceneGraph) : Tree<SNode<*, *>, Any>(UI.
             validateOrAdd(event.go,event.parent)
             calculateVisualIndices()
         }
+        selection
+        
+        singleton( goSelection )
+
+        onChange {
+            val dif = goSelection.items().filter { !selection.contains(nodeMap[it]) }.toList()
+            goSelection.clear()
+            goSelection.setAll(selection.items().map { it.obj }.toGdxArray())
+            post(GameObjectDeselectedEvent(dif))
+            post(GameObjectSelectedEvent(goSelection.items().toList()))
+
+        }
+
     }
 
     fun buildTree(go:GameObject, parent: GameObjectNode?, index : Int = 0) {
@@ -49,6 +75,8 @@ class SceneGraphTree(private var graph: SceneGraph) : Tree<SNode<*, *>, Any>(UI.
             buildTree(it,node)
         }
     }
+    
+    
 
     fun validateOrAdd(go:GameObject,parent:GameObject?) {
         if (nodeMap.containsKey(go)) {
@@ -66,8 +94,8 @@ class SceneGraphTree(private var graph: SceneGraph) : Tree<SNode<*, *>, Any>(UI.
         }
     }
 
-    fun allNodesBetween(start: SNode<*, *>, end: SNode<*, *>): List<SNode<*, *>> {
-        val nodes = mutableListOf<SNode<*, *>>()
+    fun allNodesBetween(start: SNode<*, *,GameObject>, end: SNode<*, *,GameObject>): List<SNode<*, *,GameObject>> {
+        val nodes = mutableListOf<SNode<*, *,GameObject>>()
         var node = start
         while (node != end) {
             nodes.add(node)
@@ -76,7 +104,7 @@ class SceneGraphTree(private var graph: SceneGraph) : Tree<SNode<*, *>, Any>(UI.
         return nodes
     }
 
-    fun getNextNodeVisual(node: SNode<*, *>): SNode<*, *>? {
+    fun getNextNodeVisual(node: SNode<*, *,GameObject>): SNode<*, *,GameObject>? {
         val peers = listPeers(node)
         val index = peers.indexOf(node)
         val nodeAfterThis = peers.getOrNull(index + 1)
@@ -94,7 +122,7 @@ class SceneGraphTree(private var graph: SceneGraph) : Tree<SNode<*, *>, Any>(UI.
         return null
     }
 
-    fun getPreviousNodeVisual(node: SNode<*, *>): SNode<*, *>? {
+    fun getPreviousNodeVisual(node: SNode<*, *,GameObject>): SNode<*, *,GameObject>? {
         val peers = listPeers(node)
         val index = peers.indexOf(node)
         val nodeBeforeThis = peers.getOrNull(index - 1)
@@ -126,17 +154,17 @@ class SceneGraphTree(private var graph: SceneGraph) : Tree<SNode<*, *>, Any>(UI.
         return i
     }
 
-    fun hasParent(node: SNode<*, *>): Boolean {
+    fun hasParent(node: SNode<*, *,GameObject>): Boolean {
         return node.parent != null
     }
 
-    fun listPeers(node: SNode<*, *>): List<SNode<*, *>> {
+    fun listPeers(node: SNode<*, *,GameObject>): List<SNode<*, *,GameObject>> {
         if (!hasParent(node)) return root.children.toList()
         return node.parent.children.toList()
     }
 
     fun populateComponents(go: GameObjectNode) {
-        go.go.components.forEach {
+        go.go.components.filterIsInstance<org.yunghegel.salient.engine.api.Icon>().forEach { it as EntityComponent<*>
             debug("Adding component node: ${it::class.simpleName}")
             val node = ComponentNode(it,go.go)
             go.map[it] = node
@@ -153,10 +181,6 @@ class SceneGraphTree(private var graph: SceneGraph) : Tree<SNode<*, *>, Any>(UI.
 
             override fun clicked(event: InputEvent?, x: Float, y: Float) {
                 val node = getNodeAt(y) ?: return
-                println(getNextNodeVisual(node)?.name)
-                allNodesBetween(node,root!!).forEach {
-                    println(it.name)
-                }
 
                 if (doubleClick()) {
                     info("Double click detected")

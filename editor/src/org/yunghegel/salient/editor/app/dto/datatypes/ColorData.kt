@@ -1,10 +1,14 @@
-package org.yunghegel.salient.engine.api.model.dto.datatypes
+package org.yunghegel.salient.editor.app.dto.datatypes
 
 import com.badlogic.gdx.graphics.*
 import kotlinx.serialization.*
 
 @Serializable
-data class ColorData(val r: Float, val g: Float, val b: Float, val a: Float) {
+data class ColorData(val r: Float =1f, val g: Float =1f, val b: Float=1f, val a: Float=1f) {
+
+    fun toColor(): Color {
+        return Color(r, g, b, a)
+    }
 
     companion object {
 

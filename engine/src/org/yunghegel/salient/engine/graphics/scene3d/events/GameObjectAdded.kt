@@ -1,4 +1,4 @@
-package org.yunghegel.salient.engine.scene3d.events
+package org.yunghegel.salient.engine.graphics.scene3d.events
 
 class GameObjectAdded {
 }

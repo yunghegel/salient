@@ -1,4 +1,4 @@
-package org.yunghegel.salient.editor.input
+package org.yunghegel.salient.editor.plugins.input
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
+import org.yunghegel.salient.editor.tool.Tool
+import org.yunghegel.salient.engine.io.inject
 import kotlin.math.abs
 import kotlin.math.tan
 
@@ -15,11 +17,12 @@ class EditorCamera {
         private set
     private var orthoMode = false
 
-    private var orthographicCamera: OrthographicCamera? = null
-    private var perspectiveCamera: PerspectiveCamera? = null
+    private var orthographicCamera: OrthographicCamera = inject()
+    private var perspectiveCamera: PerspectiveCamera = inject()
 
     init {
         createCamera()
+
     }
 
     private fun createCamera() {

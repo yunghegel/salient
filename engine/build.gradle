@@ -1,0 +1,5 @@
+dependencies {
+    packages.each { pkg->
+        api project (pkg.value)
+    }
+}

@@ -1,15 +1,15 @@
-package org.yunghegel.salient.modules.graphics.renderers
+package org.yunghegel.salient.engine.helpers
 
-import org.yunghegel.salient.core.app.Salient
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import org.yunghegel.gdx.ui.UI
-import org.yunghegel.salient.core.app.inject
-import org.yunghegel.salient.core.util.DebugDrawer
+import org.yunghegel.salient.engine.graphics.DebugDrawer
+import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.ui.UI
+
 
 object TextRenderer {
 
@@ -29,14 +29,14 @@ object TextRenderer {
     val debugDrawer: DebugDrawer
 
     init {
-        fontLarge = UI.getSkin().getFont("default-large")
-        fontMedium = UI.getSkin().getFont("default-medium")
-        fontSmall = UI.getSkin().getFont("default-small")
+        fontLarge = UI.skin.getFont("default-large")
+        fontMedium = UI.skin.getFont("default-medium")
+        fontSmall = UI.skin.getFont("default-small")
 
         debugDrawer = DebugDrawer()
         font = fontSmall
         fontBatch = SpriteBatch()
-        camera = inject()!!
+        camera = inject()
     }
 
     fun renderText(text: String, x: Float, y: Float, size: Int = 1) {
@@ -79,11 +79,11 @@ object TextRenderer {
         }
     }
 
-    inline fun keyVal(pos: Vector2, key: String, value: String) {
+    fun keyVal(pos: Vector2, key: String, value: String) {
         debugDrawer.keyValue(pos, key, value, font)
     }
 
-    inline fun keyVal(x: Float, y: Float, key: String, value: String) {
+    fun keyVal(x: Float, y: Float, key: String, value: String) {
         debugDrawer.keyValue(Vector2(x, y), key, value, font)
     }
 

@@ -1,4 +1,4 @@
-package org.yunghegel.salient.common.reflect
+package org.yunghegel.gdx.utils.reflection
 
 import java.lang.reflect.Field
 import java.lang.reflect.InvocationTargetException
@@ -12,6 +12,7 @@ object ReflectionHelper {
     }
 
     operator fun get(`object`: Any?, field: Field?): Any {
+        field?.trySetAccessible()
         return try {
             field!!.get(`object`)
         } catch (e: IllegalArgumentException) {

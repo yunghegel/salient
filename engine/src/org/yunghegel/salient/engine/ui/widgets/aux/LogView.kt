@@ -12,13 +12,13 @@ import org.yunghegel.salient.engine.io.LogReference
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
 
-class Console : STable(), LogHandler {
+class LogView : STable(), LogHandler {
 
     var stack: Stack = Stack()
     val scroll: ScrollPane
 
     val MAX_ENTRIES = 250
-    val entries : Entries
+    internal val entries : Entries
 
     init {
         add(stack).grow()
@@ -50,7 +50,7 @@ class Console : STable(), LogHandler {
             override fun exit(event: InputEvent?, x: Float, y: Float, pointer: Int, toActor: Actor?) {
                 if (stage.scrollFocus != null)
                 {
-                    if (toActor !=null && toActor.isDescendantOf(this@Console))
+                    if (toActor !=null && toActor.isDescendantOf(this@LogView))
                     {
                         stage.setScrollFocus(scroll)
 
@@ -74,7 +74,7 @@ class Console : STable(), LogHandler {
         addListener(clickListener)
     }
 
-    class Entry(var ref:LogReference) : STable() {
+    internal class Entry(var ref:LogReference) : STable() {
 
         val typeLabel = SLabel("")
         val sourceLabel = SLabel("")
@@ -110,7 +110,7 @@ class Console : STable(), LogHandler {
 
     }
 
-    inner class Entries : STable() {
+    internal inner class Entries : STable() {
 
         val entries = mutableListOf<Entry>()
 

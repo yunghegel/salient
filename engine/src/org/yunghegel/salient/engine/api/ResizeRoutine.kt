@@ -1,4 +1,4 @@
-package org.yunghegel.salient.engine
+package org.yunghegel.salient.engine.api
 
 interface ResizeRoutine {
 

@@ -4,23 +4,23 @@ import org.greenrobot.eventbus.Subscribe
 import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.events.Bus
 
-class SceneInitializedEvent(val scene: EditorScene) {
+class SceneChangedEvent(val old: EditorScene?, val new: EditorScene) {
 
     interface Listener {
         @Subscribe
-        fun onSceneInitialized(event: SceneInitializedEvent)
+        fun onSceneChanged(event: SceneChangedEvent)
 
     }
 
 }
 
-fun onSceneInitialized(action: () -> Unit) = object : SceneInitializedEvent.Listener {
+fun onSceneChanged(action: (SceneChangedEvent) -> Unit) = object : SceneChangedEvent.Listener {
 
     init {
         Bus.register(this)
     }
     @Subscribe
-    override fun onSceneInitialized(event: SceneInitializedEvent) {
-        action()
+    override fun onSceneChanged(event: SceneChangedEvent) {
+        action(event)
     }
 }

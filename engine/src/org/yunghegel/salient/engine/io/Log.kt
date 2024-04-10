@@ -37,6 +37,7 @@ object Log {
             logWriter?.flush()
             logWriter?.close()
         }
+
     }
 
     fun addHandler(handler: LogHandler) {
@@ -78,12 +79,12 @@ object Log {
     }
 
     fun handle(logRef: LogReference) {
-        handlers.forEach { it(logRef) }
+        handlers.forEach { handler -> handler.handle(logRef) }
     }
 
-    fun processStack(handler: LogHandler) {
+    fun processStack() {
         while (!stack.isEmpty()) {
-            handler(stack.pop())
+           handlers.forEach { handle(stack.pop()) }
         }
     }
 
@@ -147,7 +148,12 @@ fun warn(msg: String) {
 
 
 
-typealias LogHandler = (LogReference) -> Unit
+
+fun interface LogHandler {
+
+    fun handle(logRef: LogReference)
+
+}
 
 enum class LogLevel(val color: Color) {
     INFO(Color.WHITE), DEBUG(Color.CYAN), WARN(Color.CORAL), ERROR(Color.FIREBRICK), STATE(Color.GOLD), EVENT(Color.FOREST)
@@ -159,7 +165,8 @@ data class LogReference(
     val line: Int,
     val time: String,
     val level: LogLevel,
-    val msg: String
+    val msg: String,
+    val obj : Any? = null
 ) {
 
     fun format(): String {

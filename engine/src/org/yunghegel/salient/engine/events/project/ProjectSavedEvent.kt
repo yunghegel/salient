@@ -1,12 +1,12 @@
 package org.yunghegel.salient.engine.events.project
 
 import org.greenrobot.eventbus.Subscribe
+import org.yunghegel.salient.engine.api.project.EditorProject
 import org.yunghegel.salient.engine.events.Bus
 
-class ProjectSavedEvent() {
+class ProjectSavedEvent(val project: EditorProject<*,*>) {
 
-    interface Listener
-    {
+    interface Listener {
         @Subscribe
         fun onProjectSaved(event: ProjectSavedEvent)
 
@@ -14,12 +14,12 @@ class ProjectSavedEvent() {
 
 }
 
-fun onProjectSaved(action: ()->Unit) = object : ProjectSavedEvent.Listener {
+fun onProjectSaved(action: () -> Unit) = object : ProjectSavedEvent.Listener {
 
     init {
         Bus.register(this)
     }
-    
+
     @Subscribe
     override fun onProjectSaved(event: ProjectSavedEvent) {
         action()

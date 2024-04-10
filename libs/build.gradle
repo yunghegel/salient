@@ -1,0 +1,39 @@
+subprojects {
+
+    apply plugin: 'maven-publish'
+    apply plugin: 'java-library'
+
+    artifacts {
+        archives jar
+        archives sourcesJar
+    }
+
+    jar {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    java {
+        withSourcesJar()
+    }
+
+    publishing {
+        repositories {
+            maven {
+                name = "releases" //REPOSITORY NAME
+                url = uri("https://repo.yunghegel.org/releases") //REPOSITORY URL
+                credentials(PasswordCredentials)
+                authentication {
+                    basic(BasicAuthentication)
+                }
+            }
+        }
+
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+
+}
+

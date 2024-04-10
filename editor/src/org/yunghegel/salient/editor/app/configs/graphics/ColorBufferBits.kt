@@ -1,4 +1,4 @@
-package org.yunghegel.salient.modules.graphics.shared.config
+package org.yunghegel.salient.editor.app.configs.graphics
 
 enum class ColorBufferBits(r: Int, g: Int, b: Int, a: Int) {
 

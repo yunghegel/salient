@@ -5,18 +5,23 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.Scaling
 import ktx.actors.onChange
-import org.yunghegel.gdx.ui.widgets.ColorPicker
-import org.yunghegel.gdx.utils.ui.scene2d.STable
+import ktx.scene2d.dialog
+import ktx.scene2d.scene2d
+import org.yunghegel.gdx.utils.ext.dialog
+import org.yunghegel.gdx.utils.ui.ColorPicker
 
 
 class ColorBox(
-    title: String?,
+    title: String,
     private val colorModel: ()->Color,
     private val alpha: Boolean,
-) : STable() {
+    skin:Skin
+) : Table(skin) {
     private val colorPreview: Image
     private var alphaPreview: Image? = null
 
@@ -43,12 +48,15 @@ class ColorBox(
 
         add(bt)
         bt.onChange {
-            openDialog(title, UI.stage)
+            openDialog(title, stage)
         }
     }
 
-    private fun openDialog(title: String?, stage: Stage) {
-       dialog(createPicker(), title).show(stage)
+    private fun openDialog(title: String, stage: Stage) {
+       val dialog = dialog(createPicker(), title,skin)
+        dialog.width = 300f
+        dialog.height = 200f
+        dialog.show(stage)
     }
 
     private fun createPicker(): Actor {

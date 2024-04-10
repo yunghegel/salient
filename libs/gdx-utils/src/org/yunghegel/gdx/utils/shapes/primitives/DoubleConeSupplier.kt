@@ -1,9 +1,11 @@
-package org.yunghegel.gdx.utils.primitives
+package org.yunghegel.gdx.utils.shapes.primitives
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.ConeShapeBuilder
 import com.badlogic.gdx.math.Matrix4
+import org.yunghegel.gdx.utils.shapes.BuilderUtils
+import org.yunghegel.gdx.utils.shapes.InstanceSupplier
 
 class DoubleConeSupplier : InstanceSupplier {
     private val vertices: Int

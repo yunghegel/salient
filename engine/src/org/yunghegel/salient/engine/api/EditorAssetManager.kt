@@ -1,6 +1,6 @@
 package org.yunghegel.salient.engine.api
 
-interface AssetManager {
+interface EditorAssetManager {
 
 
 

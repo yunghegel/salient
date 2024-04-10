@@ -1,4 +1,7 @@
 package org.yunghegel.salient.engine.api
 
-interface NamedObjectResource {
+interface NamedObjectResource : Resource, Named, ID {
+
+
+
 }

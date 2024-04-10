@@ -1,7 +1,8 @@
-package org.yunghegel.gdx.utils.primitives
+package org.yunghegel.gdx.utils.shapes.primitives
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g3d.Model
+import org.yunghegel.gdx.utils.shapes.InstanceSupplier
 
 class PlaneSupplier(var scale: Float, color: Color?) : InstanceSupplier(color) {
     override fun createModel(): Model? {

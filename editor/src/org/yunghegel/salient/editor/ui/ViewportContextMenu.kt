@@ -1,15 +1,12 @@
 package org.yunghegel.salient.editor.ui
 
-import com.badlogic.gdx.graphics.g3d.Model
-import com.badlogic.gdx.graphics.g3d.ModelInstance
-import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.kotcrab.vis.ui.widget.PopupMenu
 
-class EditorRightClickMenu : PopupMenu() {
+class ViewportContextMenu : PopupMenu() {
 
     var translate: EditorMenuItem? = null
     var rotate: EditorMenuItem? = null
@@ -44,6 +41,10 @@ class EditorRightClickMenu : PopupMenu() {
     fun attachListener(actor:Actor) {
         actor.addListener(object : ClickListener() {
             override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
+                if(!isOver) return true
+                if (button == 1) {
+                    showMenu(actor.stage, x, y)
+                }
                 return super.touchDown(event, x, y, pointer, button)
             }
 

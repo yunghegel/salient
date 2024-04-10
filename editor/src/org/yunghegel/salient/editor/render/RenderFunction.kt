@@ -1,4 +1,4 @@
-package org.yunghegel.salient.editor.plugins.render
+package org.yunghegel.salient.editor.render
 
 class RenderFunction(private val renderFunc: (Float) -> Unit, val priority: Int) : Comparable<RenderFunction> {
 

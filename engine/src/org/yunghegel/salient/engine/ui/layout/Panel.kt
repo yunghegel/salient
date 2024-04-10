@@ -1,39 +1,138 @@
 package org.yunghegel.salient.ui.container
 
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.ui.Button
+import com.badlogic.gdx.scenes.scene2d.ui.Cell
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
-import org.yunghegel.salient.ui.scene2d.SImageButton
-import org.yunghegel.salient.modules.ui.scene2d.SLabel
-import org.yunghegel.salient.modules.ui.scene2d.STable
-import org.yunghegel.salient.modules.ui.scene2d.STextButton
+import com.kotcrab.vis.ui.widget.Separator
+import org.yunghegel.salient.engine.ui.Icons
+import org.yunghegel.salient.engine.ui.UI
+import org.yunghegel.salient.engine.ui.scene2d.SLabel
+import org.yunghegel.salient.engine.ui.scene2d.STable
+import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 
 
-open class Panel(val title: String = "Default",val tabButtonStyle: String = "default") : STable() {
-    var tabTable: STable
-    var bodyTable: STable
-    var tab: Tab = Tab(title)
-    var plusButton: SImageButton = SImageButton("plus")
+open class Panel() : STable() {
 
+    internal var titleTable: TitleTable
+    internal var bodyTable: STable
+
+    var hidden = false
+
+    private var iconify : (Boolean) -> Unit = {}
+
+    override fun <T:Actor> add(actor: T): Cell<T> {
+        return bodyTable.add(actor)
+    }
+
+    fun <T:Actor> addInternal(actor: T): Cell<T>? {
+        return super.add(actor)
+    }
+
+    fun iconify() {
+        iconify(hidden)
+    }
+
+    fun setIconifyAction(action: (Boolean) -> Unit) {
+        iconify = action
+    }
+
+    fun createIcon(name: String) {
+        titleTable.createIcon(name)
+    }
+
+    fun createIcon(drawable:TextureRegionDrawable) {
+        titleTable.createIcon(drawable)
+    }
+
+    fun createTitle(title: String,category:String) {
+        titleTable.createTitle(title,category)
+    }
+
+    fun addButton(button: Button) {
+        titleTable.addButton(button)
+    }
 
     init {
         align(Align.left)
-        tabTable = STable()
-        tabTable.add(tab).pad(0f)
-        tabTable.align(Align.left)
-
-        add(tabTable).growX().left()
-
+        titleTable = TitleTable()
+        titleTable.align(Align.left)
+        addInternal(titleTable)!!.growX().left().height(24f)
         row()
+        addInternal(Separator())!!.growX().row()
         bodyTable = STable()
-        add(bodyTable).grow().colspan(2)
+        bodyTable.align(Align.topLeft)
+        addInternal(bodyTable)!!.grow().row()
+        bodyTable.touchable = Touchable.enabled
     }
 
+    internal class TitleTable : STable() {
+
+        val container = STable()
+
+        var category : String = ""
+
+        var iconName : String? = null
+        var titleName : String? = null
+
+        var icon : ImageButton? = null
+        var title : SLabel? = null
+
+        var buttons = mutableListOf<Button>()
 
 
-    inner class Tab(val title: String) : STable() {
+
+        val iconifyWindow = ImageButton(Icons.WINDOW_ICONIFY.drawable)
 
         init {
-            add(STextButton(title,tabButtonStyle))
+            add(container).growX().left().pad(2f)
+            container.align(Align.left)
+            setBackground("dark-gray")
+            iconifyWindow.style.down = Icons.WINDOW_ICONIFY_OVER.drawable
+            iconifyWindow.style.over = UI.skin.getDrawable("border-y")
+
+        }
+
+        fun createIcon(name: String) {
+            iconName = name
+            this.icon = SImageButton(name)
+            val copy = ImageButtonStyle(icon?.style)
+            icon?.style = copy
+            icon?.style?.up = null
+            icon?.style?.down = null
+            icon?.style?.over = null
+            rebuild()
+        }
+
+        fun createIcon(drawable:TextureRegionDrawable) {
+            this.icon = ImageButton(drawable)
+
+            rebuild()
+        }
+
+        fun createTitle(title: String,category:String) {
+            this.category = category
+            titleName = title
+            this.title = SLabel(title)
+            rebuild()
+        }
+
+        fun addButton(button: Button) {
+            buttons.add(button)
+            rebuild()
+        }
+
+        fun rebuild() {
+            container.clear()
+            children.filterIsInstance<Button>().forEach { removeActor(it) }
+            if(icon != null) container.add(icon).size(18f).pad(2f)
+            if(title != null) container.add(title).pad(2f)
+            buttons.forEach { add(it).pad(2f) }
+
         }
 
     }

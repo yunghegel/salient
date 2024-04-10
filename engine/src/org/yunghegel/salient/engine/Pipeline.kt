@@ -81,7 +81,7 @@ class StateComponent(val state: State, val transition: (() -> Unit)? = null) : C
  * The final state is the UI pass which restores the appropriate OpenGL state for 2D rendering, so it's
  * appropriate to render more things after this stage if needed (dialogs, notifications, etc)
  */
-class Pipeline : Engine() {
+open class Pipeline : Engine() {
 
     /**
      * Series of {@see #in  } are added to the engine - one for each state.
@@ -132,7 +132,7 @@ class Pipeline : Engine() {
         addEntity(entity)
     }
 
-    fun once(state: State, func: (Float) -> Unit, transition: (() -> Unit)? = null) {
+    fun once(state: State, transition: (() -> Unit)? = null,func: (Float) -> Unit, ) {
         val entity = AutoremoveEntiy()
         entity.add(FunctionComponent(func))
         entity.add(StateComponent(state, transition))
@@ -143,7 +143,7 @@ class Pipeline : Engine() {
      * Middleware utility. Example usage would be to profile the time taken to render a certain state, or log the number of texture bindings that occured during a state
      */
 
-    fun each(func: (Float) -> Unit, transition: (() -> Unit)? = null) {
+    fun each(transition: (() -> Unit)? = null,func: (Float) -> Unit ) {
         for (state in State.entries) {
             push(state, transition, func)
         }

@@ -1,12 +1,12 @@
 package org.yunghegel.salient.editor.plugins.events
 
 import org.greenrobot.eventbus.Subscribe
+import org.yunghegel.salient.editor.tool.Tool
 import org.yunghegel.salient.engine.events.Bus
 
-class ToolLoadedEvent() {
+class ToolLoadedEvent(val tool: Tool) {
 
-    interface Listener
-    {
+    interface Listener {
         @Subscribe
         fun onToolLoaded(event: ToolLoadedEvent)
 
@@ -14,14 +14,14 @@ class ToolLoadedEvent() {
 
 }
 
-fun onToolLoaded(action: ()->Unit) = object : ToolLoadedEvent.Listener {
+fun onToolLoaded(action: (ToolLoadedEvent) -> Unit) = object : ToolLoadedEvent.Listener {
 
     init {
         Bus.register(this)
     }
-    
+
     @Subscribe
     override fun onToolLoaded(event: ToolLoadedEvent) {
-        action()
+        action(event)
     }
 }

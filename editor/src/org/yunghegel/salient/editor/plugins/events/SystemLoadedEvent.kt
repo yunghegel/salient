@@ -1,12 +1,12 @@
 package org.yunghegel.salient.editor.plugins.events
 
 import org.greenrobot.eventbus.Subscribe
+import org.yunghegel.salient.editor.plugins.BaseSystem
 import org.yunghegel.salient.engine.events.Bus
 
-class SystemLoadedEvent() {
+class SystemLoadedEvent(val system: BaseSystem) {
 
-    interface Listener
-    {
+    interface Listener {
         @Subscribe
         fun onSystemLoaded(event: SystemLoadedEvent)
 
@@ -14,14 +14,14 @@ class SystemLoadedEvent() {
 
 }
 
-fun onSystemLoaded(action: ()->Unit) = object : SystemLoadedEvent.Listener {
+fun onSystemLoaded(action: (SystemLoadedEvent) -> Unit) = object : SystemLoadedEvent.Listener {
 
     init {
         Bus.register(this)
     }
-    
+
     @Subscribe
     override fun onSystemLoaded(event: SystemLoadedEvent) {
-        action()
+        action(event)
     }
 }

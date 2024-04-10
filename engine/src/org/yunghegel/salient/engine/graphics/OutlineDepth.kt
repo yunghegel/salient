@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
-import org.yunghegel.salient.core.util.ShaderUtils
 import kotlin.math.pow
 
 class OutlineDepth
@@ -29,7 +28,9 @@ class OutlineDepth
             prefix +
                     Gdx.files.classpath("shaders/outline-depth.fs.glsl").readString()
         )
-        ShaderUtils.check(shader)
+        if (!shader.isCompiled) {
+            println(shader.log)
+        }
     }
 
     fun render(batch: SpriteBatch, depthTexture: Texture?, camera: Camera) {

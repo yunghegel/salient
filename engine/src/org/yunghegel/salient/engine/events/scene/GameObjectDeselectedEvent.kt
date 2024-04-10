@@ -2,11 +2,11 @@ package org.yunghegel.salient.engine.events.scene
 
 import org.greenrobot.eventbus.Subscribe
 import org.yunghegel.salient.engine.events.Bus
+import org.yunghegel.salient.engine.graphics.scene3d.GameObject
 
-class GameObjectDeselectedEvent() {
+class GameObjectDeselectedEvent(val gameObjects: List<GameObject>) {
 
-    interface Listener
-    {
+    interface Listener {
         @Subscribe
         fun onGameObjectDeselected(event: GameObjectDeselectedEvent)
 
@@ -14,14 +14,14 @@ class GameObjectDeselectedEvent() {
 
 }
 
-fun onGameObjectDeselected(action: ()->Unit) = object : GameObjectDeselectedEvent.Listener {
+fun onGameObjectDeselected(action: (GameObjectDeselectedEvent) -> Unit) = object : GameObjectDeselectedEvent.Listener {
 
     init {
         Bus.register(this)
     }
-    
+
     @Subscribe
     override fun onGameObjectDeselected(event: GameObjectDeselectedEvent) {
-        action()
+        action(event)
     }
 }

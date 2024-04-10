@@ -1,23 +1,42 @@
-package org.yunghegel.salient.modules.scene.common.data
+package org.yunghegel.salient.editor.app.dto.datatypes
 
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import kotlinx.serialization.Serializable
-import org.yunghegel.salient.core.util.Matrix4Data
-import org.yunghegel.salient.core.util.Vector3Data
+import org.yunghegel.salient.editor.app.dto.DTOAdapter
 
 @Serializable
 data class CameraData(
-    val view: Matrix4Data,
-    val projection: Matrix4Data,
-    val near: Float,
-    val far: Float,
-    val aspect: Float,
-    val position: Vector3Data,
-    val rotation: Vector3Data
+    val view: Matrix4Data = Matrix4Data.identity,
+    val projection: Matrix4Data = Matrix4Data.identity,
+    val near: Float = 0.1f,
+    val far: Float = 300f,
+    val aspect: Float = 1f,
+    val position: Vector3Data = Vector3Data.zero,
+    val rotation: Vector3Data = Vector3Data.zero
 ) {
 
-    companion object {
+    companion object : DTOAdapter<Camera,CameraData> {
+
+        override fun fromDTO(dto: CameraData): Camera {
+            return toCamera(dto)
+        }
+
+        override fun toDTO(model: Camera): CameraData {
+            return fromCamera(model)
+        }
+
+        fun applyToCamera(cam: Camera, data: CameraData) {
+            cam.view.set(Matrix4Data.toMat4(data.view))
+            cam.projection.set(Matrix4Data.toMat4(data.projection))
+            cam.near = data.near
+            cam.far = data.far
+            cam.viewportWidth = data.aspect
+            cam.viewportHeight = 1f
+            cam.position.set(data.position.x, data.position.y, data.position.z)
+            cam.direction.set(data.rotation.x, data.rotation.y, data.rotation.z)
+            cam.update()
+        }
 
         fun fromCamera(cam: Camera): CameraData {
             return CameraData(
@@ -45,4 +64,6 @@ data class CameraData(
             return camera
         }
     }
+
+
 }

@@ -4,18 +4,11 @@ import com.badlogic.gdx.math.FloatCounter
 import com.badlogic.gdx.utils.Array
 
 /** An Array that will automatically remove oldest items when beyond max size  */
-class RollingFloatArray {
+class RollingFloatArray(var maxSize: Int) {
     var floatCounter: FloatCounter? = null
 
-    constructor()
-
-    constructor(maxSize: Int) {
-        this.maxSize = maxSize
-        floatCounter = FloatCounter(maxSize)
-    }
 
     var items: Array<Float> = Array()
-    var maxSize: Int = 60
 
     fun clear() {
         items.clear()
@@ -37,4 +30,8 @@ class RollingFloatArray {
             }
             return total / items.size
         }
+
+    init {
+        floatCounter = FloatCounter(maxSize)
+    }
 }

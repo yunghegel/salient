@@ -1,6 +1,6 @@
-package org.yunghegel.salient.common.reflect
+package org.yunghegel.gdx.utils.reflection
 
-import org.yunghegel.salient.common.reflect.ReflectionHelper.invoke
+import org.yunghegel.gdx.utils.reflection.ReflectionHelper.invoke
 import java.lang.reflect.Method
 
 class VoidAccessor(private val `object`: Any?, method: Method?, name: String) : AccessorBase() {

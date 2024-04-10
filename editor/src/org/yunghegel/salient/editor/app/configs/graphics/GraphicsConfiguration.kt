@@ -1,13 +1,13 @@
-package org.yunghegel.salient.modules.graphics.shared.config
+package org.yunghegel.salient.editor.app.configs.graphics
 
 import com.badlogic.gdx.*
 import com.badlogic.gdx.backends.lwjgl3.*
-import org.yunghegel.salient.common.shared.config.*
+
 import kotlinx.serialization.Serializable
 import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.*
-import org.yunghegel.salient.modules.ui.edit.EditorFactory
-import org.yunghegel.salient.modules.ui.edit.widgets.EnumWidget
+import org.yunghegel.salient.editor.app.configs.Configuration
+
 
 @Serializable
 data class GraphicsConfiguration(

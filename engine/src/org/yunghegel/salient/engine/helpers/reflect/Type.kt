@@ -1,4 +1,4 @@
-package org.yunghegel.salient.engine.reflect
+package org.yunghegel.salient.engine.helpers.reflect
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Matrix4

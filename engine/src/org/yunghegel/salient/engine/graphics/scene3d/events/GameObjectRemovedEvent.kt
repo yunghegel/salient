@@ -1,10 +1,10 @@
-package org.yunghegel.salient.engine.scene3d.events
+package org.yunghegel.salient.engine.graphics.scene3d.events
 
 import org.greenrobot.eventbus.Subscribe
 import org.yunghegel.salient.engine.events.Bus
-import org.yunghegel.salient.engine.scene3d.GameObject
+import org.yunghegel.salient.engine.graphics.scene3d.GameObject
 
-class GameObjectRemovedEvent(val go:GameObject) {
+class GameObjectRemovedEvent(val go: GameObject) {
 
     interface Listener {
         @Subscribe
@@ -14,7 +14,7 @@ class GameObjectRemovedEvent(val go:GameObject) {
 
 }
 
-fun onGameObjectRemoved(action: (go:GameObjectRemovedEvent) -> Unit) = object : GameObjectRemovedEvent.Listener {
+fun onGameObjectRemoved(action: (go: GameObjectRemovedEvent) -> Unit) = object : GameObjectRemovedEvent.Listener {
 
     init {
         Bus.register(this)

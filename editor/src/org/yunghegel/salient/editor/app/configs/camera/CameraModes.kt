@@ -1,10 +1,9 @@
-package org.yunghegel.salient.modules.input.shared.config
+package org.yunghegel.salient.editor.app.configs.camera
 
-import org.yunghegel.salient.modules.input.shared.config.CameraConfiguration.CameraConfig
+import org.yunghegel.salient.editor.app.configs.camera.CameraConfiguration.CameraConfig
 import kotlinx.serialization.*
-import org.yunghegel.salient.core.input.view.*
-import org.yunghegel.salient.core.input.view.CameraMode.*
-import org.yunghegel.salient.core.input.view.NavigationMethod.*
+import org.yunghegel.salient.editor.app.configs.camera.CameraMode.*
+import org.yunghegel.salient.editor.app.configs.camera.NavigationMethod.*
 
 @Serializable
 data class CameraModes(

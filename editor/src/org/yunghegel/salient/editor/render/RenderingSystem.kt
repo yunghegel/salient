@@ -1,4 +1,4 @@
-package org.yunghegel.salient.editor.plugins.render
+package org.yunghegel.salient.editor.render
 
 import org.yunghegel.salient.editor.plugins.BaseSystem
 

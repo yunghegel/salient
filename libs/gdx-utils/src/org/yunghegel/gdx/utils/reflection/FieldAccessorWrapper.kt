@@ -1,5 +1,6 @@
-package org.yunghegel.salient.common.reflect
+package org.yunghegel.gdx.utils.reflection
 
+import org.yunghegel.gdx.utils.reflection.Accessor
 import java.lang.reflect.Field
 
 class FieldAccessorWrapper(original: Accessor?, field: Field?) : AccessorBase() {

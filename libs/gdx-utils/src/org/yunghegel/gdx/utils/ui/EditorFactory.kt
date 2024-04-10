@@ -1,10 +1,11 @@
 package org.yunghegel.gdx.utils.ui
 
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.math.Vector
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.sun.beans.editors.EnumEditor
-import org.yunghegel.salient.common.reflect.Accessor
-import org.yunghegel.salient.modules.io.debug
-import org.yunghegel.salient.modules.ui.edit.widgets.*
+import org.yunghegel.gdx.utils.ui.widgets.*
+import org.yunghegel.gdx.utils.reflection.Accessor
+
 
 typealias FactoryFunction = (Accessor) -> Actor
 
@@ -21,7 +22,6 @@ object EditorFactory {
 
     fun create(accesor: Accessor): Actor? {
         if (!validTypes.contains(accesor.getType())) {
-            debug("No editor for ${accesor.getType()}")
             return null
 
         }
@@ -48,6 +48,13 @@ object EditorFactory {
         register(Long::class.java) {
             LongEditor().create(it)
         }
+        register(Vector::class.java) {
+            VectorEditor().create(it)
+        }
+        register(Color::class.java) {
+            ColorEditor().create(it)
+        }
+
 
     }
 

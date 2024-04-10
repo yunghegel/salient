@@ -1,15 +1,16 @@
 package org.yunghegel.salient.editor.app.dto
 
-import org.yunghegel.salient.editor.project.Project
+import kotlinx.serialization.Serializable
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.model.ProjectHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
-import org.yunghegel.salient.engine.api.project.EditorProject
+import org.yunghegel.salient.engine.io.Filepath
 
-class ProjectDTO : DTO<Project?>(EditorProject::class.java.name) {
-    var handle: ProjectHandle? = null
+@Serializable
+class ProjectDTO {
+    var handle: ProjectHandle = ProjectHandle("null", Filepath("null"))
 
-    var sceneRegistry: Array<SceneHandle>
+    var sceneRegistry: Array<SceneHandle> = arrayOf()
 
-    var assetRegistry: Array<AssetHandle>
+    var assetRegistry: Array<AssetHandle> = arrayOf()
 }

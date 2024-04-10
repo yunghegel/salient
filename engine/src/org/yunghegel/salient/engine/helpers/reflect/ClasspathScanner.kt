@@ -1,4 +1,4 @@
-package org.yunghegel.salient.engine.reflect
+package org.yunghegel.salient.engine.helpers.reflect
 
 import com.google.common.reflect.ClassPath
 import java.lang.reflect.Field

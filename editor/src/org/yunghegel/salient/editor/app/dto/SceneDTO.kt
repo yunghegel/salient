@@ -1,14 +1,14 @@
 package org.yunghegel.salient.editor.app.dto
 
-import org.yunghegel.salient.editor.scene.Scene
+import kotlinx.serialization.Serializable
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
-import org.yunghegel.salient.engine.api.scene.EditorScene
 
-class SceneDTO : DTO<Scene?>(EditorScene::class.java.name) {
+@Serializable
+class SceneDTO()  {
     var handle: SceneHandle? = null
 
-    var assetUsage: Array<AssetHandle>
+    var assetUsage: Array<AssetHandle> = arrayOf()
 
     var sceneGraph: SceneGraphDTO = SceneGraphDTO()
 

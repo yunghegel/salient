@@ -1,4 +1,4 @@
-package org.yunghegel.salient.editor.plugins.render
+package org.yunghegel.salient.editor.render
 
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL30
 import org.yunghegel.salient.editor.tool.Tool
 import org.yunghegel.salient.engine.graphics.GFX
 import org.yunghegel.salient.engine.graphics.attach
-import org.yunghegel.salient.engine.sys.inject
+import org.yunghegel.salient.engine.io.inject
 
 class FBOTool : Tool("fbo_tool") {
 

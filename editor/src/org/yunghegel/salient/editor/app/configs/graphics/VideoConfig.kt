@@ -1,7 +1,8 @@
-package org.yunghegel.salient.modules.graphics.shared.config
+package org.yunghegel.salient.editor.app.configs.graphics
 
-import org.yunghegel.salient.modules.graphics.shared.config.AntiAliasing.*
+import org.yunghegel.salient.editor.app.configs.graphics.AntiAliasing.*
 import kotlinx.serialization.Serializable
+import org.yunghegel.salient.editor.app.configs.graphics.AntiAliasing
 
 @Serializable
 data class VideoConfig(

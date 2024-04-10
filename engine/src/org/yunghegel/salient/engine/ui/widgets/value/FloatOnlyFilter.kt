@@ -1,11 +1,11 @@
-package org.yunghegel.salient.core.ui.fields
+package org.yunghegel.salient.engine.ui.widgets.value
 
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
 
-class FloatOnlyFilter : TextField.TextFieldFilter {
+class FloatOnlyFilter(private val allowNegative:Boolean = false) : TextField.TextFieldFilter {
 
     override fun acceptChar(textField: TextField?, c: Char): Boolean {
-        return c.isDigit() || c == '.' || c == '-'
+        return c.isDigit() || c == '.' || (allowNegative && c == '-')
     }
 
 }

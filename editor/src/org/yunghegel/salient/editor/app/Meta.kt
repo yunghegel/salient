@@ -9,10 +9,10 @@ import org.yunghegel.salient.engine.events.lifecycle.onShutdown
 import org.yunghegel.salient.engine.events.project.onProjectChanged
 import org.yunghegel.salient.engine.events.scene.onSceneChanged
 import org.yunghegel.salient.engine.helpers.save
-import org.yunghegel.salient.engine.sys.Paths
+import org.yunghegel.salient.engine.io.Paths
 
 @Serializable
-class AppMeta() {
+class Meta() {
 
     init {
         onProjectChanged { event ->
@@ -45,7 +45,7 @@ class AppMeta() {
     val lastModified: Long
         get() = lastLoadedProject?.path?.lastModified?.toLong() ?: 0L
 
-    fun conf(action: AppMeta.() -> Unit) = this.apply(action)
+    fun conf(action: Meta.() -> Unit) = this.apply(action)
 
     fun pushRecentProject(project: ProjectHandle) {
         if (recentProjects.contains(project)) recentProjects.remove(project)

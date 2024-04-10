@@ -1,4 +1,4 @@
-package org.yunghegel.salient.engine.ecs
+package org.yunghegel.salient.engine.api.ecs
 
 import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Entity
@@ -7,7 +7,8 @@ const val VISIBLE = 1
 const val SELECTED = 2
 const val CULLED = 4
 const val DIRTY = 8
-const val DEBUG = 16
+const val DEBUG_ALL = 16
+const val LOCKED = 32
 
 
 @Suppress("UNCHECKED_CAST")

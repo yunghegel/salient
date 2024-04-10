@@ -61,7 +61,7 @@ class Picker {
         val id = PickerColorEncoder.decode(pm.getPixel(x, y))
 
         for (pickable in pickables) {
-            if (pickable.iD === id) {
+            if (pickable.id.equals(id)) {
                 return pickable
             }
         }

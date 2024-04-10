@@ -1,6 +1,7 @@
-package org.yunghegel.salient.common.reflect
+package org.yunghegel.gdx.utils.reflection
 
 import com.badlogic.gdx.utils.Array
+import org.yunghegel.gdx.utils.reflection.Accessor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier

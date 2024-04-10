@@ -1,4 +1,4 @@
-package org.yunghegel.gdx.utils.primitives
+package org.yunghegel.gdx.utils.shapes
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20

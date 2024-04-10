@@ -1,16 +1,16 @@
-package org.yunghegel.salient.engine.ecs
+package org.yunghegel.salient.engine.api.ecs
 
 import com.badlogic.ashley.core.Component
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g3d.ModelBatch
-import org.yunghegel.salient.engine.RendererRoutine
-import org.yunghegel.salient.engine.UpdateRoutine
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.scene.EditorScene
-import org.yunghegel.salient.engine.scene3d.GameObject
-import org.yunghegel.salient.engine.scene3d.SceneContext
+import org.yunghegel.salient.engine.graphics.scene3d.GameObject
+import org.yunghegel.salient.engine.graphics.scene3d.SceneContext
 
-abstract class EntityComponent<T>(val type: Class<T>?,val value : T?) : Component {
+abstract class EntityComponent<T>(val type: Class<T>?,val value : T?,val go: GameObject) : Component {
+
+    val flags = ComponentFlags()
 
     internal val assetUsage : MutableList<AssetHandle> = mutableListOf()
 

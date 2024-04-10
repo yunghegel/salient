@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Slider
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Array
-import com.kotcrab.vis.ui.widget.VisSlider
 import org.yunghegel.gdx.utils.ext.ControlScale
 import org.yunghegel.gdx.utils.ext.sliderTable
 import org.yunghegel.gdx.utils.ext.table
@@ -17,7 +16,7 @@ import java.util.function.Supplier
 class ColorPicker @JvmOverloads constructor(
     colorModel: Color,
     alpha: Boolean,
-    skin: Skin?,
+    skin: Skin,
     private val callback: Runnable? = null
 ) : Table(skin) {
     private val colorModel: Color
@@ -53,7 +52,7 @@ class ColorPicker @JvmOverloads constructor(
 
         if (alpha) {
             alphaPreview = Image(skin, "white")
-            alphaPreview.setColor(colorModel.a, colorModel.a, colorModel.a, 1f)
+            alphaPreview?.setColor(colorModel.a, colorModel.a, colorModel.a, 1f)
             add(alphaPreview).width(64f).fill()
             add(alphaPane())
             row()
@@ -144,19 +143,20 @@ class ColorPicker @JvmOverloads constructor(
         updater: Runnable,
         range: Range
     ) {
-        val slider: VisSlider = sliderTable(
-            table,
+        val container = Table()
+        val slider = sliderTable(
+            container,
+            skin,
+
+            100f,
             name,
             0f,
-            if (range == Range.ANGLE_360) 360f else 1f,
+            if (range == Range.LINEAR_UNIT) 1f else 360f,
+            0.01f,
             getter.get(),
-            ControlScale.LIN,
-            Float({ v ->
-                setter.accept(v)
-                updater.run()
-                updateColorVectors()
-            })
-        )
+            ControlScale.LIN
+        ) { setter.accept(it) }
+        table.add(container).fillX().width(150f).row()
         colorVectors.add(ColorVector(slider, getter))
     }
 

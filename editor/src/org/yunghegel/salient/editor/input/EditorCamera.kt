@@ -1,4 +1,4 @@
-package org.yunghegel.salient.core.input
+package org.yunghegel.salient.editor.input
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.Ray
 import com.badlogic.gdx.utils.viewport.Viewport
-import org.yunghegel.salient.core.util.Vector3Data
+import org.yunghegel.salient.editor.app.dto.datatypes.Vector3Data
 
 class EditorCamera(var perspectiveCamera: PerspectiveCamera, var viewport: Viewport) {
 
@@ -42,12 +42,12 @@ class EditorCamera(var perspectiveCamera: PerspectiveCamera, var viewport: Viewp
                      )
 
     data class Keybinds(
-            var rotate: Int = Input.Buttons.RIGHT,
+            var rotate: Int = Input.Buttons.LEFT,
             var pan: Int = Input.Buttons.MIDDLE,
             var zoom: Int = Input.Buttons.FORWARD,
             var home: Int = Input.Keys.CONTROL_LEFT,
             var reset: Int = Input.Keys.PERIOD,
-            var button: Int = Input.Buttons.RIGHT
+            var button: Int = Input.Buttons.LEFT
                        )
 
     abstract class CameraController(var camera: PerspectiveCamera):InputAdapter(), GestureListener {
@@ -156,7 +156,7 @@ class EditorCamera(var perspectiveCamera: PerspectiveCamera, var viewport: Viewp
 
         fun process(keycode: Int, deltaX: Float, deltaY: Float) {
             if (!enabled) return
-            if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 tmpV1.set(camera.direction).crs(camera.up).y = 0f
                 camera.rotateAround(target, tmpV1.nor(), deltaY * rotateAngle)
                 camera.rotateAround(target, Vector3.Y, deltaX * -rotateAngle)

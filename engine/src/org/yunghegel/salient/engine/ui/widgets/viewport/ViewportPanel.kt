@@ -2,15 +2,20 @@ package org.yunghegel.salient.engine.ui.widgets.viewport
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.Stack
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.ray3k.stripe.PopTable
 import ktx.actors.onClick
-import org.yunghegel.salient.engine.sys.inject
+import org.yunghegel.gdx.utils.ext.toOpenGLCoords
+import org.yunghegel.gdx.utils.ext.topRight
+import org.yunghegel.salient.engine.Pipeline
+import org.yunghegel.salient.engine.State
+import org.yunghegel.salient.engine.io.inject
 import org.yunghegel.salient.engine.ui.scene2d.STable
-import org.yunghegel.salient.ui.scene2d.SImageButton
+import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 
 class ViewportPanel(val viewport : ScreenViewport) : STable() {
 
@@ -29,6 +34,8 @@ class ViewportPanel(val viewport : ScreenViewport) : STable() {
     val config : SImageButton = SImageButton("config")
 
     val compass : Compass = Compass(inject())
+
+    val pipeline : Pipeline = inject()
 
 
     internal val tools = Tools()
@@ -54,21 +61,28 @@ class ViewportPanel(val viewport : ScreenViewport) : STable() {
         popup.attachToActor(config, Align.bottomLeft, Align.bottomRight, -10f, -10f)
         config.onClick { if (isChecked) popup.show(stage) else popup.hide() }
         rowOne.add(viewportMenu.table).growX()
-
         rowTwo.add(tools).growY().left().pad(10f).width(20f)
-
     }
 
     fun update() {
-        compass.update(Gdx.graphics.deltaTime,width,height)
+        val pos = calculateCompassPosition()
+        compass.setPos(pos.x,pos.y)
+        compass.update(Gdx.graphics.deltaTime,pos.x,pos.y)
         viewportWidget.updateViewport(false)
-        compass.render(delta = Gdx.graphics.deltaTime)
-
     }
 
+    fun calculateCompassPosition() : Vector2 {
+        val bounds = viewportWidget.bounds
+        val topRight = toOpenGLCoords(bounds.topRight())
+        return Vector2(topRight.x - .06f, topRight.y - .065f)
+    }
+    fun layoutCompass() {
+
+    }
     override fun act(delta: Float) {
-
-
+        pipeline.once(State.UI_PASS) {
+            compass.render(delta = Gdx.graphics.deltaTime)
+        }
         super.act(delta)
     }
 

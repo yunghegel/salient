@@ -1,16 +1,16 @@
 package org.yunghegel.salient.engine.api
 
 import org.yunghegel.salient.engine.api.scene.EditorScene
-import org.yunghegel.salient.engine.sys.Filepath
+import org.yunghegel.salient.engine.io.Filepath
 
-interface SceneManager {
+interface EditorSceneManager<T:EditorScene> {
 
-    fun createNew(name:String) : EditorScene
+    fun createNew(name:String) : T
 
-    fun loadScene(file: Filepath) : EditorScene
+    fun loadScene(file: Filepath,makeCurrent: Boolean) : T
 
-    fun initialize(scene: EditorScene)
+    fun initialize(scene: T,makeCurrent:Boolean)
 
-    fun saveScene(scene: EditorScene)
+    fun saveScene(scene: T)
 
 }

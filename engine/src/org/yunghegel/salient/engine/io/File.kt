@@ -1,4 +1,4 @@
-package org.yunghegel.salient.engine.sys
+package org.yunghegel.salient.engine.io
 
 import com.badlogic.gdx.files.FileHandle
 import org.yunghegel.salient.engine.api.model.AssetHandle
@@ -16,7 +16,7 @@ class File(val absolutePath: String) : FileHandle(absolutePath) {
 
     init {
         if(isAsset) {
-            if (filetype==FileType.ASSET_INDEX) {
+            if (filetype== FileType.ASSET_INDEX) {
 
             }
         }

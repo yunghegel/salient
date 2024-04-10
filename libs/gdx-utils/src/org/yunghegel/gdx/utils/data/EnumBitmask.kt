@@ -1,4 +1,4 @@
-package org.yunghegel.salient.common.util
+package org.yunghegel.gdx.utils.data
 
 import mobx.core.action
 import mobx.core.observable

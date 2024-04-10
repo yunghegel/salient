@@ -1,4 +1,6 @@
 package org.yunghegel.salient.editor.asset
 
-class AssetManager {
+import org.yunghegel.salient.engine.api.EditorAssetManager
+
+class AssetManager : EditorAssetManager {
 }

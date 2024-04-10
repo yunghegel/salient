@@ -1,7 +1,7 @@
-package org.yunghegel.salient.modules.input.shared.config
+package org.yunghegel.salient.editor.app.configs.camera
 
-import org.yunghegel.salient.common.shared.config.*
 import kotlinx.serialization.Serializable
+import org.yunghegel.salient.editor.app.configs.Configuration
 
 @Serializable
 data class InputConfiguration(val camera: CameraConfiguration = CameraConfiguration()) : Configuration()

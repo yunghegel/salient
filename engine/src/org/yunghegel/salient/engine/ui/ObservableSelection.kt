@@ -1,4 +1,6 @@
 package org.yunghegel.salient.engine.ui
 
-class ObservableSelection {
+import com.badlogic.gdx.scenes.scene2d.utils.Selection
+
+class ObservableSelection<T> : Selection<T>() {
 }

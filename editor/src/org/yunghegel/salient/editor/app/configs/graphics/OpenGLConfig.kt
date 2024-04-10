@@ -1,10 +1,10 @@
-package org.yunghegel.salient.modules.graphics.shared.config
+package org.yunghegel.salient.editor.app.configs.graphics
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration.GLEmulation
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration.GLEmulation.*
-import org.yunghegel.salient.modules.graphics.shared.config.ColorBufferBits.*
-import org.yunghegel.salient.modules.graphics.shared.config.DepthBufferBits.*
-import org.yunghegel.salient.modules.graphics.shared.config.StencilBufferBits.*
+import org.yunghegel.salient.editor.app.configs.graphics.ColorBufferBits.*
+import org.yunghegel.salient.editor.app.configs.graphics.DepthBufferBits.*
+import org.yunghegel.salient.editor.app.configs.graphics.StencilBufferBits.*
 import kotlinx.serialization.Serializable
 
 @Serializable

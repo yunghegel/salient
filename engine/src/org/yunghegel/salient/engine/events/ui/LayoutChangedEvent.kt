@@ -5,8 +5,7 @@ import org.yunghegel.salient.engine.events.Bus
 
 class LayoutChangedEvent() {
 
-    interface Listener
-    {
+    interface Listener {
         @Subscribe
         fun onLayoutChanged(event: LayoutChangedEvent)
 
@@ -14,12 +13,12 @@ class LayoutChangedEvent() {
 
 }
 
-fun onLayoutChanged(action: ()->Unit) = object : LayoutChangedEvent.Listener {
+fun onLayoutChanged(action: () -> Unit) = object : LayoutChangedEvent.Listener {
 
     init {
         Bus.register(this)
     }
-    
+
     @Subscribe
     override fun onLayoutChanged(event: LayoutChangedEvent) {
         action()

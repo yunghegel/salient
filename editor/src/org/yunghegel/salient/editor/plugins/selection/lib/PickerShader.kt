@@ -11,12 +11,10 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Vector3
 
 class PickerShader : BaseShader() {
-    protected val UNIFORM_PROJ_VIEW_MATRIX: Int = register(Uniform("u_projViewMatrix"))
-    protected val UNIFORM_TRANS_MATRIX: Int = register(Uniform("u_transMatrix"))
 
-    protected val UNIFORM_COLOR: Int = register(Uniform("u_color"))
-
-    private val program: ShaderProgram
+    private val UNIFORM_PROJ_VIEW_MATRIX: Int = register(Uniform("u_projViewMatrix"))
+    private val UNIFORM_TRANS_MATRIX: Int = register(Uniform("u_transMatrix"))
+    private val UNIFORM_COLOR: Int = register(Uniform("u_color"))
 
     init {
         program = ShaderProgram(VERTEX_SHADER, FRAGMENT_SHADER)
@@ -40,7 +38,7 @@ class PickerShader : BaseShader() {
         this.context.setDepthTest(GL20.GL_LEQUAL, 0f, 1f)
         this.context.setDepthMask(true)
 
-        program.begin()
+        program.bind()
 
         set(UNIFORM_PROJ_VIEW_MATRIX, camera.combined)
     }

@@ -1,7 +1,7 @@
-package org.yunghegel.salient.common.reflect
+package org.yunghegel.gdx.utils.reflection
 
-import org.yunghegel.salient.common.reflect.ReflectionHelper.invoke
-import org.yunghegel.salient.common.reflect.ReflectionHelper.method
+import org.yunghegel.gdx.utils.reflection.ReflectionHelper.invoke
+import org.yunghegel.gdx.utils.reflection.ReflectionHelper.method
 import java.lang.reflect.Method
 
 class MethodAccessor : AccessorBase {

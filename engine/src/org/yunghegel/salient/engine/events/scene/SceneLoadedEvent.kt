@@ -1,12 +1,12 @@
 package org.yunghegel.salient.engine.events.scene
 
 import org.greenrobot.eventbus.Subscribe
+import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.events.Bus
 
-class SceneLoadedEvent {
+class SceneLoadedEvent(val scene: EditorScene) {
 
-    interface Listener
-    {
+    interface Listener {
         @Subscribe
         fun onSceneLoaded(event: SceneLoadedEvent)
 
@@ -14,13 +14,13 @@ class SceneLoadedEvent {
 
 }
 
-fun onSceneLoaded(action: ()->Unit) = object : SceneLoadedEvent.Listener {
+fun onSceneLoaded(action: (SceneLoadedEvent) -> Unit) = object : SceneLoadedEvent.Listener {
 
     init {
         Bus.register(this)
     }
-
+    @Subscribe
     override fun onSceneLoaded(event: SceneLoadedEvent) {
-        action()
+        action(event)
     }
 }

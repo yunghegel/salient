@@ -1,5 +1,10 @@
 package org.yunghegel.salient.editor.app.configs
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+
+typealias SyncAction<T> = () -> T
+
 @Serializable
 abstract class Configuration {
 
@@ -14,15 +19,6 @@ abstract class Configuration {
         sync_actions.forEach { it.invoke() }
     }
 
-    inner class ConfigItemDelegate<R, T>(var value: T) : Delegate<R, T> {
 
-        override fun getValue(r: R, p: KProperty<*>): T {
-            return value
-        }
-
-        override fun setValue(r: R, p: KProperty<*>, value: T) {
-            this.value = value
-        }
-    }
 
 }
