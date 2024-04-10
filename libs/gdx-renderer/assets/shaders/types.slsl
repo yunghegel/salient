@@ -1,0 +1,5 @@
+[light]
+struct Light {
+    vec3 lightPosition;
+    vec3 lightColor;
+};

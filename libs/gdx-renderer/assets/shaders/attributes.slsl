@@ -1,0 +1,313 @@
+[VS]
+#include ":a_position"
+#include ":a_color"
+#include ":a_normal"
+#include ":a_tangent"
+#include ":a_binormal"
+#include ":a_boneWeights"
+#include ":a_texCoords"
+
+[FS]
+#include ":v_position"
+#include ":v_color"
+#include ":v_normal"
+#include ":v_tangent"
+#include ":v_binormal"
+#include ":v_texCoords"
+
+
+[a_position]
+#ifdef positionFlag
+    attribute vec4 a_position;
+    varying vec4 v_position;
+    #define passPosition() v_position = a_position;
+    #define pushPosition(value) v_position = vec4(value, 1.0);
+#endif
+
+[a_color]
+#ifdef colorFlag
+ 	attribute vec4 a_color;
+ 	varying vec4 v_color;
+ 	#define passColor() v_color = a_color;
+ 	#define pushColor(value) v_color = value;
+#endif //colorFlag
+
+[a_normal]
+#ifdef normalFlag
+ 	attribute vec3 a_normal;
+ 	varying vec3 v_normal;
+ 	#define passNormal() v_normal = a_normal;
+ 	#define pushNormal(value) v_normal = value;
+#endif //normalFlag
+
+[a_tangent]
+#ifdef tangentFlag
+ 	attribute vec3 a_tangent;
+ 	varying vec3 v_tangent;
+ 	#define passTangent() v_tangent = a_tangent;
+ 	#define pushTangent(value) v_tangent = value;
+#endif //tangentFlag
+
+[a_binormal]
+#ifdef binormalFlag
+ 	attribute vec3 a_binormal;
+ 	varying vec3 v_binormal;
+ 	#define passBinormal() v_binormal = a_binormal;
+ 	#define pushBinormal(value) v_binormal = value;
+#endif //binormalFlag
+
+
+
+[v_position]
+#ifdef positionFlag
+    varying vec4 v_position;
+#endif
+
+[v_color]
+#ifdef colorFlag
+ 	varying vec4 v_color;
+#endif //colorFlag
+
+[v_normal]
+#ifdef normalFlag
+ 	varying vec3 v_normal;
+#endif //normalFlag
+
+[v_tangent]
+#ifdef tangentFlag
+ 	varying vec3 v_tangent;
+#endif //tangentFlag
+
+[v_binormal]
+#ifdef binormalFlag
+ 	varying vec3 v_binormal;
+#endif //binormalFlag
+
+
+
+
+
+
+[a_texCoord0]
+#ifdef texCoord0Flag
+	#ifndef texCoordsFlag
+		#define texCoordsFlag
+	#endif
+ 	attribute vec2 a_texCoord0;
+ 	varying vec2 v_texCoord0;
+ 	#define passTexCoord0() v_texCoord0 = a_texCoord0;
+ 	#define pushTexCoord0(value) v_texCoord0 = value;
+#endif
+
+[a_texCoord1]
+#ifdef texCoord1Flag
+	#ifndef texCoordsFlag
+		#define texCoordsFlag
+	#endif
+ 	attribute vec2 a_texCoord1;
+ 	varying vec2 v_texCoord1;
+ 	#define passTexCoord1() v_texCoord1 = a_texCoord1;
+ 	#define pushTexCoord1(value) v_texCoord1 = value;
+#endif
+
+[a_texCoord2]
+#ifdef texCoord2Flag
+	#ifndef texCoordsFlag
+		#define texCoordsFlag
+	#endif
+ 	attribute vec2 a_texCoord2;
+ 	varying vec2 v_texCoord2;
+ 	#define passTexCoord2() v_texCoord2 = a_texCoord2;
+ 	#define pushTexCoord2(value) v_texCoord2 = value;
+#endif
+
+[a_texCoord3]
+#ifdef texCoord3Flag
+	#ifndef texCoordsFlag
+		#define texCoordsFlag
+	#endif
+ 	attribute vec2 a_texCoord3;
+ 	varying vec2 v_texCoord;
+ 	#define passTexCoord3() v_texCoord3 = a_texCoord3;
+ 	#define pushTexCoord3(value) v_texCoord3 = value;
+#endif
+
+[a_texCoord4]
+#ifdef texCoord4Flag
+	#ifndef texCoordsFlag
+		#define texCoordsFlag
+	#endif
+ 	attribute vec2 a_texCoord4;
+ 	varying vec2 v_texCoord4;
+ 	#define passTexCoord4() v_texCoord4 = a_texCoord4;
+ 	#define pushTexCoord4(value) v_texCoord4 = value;
+#endif
+
+[a_texCoord5]
+#ifdef texCoord5Flag
+	#ifndef texCoordsFlag
+		#define texCoordsFlag
+	#endif
+ 	attribute vec2 a_texCoord5;
+ 	varying vec2 v_texCoord5;
+ 	#define passTexCoord5() v_texCoord5 = a_texCoord5;
+ 	#define pushTexCoord5(value) v_texCoord5 = value;
+#endif
+
+[a_texCoord6]
+#ifdef texCoord6Flag
+	#ifndef texCoordsFlag
+		#define texCoordsFlag
+	#endif
+ 	attribute vec2 a_texCoord6;
+ 	varying vec2 v_texCoord6;
+ 	#define passTexCoord6() v_texCoord6 = a_texCoord6;
+ 	#define pushTexCoord6(value) v_texCoord6 = value;
+#endif
+
+[a_texCoord7]
+#ifdef texCoord7Flag
+	#ifndef texCoordsFlag
+		#define texCoordsFlag
+	#endif
+ 	attribute vec2 a_texCoord7;
+ 	varying vec2 v_texCoord7;
+ 	#define passTexCoord7() v_texCoord7 = a_texCoord7;
+ 	#define pushTexCoord7(value) v_texCoord7 = value;
+#endif
+
+[a_texCoords]
+#include ":a_texCoord0"
+#include ":a_texCoord1"
+#include ":a_texCoord2"
+#include ":a_texCoord3"
+#include ":a_texCoord4"
+#include ":a_texCoord5"
+#include ":a_texCoord6"
+#include ":a_texCoord7"
+
+[v_texCoord0]
+#ifdef texCoord0Flag
+ 	varying vec2 v_texCoord0;
+#endif
+
+[v_texCoord1]
+#ifdef texCoord1Flag
+ 	varying vec2 v_texCoord1;
+#endif
+
+[v_texCoord2]
+#ifdef texCoord2Flag
+ 	varying vec2 v_texCoord2;
+#endif
+
+[v_texCoord3]
+#ifdef texCoord3Flag
+ 	varying vec2 v_texCoord3;
+#endif
+
+[v_texCoord4]
+#ifdef texCoord4Flag
+ 	varying vec2 v_texCoord4;
+#endif
+
+[v_texCoord5]
+#ifdef texCoord5Flag
+ 	varying vec2 v_texCoord5;
+#endif
+
+[v_texCoord6]
+#ifdef texCoord6Flag
+ 	varying vec2 v_texCoord6;
+#endif
+
+[v_texCoord7]
+#ifdef texCoord7Flag
+ 	varying vec2 v_texCoord7;
+#endif
+
+[v_texCoords]
+#include ":v_texCoord0"
+#include ":v_texCoord1"
+#include ":v_texCoord2"
+#include ":v_texCoord3"
+#include ":v_texCoord4"
+#include ":v_texCoord5"
+#include ":v_texCoord6"
+#include ":v_texCoord7"
+
+
+
+[a_boneWeight0]
+#ifdef boneWeight0Flag
+	#ifndef boneWeightsFlag
+		#define boneWeightsFlag
+	#endif
+ 	attribute vec2 a_boneWeight0;
+#endif //boneWeight0Flag
+
+[a_boneWeight1]
+#ifdef boneWeight1Flag
+	#ifndef boneWeightsFlag
+		#define boneWeightsFlag
+	#endif
+	attribute vec2 a_boneWeight1;
+#endif //boneWeight1Flag
+
+[a_boneWeight2]
+#ifdef boneWeight2Flag
+	#ifndef boneWeightsFlag
+		#define boneWeightsFlag
+	#endif
+	attribute vec2 a_boneWeight2;
+#endif //boneWeight2Flag
+
+[a_boneWeight3]
+#ifdef boneWeight3Flag
+	#ifndef boneWeightsFlag
+		#define boneWeightsFlag
+	#endif
+	attribute vec2 a_boneWeight3;
+#endif //boneWeight3Flag
+
+[a_boneWeight4]
+#ifdef boneWeight4Flag
+	#ifndef boneWeightsFlag
+		#define boneWeightsFlag
+	#endif
+	attribute vec2 a_boneWeight4;
+#endif //boneWeight4Flag
+
+[a_boneWeight5]
+#ifdef boneWeight5Flag
+	#ifndef boneWeightsFlag
+		#define boneWeightsFlag
+	#endif
+	attribute vec2 a_boneWeight5;
+#endif //boneWeight5Flag
+
+[a_boneWeight6]
+#ifdef boneWeight6Flag
+	#ifndef boneWeightsFlag
+		#define boneWeightsFlag
+	#endif
+	attribute vec2 a_boneWeight6;
+#endif //boneWeight6Flag
+
+[a_boneWeight7]
+#ifdef boneWeight7Flag
+	#ifndef boneWeightsFlag
+		#define boneWeightsFlag
+	#endif
+	attribute vec2 a_boneWeight7;
+#endif //boneWeight7Flag
+
+[a_boneWeights]
+#include ":a_boneWeight0"
+#include ":a_boneWeight1"
+#include ":a_boneWeight2"
+#include ":a_boneWeight3"
+#include ":a_boneWeight4"
+#include ":a_boneWeight5"
+#include ":a_boneWeight6"
+#include ":a_boneWeight7"
