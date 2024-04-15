@@ -1,4 +1,4 @@
-package org.yunghegel.salient.editor.plugins
+package org.yunghegel.salient.engine.plugin
 
 import com.badlogic.ashley.core.Entity
 import ktx.collections.GdxArray

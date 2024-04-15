@@ -1,4 +1,4 @@
-package org.yunghegel.salient.editor.plugins.input
+package org.yunghegel.salient.editor.input
 
 import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.gdx.Gdx
