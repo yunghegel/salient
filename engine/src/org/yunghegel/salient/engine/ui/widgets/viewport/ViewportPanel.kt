@@ -13,7 +13,7 @@ import org.yunghegel.gdx.utils.ext.toOpenGLCoords
 import org.yunghegel.gdx.utils.ext.topRight
 import org.yunghegel.salient.engine.Pipeline
 import org.yunghegel.salient.engine.State
-import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 

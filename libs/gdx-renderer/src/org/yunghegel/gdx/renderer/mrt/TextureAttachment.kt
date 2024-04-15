@@ -31,8 +31,8 @@ enum class TextureAttachment(val layout : Int,val internalFormat : Int, val form
     companion object {
         fun EnumMask<TextureAttachment>.toFbo(enumMask: EnumMask<TextureAttachment>) : FrameBuffer {
             val fbo = GLFrameBuffer.FrameBufferBuilder(
-                Gdx.graphics.width ?: 1,
-                Gdx.graphics.height ?: 1
+                Gdx.graphics.width,
+                Gdx.graphics.height
             )
             with(fbo) {
                 enumMask.forEach { attachment -> attachment.attach() }

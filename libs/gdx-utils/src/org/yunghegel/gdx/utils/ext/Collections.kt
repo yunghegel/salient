@@ -19,7 +19,7 @@ inline fun <T> Iterable<T>.each(action: (T) -> Unit): Unit {
     for (element in this) action(element)
 }
 
-public inline fun <T> Iterable<T>.withEach(action: T.() -> Unit): Unit {
+inline fun <T> Iterable<T>.withEach(action: T.() -> Unit): Unit {
     for (element in this) element.action()
 }
 
@@ -73,5 +73,23 @@ fun reverseArray(arr: Array<Any?>) {
         arr[j] = tmp
         i++
         j--
+    }
+}
+
+fun <E> MutableCollection<E>.addIfNotNull(element: E?,ifNull: (() -> Unit)?=null){
+    if (element != null) {
+        add(element)
+    } else {
+        ifNull?.invoke()
+    }
+}
+
+fun <E> MutableCollection<E>.addIfNotPresent(element: E,ifPresent: ((E) -> Unit)?=null) : Boolean {
+    if (!contains(element)) {
+        add(element)
+        return true
+    } else {
+        ifPresent?.invoke(element)
+        return false
     }
 }

@@ -1,7 +1,5 @@
 package org.yunghegel.gdx.utils.reflection
 
-import org.yunghegel.gdx.utils.reflection.Accessor
-
 abstract class AccessorBase : Accessor {
 
     override fun <T> get(type: Class<T>?): T? {

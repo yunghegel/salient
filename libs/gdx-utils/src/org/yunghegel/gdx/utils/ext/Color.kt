@@ -70,6 +70,20 @@ fun randomColor(lo: Float, hi: Float): Color {
     return col
 }
 
+fun colorToHex(color: Color): String {
+    val r = (color.r * 255).toInt()
+    val g = (color.g * 255).toInt()
+    val b = (color.b * 255).toInt()
+    return String.format("#%02X%02X%02X", r, g, b)
+}
+
+fun hexToColor(hex: String): Color {
+    val r = Integer.valueOf(hex.substring(1, 3), 16) / 255f
+    val g = Integer.valueOf(hex.substring(3, 5), 16) / 255f
+    val b = Integer.valueOf(hex.substring(5, 7), 16) / 255f
+    return Color(r, g, b, 1f)
+}
+
 fun randomColor(): Color {
     return randomColor(0f, 1f)
 }

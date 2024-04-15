@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.Cell
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
@@ -11,9 +13,9 @@ import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.Separator
 import ktx.actors.onClick
 import org.yunghegel.gdx.utils.ext.*
+import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
-import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 
 open class EditorFrame : STable() {
 
@@ -50,8 +52,8 @@ open class EditorFrame : STable() {
         split.registerComputed(1) { (split.width-300)/split.width }
         split.registerComputed(0) { 220f/split.width }
 
-        split.setSplit(0, 0.2f )
-        split.setSplit(1, 0.8f)
+        split.setSplit(0, 0.15f )
+        split.setSplit(1, 0.18f)
 
         centerSplit.setSplitAmount(0.2f)
         centerSplit.setComputation { (((Gdx.graphics.height-300f))/Gdx.graphics.height) }
@@ -82,6 +84,24 @@ open class EditorFrame : STable() {
         center.addPanel(PanelContent(icon, title, content, overflow))
     }
 
+    fun configureListener(viewportActor: Actor, listener: InputListener) {
+        addListener(object:InputListener(){
+            override fun exit(event: InputEvent?, x: Float, y: Float, pointer: Int, fromActor: Actor?) {
+                fromActor?.let { actor ->
+                    event?.relatedActor.run {
+                        if(this!!.isDescendantOf(viewportActor)) {
+                            stage.setKeyboardFocus(viewportActor)
+                            stage.cancelTouchFocus(fromActor)
+
+                        }
+
+                    }
+                }
+            }
+
+        })
+    }
+
     fun hide(pos: Int) {
         when(pos) {
             LEFT ->  {
@@ -94,7 +114,7 @@ open class EditorFrame : STable() {
                 right.hidden = true
                 right.container.touchable = Touchable.disabled
             }
-            CENTER -> {
+            CENTER or BOTTOM -> {
                 centerSplit.hide(BOTTOM)
                 center.hidden = true
                 center.container.touchable = Touchable.disabled
@@ -115,7 +135,7 @@ open class EditorFrame : STable() {
                 right.hidden = false
                 right.container.touchable = Touchable.enabled
             }
-            CENTER -> {
+            CENTER or BOTTOM -> {
                 centerSplit.restoreSplit()
                 center.hidden = false
                 center.container.touchable = Touchable.enabled
@@ -181,7 +201,7 @@ open class EditorFrame : STable() {
         private fun createToolbarButton(panel: PanelContent) : ToolbarButton {
            panel.button =  ToolbarButton(panel) { from->
                 setPanel(from)
-                println("${panel.title} clicked")
+
             }
             return panel.button!!
         }
@@ -305,13 +325,13 @@ open class EditorFrame : STable() {
                 buttonGroup.children.forEach {
                     val bounds = Rectangle()
                     if (it.y < y && it.y+it.height > y) {
-                        println("clicked ${it::class.simpleName}")
+
                     }
 
                     if (it is ToolbarButton) {
                         it.getBounds(bounds)
                         with(it) {
-                            println("$x $y $width $height")
+
                         }
 
                     }

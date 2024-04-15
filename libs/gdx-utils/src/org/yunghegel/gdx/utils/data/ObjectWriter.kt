@@ -1,16 +1,10 @@
 package org.yunghegel.gdx.utils.data
 
 import com.charleskorn.kaml.Yaml
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.InternalSerializationApi
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.serializer
+import kotlinx.serialization.*
 import ktx.reflect.Reflection
-import org.yunghegel.gdx.utils.data.ObjectWriter.Companion.yaml
 import java.io.File
 import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 class ObjectWriter<T:Any>(val value: T) {
 
@@ -39,24 +33,34 @@ class ObjectWriter<T:Any>(val value: T) {
     }
 
     companion object {
+        @OptIn(ExperimentalSerializationApi::class)
         val yaml: Yaml = Yaml.default
     }
 
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun <reified T : Any> encode(value:  T): String {
-    contract { returnsNotNull() implies (value is Serializable)  }
-    return yaml.encodeToString(value.serializerFor(),  value)
-}
+
+
+
+
+
 
 @OptIn(InternalSerializationApi::class, ExperimentalContracts::class)
 inline fun <reified T : Any> T.serializerFor(): SerializationStrategy<T> {
     return T::class.serializer()
 }
 
+
+inline fun <reified T : Any> T.serialize(): String {
+    return ObjectWriter(this).serialize()
+}
+
 @OptIn(InternalSerializationApi::class, ExperimentalContracts::class)
 inline fun <reified T:Any> T.writeToFile(path: String, flush: Boolean = true) {
     val writer = ObjectWriter(this)
     writer.writeToFile(path, flush)
+}
+
+inline fun <reified T: Any> T.validSerializer(): Boolean {
+    return this::class.annotations.filterIsInstance<Serializable>().isNotEmpty()
 }

@@ -1,7 +1,6 @@
 package org.yunghegel.gdx.utils.reflection
 
 import com.badlogic.gdx.utils.Array
-import org.yunghegel.gdx.utils.reflection.Accessor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
@@ -15,10 +14,10 @@ object AccessorScanner {
         if (annotationBasedOnly) {
             val editable = field.getAnnotation(Editable::class.java)
             if (editable == null) return
-            if (editable.value.isEmpty()) {
+            if (editable.name.isEmpty()) {
                 accessors.add(FieldAccessor(entity, field))
             } else {
-                accessors.add(FieldAccessorWrapper(FieldAccessor(entity, field), editable.value))
+                accessors.add(FieldAccessorWrapper(FieldAccessor(entity, field), editable.name))
             }
         } else {
             if (field.getAnnotation(NotEditable::class.java) != null) return
@@ -33,10 +32,10 @@ object AccessorScanner {
         if (method.getAnnotation(NotEditable::class.java) != null) return
 
         if (editable != null && method.returnType == Void::class.java && method.parameterTypes.isEmpty()) {
-            if (editable.value.isEmpty()) {
+            if (editable.name.isEmpty()) {
                 accessors.add(VoidAccessor(entity, method))
             } else {
-                accessors.add(VoidAccessor(entity, method, editable.value))
+                accessors.add(VoidAccessor(entity, method, editable.name))
             }
         }
 

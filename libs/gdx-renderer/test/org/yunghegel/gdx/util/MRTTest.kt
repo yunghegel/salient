@@ -24,5 +24,5 @@ class MRTTest  : ModelLoadTest() {
 }
 
 fun main(args: Array<String>) {
-    MRTTest().launch() { cfg -> cfg.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL32,3,2)}
+    MRTTest().launch { cfg -> cfg.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL32,3,2)}
 }

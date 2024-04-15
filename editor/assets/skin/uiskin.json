@@ -1,1158 +1,1197 @@
 {
-	com.badlogic.gdx.graphics.Color: {
-		background: {
-			r: 0.14901961
-			g: 0.14901961
-			b: 0.14901961
-			a: 1
-		}
-		black: {
-			r: 0
-			g: 0
-			b: 0
-			a: 1
-		}
-		blue-light: {
-			r: 0.39
-			g: 1
-			b: 1
-			a: 0.25
-		}
-		clear: {
-			r: 0
-			g: 0
-			b: 0
-			a: 0
-		}
-		clearscreen: {
-			r: 0.09803922
-			g: 0.09803922
-			b: 0.09803922
-			a: 1
-		}
-		dark: {
-			r: 0.18431373
-			g: 0.18431373
-			b: 0.18431373
-			a: 1
-		}
-		dark-gray: {
-			r: 0.14117648
-			g: 0.14117648
-			b: 0.14117648
-			a: 1
-		}
-		gray: {
-			r: 0.5176471
-			g: 0.5176471
-			b: 0.5176471
-			a: 1
-		}
-		light_gray: {
-			r: 0.9098039
-			g: 0.9098039
-			b: 0.9098039
-			a: 1
-		}
-		list_selection: {
-			r: 0.28235295
-			g: 0.28235295
-			b: 0.28235295
-			a: 1
-		}
-		red: {
-			r: 1
-			g: 0
-			b: 0
-			a: 0.7
-		}
-		white: {
-			r: 0.9529412
-			g: 0.9529412
-			b: 0.9529412
-			a: 1
-		}
-		white_transparent: {
-			r: 1
-			g: 1
-			b: 1
-			a: 0.1
-		}
+com.badlogic.gdx.graphics.Color: {
+	background: {
+		r: 0.14901961
+		g: 0.14901961
+		b: 0.14901961
+		a: 1
 	}
-	com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
-		default: {
-			font: bfont.ttf
-			size: 10
-			mono: false
-			color: light_gray
-			gamma: 1.8
-			renderCount: 2
-			borderWidth: 0
-			borderColor: black
-			borderStraight: false
-			borderGamma: 1.8
-			shadowOffsetX: 0
-			shadowOffsetY: 0
-			spaceX: 0
-			spaceY: 0
-			kerning: true
-			flip: false
-			genMipMaps: true
-			incremental: false
-			hinting: AutoFull
-			minFilter: Nearest
-			magFilter: Nearest
-			characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
-		}
-		bold: {
-			font: DejaVuSansCondensed-Bold.ttf
-			size: 10
-			mono: false
-			color: white
-			gamma: 1.8
-			renderCount: 2
-			borderWidth: 0
-			borderColor: black
-			borderStraight: false
-			borderGamma: 1.8
-			shadowOffsetX: 0
-			shadowOffsetY: 0
-			spaceX: 0
-			spaceY: 0
-			kerning: true
-			flip: false
-			genMipMaps: false
-			incremental: false
-			hinting: AutoFull
-			minFilter: Nearest
-			magFilter: Nearest
-			characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
-		}
-		default-medium: {
-			font: bfont.ttf
-			size: 11
-			mono: false
-			color: white
-			gamma: 1.8
-			renderCount: 2
-			borderWidth: 0
-			borderStraight: false
-			borderGamma: 1.8
-			shadowOffsetX: 0
-			shadowOffsetY: 0
-			spaceX: 0
-			spaceY: 0
-			kerning: true
-			flip: false
-			genMipMaps: false
-			incremental: false
-			hinting: AutoFull
-			minFilter: Nearest
-			magFilter: Nearest
-			characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
-		}
-		mono: {
-			font: bmonofont.ttf
-			size: 11
-			mono: false
-			color: white
-			gamma: 1.8
-			renderCount: 2
-			borderWidth: 0
-			borderStraight: false
-			borderGamma: 1.8
-			shadowOffsetX: 0
-			shadowOffsetY: 0
-			spaceX: 0
-			spaceY: 0
-			kerning: true
-			flip: false
-			genMipMaps: false
-			incremental: false
-			hinting: AutoFull
-			minFilter: Nearest
-			magFilter: Nearest
-			characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
-		}
-		default-large: {
-			font: bfont.ttf
-			size: 16
-			mono: false
-			color: white
-			gamma: 1.8
-			renderCount: 2
-			borderWidth: 0
-			borderStraight: false
-			borderGamma: 1.8
-			shadowOffsetX: 0
-			shadowOffsetY: 0
-			spaceX: 0
-			spaceY: 0
-			kerning: true
-			flip: false
-			genMipMaps: false
-			incremental: false
-			hinting: AutoFull
-			minFilter: Nearest
-			magFilter: Nearest
-			characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
-		}
-		default-small: {
-			font: DejaVuSans.ttf
-			size: 10
-			mono: false
-			color: light_gray
-			gamma: 1.8
-			renderCount: 2
-			borderWidth: 0
-			borderStraight: false
-			borderGamma: 1.8
-			shadowOffsetX: 0
-			shadowOffsetY: 0
-			spaceX: 0
-			spaceY: 0
-			kerning: true
-			flip: false
-			genMipMaps: false
-			incremental: false
-			hinting: AutoFull
-			minFilter: Nearest
-			magFilter: Nearest
-			characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
-		}
-		inter: {
-			font: bfont.ttf
-			size: 12
-			mono: false
-			color: white
-			gamma: 1.8
-			renderCount: 2
-			borderWidth: 0
-			borderStraight: false
-			borderGamma: 1.8
-			shadowOffsetX: 0
-			shadowOffsetY: 0
-			spaceX: 0
-			spaceY: 0
-			kerning: true
-			flip: false
-			genMipMaps: false
-			incremental: false
-			hinting: AutoMedium
-			minFilter: Nearest
-			magFilter: Nearest
-			characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
-		}
-		inter-small: {
-			font: Inter.ttf
-			size: 10
-			mono: false
-			color: white
-			gamma: 1.8
-			renderCount: 2
-			borderWidth: 0
-			borderStraight: false
-			borderGamma: 1.8
-			shadowOffsetX: 0
-			shadowOffsetY: 0
-			spaceX: 0
-			spaceY: 0
-			kerning: true
-			flip: false
-			genMipMaps: false
-			incremental: false
-			hinting: AutoMedium
-			minFilter: Nearest
-			magFilter: Nearest
-			characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
-		}
+	black: {
+		r: 0
+		g: 0
+		b: 0
+		a: 1
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
-		selection: {
-			name: white
-			color: list_selection
-		}
-		selection-dark: {
-			name: white
-			color: dark
-		}
-		empty-button: {
-			name: button
-			color: clear
-		}
-		list-background-dark: {
-			name: white
-			color: dark
-		}
-		black: {
-			name: white
-			color: black
-		}
-		bg: {
-			name: white
-			color: clearscreen
-		}
-		lighter-gray: {
-			name: white
-			color: white_transparent
-		}
-		gray: {
-			name: white
-			color: gray
-		}
-		dark-gray: {
-			name: white
-			color: dark-gray
-		}
-		minus-down: {
-			name: minus
-			color: gray
-		}
-		plus-down: {
-			name: plus
-			color: gray
-		}
-		button-down-blue-light: {
-			name: button-down-blue
-			color: blue-light
-		}
-		default-pane-darker: {
-			name: default-pane
-			color: gray
-		}
-		border-light: {
-			name: border-xy
-			color: white_transparent
-		}
-		border-light-y: {
-			name: border-y
-			color: white_transparent
-		}
-		background-pixel: {
-			name: white-pixel
-			color: background
-		}
-		soft-panel: {
-			name: button-rounded-edge-over
-			color: gray
-		}
+	blue-light: {
+		r: 0.39
+		g: 1
+		b: 1
+		a: 0.25
 	}
-	com.kotcrab.vis.ui.Sizes: {
-		default: {
-			scaleFactor: 1
-			spacingBottom: 8
-			spacingRight: 6
-			buttonBarSpacing: 10
-			menuItemIconSize: 22
-			borderSize: 1
-			spinnerButtonHeight: 12
-			spinnerFieldSize: 50
-			fileChooserViewModeBigIconsSize: 200
-			fileChooserViewModeMediumIconsSize: 128
-			fileChooserViewModeSmallIconsSize: 64
-			fileChooserViewModeListWidthSize: 150
-		}
+	clear: {
+		r: 0
+		g: 0
+		b: 0
+		a: 0
 	}
-	com.kotcrab.vis.ui.widget.VisTextButton$VisTextButtonStyle: {
-		default: {
-			up: button-down
-			down: button-down
-			over: button-over
-			font: default
-		}
-		round: {
-			up: rounded-button-down
-			down: rounded-rectangle-blue
-			over: rounded-button-over
-			checked: rounded-rectangle-blue
-			font: default-small
-		}
-		menu: {
-			up: empty-button
-			over: button-underline
-			font: default-small
-		}
-		rounded-soft: {
-			up: scroll
-			font: default-small
-			over: button-rounded-edge-down
-		}
+	half_alpha: {
+		r: 0
+		g: 0
+		b: 0
+		a: 0.5
 	}
-	com.kotcrab.vis.ui.widget.VisSplitPane$VisSplitPaneStyle: {
-		default-vertical: {
-			handle: lighter-gray
-			handleOver: lighter-gray
-		}
-		default-horizontal: {
-			handle: lighter-gray
-			handleOver: lighter-gray
-		}
+	clearscreen: {
+		r: 0.09803922
+		g: 0.09803922
+		b: 0.09803922
+		a: 1
 	}
+	dark: {
+		r: 0.18431373
+		g: 0.18431373
+		b: 0.18431373
+		a: 1
+	}
+	dark-gray: {
+		r: 0.14117648
+		g: 0.14117648
+		b: 0.14117648
+		a: 1
+	}
+	gray: {
+		r: 0.5176471
+		g: 0.5176471
+		b: 0.5176471
+		a: 1
+	}
+	light_gray: {
+		r: 0.9098039
+		g: 0.9098039
+		b: 0.9098039
+		a: 1
+	}
+	list_selection: {
+		r: 0.28235295
+		g: 0.28235295
+		b: 0.28235295
+		a: 1
+	}
+	red: {
+		r: 1
+		g: 0
+		b: 0
+		a: 0.7
+	}
+	white: {
+		r: 0.9529412
+		g: 0.9529412
+		b: 0.9529412
+		a: 1
+	}
+	white_transparent: {
+		r: 1
+		g: 1
+		b: 1
+		a: 0.1
+	}
+}
+com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
+	default: {
+		font: bfont.ttf
+		size: 10
+		mono: false
+		color: light_gray
+		gamma: 1.8
+		renderCount: 2
+		borderWidth: 0
+		borderColor: black
+		borderStraight: false
+		borderGamma: 1.8
+		shadowOffsetX: 0
+		shadowOffsetY: 0
+		spaceX: 0
+		spaceY: 0
+		kerning: true
+		flip: false
+		genMipMaps: true
+		incremental: false
+		hinting: AutoFull
+		minFilter: Nearest
+		magFilter: Nearest
+		characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
+	}
+	bold: {
+		font: DejaVuSans-Bold.ttf
+		size: 10
+		mono: false
+		color: white
+		gamma: 1.8
+		renderCount: 2
+		borderWidth: 0
+		borderColor: black
+		borderStraight: false
+		borderGamma: 1.8
+		shadowOffsetX: 0
+		shadowOffsetY: 0
+		spaceX: 0
+		spaceY: 0
+		kerning: true
+		flip: false
+		genMipMaps: false
+		incremental: false
+		hinting: AutoFull
+		minFilter: Nearest
+		magFilter: Nearest
+		characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
+	}
+	default-medium: {
+		font: bfont.ttf
+		size: 11
+		mono: false
+		color: white
+		gamma: 1.8
+		renderCount: 2
+		borderWidth: 0
+		borderStraight: false
+		borderGamma: 1.8
+		shadowOffsetX: 0
+		shadowOffsetY: 0
+		spaceX: 0
+		spaceY: 0
+		kerning: true
+		flip: false
+		genMipMaps: false
+		incremental: false
+		hinting: AutoFull
+		minFilter: Nearest
+		magFilter: Nearest
+		characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
+	}
+	mono: {
+		font: bmonofont.ttf
+		size: 11
+		mono: false
+		color: white
+		gamma: 1.8
+		renderCount: 2
+		borderWidth: 0
+		borderStraight: false
+		borderGamma: 1.8
+		shadowOffsetX: 0
+		shadowOffsetY: 0
+		spaceX: 0
+		spaceY: 0
+		kerning: true
+		flip: false
+		genMipMaps: false
+		incremental: false
+		hinting: AutoFull
+		minFilter: Nearest
+		magFilter: Nearest
+		characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
+	}
+	default-large: {
+		font: bfont.ttf
+		size: 16
+		mono: false
+		color: white
+		gamma: 1.8
+		renderCount: 2
+		borderWidth: 0
+		borderStraight: false
+		borderGamma: 1.8
+		shadowOffsetX: 0
+		shadowOffsetY: 0
+		spaceX: 0
+		spaceY: 0
+		kerning: true
+		flip: false
+		genMipMaps: false
+		incremental: false
+		hinting: AutoFull
+		minFilter: Nearest
+		magFilter: Nearest
+		characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
+	}
+	default-small: {
+		font: DejaVuSans.ttf
+		size: 10
+		mono: false
+		color: light_gray
+		gamma: 1.8
+		renderCount: 2
+		borderWidth: 0
+		borderStraight: false
+		borderGamma: 1.8
+		shadowOffsetX: 0
+		shadowOffsetY: 0
+		spaceX: 0
+		spaceY: 0
+		kerning: true
+		flip: false
+		genMipMaps: false
+		incremental: false
+		hinting: AutoFull
+		minFilter: Nearest
+		magFilter: Nearest
+		characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
+	}
+	inter: {
+		font: bfont.ttf
+		size: 12
+		mono: false
+		color: white
+		gamma: 1.8
+		renderCount: 2
+		borderWidth: 0
+		borderStraight: false
+		borderGamma: 1.8
+		shadowOffsetX: 0
+		shadowOffsetY: 0
+		spaceX: 0
+		spaceY: 0
+		kerning: true
+		flip: false
+		genMipMaps: false
+		incremental: false
+		hinting: AutoMedium
+		minFilter: Nearest
+		magFilter: Nearest
+		characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
+	}
+	inter-small: {
+		font: Inter.ttf
+		size: 10
+		mono: false
+		color: white
+		gamma: 1.8
+		renderCount: 2
+		borderWidth: 0
+		borderStraight: false
+		borderGamma: 1.8
+		shadowOffsetX: 0
+		shadowOffsetY: 0
+		spaceX: 0
+		spaceY: 0
+		kerning: true
+		flip: false
+		genMipMaps: false
+		incremental: false
+		hinting: AutoMedium
+		minFilter: Nearest
+		magFilter: Nearest
+		characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
+	selection: {
+		name: white
+		color: list_selection
+	}
+	selection-dark: {
+		name: white
+		color: dark
+	}
+	empty-button: {
+		name: button
+		color: clear
+	}
+	list-background-dark: {
+		name: white
+		color: dark
+	}
+	black: {
+		name: white
+		color: black
+	}
+	bg: {
+		name: white
+		color: clearscreen
+	}
+	lighter-gray: {
+		name: white
+		color: white_transparent
+	}
+	gray: {
+		name: white
+		color: gray
+	}
+	dark-gray: {
+		name: white
+		color: dark-gray
+	}
+	minus-down: {
+		name: minus
+		color: gray
+	}
+	plus-down: {
+		name: plus
+		color: gray
+	}
+	button-down-blue-light: {
+		name: button-down-blue
+		color: blue-light
+	}
+	default-pane-darker: {
+		name: default-pane
+		color: gray
+	}
+	border-light: {
+		name: border-xy
+		color: white_transparent
+	}
+	border-light-y: {
+		name: border-y
+		color: white_transparent
+	}
+	background-pixel: {
+		name: white-pixel
+		color: background
+	}
+	soft-panel: {
+		name: button-rounded-edge-over
+		color: half_alpha
+	}
+}
+com.kotcrab.vis.ui.Sizes: {
+	default: {
+		scaleFactor: 1
+		spacingBottom: 8
+		spacingRight: 6
+		buttonBarSpacing: 10
+		menuItemIconSize: 22
+		borderSize: 1
+		spinnerButtonHeight: 12
+		spinnerFieldSize: 50
+		fileChooserViewModeBigIconsSize: 200
+		fileChooserViewModeMediumIconsSize: 128
+		fileChooserViewModeSmallIconsSize: 64
+		fileChooserViewModeListWidthSize: 150
+	}
+}
+com.kotcrab.vis.ui.widget.VisTextButton$VisTextButtonStyle: {
+	default: {
+		up: button-down
+		down: button-down
+		over: button-over
+		font: default
+	}
+	round: {
+		up: rounded-button-down
+		down: rounded-rectangle-blue
+		over: rounded-button-over
+		checked: rounded-rectangle-blue
+		font: default-small
+	}
+	menu: {
+		up: empty-button
+		over: button-underline
+		font: default-small
+	}
+	rounded-soft: {
+		up: scroll
+		font: default-small
+		over: button-rounded-edge-down
+	}
+}
+com.kotcrab.vis.ui.widget.VisSplitPane$VisSplitPaneStyle: {
+	default-vertical: {
+		handle: lighter-gray
+		handleOver: lighter-gray
+	}
+	default-horizontal: {
+		handle: lighter-gray
+		handleOver: lighter-gray
+	}
+}
+com.kotcrab.vis.ui.widget.Menu$MenuStyle: {
+	default: {
+		openButtonStyle: menu
+		border: border
+	}
+	viewport: {
+		openButtonStyle: rounded-soft
+		border: border
+	}
+}
+com.kotcrab.vis.ui.widget.MenuBar$MenuBarStyle: {
+	default: {
+		background: dark-gray
+	}
+	no-bg: {
+		background: empty-button
+	}
+}
+com.kotcrab.vis.ui.widget.MenuItem$MenuItemStyle: {
+	default: {
+		subMenu: select-down
+		font: default-small
+		fontColor: white
+		over: button-over
+		disabledFontColor: gray
+		up: button-underline
+	}
+}
+com.kotcrab.vis.ui.widget.PopupMenu$PopupMenuStyle: {
+	default: {
+		background: selection-dark
+		border: border
+	}
+}
+com.kotcrab.vis.ui.widget.Separator$SeparatorStyle: {
+	default: {
+		background: lighter-gray
+		thickness: 1
+	}
+	menu: {
+		background: lighter-gray
+		thickness: 1
+	}
+}
+com.kotcrab.vis.ui.widget.tabbedpane.TabbedPane$TabbedPaneStyle: {
+	default: {
+		vertical: false
+		draggable: false
+	}
+}
+com.kotcrab.vis.ui.widget.BusyBar$BusyBarStyle: {
+	default: {
+		height: 5
+		segmentWidth: 150
+		segmentOverflow: 10
+	}
+}
+com.kotcrab.vis.ui.widget.Tooltip$TooltipStyle: {
+	default: {
+		background: button-rounded-edge-blue
+	}
+}
+com.kotcrab.vis.ui.widget.MultiSplitPane$MultiSplitPaneStyle: {
+	default: {
+		handle: lighter-gray
+	}
+	default-horizontal: {
+		handle: lighter-gray
+	}
+	default-vertical: {
+		handle: lighter-gray
+	}
+}
+com.kotcrab.vis.ui.widget.spinner.Spinner$SpinnerStyle: {
+	default: {
+		up: up
+		down: down
+	}
+}
+com.ray3k.stripe.DraggableList$DraggableListStyle: {
+	default-horizontal: {
+		background: list-background-dark
+		dividerUp: splitpane-horizontal-pressed
+		dividerOver: splitpane-horizontal-pressed
+	}
+	default-vertical: {
+		background: list-background-dark
+		dividerUp: splitpane-vertical-pressed
+		dividerOver: splitpane-vertical-pressed
+	}
+}
+com.ray3k.stripe.PopTable$PopTableStyle: {
+	default: {
+		background: button-rounded-edge-blue
+	}
+}
+com.kotcrab.vis.ui.widget.VisTextField$VisTextFieldStyle: {
+	default: {
+		font: default
+		fontColor: white
+		disabledFontColor: gray
+		background: button
+		focusedBackground: button-over
+		cursor: cursor
+	}
+	toast: {
+		font: default
+		fontColor: white
+		disabledFontColor: gray
+		background: button-rounded-edge-over
+		backgroundOver: button-rounded-edge-blue
+		cursor: cursor
+	}
+}
+org.yunghegel.salient.engine.ui.scene2d.STree$TreeStyle: {
+	default: {
+		minus: select-down
+		plus: sub-menu
+		over: button
+		row: button-underline
+		selection: button-compact-blue
+		row_alternate: border-xy
+		guide: gray
+	}
+}
 
-	com.kotcrab.vis.ui.widget.Menu$MenuStyle: {
-		default: {
-			openButtonStyle: menu
-			border: border
-		}
-		viewport: {
-			openButtonStyle: rounded-soft
-			border: border
-		}
+com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
+	default: {
+		up: button
+		down: button-down
+		over: button-over
 	}
-	com.kotcrab.vis.ui.widget.MenuBar$MenuBarStyle: {
-		default: {
-			background: dark-gray
-		}
-		no-bg: {
-			background: empty-button
-		}
+	round: {
+		up: button-round
+		down: button-round-down
+		over: button-round-over
 	}
-	com.kotcrab.vis.ui.widget.MenuItem$MenuItemStyle: {
-		default: {
-			subMenu: select-down
-			font: default-small
-			fontColor: white
-			over: button-over
-			disabledFontColor: gray
-			up: button-underline
-		}
+	menuitem: {
+		up: button-over
+		down: button-down
+		over: button-over
 	}
-	com.kotcrab.vis.ui.widget.PopupMenu$PopupMenuStyle: {
-		default: {
-			background: selection-dark
-			border: border
-		}
+	round-blue: {
+		up: button-round-over
+		down: rounded-rectangle-blue
+		over: button-round
+		checked: rounded-rectangle-blue
 	}
-	com.kotcrab.vis.ui.widget.Separator$SeparatorStyle: {
-		default: {
-			background: lighter-gray
-			thickness: 1
-		}
-		menu: {
-			background: lighter-gray
-			thickness: 1
-		}
+	blue: {
+		parent: default
+		up: button
+		down: button-down
+		checked: button-down-blue
 	}
-	com.kotcrab.vis.ui.widget.tabbedpane.TabbedPane$TabbedPaneStyle: {
-		default: {
-			vertical: false
-			draggable: false
-		}
+	compact: {
+		up: button-compact
+		down: button-compact-down
+		over: button-compact-over
 	}
-	com.kotcrab.vis.ui.widget.BusyBar$BusyBarStyle: {
-		default: {
-			height: 5
-			segmentWidth: 150
-			segmentOverflow: 10
-		}
+	compact-blue: {
+		up: button-compact
+		down: button-compact-blue
+		over: button-compact-over
+		checked: button-compact-blue
 	}
-	com.kotcrab.vis.ui.widget.Tooltip$TooltipStyle: {
-		default: {
-			background: button-rounded-edge-blue
-		}
+	rounded-soft: {
+		up: scroll
+		over: button-rounded-edge-over
 	}
-	com.kotcrab.vis.ui.widget.MultiSplitPane$MultiSplitPaneStyle: {
-		default: {
-			handle: lighter-gray
-		}
-		default-horizontal: {
-			handle: lighter-gray
-		}
-		default-vertical: {
-			handle: lighter-gray
-		}
+	soft-blue: {
+		up: scroll
+		over: button-rounded-edge-blue
+		checked: button-rounded-edge-blue
 	}
-	com.kotcrab.vis.ui.widget.spinner.Spinner$SpinnerStyle: {
-		default: {
-			up: up
-			down: down
-		}
+	tab: {
+		up: tab_up
+		down: tab_down
 	}
-	com.ray3k.stripe.DraggableList$DraggableListStyle: {
-		default-horizontal: {
-			background: list-background-dark
-			dividerUp: splitpane-horizontal-pressed
-			dividerOver: splitpane-horizontal-pressed
-		}
-		default-vertical: {
-			background: list-background-dark
-			dividerUp: splitpane-vertical-pressed
-			dividerOver: splitpane-vertical-pressed
-		}
+	icon_left: {
+		up: icon_textfield_left
 	}
-	com.ray3k.stripe.PopTable$PopTableStyle: {
-		default: {
-			background: button-rounded-edge-blue
-		}
+	icon_right: {
+		up: icon_textfield_right
 	}
-
-
-	com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
-		default: {
-			up: button
-			down: button-down
-			over: button-over
-		}
-		round: {
-			up: button-round
-			down: button-round-down
-			over: button-round-over
-		}
-		menuitem: {
-			up: button-over
-			down: button-down
-			over: button-over
-		}
-		round-blue: {
-			up: button-round-over
-			down: rounded-rectangle-blue
-			over: button-round
-			checked: rounded-rectangle-blue
-		}
-		blue: {
-			parent: default
-			up: button
-			down: button-down
-			checked: button-down-blue
-		}
-		compact: {
-			up: button-compact
-			down: button-compact-down
-			over: button-compact-over
-		}
-		compact-blue: {
-			up: button-compact
-			down: button-compact-blue
-			over: button-compact-over
-			checked: button-compact-blue
-		}
-		rounded-soft: {
-			up: scroll
-			over: button-rounded-edge-over
-		}
-		soft-blue: {
-			up: scroll
-			over: button-rounded-edge-blue
-			checked: button-rounded-edge-blue
-		}
-		tab: {
-			up: tab_up
-			down: tab_down
-		}
+}
+com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
+	default: {
+		checkboxOn: tile741
+		checkboxOff: tile740
+		checkboxOver: tile740
+		font: default
+		fontColor: white
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
-		default: {
-			checkboxOn: tile741
-			checkboxOff: tile740
-			checkboxOver: tile740
-			font: default
-			fontColor: white
-		}
+}
+com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
+	default: {
+		imageUp: overflow-menu
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
-		default: {
-			imageUp: overflow-menu
-		}
-		round: {
-			parent: round
-		}
-		delete: {
-			imageUp: icon-trash
-			imageDown: icon-trash-disabled
-		}
-		close-window: {
-			imageUp: window-action-close-over
-			imageDown: window-action-close
-			imageOver: window-action-close-down
-		}
-		iconify-window: {
-			imageUp: window-iconify
-			imageDown: window-iconify-down
-			imageOver: window-iconify-over
-		}
-		maximize-window: {
-			imageUp: window-maximize
-			imageDown: window-maximize-down
-			imageOver: window-maximize-over
-		}
-		minimize-window: {
-			imageUp: window-iconify
-			imageDown: window-iconify-down
-			imageOver: window-iconify-over
-		}
-		project: {
-			imageUp: drive
-		}
-		rotate: {
-			parent: soft-blue
-			imageUp: rotate_tool_icon
-			pressedOffsetX: -1
-			unpressedOffsetX: -1
-			checkedOffsetX: -1
-		}
-		scale: {
-			parent: soft-blue
-			imageUp: scale_tool_icon
-			pressedOffsetX: -1
-			unpressedOffsetX: -1
-			checkedOffsetX: -1
-		}
-		translate: {
-			parent: soft-blue
-			imageUp: translate_tool_icon
-			pressedOffsetX: -1
-			unpressedOffsetX: -1
-			checkedOffsetX: -1
-		}
-		light: {
-			imageUp: tile676
-		}
-		transform: {
-			imageUp: tile494
-		}
-		material: {
-			imageUp: material
-			imageChecked: material-on
-		}
-		settings: {
-			imageUp: settings_list
-		}
-		snap: {
-			parent: round
-			imageUp: snap-off
-			imageChecked: snap-on
-			pressedOffsetX: -1
-			unpressedOffsetX: -1
-			checkedOffsetX: -1
-		}
-		play: {
-			parent: round
-			imageUp: play_icon
-		}
-		geometry: {
-			imageUp: cube
-			imageChecked: geometry-on
-		}
-		mesh: {
-			imageUp: mesh_down
-			pressedOffsetY: -1
-			unpressedOffsetY: -1
-			checkedOffsetY: -1
-		}
-		shaded: {
-			parent: soft-blue
-			imageUp: view_shaded
-			pressedOffsetY: 1
-			unpressedOffsetY: 1
-			checkedOffsetY: 1
-		}
-		wireframe: {
-			parent: soft-blue
-			imageUp: wire-sphere
-		}
-		wireframe_icon: {
-			imageUp: view_wireframe
-		}
-		select: {
-			parent: soft-blue
-			imageUp: selection_tool_icon
-		}
-		texture: {
-			imageUp: texture-off
-			imageChecked: texture
-		}
-		select-vertex: {
-			parent: rounded-soft
-			imageUp: vertex
-		}
-		select-face: {
-			parent: rounded-soft
-			imageUp: face
-		}
-		select-edge: {
-			parent: rounded-soft
-			imageUp: edge
-		}
-		orthographic-view: {
-			parent: soft-blue
-			imageUp: orthogonal-view
-		}
-		perspective-view: {
-			parent: soft-blue
-			imageUp: perspective-view
-		}
-		extrude: {
-			parent: round-blue
-			imageUp: extrude
-		}
-		scene: {
-			parent: compact-blue
-			imageUp: scene
-		}
-		scene_icon: {
-			imageUp: scene
-		}
-		tree: {
-			imageUp: logo24
-		}
-		expand-collapse: {
-			imageUp: remove
-			imageChecked: add
-		}
-		eye: {
-			imageUp: visible
-			imageChecked: invisible
-			unpressedOffsetX: -1
-		}
-		plus-minus: {
-			imageUp: plus
-			imageChecked: minus
-		}
-		plus: {
-			parent: compact
-			imageUp: add
-		}
-		minus: {
-			parent: compact
-			imageUp: remove
-		}
-		scene_tree: {
-			parent: default
-			imageUp: scene_view
-		}
-		camera: {
-			parent: compact
-			imageUp: camera
-		}
-		camera_object: {
-			imageUp: camera_object
-			imageChecked: camera_object_on
-		}
-		light_object: {
-			imageUp: light_object
-			imageChecked: light_object_on
-		}
-		mesh_object: {
-			imageUp: mesh_down
-			imageChecked: mesh
-		}
-		material_object: {
-			imageUp: material
-			imageChecked: material-on
-		}
-		config: {
-			imageUp: config
-		}
-		lock: {
-			imageUp: unlocked
-			imageChecked: locked
-			pressedOffsetX: -1
-			unpressedOffsetX: -1
-			checkedOffsetX: -1
-		}
-		terminal: {
-			imageUp: terminal
-		}
-		solid: {
-			parent: soft-blue
-			imageUp: sphere
-		}
-		textured: {
-			parent: soft-blue
-			imageUp: view_textured
-		}
-		spinner-top: {
-			parent: compact
-			imageUp: spin-up-insensitive
-			imageDown: spin-up-pressed
-		}
-		spinner-bottom: {
-			parent: compact
-			imageUp: spin-down-insensitive
-			imageDown: spin-down-pressed
-		}
-		spot-light: {
-			imageUp: spot-light
-			imageChecked: spot-light-off
-		}
-		point-light: {
-			imageUp: point-light
-			imageChecked: point-light-off
-		}
-		color: {
-			parent: compact
-			imageUp: color
-		}
-		link: {
-			imageUp: unlinked
-			imageChecked: linked
-		}
-		cube: {
-			imageUp: cube
-		}
-		sphere: {
-			imageUp: sphere
-		}
-		cylinder: {
-			imageUp: cylinder
-		}
-		cone: {
-			imageUp: cone
-		}
-		plane: {
-			imageUp: plane
-		}
-		popup-close: {
-			imageUp: window-action-close
-		}
-		directional-light: {
-			imageUp: directional-light-off
-			imageChecked: directional-light
-		}
-		model-geometry: {
-			imageUp: cube
-			imageChecked: geometry-on
-		}
-		overflow-menu: {
-			imageUp: overflow-menu
-		}
-		library: {
-			imageUp: library-up
-		}
-		transform_object: {
-			imageUp: tile494
-			imageChecked: tile520
-		}
-		environment_object: {
-			imageUp: scene
-		}
-		filter: {
-			parent: compact-blue
-			imageUp: icon-filter
-		}
-		dropdown: {
-			imageUp: select-down
-		}
-		copy: {
-			imageUp: copy
-		}
-		refresh: {
-			imageUp: tile094
-		}
-		parent: {
-			imageUp: tile093
-		}
-		info: {
-			imageUp: tile656
-		}
-		help: {
-			imageUp: tile755
-		}
-		salient: {
-			imageUp: logo24
-		}
-		log_view: {
-			imageUp: log
-		}
-		object: {
-			imageUp: object
-			imageDisabled: object_locked
-		}
-		inspect: {
-			imageUp: inspect
-		}
-		inspect_file: {
-			imageUp: inspect_file
-		}
-		add: {
-			imageUp: add
-		}
-		remove: {
-			imageUp: remove
-		}
-		stats: {
-			imageUp: stats
-		}
-		asset_manager: {
-			imageUp: AssetManager
-		}
-		config_secondary: {
-			imageUp: tile580
-		}
+	round: {
+		parent: round
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
-		default: {
-			parent: default
-			font: default
-		}
-		round: {
-			parent: round
-			font: default
-		}
-		color: {
-			parent: default
-			imageUp: color
-			font: default
-		}
-		file_scene: {
-			imageUp: file_scene
-			font: bold
-		}
-		project: {
-			imageUp: drive
-			font: bold
-		}
-		salient: {
-			imageUp: logo24
-			font: bold
-		}
-		folder: {
-			imageUp: default-folder
-			imageChecked: fileopen
-			font: default
-		}
-		file: {
-			imageUp: file
-			font: default
-		}
-		tab: {
-			parent: tab
-			font: default
-		}
+	delete: {
+		imageUp: icon-trash
+		imageDown: icon-trash-disabled
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
-		default: {
-			font: default
-			fontColor: light_gray
-		}
-		mono: {
-			font: mono
-			fontColor: light_gray
-		}
-		bold: {
-			font: bold
-			fontColor: light_gray
-		}
-		default-alternative: {
-			font: default-medium
-			fontColor: light_gray
-		}
-		default-gray: {
-			font: default-small
-			fontColor: gray
-		}
-		default-small: {
-			font: default-small
-			fontColor: light_gray
-		}
-		default-medium: {
-			font: default-medium
-			fontColor: light_gray
-		}
-		menuitem-shortcut: {
-			font: default
-			fontColor: light_gray
-		}
+	close-window: {
+		imageUp: window-action-close-over
+		imageDown: window-action-close
+		imageOver: window-action-close-down
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
-		default: {
-			font: default-medium
-			fontColorSelected: light_gray
-			fontColorUnselected: light_gray
-			selection: selection
-			over: gray
-			background: button-over
-		}
+	iconify-window: {
+		imageUp: window-iconify
+		imageDown: window-iconify-down
+		imageOver: window-iconify-over
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
-		default-horizontal: {
-			background: progressbar-narrow-filled-grey
-			knobAfter: progressbar-filled
-		}
+	maximize-window: {
+		imageUp: window-maximize
+		imageDown: window-maximize-down
+		imageOver: window-maximize-over
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
-		default: {
-			hScroll: scroll-horizontal
-			hScrollKnob: scroll-knob-horizontal
-			vScroll: scroll
-			vScrollKnob: scroll-knob-vertical
-		}
-		list: {
-			parent: default
-		}
+	minimize-window: {
+		imageUp: window-iconify
+		imageDown: window-iconify-down
+		imageOver: window-iconify-over
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
-		default: {
-			font: default-small
-			fontColor: white
-			background: default-select
-			scrollStyle: default
-			listStyle: default
-			backgroundOver: default-select-over
-		}
+	project: {
+		imageUp: drive
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
-		default-horizontal: {
-			background: slider
-			knob: slider-knob
-		}
-		default-vertical: {
-			background: slider-vertical
-			knob: slider-knob
-		}
+	rotate: {
+		parent: soft-blue
+		imageUp: rotate_tool_icon
+		pressedOffsetX: -1
+		unpressedOffsetX: -1
+		checkedOffsetX: -1
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
-		default-horizontal: {
-			handle: lighter-gray
-		}
-		default-vertical: {
-			handle: lighter-gray
-		}
+	scale: {
+		parent: soft-blue
+		imageUp: scale_tool_icon
+		pressedOffsetX: -1
+		unpressedOffsetX: -1
+		checkedOffsetX: -1
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
-		default: {
-			parent: default
-			font: default
-			fontColor: white
-			disabledFontColor: gray
-		}
-		bold: {
-			parent: default
-			font: bold
-			fontColor: white
-			disabledFontColor: gray
-		}
-		round: {
-			parent: round
-			font: default-small
-			disabledFontColor: gray
-		}
-		menu: {
-			parent: menuitem
-			font: default
-			fontColor: white
-			disabledFontColor: gray
-		}
-		round-blue: {
-			parent: round-blue
-			font: default-medium
-		}
-		toggle: {
-			parent: default
-			font: default-small
-			fontColor: white
-			disabledFontColor: gray
-		}
-		blue: {
-			parent: compact-blue
-			font: default-small
-			fontColor: white
-			disabledFontColor: gray
-		}
-		compact: {
-			font: default-small
-			fontColor: light_gray
-			up: button-compact
-			down: button-compact-down
-			over: button-compact-over
-		}
-		soft: {
-			parent: rounded-soft
-			font: default
-		}
-		soft-blue: {
-			parent: rounded-soft
-			font: default
-			fontColor: light_gray
-			over: button-rounded-edge-blue
-			checked: button-rounded-edge-blue
-		}
-		empty: {
-			font: default
-			fontColor: white
-			up: empty-button
-		}
-		tab: {
-			parent: tab
-			font: default
-			fontColor: light_gray
-		}
+	translate: {
+		parent: soft-blue
+		imageUp: translate_tool_icon
+		pressedOffsetX: -1
+		unpressedOffsetX: -1
+		checkedOffsetX: -1
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
-		default: {
-			font: default
-			fontColor: light_gray
-			disabledFontColor: gray
-			background: button-compact
-			focusedBackground: button-compact-over
-			cursor: cursor
-			selection: selection
-		}
-		console: {
-			font: default
-			fontColor: white
-			disabledFontColor: gray
-			background: button
-			focusedBackground: button-over
-			cursor: cursor
-		}
-		toast: {
-			font: default
-			fontColor: white
-			disabledFontColor: gray
-			background:button-rounded-edge-over
-			cursor: cursor
-		}
+	light: {
+		imageUp: tile676
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
-		default: {
-			label: default
-			background: button-rounded-edge-blue
-		}
+	transform: {
+		imageUp: tile494
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
-		default: {
-			background: touchpad
-			knob: touchpad-knob
-		}
+	material: {
+		imageUp: material
+		imageChecked: material-on
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle: {
-		default: {
-			plus: progressbar-narrow
-			minus: select-down
-			over: button
-			selection: button-compact-blue
-			background: dark-gray
-		}
+	settings: {
+		imageUp: settings_list
 	}
-	com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
-
-		default: {
-			background: window-noborder
-			titleFont: default-small
-		}
-		dialog: {
-			parent: default
-		}
+	snap: {
+		parent: round
+		imageUp: snap-off
+		imageChecked: snap-on
+		pressedOffsetX: -1
+		unpressedOffsetX: -1
+		checkedOffsetX: -1
 	}
-	com.kotcrab.vis.ui.widget.VisTextField$VisTextFieldStyle: {
-		default: {
-			font: default
-			fontColor: white
-			disabledFontColor: gray
-			background: button
-			focusedBackground: button-over
-			cursor: cursor
-		}
-		toast: {
-			font: default
-			fontColor: white
-			disabledFontColor: gray
-			background: button-rounded-edge-over
-			backgroundOver: button-rounded-edge-blue
-			cursor: cursor
-		}
+	play: {
+		parent: round
+		imageUp: play_icon
 	}
+	geometry: {
+		imageUp: cube
+		imageChecked: geometry-on
+	}
+	mesh: {
+		imageUp: mesh_down
+		pressedOffsetY: -1
+		unpressedOffsetY: -1
+		checkedOffsetY: -1
+	}
+	shaded: {
+		parent: soft-blue
+		imageUp: view_shaded
+		pressedOffsetY: 1
+		unpressedOffsetY: 1
+		checkedOffsetY: 1
+	}
+	wireframe: {
+		parent: soft-blue
+		imageUp: wire-sphere
+	}
+	wireframe_icon: {
+		imageUp: view_wireframe
+	}
+	select: {
+		parent: soft-blue
+		imageUp: selection_tool_icon
+	}
+	texture: {
+		imageUp: texture-off
+		imageChecked: texture
+	}
+	select-vertex: {
+		parent: rounded-soft
+		imageUp: vertex
+	}
+	select-face: {
+		parent: rounded-soft
+		imageUp: face
+	}
+	select-edge: {
+		parent: rounded-soft
+		imageUp: edge
+	}
+	orthographic-view: {
+		parent: soft-blue
+		imageUp: orthogonal-view
+	}
+	perspective-view: {
+		parent: soft-blue
+		imageUp: perspective-view
+	}
+	extrude: {
+		parent: round-blue
+		imageUp: extrude
+	}
+	scene: {
+		parent: compact-blue
+		imageUp: scene
+	}
+	scene_icon: {
+		imageUp: scene
+	}
+	tree: {
+		imageUp: logo24
+	}
+	expand-collapse: {
+		imageUp: remove
+		imageChecked: add
+	}
+	eye: {
+		imageUp: visible
+		imageChecked: invisible
+		unpressedOffsetX: -1
+	}
+	plus-minus: {
+		imageUp: plus
+		imageChecked: minus
+	}
+	plus: {
+		parent: compact
+		imageUp: add
+	}
+	minus: {
+		parent: compact
+		imageUp: remove
+	}
+	scene_tree: {
+		parent: default
+		imageUp: scene_view
+	}
+	camera: {
+		parent: compact
+		imageUp: camera
+	}
+	camera_object: {
+		imageUp: camera_object
+		imageChecked: camera_object_on
+	}
+	light_object: {
+		imageUp: light_object
+		imageChecked: light_object_on
+	}
+	mesh_object: {
+		imageUp: mesh_down
+		imageChecked: mesh
+	}
+	model_object: {
+		imageUp: model_file
+	}
+	material_object: {
+		imageUp: material
+		imageChecked: material-on
+	}
+	config: {
+		imageUp: config
+	}
+	lock: {
+		imageUp: unlocked
+		imageChecked: locked
+		pressedOffsetX: -1
+		unpressedOffsetX: -1
+		checkedOffsetX: -1
+	}
+	terminal: {
+		imageUp: terminal
+	}
+	solid: {
+		parent: soft-blue
+		imageUp: sphere
+	}
+	textured: {
+		parent: soft-blue
+		imageUp: view_textured
+	}
+	spinner-top: {
+		parent: compact
+		imageUp: spin-up-insensitive
+		imageDown: spin-up-pressed
+	}
+	spinner-bottom: {
+		parent: compact
+		imageUp: spin-down-insensitive
+		imageDown: spin-down-pressed
+	}
+	spot-light: {
+		imageUp: spot-light
+		imageChecked: spot-light-off
+	}
+	point-light: {
+		imageUp: point-light
+		imageChecked: point-light-off
+	}
+	color: {
+		parent: compact
+		imageUp: color
+	}
+	link: {
+		imageUp: unlinked
+		imageChecked: linked
+	}
+	cube: {
+		imageUp: cube
+	}
+	sphere: {
+		imageUp: sphere
+	}
+	cylinder: {
+		imageUp: cylinder
+	}
+	cone: {
+		imageUp: cone
+	}
+	plane: {
+		imageUp: plane
+	}
+	popup-close: {
+		imageUp: window-action-close
+	}
+	directional-light: {
+		imageUp: directional-light-off
+		imageChecked: directional-light
+	}
+	model-geometry: {
+		imageUp: cube
+		imageChecked: geometry-on
+	}
+	overflow-menu: {
+		imageUp: overflow-menu
+	}
+	library: {
+		imageUp: library-up
+	}
+	transform_object: {
+		imageUp: tile494
+		imageChecked: tile520
+	}
+	environment_object: {
+		imageUp: scene
+	}
+	filter: {
+		parent: compact-blue
+		imageUp: icon-filter
+	}
+	dropdown: {
+		imageUp: select-down
+	}
+	copy: {
+		imageUp: copy
+	}
+	refresh: {
+		imageUp: tile094
+	}
+	parent: {
+		imageUp: tile093
+	}
+	info: {
+		imageUp: tile656
+	}
+	help: {
+		imageUp: tile755
+	}
+	salient: {
+		imageUp: logo24
+	}
+	log_view: {
+		imageUp: log
+	}
+	object: {
+		imageUp: object
+		imageDisabled: object_locked
+	}
+	inspect: {
+		imageUp: inspect
+	}
+	inspect_file: {
+		imageUp: inspect_file
+	}
+	add: {
+		imageUp: add
+	}
+	remove: {
+		imageUp: remove
+	}
+	stats: {
+		imageUp: stats
+	}
+	asset_manager: {
+		imageUp: AssetManager
+	}
+	config_secondary: {
+		imageUp: tile580
+	}
+	expand_collapse: {
+		imageUp: Expand
+		imageChecked: Collapse
+	}
+	expand_collapse_all: {
+		imageUp: ExpandAll
+		imageChecked: CollapseAll
+	}
+	find: {
+		imageUp: FindAll
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
+	default: {
+		parent: default
+		font: default
+	}
+	round: {
+		parent: round
+		font: default
+	}
+	color: {
+		parent: default
+		imageUp: color
+		font: default
+	}
+	file_scene: {
+		imageUp: file_scene
+		font: bold
+	}
+	project: {
+		imageUp: drive
+		font: bold
+	}
+	salient: {
+		imageUp: logo24
+		font: bold
+	}
+	folder: {
+		imageUp: default-folder
+		imageChecked: fileopen
+		font: default
+	}
+	file: {
+		imageUp: file
+		font: default
+	}
+	tab: {
+		parent: tab
+		font: default
+	}
+	lock: {
+		imageUp: unlocked
+		imageChecked: locked
+		font: default
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
+	default: {
+		font: default
+		fontColor: light_gray
+	}
+	mono: {
+		font: mono
+		fontColor: light_gray
+	}
+	bold: {
+		font: bold
+		fontColor: light_gray
+	}
+	default-alternative: {
+		font: default-medium
+		fontColor: light_gray
+	}
+	default-gray: {
+		font: default-small
+		fontColor: gray
+	}
+	default-small: {
+		font: default-small
+		fontColor: light_gray
+	}
+	default-medium: {
+		font: default-medium
+		fontColor: light_gray
+	}
+	menuitem-shortcut: {
+		font: default
+		fontColor: light_gray
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
+	default: {
+		font: default
+		fontColorSelected: white
+		fontColorUnselected: light_gray
+		selection: button-compact-blue
+		over: selection-dark
+		background: button-over
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
+	default-horizontal: {
+		background: progressbar-narrow-filled-grey
+		knobAfter: progressbar-filled
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
+	default: {
+		hScroll: scroll-horizontal
+		hScrollKnob: scroll-knob-horizontal
+		vScroll: scroll
+		vScrollKnob: scroll-knob-vertical
+	}
+	list: {
+		parent: default
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
+	default: {
+		font: default-small
+		fontColor: white
+		background: default-select
+		scrollStyle: default
+		listStyle: default
+		backgroundOver: default-select-over
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
+	default-horizontal: {
+		background: slider
+		knob: slider-knob
+	}
+	default-vertical: {
+		background: slider-vertical
+		knob: slider-knob
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
+	default-horizontal: {
+		handle: lighter-gray
+	}
+	default-vertical: {
+		handle: lighter-gray
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
+	default: {
+		parent: default
+		font: default
+		fontColor: white
+		disabledFontColor: gray
+	}
+	bold: {
+		parent: default
+		font: bold
+		fontColor: white
+		disabledFontColor: gray
+	}
+	round: {
+		parent: round
+		font: default-small
+		disabledFontColor: gray
+	}
+	menu: {
+		parent: menuitem
+		font: default
+		fontColor: white
+		disabledFontColor: gray
+	}
+	round-blue: {
+		parent: round-blue
+		font: default-medium
+	}
+	toggle: {
+		parent: default
+		font: default-small
+		fontColor: white
+		disabledFontColor: gray
+	}
+	blue: {
+		parent: compact-blue
+		font: default-small
+		fontColor: white
+		disabledFontColor: gray
+	}
+	compact: {
+		font: default-small
+		fontColor: light_gray
+		up: button-compact
+		down: button-compact-down
+		over: button-compact-over
+	}
+	soft: {
+		parent: rounded-soft
+		font: default
+	}
+	soft-blue: {
+		parent: rounded-soft
+		font: default
+		fontColor: light_gray
+		over: button-rounded-edge-blue
+		checked: button-rounded-edge-blue
+	}
+	empty: {
+		font: default
+		fontColor: white
+		up: empty-button
+	}
+	tab: {
+		parent: tab
+		font: default
+		fontColor: light_gray
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
+	default: {
+		font: default
+		fontColor: light_gray
+		disabledFontColor: gray
+		background: button-down
+		focusedBackground: button-over
+		cursor: cursor
+		selection: selection
+	}
+	console: {
+		font: default
+		fontColor: white
+		disabledFontColor: gray
+		background: button
+		focusedBackground: button-over
+		cursor: cursor
+	}
+	toast: {
+		font: default
+		fontColor: white
+		disabledFontColor: gray
+		background: button-rounded-edge-over
+		cursor: cursor
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
+	default: {
+		label: default
+		background: button-rounded-edge-blue
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
+	default: {
+		background: touchpad
+		knob: touchpad-knob
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle: {
+	default: {
+		plus: progressbar-narrow
+		minus: select-down
+		over: button
+		selection: button-compact-blue
+		background: dark-gray
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
+	default: {
+		background: window-noborder
+		titleFont: default-small
+	}
+	dialog: {
+		parent: default
+	}
+}
 	com.kotcrab.vis.ui.widget.VisImageButton$VisImageButtonStyle: {
 		default: {
 			parent: compact
@@ -1167,16 +1206,4 @@
 			closeButtonStyle: toast
 		}
 	}
-	org.yunghegel.salient.engine.ui.scene2d.STree$TreeStyle: {
-		default: {
-			minus: select-down
-			plus: sub-menu
-			over: button
-			row: button-underline
-			selection: button-compact-blue
-			row_alternate: border-xy
-			guide: gray
-		}
-	}
-
 }

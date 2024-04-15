@@ -8,13 +8,11 @@ import ktx.actors.onChange
 import org.yunghegel.gdx.utils.ext.BOTTOM
 import org.yunghegel.gdx.utils.ext.LEFT
 import org.yunghegel.gdx.utils.ext.RIGHT
-import org.yunghegel.salient.engine.api.undo.Action
 import org.yunghegel.salient.engine.api.undo.ActionHistory
 import org.yunghegel.salient.engine.events.history.onActionExecuted
 import org.yunghegel.salient.engine.events.history.onActionUndone
-import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.UI
-import org.yunghegel.salient.engine.ui.scene2d.SImage
 
 class AppBar : MenuBar() {
 
@@ -66,7 +64,6 @@ class AppBar : MenuBar() {
         }
 
         undo.onChange {
-            println(history.pointer)
             history.goBack()
         }
 

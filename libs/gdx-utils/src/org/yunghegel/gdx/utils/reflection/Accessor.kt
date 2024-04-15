@@ -13,4 +13,9 @@ interface Accessor {
     fun <T> get(type: Class<T>?): T?
 
     fun <T : Annotation> config(annotation: Class<T>?): T?
+
+    fun <T : Annotation>  evalAnnotation(annotationClass: Class<T>?, evaluator: (T?)->Unit) {
+        val annotation = config(annotationClass)
+        evaluator(annotation)
+    }
 }

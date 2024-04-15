@@ -3,8 +3,8 @@ package org.yunghegel.salient.engine.api.model
 import kotlinx.serialization.Serializable
 import org.yunghegel.salient.engine.api.*
 import org.yunghegel.salient.engine.api.ID.Companion.generateId
-import org.yunghegel.salient.engine.io.Filepath
-import org.yunghegel.salient.engine.io.Paths
+import org.yunghegel.salient.engine.system.file.Filepath
+import org.yunghegel.salient.engine.system.file.Paths
 
 
 

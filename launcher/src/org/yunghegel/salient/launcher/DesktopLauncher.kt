@@ -4,18 +4,33 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import org.yunghegel.salient.editor.app.Salient
 import org.yunghegel.salient.editor.app.configs.Settings
-import org.yunghegel.salient.editor.app.storage.persistent
-import org.yunghegel.salient.engine.events.lifecycle.onStartup
-import org.yunghegel.salient.engine.helpers.reflect.Type
-import org.yunghegel.salient.engine.helpers.reflect.annotation.Key
-import org.yunghegel.salient.engine.io.debug
+import org.yunghegel.salient.engine.helpers.Encoded.Companion.encoded
+import org.yunghegel.salient.engine.helpers.Serializer
+import org.yunghegel.salient.engine.system.file.Paths
+import java.io.File
 
 object DesktopLauncher {
 
-    val nativeService = NativeService()
+    private val nativeService = NativeService()
+
+    private val settings : Settings
+    private val config_file = File("${Paths.USER_HOME}/.salient/salient.config")
 
     init {
-        Settings.i.configure()
+        val yaml = Serializer.yaml
+        if (!config_file.exists()) {
+            println("Config file not found, creating new one")
+            settings = Settings()
+            config_file.parentFile.mkdirs()
+            config_file.createNewFile()
+            config_file.writeText(yaml.encodeToString(Settings.serializer(), settings))
+        } else {
+            println("Config file found, loading")
+            val config = config_file.readText()
+            settings = yaml.decodeFromString(Settings.serializer(), config)
+
+        }
+        Settings.i = settings
     }
 
     @JvmStatic

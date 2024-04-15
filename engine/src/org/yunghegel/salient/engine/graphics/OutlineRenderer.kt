@@ -36,7 +36,7 @@ class OutlineRenderer {
     init {
         outlineShaderProgram = ShaderProgram(Gdx.files.internal("shaders/object_outline.vert").readString(), Gdx.files.internal("shaders/object_outline.frag").readString())
         if (!outlineShaderProgram.isCompiled) {
-            println(outlineShaderProgram.log)
+
         }
         outlineShaderProgram.bind()
         batch.shader = outlineShaderProgram

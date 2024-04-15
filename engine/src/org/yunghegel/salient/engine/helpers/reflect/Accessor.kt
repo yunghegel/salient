@@ -4,7 +4,7 @@ interface Accessor {
 
     fun get(obj: Any): Any?
 
-    fun set(value: Any);
+    fun set(value: Any)
 
     val name: String
 

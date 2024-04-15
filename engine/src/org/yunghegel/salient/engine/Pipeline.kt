@@ -6,20 +6,21 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.Family
 import com.badlogic.ashley.systems.IteratingSystem
 
-class UILogicSystem() : StateSystem(State.UI_LOGIC)
-class InitStateSystem() : StateSystem(State.INIT)
-class PrepareSceneSystem() : StateSystem(State.PREPARE_SCENE)
-class BeforeDepthPassSystem() : StateSystem(State.BEFORE_DEPTH_PASS)
-class DepthPassSystem() : StateSystem(State.DEPTH_PASS)
-class BeforeColorPassSystem() : StateSystem(State.BEFORE_COLOR_PASS)
-class ColorPassSystem() : StateSystem(State.COLOR_PASS)
-class UIPassSystem() : StateSystem(State.UI_PASS)
+class UILogicSystem : StateSystem(State.UI_LOGIC)
+class InitStateSystem : StateSystem(State.INIT)
+class PrepareSceneSystem : StateSystem(State.PREPARE_SCENE)
+class BeforeDepthPassSystem : StateSystem(State.BEFORE_DEPTH_PASS)
+class DepthPassSystem : StateSystem(State.DEPTH_PASS)
+class BeforeColorPassSystem : StateSystem(State.BEFORE_COLOR_PASS)
+class ColorPassSystem : StateSystem(State.COLOR_PASS)
+class UIPassSystem : StateSystem(State.UI_PASS)
+class OverlayPassSystem : StateSystem(State.OVERLAY_PASS)
 
 /**
  * Enumeration of necessary render states that must occur in a specific order; at particular moments we have to access the OpenGL context
  * and modify it to support the rendering of things in a certain order
  */
-enum class State() {
+enum class State {
     INIT(),
     UI_LOGIC,
     PREPARE_SCENE,
@@ -27,7 +28,8 @@ enum class State() {
     DEPTH_PASS,
     BEFORE_COLOR_PASS,
     COLOR_PASS,
-    UI_PASS;
+    UI_PASS,
+    OVERLAY_PASS;
 }
 
 /**
@@ -98,7 +100,8 @@ open class Pipeline : Engine() {
         DepthPassSystem(),
         BeforeColorPassSystem(),
         ColorPassSystem(),
-        UIPassSystem()
+        UIPassSystem(),
+        OverlayPassSystem()
     )
 
 

@@ -3,37 +3,32 @@ package org.yunghegel.salient.editor.app
 import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader
 import com.badlogic.gdx.utils.ScreenUtils
 import ktx.async.KtxAsync
 import org.yunghegel.gdx.utils.ext.*
 import org.yunghegel.salient.editor.app.configs.Settings
-import org.yunghegel.salient.engine.events.lifecycle.EditorInitializedEvent
-import org.yunghegel.salient.editor.app.storage.Registry
-import org.yunghegel.salient.editor.input.Input
-
+import org.yunghegel.salient.editor.input.ViewportController
+import org.yunghegel.salient.editor.project.Project
+import org.yunghegel.salient.editor.render.systems.SelectionSystem
 import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.editor.scene.SceneGraph
-
-import org.yunghegel.salient.engine.events.Bus.post
-import org.yunghegel.salient.engine.events.lifecycle.WindowResizedEvent
-import org.yunghegel.salient.engine.graphics.scene3d.GameObject
-import org.yunghegel.salient.engine.io.singleton
-import org.yunghegel.salient.engine.ui.UI
-import org.yunghegel.salient.engine.State.*
-import org.yunghegel.salient.editor.input.ViewportController
-import org.yunghegel.salient.editor.render.systems.SelectionSystem
 import org.yunghegel.salient.engine.Pipeline
+import org.yunghegel.salient.engine.State.*
 import org.yunghegel.salient.engine.api.Resizable
 import org.yunghegel.salient.engine.api.ecs.DEBUG_ALL
-import org.yunghegel.salient.engine.api.undo.ActionHistory
+import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.undo.ActionHistoryKeyListener
+import org.yunghegel.salient.engine.events.Bus.post
+import org.yunghegel.salient.engine.events.lifecycle.EditorInitializedEvent
+import org.yunghegel.salient.engine.events.lifecycle.WindowResizedEvent
 import org.yunghegel.salient.engine.graphics.GFX
 import org.yunghegel.salient.engine.graphics.scene3d.component.*
-import org.yunghegel.salient.engine.io.debug
-import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.input.Input
+import org.yunghegel.salient.engine.system.inject
+import org.yunghegel.salient.engine.system.singleton
+import org.yunghegel.salient.engine.ui.UI
 
 
 /**
@@ -42,13 +37,18 @@ import org.yunghegel.salient.engine.io.inject
 
 class Salient : ApplicationAdapter() {
 
-    val registry = Registry()
 
-    val actionHistory = ActionHistory(100)
     val app = App()
 
     var gui : Gui by notnull()
+
     var scene : Scene by notnull()
+
+    var project : Project by notnull()
+
+    private var state : State by notnull()
+
+
 
     val resizeListeners = mutableListOf<Resizable>()
     init {
@@ -56,21 +56,26 @@ class Salient : ApplicationAdapter() {
 
 
     override fun create() {
-
-
         KtxAsync.initiate()
+
         singleton(this)
         run {
-            singleton(actionHistory)
             singleton(app)
-            singleton(registry)
             singleton<Engine>(engine as Engine)
             singleton<Pipeline>(engine as Pipeline)
-
         }
+
+        listOf(app,UI,GFX,Input).forEach { module ->
+            module.initialize()
+        }
+
+
         UI.buildSharedContext()
         GFX.buildSharedContext()
-        scene = app.bootstrap() ?: throw IllegalStateException("Scene not found")
+        state = app.bootstrap() ?: throw IllegalStateException("Scene not found")
+        project = state.first
+        scene = state.second
+
 
         addSystem(SelectionSystem())
 
@@ -80,8 +85,10 @@ class Salient : ApplicationAdapter() {
         configureUI()
         configureInput()
 
-        sampleSceneGraph(scene.sceneGraph)
+        scene.manager.saveScene(scene)
         post(EditorInitializedEvent())
+
+
 
     }
 
@@ -100,7 +107,7 @@ class Salient : ApplicationAdapter() {
      * @see State
      * @see push
      */
-    fun buildPipeline() {
+    private fun buildPipeline() {
 
             push(INIT) { delta ->
                 clearColor()
@@ -164,7 +171,7 @@ class Salient : ApplicationAdapter() {
         UI.dispose()
     }
 
-    fun configureUI() {
+    private fun configureUI() {
         gui = Gui()
         gui.configure()
         singleton(gui)
@@ -175,10 +182,13 @@ class Salient : ApplicationAdapter() {
 
         with(Settings.i.ui) {
 
-            gui.split.setSplitInternal(0, leftLayout.splitAmount)
-            gui.split.setSplitInternal(1, rightLayout.splitAmount)
-            gui.centerSplit.setSplitAmount(bottomLayout.splitAmount)
-
+            gui.apply {
+                split.cache.put(0, leftLayout.splitAmount)
+                split.cache.put(1, rightLayout.splitAmount)
+                split.setSplit(0, leftLayout.splitAmount)
+                split.setSplit(1, rightLayout.splitAmount)
+                gui.centerSplit.setSplitAmount(bottomLayout.splitAmount)
+            }
             if (leftLayout.hidden) {
                 gui.split.hide(0, LEFT)
             } else {
@@ -197,14 +207,15 @@ class Salient : ApplicationAdapter() {
         }
     }
 
-    fun configureInput() {
+    private fun configureInput() {
         val viewportController = ViewportController()
         viewportController.actor = gui.viewportWidget
         gui.viewportWidget.addListener(viewportController)
         gui.viewportWidget.addListener(viewportController.clickListener)
-        val historyListener = ActionHistoryKeyListener(actionHistory)
+        val historyListener = ActionHistoryKeyListener(inject())
         Input.addProcessor(historyListener)
         Input.addProcessor(UI)
+        UI.root.configureListener(gui.viewportWidget,viewportController)
 //        Input.addProcessor(scene.editorCamera.perspectiveCameraController)
     }
 
@@ -219,8 +230,8 @@ fun sampleSceneGraph(graph:SceneGraph) {
     val mesh = model.meshes
     val bounds = BoundsComponent.getBounds(model)
 
-    val go = GameObject("TorusKnot").apply {
-        val modelComponent = ModelComponent(Model(),this)
+    val go =graph.newFromRoot("TorusKnot").apply {
+        val modelComponent = ModelComponent(AssetHandle(Gdx.files.internal("models/obj/TorusKnot.obj")),this)
         val materialsCompenent = MaterialsComponent(mats,this)
         val meshComponent = MeshComponent(mesh,this)
         val boundsComponent = BoundsComponent(bounds,this)

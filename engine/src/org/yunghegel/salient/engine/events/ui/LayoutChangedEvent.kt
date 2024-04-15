@@ -3,7 +3,7 @@ package org.yunghegel.salient.engine.events.ui
 import org.greenrobot.eventbus.Subscribe
 import org.yunghegel.salient.engine.events.Bus
 
-class LayoutChangedEvent() {
+class LayoutChangedEvent {
 
     interface Listener {
         @Subscribe

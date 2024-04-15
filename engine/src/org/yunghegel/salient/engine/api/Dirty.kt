@@ -1,15 +1,25 @@
 package org.yunghegel.salient.engine.api
 
-interface Dirty {
+import org.yunghegel.salient.engine.system.info
+
+interface Dirty<T:Dirty<T>> {
 
     var dirty : Boolean
 
-    fun markDirty(dirty: Boolean) {
+    val listeners: MutableList<DirtyListener<T>>
+
+    fun markDirty(dirty: Boolean = true) {
         this.dirty = dirty
-        if (dirty) onDirty()
+        info("marked ${this::class.simpleName} as dirty")
+        if (dirty) {
+            onDirty()
+            listeners.forEach { listener ->
+                listener.onDirty(this)
+            }
+        }
         this.dirty = false
     }
 
-    fun onDirty()
+    open fun onDirty() {}
 
 }

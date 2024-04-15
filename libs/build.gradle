@@ -8,9 +8,9 @@ subprojects {
         archives sourcesJar
     }
 
-    jar {
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    }
+    def ref =  project.name.split("-")[1]
+    def qualified = ":libs:${project.name}"
+    packages[ref] = qualified
 
     java {
         withSourcesJar()

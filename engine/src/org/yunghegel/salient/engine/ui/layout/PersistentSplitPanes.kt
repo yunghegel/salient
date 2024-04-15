@@ -7,10 +7,7 @@ import com.badlogic.gdx.utils.IntMap
 import com.kotcrab.vis.ui.widget.MultiSplitPane
 import com.kotcrab.vis.ui.widget.VisSplitPane
 import org.yunghegel.gdx.utils.ext.*
-import org.yunghegel.salient.engine.events.lifecycle.WindowResizedEvent
 import org.yunghegel.salient.engine.events.lifecycle.onEditorInitialized
-import org.yunghegel.salient.engine.events.lifecycle.onWindowResized
-import org.yunghegel.salient.engine.io.info
 import kotlin.math.max
 import kotlin.math.min
 
@@ -21,6 +18,10 @@ open class MultiSplitPaneEx (vertical: Boolean): MultiSplitPane(vertical) {
     var bounds : IntMap<Rectangle> = IntMap()
 
     private val getters : MutableMap<Int,()->Float> = mutableMapOf()
+
+    init {
+
+    }
 
     override fun setSplit(handleBarIndex: Int, split: Float) {
         val restriction = computeRestriction(handleBarIndex, split)
@@ -36,27 +37,10 @@ open class MultiSplitPaneEx (vertical: Boolean): MultiSplitPane(vertical) {
     var initialized = false
 
     init {
-        onWindowResized {
-
-//            bounds.clear()
-//            getters.forEach { (index, getter) ->
-//                bounds.put(index, Rectangle())
-//                setSplit(index, getter.invoke())
-//            }
-        }
-
         onEditorInitialized {
             layout()
             initialized = true
         }
-    }
-
-    override fun layout(){
-        super.layout()
-
-
-
-
     }
 
     fun setSplitInternal(handleBarIndex: Int, split: Float) {
@@ -131,7 +115,7 @@ class SplitPaneEx(first:Actor,second:Actor,vertical: Boolean,val reverse:Boolean
 
     fun setComputation(computation: () -> Float) {
         restrictionComputation = computation
-        println(computation())
+
     }
 
     fun evaluateRestriction(proposed: Float) : Float {
@@ -155,7 +139,7 @@ class SplitPaneEx(first:Actor,second:Actor,vertical: Boolean,val reverse:Boolean
     }
 
     fun restoreSplit() {
-        println(cached)
+
         super.setSplitAmount(cached)
     }
 

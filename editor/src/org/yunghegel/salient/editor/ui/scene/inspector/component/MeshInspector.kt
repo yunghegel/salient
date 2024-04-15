@@ -7,7 +7,7 @@ import org.yunghegel.salient.engine.graphics.scene3d.component.MeshComponent
 
 class MeshInspector : ComponentInspector<MeshComponent, GdxArray<Mesh>>(MeshComponent::class.java, "Mesh", "mesh_object") {
 
-    override fun populate(component: MeshComponent) {
+    override fun populate(component: MeshComponent?) {
 
     }
 

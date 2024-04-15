@@ -7,7 +7,7 @@ import org.yunghegel.salient.engine.graphics.scene3d.component.MaterialsComponen
 
 class MaterialInspector : ComponentInspector<MaterialsComponent, GdxArray<Material>>(MaterialsComponent::class.java, "Materials", "material_object") {
 
-    override fun populate(component: MaterialsComponent) {
+    override fun populate(component: MaterialsComponent?) {
 
     }
 

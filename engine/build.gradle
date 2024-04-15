@@ -1,5 +1,5 @@
 dependencies {
     packages.each { pkg->
-        api project (pkg.value)
+        api project("$pkg.value")
     }
 }

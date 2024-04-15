@@ -20,8 +20,13 @@ interface Mask {
         return value and mask != 0
     }
 
-    fun allOf(value: Int): Boolean {
-        return value and mask == mask
+    fun allOf(vararg int: Int): Boolean {
+        for (value in int) {
+            if (value and mask == 0) {
+                return false
+            }
+        }
+        return true
     }
 
     fun noneOf(value: Int): Boolean {

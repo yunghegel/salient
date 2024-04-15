@@ -26,7 +26,7 @@ enum class Resolution(val width: Int, val height: Int) {
         fun detectNativeRes(): Pair<Int, Int> {
             val x = Gdx.graphics.monitor.virtualX
             val y = Gdx.graphics.monitor.virtualY
-            println("Native Resolution: $x x $y")
+
             return Pair(x, y)
         }
     }

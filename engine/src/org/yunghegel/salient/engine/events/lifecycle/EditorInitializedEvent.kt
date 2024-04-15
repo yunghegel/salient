@@ -3,7 +3,7 @@ package org.yunghegel.salient.engine.events.lifecycle
 import org.greenrobot.eventbus.Subscribe
 import org.yunghegel.salient.engine.events.Bus
 
-class EditorInitializedEvent() {
+class EditorInitializedEvent {
 
     interface Listener {
         @Subscribe

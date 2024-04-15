@@ -8,6 +8,10 @@ typealias SyncAction<T> = () -> T
 @Serializable
 abstract class Configuration {
 
+    fun index() {
+        sync_actions.add { false}
+    }
+
     @Transient
     var sync_actions = mutableListOf<SyncAction<*>>()
 
@@ -16,7 +20,9 @@ abstract class Configuration {
     }
 
     fun sync() {
-        sync_actions.forEach { it.invoke() }
+        sync_actions.forEach { it.invoke()
+
+        }
     }
 
 

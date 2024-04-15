@@ -1,48 +1,65 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 buildscript {
+
     repositories {
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         gradlePluginPortal()
     }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
-        classpath "com.adarshr:gradle-test-logger-plugin:$testLoggerVersion"
-        classpath "edu.sc.seis.launch4j:launch4j:$launch4jVersion"
-        classpath "com.diffplug.spotless:spotless-plugin-gradle:$spotlessVersion"
-        classpath "anverus.tools:gradle-build-timer:$gradleBuildTimerVersion"
-        classpath 'com.netflix.nebula:gradle-lint-plugin:19.0.1'
-    }
+
+    classpath(ext.build,buildscript)
 }
 
 
 plugins {
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion" apply false
 }
 
 apply from: "$gradleHome/tests.gradle"
-apply from: "$gradleHome/dependencies.gradle"
+apply from: "$gradleHome/libraries.gradle"
 apply from: "$gradleHome/dist.gradle"
 
 
 
 ext {
     packages = [:]
+
 }
 
 project(":libs").subprojects.each { project ->
-    def ref =  project.name.split("-")[1]
-    def qualified = ":libs:${project.name}"
-    packages[ref] = qualified
+    packages[project.name] = ":libs:${project.name}"
 }
+
 
 allprojects {
 
     group = "$groupId"
     project.version = "$salientVersion"
     apply plugin: "com.diffplug.spotless"
+
+    tasks.withType(Jar).configureEach {
+        archiveFileName = "${rootProject.name}-$project.name.${project.version.toString()}.jar"
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    tasks.withType(KotlinCompile).configureEach {
+        configure(kotlinOptions) {
+            freeCompilerArgs += ['-Xcontext-receivers']
+        }
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        dependencies {
+            implementation fileTree(dir: 'extern', include: ['*.jar'])
+        }
+    }
+
+    ext {
+        resourceDir = project(":editor").file("assets")
+    }
 
     spotless {
         kotlin {
@@ -74,16 +91,6 @@ allprojects {
         }
     }
 
-    if (project.tasks.findByPath("compileJava")!=null) {
-        dependencies {
-
-            implementation fileTree(dir: 'extern', include: ['*.jar'])
-
-
-        }
-    }
-
-
 }
 
 subprojects {
@@ -93,20 +100,13 @@ subprojects {
     apply plugin: 'kotlin'
     apply plugin: 'kotlinx-serialization'
 
-    def resourceDir = project.file("assets")
+    apply from : rootDir.path + "/gradle/dependencies.gradle"
 
-    dependencies {
-        testImplementation "org.jetbrains.kotlin:kotlin-test"
-        testImplementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
 
-        implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
-        implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-        implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        implementation "org.apache.commons:commons-lang3:$apacheCommonsVersion"
-        implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
-        implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-        implementation "com.charleskorn.kaml:kaml:$kamlVersion"
-    }
+
+
+    implement(libs.gdx_core)
+    implement(libs.gdx_ext)
 
     java {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -129,16 +129,10 @@ subprojects {
             test.java.srcDirs = [ 'test' ]
             test.resources.srcDirs = [ "$resourceDir" ]
         }
-
     }
 
     kotlin {
         jvmToolchain(11)
-        compileKotlin{
-            kotlinOptions {
-                freeCompilerArgs += ['-Xcontext-receivers']
-            }
-        }
         sourceSets.named("main") { main ->
             main.kotlin.srcDirs = ['src']
             main.resources.srcDirs = ["$resourceDir"]
@@ -149,66 +143,10 @@ subprojects {
         }
     }
 
-    jar {
-        archiveFileName = "${rootProject.name}-$project.name.${project.version.toString()}.jar"
-    }
-
-    dependencies {
-
-        implementation "com.badlogicgames.ashley:ashley:$ashleyVersion"
-        implementation "com.github.lyze237:gdx-TinyVG:$tinyVgVersion"
-        implementation "space.earlygrey:shapedrawer:$shapedrawerVersion"
-        implementation "com.kotcrab.vis:vis-ui:$visUiVersion"
-        implementation "games.spooky.gdx:gdx-nativefilechooser-desktop:$nativeFileChooserVersion"
-        implementation "games.spooky.gdx:gdx-nativefilechooser:$nativeFileChooserVersion"
-        implementation "com.google.guava:guava:$guavaVersion"
-        implementation "com.github.czyzby:gdx-kiwi:$kiwiVersion"
-        implementation "com.squidpony:squidlib-util:$squidlibVersion"
-        implementation "com.squidpony:squidlib:$squidlibVersion"
-        implementation "com.github.mgsx-dev.gdx-gltf:gltf:$gdxGltfVersion"
-
-        implementation "com.github.raeleus.stripe:stripe:$stripeVersion"
-        implementation "com.github.raeleus.stripe:freetype:$freetypeVersion"
-        implementation "com.github.tommyettinger:libgdx-utils:$utilsVersion"
-
-        implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-        implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
-        implementation "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
-
-        implementation "com.github.crykn.guacamole:core:$guacamoleVersion"
-        implementation "com.github.crykn.guacamole:gdx:$guacamoleVersion"
-        implementation "com.github.crykn.guacamole:gdx-desktop:$guacamoleVersion"
-
-        implementation "io.github.libktx:ktx-inject:$ktxVersion"
-        implementation "io.github.libktx:ktx-collections:$ktxVersion"
-        implementation "io.github.libktx:ktx-graphics:$ktxVersion"
-        implementation "io.github.libktx:ktx-scene2d:$ktxVersion"
-        implementation "io.github.libktx:ktx-app:$ktxVersion"
-        implementation "io.github.libktx:ktx-assets:$ktxVersion"
-        implementation "io.github.libktx:ktx-async:$ktxVersion"
-        implementation "io.github.libktx:ktx-json:$ktxVersion"
-        implementation "io.github.libktx:ktx-math:$ktxVersion"
-        implementation "io.github.libktx:ktx-style:$ktxVersion"
-        implementation "io.github.libktx:ktx-vis:$ktxVersion"
-        implementation "io.github.libktx:ktx-actors:$ktxVersion"
-        implementation "io.github.libktx:ktx-vis:$ktxVersion"
-        implementation "io.github.libktx:ktx-ashley:$ktxVersion"
-        implementation "io.github.libktx:ktx-assets-async:$ktxVersion"
-        implementation "com.github.RomanPozdeev:MobX:0.1"
-        implementation 'org.json:json:20240303'
-        implementation "org.lwjgl:lwjgl-tinyfd:3.3.2"
-        implementation "org.lwjgl:lwjgl-tinyfd:3.3.2:natives-windows"
-        implementation "org.lwjgl:lwjgl-tinyfd:3.3.2:natives-linux"
-        implementation "org.lwjgl:lwjgl-tinyfd:3.3.2:natives-macos"
-        implementation "org.lwjgl:lwjgl-tinyfd:3.3.2:natives-macos-arm64"
-        implementation("org.greenrobot:eventbus-java:3.3.1")
-        implementation "com.github.tommyettinger:textratypist:0.8.0"
-        implementation 'com.github.raeleus.TenPatch:tenpatch:5.2.3'
-    }
-
 }
 
 
+def launcherClass = 'org.yunghegel.salient.launcher.DesktopLauncher'
 
 
 

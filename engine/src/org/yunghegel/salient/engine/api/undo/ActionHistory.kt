@@ -5,7 +5,7 @@ import ktx.collections.GdxArray
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.history.ActionExecutedEvent
 import org.yunghegel.salient.engine.events.history.ActionUndoneEvent
-import org.yunghegel.salient.engine.io.debug
+import org.yunghegel.salient.engine.system.debug
 
 class ActionHistory(private val limit: Int) {
 

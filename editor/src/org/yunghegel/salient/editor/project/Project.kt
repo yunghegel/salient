@@ -2,29 +2,28 @@ package org.yunghegel.salient.editor.project
 
 import com.badlogic.gdx.files.FileHandle
 import org.yunghegel.salient.editor.scene.Scene
+import org.yunghegel.salient.engine.api.dto.DTOAdapter
+import org.yunghegel.salient.engine.api.dto.ProjectDTO
 import org.yunghegel.salient.engine.api.model.ProjectHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
-import org.yunghegel.salient.editor.app.dto.DTOAdapter
-import org.yunghegel.salient.editor.app.dto.ProjectDTO
-import org.yunghegel.salient.editor.scene.SceneManager
 import org.yunghegel.salient.engine.api.project.EditorProject
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.lifecycle.onShutdown
 import org.yunghegel.salient.engine.events.scene.SceneChangedEvent
-import org.yunghegel.salient.engine.io.Paths
-import org.yunghegel.salient.engine.io.debug
-import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.system.debug
+import org.yunghegel.salient.engine.system.file.Paths
+import org.yunghegel.salient.engine.system.inject
 
 typealias ProjectDirectory = FileHandle
 typealias ProjectFile = FileHandle
 
-class Project(handle: ProjectHandle,val manager:ProjectManager) : EditorProject<Project,Scene>(handle, manager) {
+class Project(handle: ProjectHandle, val manager:ProjectManager) : EditorProject<Project,Scene>(handle, manager) {
 
     val folder : ProjectDirectory = Paths.PROJECT_DIR_FOR(handle.name).handle
 
     val file : ProjectFile = Paths.PROJECT_FILE_FOR(handle.name).handle
 
-    val sceneManager : SceneManager by lazy { inject() }
+
 
     override val scenes: MutableList<Scene> = mutableListOf()
 
@@ -32,7 +31,6 @@ class Project(handle: ProjectHandle,val manager:ProjectManager) : EditorProject<
         onShutdown {
             sceneIndex.forEach { handle ->
                 val scene = scenes.find { it.handle == handle }
-                println("matched handle to scene ${scene?.name}")
                 SceneHandle.saveToFile(handle,this)
             }
         }

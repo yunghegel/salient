@@ -125,8 +125,8 @@ class Renderer : Disposable {
             Gdx.files.internal("shaders/mrtscene.vert"),
             Gdx.files.internal("shaders/mrtscene.frag")
         )
-        if (!mrtSceneShader!!.isCompiled) {
-            println(mrtSceneShader!!.log)
+        if (!mrtSceneShader.isCompiled) {
+            println(mrtSceneShader.log)
         }
 
 

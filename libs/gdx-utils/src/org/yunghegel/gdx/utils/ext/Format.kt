@@ -147,6 +147,16 @@ fun isCamelCase(str: String): Boolean {
     return true
 }
 
+fun isSnakeCase(str: String): Boolean {
+    for (i in 0 until str.length) {
+        val c = str[i]
+        if (!Character.isLetterOrDigit(c) && c != '_') return false
+    }
+    return true
+}
+
+
+
 fun capitalizeFirst(str: String): String {
     return str.substring(0, 1).uppercase() + str.substring(1)
 }
@@ -166,6 +176,38 @@ fun pascalCaseToHumanReadable(str: String): String {
         lastChar = it
     }
     return sb.toString()
+}
+
+fun snakeCaseToHumanReadable(str: String): String {
+    val sb = StringBuilder()
+    str.forEach {
+        if (it == '_') {
+            sb.append(" ")
+        } else {
+            sb.append(it)
+        }
+    }
+    return sb.toString()
+}
+
+fun append(str: String, append: String): String {
+    return if (str.isEmpty()) append else "$str$append"
+}
+
+fun append(str: String, append: String, separator: String= " "): String {
+    return if (str.isEmpty()) append else "$str$separator$append"
+}
+
+fun prepend(str: String, prepend: String): String {
+    return if (str.isEmpty()) prepend else "$prepend$str"
+}
+
+fun prepend(str: String, prepend: String, separator: String= " "): String {
+    return if (str.isEmpty()) prepend else "$prepend$separator$str"
+}
+
+fun wrap(left: String, right: String, str: String): String {
+    return "$left$str$right"
 }
 
 class Printer(private val type: Class<*>, vararg labels: Label) {

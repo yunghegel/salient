@@ -1,8 +1,9 @@
 apply plugin:'application'
 apply plugin:'edu.sc.seis.launch4j'
+allprojects {
+    mainClassName = mainClassName
+}
 
-ext.artifactId = "$artifactId"
-ext.mainClassName = "$mainClassName"
 
 dependencies {
     implementation project(":editor")
@@ -38,6 +39,10 @@ run {
     }
     mainClass = "$mainClassName"
 }
+
+
+
+
 
 launch4j {
     mainClassName = "$mainClassName"

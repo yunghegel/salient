@@ -8,7 +8,7 @@ import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.graphics.scene3d.GameObject
 import org.yunghegel.salient.engine.graphics.scene3d.SceneContext
 
-abstract class EntityComponent<T>(val type: Class<T>?,val value : T?,val go: GameObject) : Component {
+abstract class EntityComponent<T>(val type: Class<T>?,var value : T?,val go: GameObject) : Component {
 
     val flags = ComponentFlags()
 

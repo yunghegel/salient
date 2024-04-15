@@ -2,11 +2,11 @@ package org.yunghegel.salient.engine.events
 
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.EventBusBuilder
-import org.yunghegel.salient.engine.io.event
+import org.yunghegel.salient.engine.system.event
 
 object Bus {
 
-    val eventBus: EventBus = Config.eventBusBuilder.build()
+    val eventBus: EventBus by lazy { Config.eventBusBuilder.build()  }
 
     fun post (event: Any,log: Boolean = true) {
         if (log) event(event::class.java)

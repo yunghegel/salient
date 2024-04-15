@@ -1,16 +1,17 @@
 package org.yunghegel.salient.engine.api.model
 
-import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g3d.Model
+import com.badlogic.gdx.files.FileHandle
 import kotlinx.serialization.Serializable
 import org.yunghegel.salient.engine.api.ID
 import org.yunghegel.salient.engine.api.Named
 import org.yunghegel.salient.engine.api.Resource
-import org.yunghegel.salient.engine.io.FileType
-import org.yunghegel.salient.engine.io.Filepath
+import org.yunghegel.salient.engine.system.file.FileType
+import org.yunghegel.salient.engine.system.file.Filepath
 
 @Serializable
-class AssetHandle(val pth: String) : Resource,ID,Named {
+class AssetHandle(val pth: String="") : Resource,ID,Named {
+
+    constructor(handle:FileHandle) : this(handle.path())
 
     override val id: Int = generateID()
 
@@ -22,16 +23,13 @@ class AssetHandle(val pth: String) : Resource,ID,Named {
 
     val type : String = resolveType(path.extension)
 
-    fun toClass() : Class<*> = Class.forName(type)
-
-
     fun resolveType(ext: String) : String {
-        if (FileType.MODEL.extensions.contains(ext)) {
-            return Model::class.java.typeName
+        FileType.entries.forEach { type ->
+            if (type.extensions.contains(ext)) {
+                return type.name
+            }
         }
-        if (FileType.TEXTURE.extensions.contains(ext)) {
-            return Texture::class.java.typeName
-        }
+
         return "unknown"
     }
 

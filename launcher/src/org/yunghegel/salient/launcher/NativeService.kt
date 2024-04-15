@@ -1,15 +1,20 @@
 package org.yunghegel.salient.launcher
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.LifecycleListener
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Window
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowListener
-import com.kotcrab.vis.ui.util.dialog.Dialogs
+import org.yunghegel.gdx.utils.ui.IconType
+import org.yunghegel.gdx.utils.ui.MessageType
+import org.yunghegel.gdx.utils.ui.messageBox
+import org.yunghegel.salient.editor.app.configs.Settings
 import org.yunghegel.salient.engine.events.Bus
 import org.yunghegel.salient.engine.events.lifecycle.ShutdownEvent
 import org.yunghegel.salient.engine.events.lifecycle.StartupEvent
-import org.yunghegel.salient.engine.io.inject
-import org.yunghegel.salient.engine.ui.UI
+import org.yunghegel.salient.engine.helpers.Serializer
+import org.yunghegel.salient.engine.helpers.save
+import org.yunghegel.salient.engine.system.debug
+import org.yunghegel.salient.engine.system.file.Paths
+import kotlin.system.exitProcess
 
 class NativeService : Lwjgl3WindowListener, LifecycleListener {
 
@@ -35,17 +40,22 @@ class NativeService : Lwjgl3WindowListener, LifecycleListener {
 
     override fun closeRequested(): Boolean {
         Bus.post(ShutdownEvent())
-        val result = Dialogs.showConfirmDialog<Boolean>(
-            UI,"Exit", "Save before exit?", arrayOf("Yes", "No","Cancel"), arrayOf(true,true,false)
-        ) {
+
+       messageBox("Exit", "Save before exit?", MessageType.YES_NO,IconType.QUESTION,true) {
+           if (it == null) return@messageBox
             if (it) {
-                Gdx.app.exit()
+                Settings.i.configurations.forEach { config->
+                config.sync()
+                debug("${config::class.simpleName} synced")
+                }
+
+                save(Paths.CONFIG_FILEPATH.path) { Serializer.yaml.encodeToString(Settings.serializer(),Settings.i) }
+                exitProcess(0)
+            } else {
+                exitProcess(0)
             }
-            false
-        }.apply {
-            isModal = true
-            isMovable = false
         }
+
         return false
     }
 
@@ -64,5 +74,9 @@ class NativeService : Lwjgl3WindowListener, LifecycleListener {
 
     override fun dispose() {
 
+    }
+
+    fun addShutdownHook(hook: ()->Unit) {
+        Runtime.getRuntime().addShutdownHook(Thread(hook))
     }
 }

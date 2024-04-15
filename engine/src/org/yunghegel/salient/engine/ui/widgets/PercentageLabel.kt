@@ -2,16 +2,7 @@ package org.yunghegel.salient.engine.ui.widgets
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Tooltip
-import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager
-import com.badlogic.gdx.utils.Align
-import ktx.scene2d.label
-import ktx.scene2d.scene2d
-import ktx.scene2d.textTooltip
-import ktx.scene2d.tooltip
 import org.yunghegel.gdx.utils.ext.alpha
-import org.yunghegel.salient.engine.io.Memory
-import org.yunghegel.salient.engine.ui.addTooltip
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
 
@@ -48,7 +39,7 @@ class PercentageIndicator(val prefix: String,val percentSource: ()->Float) : STa
         val percent = percentSource.invoke()
         ranges.forEach { range ->
             if (percent/100 in range.min..range.max) {
-                label.setColor(range.color)
+                label.color = range.color
                 return@forEach
             }
         }

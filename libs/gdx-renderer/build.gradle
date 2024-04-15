@@ -11,3 +11,11 @@ dependencies {
     implementation "com.squidpony:squidlib-util:$squidlibVersion"
     implementation "com.squidpony:squidlib:$squidlibVersion"
 }
+
+sourceSets {
+    main {
+        resources {
+            srcDirs += ['assets']
+        }
+    }
+}

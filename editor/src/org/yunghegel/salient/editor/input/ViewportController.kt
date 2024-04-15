@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport
 import org.yunghegel.gdx.utils.ext.distanceFalloff
 import org.yunghegel.salient.editor.app.stage
 import org.yunghegel.salient.editor.app.ui
-import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.system.inject
 
 class ViewportController : DragListener() {
 
@@ -67,8 +67,6 @@ class ViewportController : DragListener() {
         override fun clicked(event: InputEvent?, x: Float, y: Float) {
             if (tapCount ==2) {
                 val result = intersectRayXZ(x,y) ?: return
-                println("Clicked at $result")
-
             }
         }
     }
@@ -251,7 +249,7 @@ class ViewportController : DragListener() {
         }
 
         tangent.set(camera.direction).crs(camera.up).nor()
-        translateUnits = camera.position.dst(target)
+        translateUnits = camera.position.dst2(target) * 0.1f
 
         camera.update()
 

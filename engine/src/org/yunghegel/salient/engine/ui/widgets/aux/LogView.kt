@@ -5,10 +5,10 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.scenes.scene2d.ui.Stack
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
-import org.yunghegel.salient.engine.io.Log
-import org.yunghegel.salient.engine.io.LogHandler
-import org.yunghegel.salient.engine.io.LogLevel
-import org.yunghegel.salient.engine.io.LogReference
+import org.yunghegel.salient.engine.system.Log
+import org.yunghegel.salient.engine.system.LogHandler
+import org.yunghegel.salient.engine.system.LogLevel
+import org.yunghegel.salient.engine.system.LogReference
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
 
@@ -45,7 +45,7 @@ class LogView : STable(), LogHandler {
         scroll.setOverscroll(true, true)
     }
 
-    fun buildListener() {
+    private fun buildListener() {
         val clickListener = object : ClickListener() {
             override fun exit(event: InputEvent?, x: Float, y: Float, pointer: Int, toActor: Actor?) {
                 if (stage.scrollFocus != null)
@@ -74,11 +74,11 @@ class LogView : STable(), LogHandler {
         addListener(clickListener)
     }
 
-    internal class Entry(var ref:LogReference) : STable() {
+    internal class Entry(private var ref:LogReference) : STable() {
 
-        val typeLabel = SLabel("")
-        val sourceLabel = SLabel("")
-        val messageLabel = SLabel("")
+        private val typeLabel = SLabel("","mono")
+        private val sourceLabel = SLabel("","mono")
+        private val messageLabel = SLabel("","mono")
 
         init {
             pad(1f)
@@ -98,7 +98,7 @@ class LogView : STable(), LogHandler {
 
         }
 
-        fun setRef() {
+        private fun setRef() {
             typeLabel.setText(ref.level.name)
             typeLabel.color = ref.level.color
             sourceLabel.setText("[${ref.className}::${ref.methodName}]")
@@ -112,7 +112,7 @@ class LogView : STable(), LogHandler {
 
     internal inner class Entries : STable() {
 
-        val entries = mutableListOf<Entry>()
+        private val entries = mutableListOf<Entry>()
 
         fun addEntry(ref: LogReference) {
             val entry = Entry(ref)
@@ -121,7 +121,7 @@ class LogView : STable(), LogHandler {
             add(entry).growX().row()
         }
 
-        fun validateEntry(entry: Entry) {
+        private fun validateEntry(entry: Entry) {
             if (entries.size > MAX_ENTRIES) {
                 entries.removeAt(0)
                 removeActorAt(0, true)

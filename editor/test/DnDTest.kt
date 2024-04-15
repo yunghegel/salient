@@ -107,9 +107,9 @@ class DnDTest : ApplicationAdapter(){
                 (group.hit(x,y,true)?.let { target ->
                     if (target is STable) {
                         if (target.children.contains(payload?.`object`)) {
-                            println("Cannot drop item on itself")
+
                         } else {
-                            println("success")
+
                             return true
                         }
                     }
@@ -134,20 +134,19 @@ class DnDTest : ApplicationAdapter(){
                 (group.hit(x,y,true)?.let { target ->
                     if (target is STable) {
                         if (target.children.contains(src)) {
-                            println("Cannot drop item on itself")
+
                         } else {
                             src.remove()
                             target.add(src)
-                            println("success")
+
                         }
                     } else if (target is SImage) {
                         val parent = target.parent as STable
                         if (parent.children.contains(src)) {
-                            println("Cannot drop item on itself")
+
                         } else {
                             src.remove()
                             parent.add(src)
-                            println("success")
                         }
                     }
                 })

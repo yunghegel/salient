@@ -27,9 +27,6 @@ class FileSystem (_root:FileHandle) : Tree<FileNode, FileHandle>(UI.skin) {
         recursiveBuildTree(_root)
     }
 
-
-
-
     fun recursiveBuildTree(root:FileHandle, parent:FileNode? = null) {
         val rootNode = FileNode(root)
         nodeMap[root] = rootNode

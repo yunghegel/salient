@@ -74,15 +74,15 @@ open class DefaultShader(val renderable: Renderable) : Shader {
 
         if (diffuseTexture != null) {
             val loc = program.getUniformLocation("u_diffuseTexture")
-            program.setUniformi(loc, context!!.textureBinder.bind((diffuseTexture as TextureAttribute).textureDescription.texture))
+            program.setUniformi(loc, context.textureBinder.bind((diffuseTexture as TextureAttribute).textureDescription.texture))
         }
         if (normalTexture != null) {
             val loc = program.getUniformLocation("u_normalTexture")
-            program.setUniformi(loc, context!!.textureBinder.bind((normalTexture as TextureAttribute).textureDescription.texture))
+            program.setUniformi(loc, context.textureBinder.bind((normalTexture as TextureAttribute).textureDescription.texture))
         }
         if (specTexture != null) {
             val loc = program.getUniformLocation("u_specularTexture")
-            program.setUniformi(loc, context!!.textureBinder.bind((specTexture as TextureAttribute).textureDescription.texture))
+            program.setUniformi(loc, context.textureBinder.bind((specTexture as TextureAttribute).textureDescription.texture))
         }
 
         program.setUniformMatrix("u_worldTrans", renderable.worldTransform ?: Matrix4())

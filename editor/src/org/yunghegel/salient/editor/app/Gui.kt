@@ -10,9 +10,8 @@ import org.yunghegel.salient.editor.ui.assets.AssetsView
 import org.yunghegel.salient.editor.ui.project.ProjectView
 import org.yunghegel.salient.editor.ui.scene.SceneManagementView
 import org.yunghegel.salient.editor.ui.scene.SceneView
-import org.yunghegel.salient.editor.ui.scene.graph.SceneGraphTree
-import org.yunghegel.salient.engine.io.Memory
-import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.system.perf.Memory
+import org.yunghegel.salient.engine.system.inject
 
 import org.yunghegel.salient.engine.ui.layout.EditorFrame
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
@@ -70,8 +69,11 @@ class Gui : EditorFrame() {
         val fpsLabel = SLabel("FPS","default") {
             "${Gdx.graphics.framesPerSecond}"
         }
-        addFooterItem(PercentageIndicator(""){Memory.getPercentage(type =  Memory.Type.GL)}.apply{
-            textTooltip("Used: ${trimFloat(Memory.getUsedMemory(Memory.Units.GB,Memory.Type.GL))} / ${trimFloat(Memory.getMaxMemory(Memory.Units.GB,Memory.Type.GL))} GB").apply {
+        addFooterItem(PercentageIndicator(""){ Memory.getPercentage(type =  Memory.Type.GL)}.apply{
+            textTooltip("Used: ${trimFloat(Memory.getUsedMemory(Memory.Units.GB, Memory.Type.GL))} / ${trimFloat(
+                Memory.getMaxMemory(
+                    Memory.Units.GB,
+                    Memory.Type.GL))} GB").apply {
                 actor.setAlignment(Align.left)
             } }).padHorizontal(10f)
 

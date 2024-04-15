@@ -5,7 +5,6 @@ class FilesTests {
 
     @Test fun test_classpath() = headlessTest {
         val file = Texture("icon.png")
-        println("${file.depth}, ${file.width}, ${file.height}")
     }
 
 }

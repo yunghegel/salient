@@ -1,4 +1,3 @@
 package org.yunghegel.salient.engine.events
 
-open class Event {
-}
+open class Event

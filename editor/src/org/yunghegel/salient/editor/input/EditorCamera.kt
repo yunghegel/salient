@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.Ray
 import com.badlogic.gdx.utils.viewport.Viewport
-import org.yunghegel.salient.editor.app.dto.datatypes.Vector3Data
+import org.yunghegel.salient.engine.api.dto.datatypes.Vector3Data
 
 class EditorCamera(var perspectiveCamera: PerspectiveCamera, var viewport: Viewport) {
 
@@ -27,14 +27,14 @@ class EditorCamera(var perspectiveCamera: PerspectiveCamera, var viewport: Viewp
         PerspectiveCameraController(perspectiveCamera, viewport)
 
     data class Config(
-            var velocity: Float = 30f,
-            val target: Vector3Data = Vector3Data(
+        var velocity: Float = 30f,
+        val target: Vector3Data = Vector3Data(
                 0f,
                 0f,
                 0f
                                                  ),
-            var distanceToHome: Float = 10f,
-            var homeTarget: Vector3Data = Vector3Data(
+        var distanceToHome: Float = 10f,
+        var homeTarget: Vector3Data = Vector3Data(
                 0f,
                 0f,
                 0f

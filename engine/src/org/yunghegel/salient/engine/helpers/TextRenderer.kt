@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import org.yunghegel.salient.engine.graphics.DebugDrawer
-import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.UI
 
 

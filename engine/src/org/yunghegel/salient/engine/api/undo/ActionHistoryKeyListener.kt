@@ -3,7 +3,7 @@ package org.yunghegel.salient.engine.api.undo
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputAdapter
-import org.yunghegel.salient.engine.io.debug
+import org.yunghegel.salient.engine.system.debug
 
 class ActionHistoryKeyListener(val history: ActionHistory) : InputAdapter() {
 

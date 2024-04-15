@@ -2,8 +2,6 @@ package org.yunghegel.salient.engine.events
 
 import org.greenrobot.eventbus.Subscribe
 import org.yunghegel.salient.engine.api.model.ProjectHandle
-import org.yunghegel.salient.engine.api.project.EditorProject
-import org.yunghegel.salient.engine.events.Bus
 
 class ProjectDiscoveryEvent(val project:ProjectHandle) {
 

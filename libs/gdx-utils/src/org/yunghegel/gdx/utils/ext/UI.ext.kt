@@ -1,16 +1,21 @@
 package org.yunghegel.gdx.utils.ext
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.utils.Pools
 import com.kotcrab.vis.ui.widget.Tooltip
 import com.ray3k.stripe.PopTable
 import com.ray3k.stripe.PopTableClickListener
 import ktx.actors.onChange
 import ktx.actors.onClick
-import org.yunghegel.gdx.utils.ui.widgets.ColorBox
+import org.yunghegel.gdx.utils.ui.ColorBox
 import kotlin.math.log10
 
 const val CENTER = 1
@@ -23,7 +28,7 @@ const val TOP_RIGHT = 18
 const val BOTTOM_LEFT = 12
 const val BOTTOM_RIGHT = 20
 
-fun <T: Actor> T.addTip(conf: Table.() -> Unit) {
+fun <T: Actor> T.tip(conf: Table.() -> Unit) {
     val table = Table()
     table.conf()
 
@@ -271,4 +276,28 @@ fun dialog(content: Actor, title: String?,skin:Skin): Dialog {
     dialog.button("Close", dialog)
 
     return dialog
+}
+
+fun recurseTable( table: Table, task: (Actor)->Unit) {
+    for (child in table.children) {
+        task(child)
+        if (child is Table) {
+            recurseTable(child, task)
+        }
+    }
+}
+
+fun cancelAllInputFocus(stage: Stage) {
+    stage.actors.each { actor ->
+        val focusevent = Pools.obtain(InputEvent::class.java)
+        focusevent.type = InputEvent.Type.touchUp
+        val mouse =  stage.screenToStageCoordinates(Vector2(Gdx.input.x.toFloat(), Gdx.input.y.toFloat()))
+        focusevent.stageX = mouse.x
+        focusevent.stageY = mouse.y
+        actor.fire(focusevent)
+        stage.cancelTouchFocus(actor)
+        Pools.free(focusevent)
+    }
+    stage.setKeyboardFocus(null)
+    stage.setScrollFocus(null)
 }

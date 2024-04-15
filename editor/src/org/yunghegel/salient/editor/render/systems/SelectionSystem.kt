@@ -4,24 +4,15 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.Family
 import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.g3d.RenderableProvider
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
-import org.yunghegel.gdx.utils.ext.clearColor
-import org.yunghegel.gdx.utils.ext.clearDepth
-import org.yunghegel.gdx.utils.ext.each
 import org.yunghegel.salient.core.graphics.util.OutlineDepth
 import org.yunghegel.salient.core.graphics.util.OutlineRenderer
-import org.yunghegel.salient.editor.plugins.BaseSystem
 import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.engine.Pipeline
-import org.yunghegel.salient.engine.State
-import org.yunghegel.salient.engine.graphics.scene3d.GameObject
-import org.yunghegel.salient.engine.graphics.scene3d.component.RenderableComponent
 import org.yunghegel.salient.engine.graphics.scene3d.component.SelectedComponent
-import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.system.inject
 
 class SelectionSystem : IteratingSystem(Family.all(SelectedComponent::class.java).get()) {
 

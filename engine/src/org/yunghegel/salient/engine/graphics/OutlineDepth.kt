@@ -38,8 +38,8 @@ class OutlineDepth
         val size = 1 / this.size
 
         // float depthMin = ui.outlineDepthMin.getValue() * .001f;
-        val depthMin = depthMin.pow(10.0f) as Float // 0.35f
-        val depthMax = depthMax.pow(10.0f) as Float // 0.9f
+        val depthMin = depthMin.pow(10.0f) // 0.35f
+        val depthMax = depthMax.pow(10.0f) // 0.9f
 
         // TODO use an integer instead and divide w and h
         shader.setUniformf("u_size", Gdx.graphics.width * size, Gdx.graphics.height * size)

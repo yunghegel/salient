@@ -3,9 +3,7 @@ package org.yunghegel.salient.engine.graphics.scene3d
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.PerspectiveCamera
-import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g3d.ModelBatch
-import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import org.yunghegel.debug.AFTER_DEPTH
 import org.yunghegel.debug.DebugContext
 import org.yunghegel.debug.Drawable
@@ -16,10 +14,9 @@ import org.yunghegel.salient.engine.api.ecs.DEBUG_ALL
 import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.api.scene.EditorSceneGraph
 import org.yunghegel.salient.engine.api.scene.EditorSceneRenderer
-import org.yunghegel.salient.engine.events.lifecycle.onWindowResized
 import org.yunghegel.salient.engine.graphics.GenFrameBuffer
 import org.yunghegel.salient.engine.helpers.DepthBatch
-import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.system.inject
 
 class SceneRenderer<E:EditorScene,G:EditorSceneGraph>(val scene : E) : EditorSceneRenderer<E,G>, Resizable {
 

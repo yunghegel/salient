@@ -6,9 +6,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.kotcrab.vis.ui.util.ToastManager
 import org.yunghegel.gdx.utils.ext.*
-import org.yunghegel.salient.engine.events.scene.onSceneLoaded
-import org.yunghegel.salient.engine.events.ui.onLayoutChanged
-import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.layout.EditorFrame
 import java.util.*
 

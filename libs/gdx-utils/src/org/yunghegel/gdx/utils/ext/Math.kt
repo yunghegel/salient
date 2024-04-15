@@ -309,7 +309,7 @@ object MathUtils {
      * Returns the value of the first argument raised to the power of the second argument
      */
     fun pow(a: Float, b: Float): Float {
-        return a.pow(b) as Float
+        return a.pow(b)
     }
 
     /**

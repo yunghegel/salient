@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.math.Rectangle
 import org.yunghegel.salient.engine.graphics.GridConfig
 import org.yunghegel.salient.engine.graphics.GridShader
-import org.yunghegel.salient.engine.io.singleton
+import org.yunghegel.salient.engine.system.singleton
 
 val vInfo1 = MeshPartBuilder.VertexInfo()
 val vInfo2 = MeshPartBuilder.VertexInfo()

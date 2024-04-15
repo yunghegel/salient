@@ -3,12 +3,9 @@ package org.yunghegel.salient.editor.app.configs.ui
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.yunghegel.salient.editor.app.Gui
-import org.yunghegel.salient.editor.app.addResizer
 import org.yunghegel.salient.editor.app.configs.Configuration
-import org.yunghegel.salient.engine.api.Resizable
-import org.yunghegel.salient.engine.events.lifecycle.onWindowResized
-import org.yunghegel.salient.engine.io.inject
-import org.yunghegel.salient.engine.ui.UI
+import org.yunghegel.salient.engine.events.lifecycle.onEditorInitialized
+import org.yunghegel.salient.engine.system.inject
 
 @Serializable
 class UIConfig(
@@ -41,17 +38,13 @@ class UIConfig(
             }
         }
 
-
-        val cb = onWindowResized { event ->
-            if (configured) return@onWindowResized
-            val width = event.width.toFloat()
-            val height = event.height.toFloat()
+        onEditorInitialized {
             val gui : Gui = inject()
             gui.split.setSplitInternal(0, leftLayout.splitAmount)
             gui.split.setSplitInternal(1, rightLayout.splitAmount)
-            gui.centerSplit.setSplitAmount(bottomLayout.splitAmount)
-            configured = true
+            gui.centerSplit.setSplitAmount(bottomLayout.splitAmount)  }
         }
-    }
+
+
 
 }

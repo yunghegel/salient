@@ -13,7 +13,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import net.mgsx.gltf.scene3d.lights.PointLightEx
 import net.mgsx.gltf.scene3d.lights.SpotLightEx
-import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.system.inject
 
 
 import kotlin.math.cbrt

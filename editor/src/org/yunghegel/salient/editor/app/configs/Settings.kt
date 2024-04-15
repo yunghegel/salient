@@ -1,16 +1,20 @@
 package org.yunghegel.salient.editor.app.configs
 
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
+import ktx.async.KtxAsync
+import ktx.async.onRenderingThread
 import org.yunghegel.salient.editor.app.configs.camera.InputConfiguration
 import org.yunghegel.salient.editor.app.configs.graphics.GraphicsConfiguration
 import org.yunghegel.salient.editor.app.configs.ui.UIConfig
-import org.yunghegel.salient.editor.app.storage.Serializer
 import org.yunghegel.salient.engine.events.lifecycle.onShutdown
-import org.yunghegel.salient.engine.io.Paths
+import org.yunghegel.salient.engine.helpers.Serializer
+import org.yunghegel.salient.engine.system.file.Paths
 import org.yunghegel.salient.modules.io.shared.config.IOConfiguration
+import java.io.File
 
 @Serializable
 data class Settings(
@@ -20,14 +24,18 @@ data class Settings(
     var ui: UIConfig = UIConfig()
 ) {
 
-    init {
-        onShutdown {
-            save()
-        }
+    @Transient
+    val saveThread = Thread {
+        save()
     }
 
-    @Transient
-    val config_file = Paths.CONFIG_FILEPATH.handle.file()
+    init {
+        onShutdown {
+
+        }
+        Runtime.getRuntime().addShutdownHook(saveThread)
+    }
+
 
     @Transient
     val configurations: List<Configuration> = listOf(input, graphics, io, ui)
@@ -46,20 +54,26 @@ data class Settings(
             config_file.createNewFile()
             config_file.writeText(yaml.encodeToString(this))
         }
-        println("Settings: ${yaml.encodeToString(this)}}")
     }
 
     fun save() {
-        println("Saving settings...")
-        val yaml = Serializer.yaml
-        configurations.forEach { it.sync() }
+        KtxAsync.launch {
+            onRenderingThread {
+                val yaml = Serializer.yaml
+                configurations.forEach { config->
+                    config.sync()
+                }
 
-        config_file.writeText(yaml.encodeToString(this))
+                config_file.writeText(yaml.encodeToString(this))
+            }
+        }
     }
 
     companion object {
 
+        val config_file = File("${Paths.USER_HOME}/.salient/salient.config")
+
         @JvmStatic
-        val i: Settings by lazy { Settings().apply { configure() } }
+        var i: Settings = Settings()
     }
 }

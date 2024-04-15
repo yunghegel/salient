@@ -1,6 +1,6 @@
 package org.yunghegel.salient.engine.api.undo
 
-import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.system.inject
 
 abstract class Action {
 

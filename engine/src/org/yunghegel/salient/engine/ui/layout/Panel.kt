@@ -9,17 +9,20 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.Separator
+import org.yunghegel.gdx.utils.ext.padHorizontal
 import org.yunghegel.salient.engine.ui.Icons
 import org.yunghegel.salient.engine.ui.UI
+import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
-import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 
 
-open class Panel() : STable() {
+open class Panel : STable() {
 
-    internal var titleTable: TitleTable
-    internal var bodyTable: STable
+    var titleTable: TitleTable = TitleTable()
+    internal var bodyTable: STable = STable()
+
+    var titleText: String? = null
 
     var hidden = false
 
@@ -49,28 +52,36 @@ open class Panel() : STable() {
         titleTable.createIcon(drawable)
     }
 
-    fun createTitle(title: String,category:String) {
+    fun createTitleActor(actor: Actor,conf: (Cell<*>)->Unit = {}) {
+        titleTable.createActor(actor,conf)
+    }
+
+    fun createTitle(title: String,category:String="") {
+        this.titleText = title
         titleTable.createTitle(title,category)
     }
 
     fun addButton(button: Button) {
         titleTable.addButton(button)
     }
-
     init {
-        align(Align.left)
-        titleTable = TitleTable()
+        build()
+    }
+    internal fun build() {
+        clearChildren()
+        align(Align.topLeft)
         titleTable.align(Align.left)
-        addInternal(titleTable)!!.growX().left().height(24f)
+        addInternal(titleTable)!!.growX().left().height(if (titleTable.titleName ==null) 10f else 26f)
         row()
         addInternal(Separator())!!.growX().row()
-        bodyTable = STable()
         bodyTable.align(Align.topLeft)
         addInternal(bodyTable)!!.grow().row()
         bodyTable.touchable = Touchable.enabled
     }
 
-    internal class TitleTable : STable() {
+
+
+    inner class TitleTable : STable() {
 
         val container = STable()
 
@@ -81,6 +92,7 @@ open class Panel() : STable() {
 
         var icon : ImageButton? = null
         var title : SLabel? = null
+        var actors = mutableMapOf<Actor,(Cell<*>)->Unit>()
 
         var buttons = mutableListOf<Button>()
 
@@ -89,7 +101,7 @@ open class Panel() : STable() {
         val iconifyWindow = ImageButton(Icons.WINDOW_ICONIFY.drawable)
 
         init {
-            add(container).growX().left().pad(2f)
+            add(container).growX().left()
             container.align(Align.left)
             setBackground("dark-gray")
             iconifyWindow.style.down = Icons.WINDOW_ICONIFY_OVER.drawable
@@ -114,6 +126,11 @@ open class Panel() : STable() {
             rebuild()
         }
 
+        fun createActor(actor: Actor,conf: (Cell<*>) -> Unit) {
+            actors[actor] = conf
+            rebuild()
+        }
+
         fun createTitle(title: String,category:String) {
             this.category = category
             titleName = title
@@ -126,11 +143,13 @@ open class Panel() : STable() {
             rebuild()
         }
 
-        fun rebuild() {
+        private fun rebuild() {
+            build()
             container.clear()
             children.filterIsInstance<Button>().forEach { removeActor(it) }
             if(icon != null) container.add(icon).size(18f).pad(2f)
-            if(title != null) container.add(title).pad(2f)
+            if(title != null) container.add(title).pad(2f,6f,2f,2f)
+            actors.forEach { (key,value) -> add(key).height(20f).padHorizontal(6f).grow().run { value(this)} }
             buttons.forEach { add(it).pad(2f) }
 
         }

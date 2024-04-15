@@ -9,10 +9,10 @@ import org.yunghegel.salient.engine.events.lifecycle.onShutdown
 import org.yunghegel.salient.engine.events.project.onProjectChanged
 import org.yunghegel.salient.engine.events.scene.onSceneChanged
 import org.yunghegel.salient.engine.helpers.save
-import org.yunghegel.salient.engine.io.Paths
+import org.yunghegel.salient.engine.system.file.Paths
 
 @Serializable
-class Meta() {
+class Meta {
 
     init {
         onProjectChanged { event ->
@@ -24,7 +24,6 @@ class Meta() {
         }
         onShutdown {
             val content = Yaml.default.encodeToString(serializer(), this)
-            println("Saved Metafile --- \n${content}")
             save(Paths.SALIENT_METAFILE.path) { content }
         }
 
@@ -47,7 +46,7 @@ class Meta() {
 
     fun conf(action: Meta.() -> Unit) = this.apply(action)
 
-    fun pushRecentProject(project: ProjectHandle) {
+    private fun pushRecentProject(project: ProjectHandle) {
         if (recentProjects.contains(project)) recentProjects.remove(project)
         if (recentProjects.size >= 5) recentProjects.removeAt(0)
         recentProjects.add(project)

@@ -3,30 +3,25 @@ package org.yunghegel.salient.engine.graphics.scene3d
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.PerspectiveCamera
-import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.utils.DefaultTextureBinder
-import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext
 import com.badlogic.gdx.graphics.g3d.utils.ShapeCache
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.badlogic.gdx.utils.viewport.Viewport
-import net.mgsx.gltf.scene3d.shaders.PBRDepthShader
 import net.mgsx.gltf.scene3d.shaders.PBRDepthShaderProvider
-import net.mgsx.gltf.scene3d.shaders.PBRShaderConfig
 import org.yunghegel.debug.DebugContext
-import org.yunghegel.gdx.renderer.shader.PBRShaderProvider
-import org.yunghegel.gdx.renderer.shader.WireframeShader
 import org.yunghegel.salient.engine.api.scene.EditorScene
+import org.yunghegel.salient.engine.api.scene.SceneEnvironment
 import org.yunghegel.salient.engine.helpers.DepthBatch
 import org.yunghegel.salient.engine.helpers.Grid
 import org.yunghegel.salient.engine.helpers.WireBatch
-import org.yunghegel.salient.engine.io.inject
-import org.yunghegel.salient.engine.io.singleton
+import org.yunghegel.salient.engine.system.inject
+import org.yunghegel.salient.engine.system.singleton
 
 
-class SceneContext(private var scene:EditorScene) : Environment(), Disposable {
+class SceneContext(private var scene:EditorScene) : SceneEnvironment(), Disposable {
 
     val modelBatch: ModelBatch
     val depthBatch : DepthBatch
@@ -101,11 +96,7 @@ class SceneContext(private var scene:EditorScene) : Environment(), Disposable {
         viewport.update(width, height, true)
     }
 
-    companion object : RenderContext(DefaultTextureBinder(DefaultTextureBinder.ROUNDROBIN)) {
-
-
-
-    }
+    companion object : RenderContext(DefaultTextureBinder(DefaultTextureBinder.ROUNDROBIN));
 
     override fun dispose() {
         modelBatch.dispose()

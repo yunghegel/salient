@@ -5,7 +5,7 @@ package org.yunghegel.gdx
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration.GLEmulation
 import com.badlogic.gdx.graphics.Pixmap
-import org.yunghegel.gdx.renderer.mrt.*;
+import org.yunghegel.gdx.renderer.mrt.*
 import org.yunghegel.gdx.renderer.mrt.TextureAttachment.Companion.toFbo
 import org.yunghegel.gdx.util.TestApplication
 import org.yunghegel.gdx.util.launch
@@ -28,7 +28,7 @@ class EnumTextureAttachmentTest {
                 println(it.textureData.format)
                 assert(it.textureData.format == Pixmap.Format.RGBA8888)
             }
-        }, render = {}).launch() { cfg -> cfg.setOpenGLEmulation(GLEmulation.GL32,3,2)}
+        }, render = {}).launch { cfg -> cfg.setOpenGLEmulation(GLEmulation.GL32,3,2)}
 
 
     }
