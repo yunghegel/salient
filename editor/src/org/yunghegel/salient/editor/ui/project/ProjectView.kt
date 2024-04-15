@@ -1,10 +1,9 @@
 package org.yunghegel.salient.editor.ui.project
 
-import org.yunghegel.gdx.utils.ext.TOP
 import org.yunghegel.gdx.utils.ext.TOP_LEFT
 import org.yunghegel.salient.editor.project.Project
-import org.yunghegel.salient.engine.io.Paths
-import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.system.file.Paths
+import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.scene2d.STable
 
 class ProjectView : STable() {

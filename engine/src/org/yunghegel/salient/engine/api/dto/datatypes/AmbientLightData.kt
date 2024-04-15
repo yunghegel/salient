@@ -1,11 +1,12 @@
-package org.yunghegel.salient.editor.app.dto.datatypes
+package org.yunghegel.salient.engine.api.dto.datatypes
 
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import kotlinx.serialization.Serializable
-import org.yunghegel.salient.editor.app.dto.DTOAdapter
+import org.yunghegel.salient.engine.api.dto.DTOAdapter
 
 @Serializable
-data class AmbientLightData(val color: ColorData = ColorData(), val intensity: Float = 1f) : DTOAdapter<ColorAttribute,AmbientLightData> {
+data class AmbientLightData(val color: ColorData = ColorData(), val intensity: Float = 1f) :
+    DTOAdapter<ColorAttribute, AmbientLightData> {
 
     override fun fromDTO(dto: AmbientLightData): ColorAttribute {
         return ColorAttribute.createAmbient(dto.color.r,dto.color.g, dto.color.b, dto.intensity)

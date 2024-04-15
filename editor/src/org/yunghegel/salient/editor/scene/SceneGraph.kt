@@ -1,21 +1,17 @@
 package org.yunghegel.salient.editor.scene
 
 import com.badlogic.gdx.scenes.scene2d.utils.Selection
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import ktx.ashley.addComponent
 import org.yunghegel.gdx.utils.ext.each
-import org.yunghegel.salient.editor.app.Gui
+import org.yunghegel.salient.engine.api.dto.SceneGraphDTO
 import org.yunghegel.salient.engine.api.scene.EditorSceneGraph
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.scene.onGameObjectDeselected
 import org.yunghegel.salient.engine.events.scene.onGameObjectSelected
 import org.yunghegel.salient.engine.graphics.scene3d.GameObject
 import org.yunghegel.salient.engine.graphics.scene3d.component.SelectedComponent
-import org.yunghegel.salient.engine.graphics.scene3d.events.GameObjectAdded
 import org.yunghegel.salient.engine.graphics.scene3d.events.GameObjectAddedEvent
-import org.yunghegel.salient.engine.io.inject
-import org.yunghegel.salient.engine.ui.UI
+import org.yunghegel.salient.engine.system.inject
 
 class SceneGraph(val scene:Scene):EditorSceneGraph {
 
@@ -23,19 +19,18 @@ class SceneGraph(val scene:Scene):EditorSceneGraph {
     private val gameObjects = mutableListOf<GameObject>()
 
     @Transient
-    override val root: GameObject = GameObject("root")
+    override var root: GameObject = GameObject("root",scene = scene)
 
 
     init {
         onGameObjectSelected { event ->
             event.go.each { go ->
-                println("selected ${go.name}")
                 go.add(SelectedComponent(go))
             }
         }
         onGameObjectDeselected { event ->
             event.gameObjects.each { go ->
-                println("deselected ${go.name}")
+
                 go.remove(SelectedComponent::class.java)
             }
         }
@@ -44,7 +39,9 @@ class SceneGraph(val scene:Scene):EditorSceneGraph {
     val selection : Selection<GameObject>
         get() = inject()
 
+    fun initialize(sceneGraphDTO: SceneGraphDTO) {
 
+    }
 
     override fun addGameObject(gameObject: GameObject, parent: GameObject?) {
         if(parent == null){
@@ -56,8 +53,9 @@ class SceneGraph(val scene:Scene):EditorSceneGraph {
     }
 
     fun newFromRoot(name:String): GameObject {
-        val go = GameObject(name)
+        val go = GameObject(name,scene = scene)
         addGameObject(go,root)
+        scene.manager.saveScene(scene)
         return go
     }
 
@@ -86,6 +84,17 @@ class SceneGraph(val scene:Scene):EditorSceneGraph {
     }
 
 
+    companion object  {
 
+        fun applyDTO(dto: SceneGraphDTO, scene:SceneGraph) {
+            scene.root = GameObject.fromDTO(dto.root,scene.scene)
+        }
+
+        fun toDTO(model: SceneGraph): SceneGraphDTO {
+            val dto = SceneGraphDTO()
+            dto.root = GameObject.toDTO(model.root)
+            return dto
+        }
+    }
 
 }

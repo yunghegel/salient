@@ -1,8 +1,8 @@
-package org.yunghegel.salient.editor.app.dto.datatypes
+package org.yunghegel.salient.engine.api.dto.datatypes
 
 import kotlinx.serialization.Serializable
 import net.mgsx.gltf.scene3d.lights.DirectionalLightEx
-import org.yunghegel.salient.editor.app.dto.DTOAdapter
+import org.yunghegel.salient.engine.api.dto.DTOAdapter
 
 @Serializable
 data class DirectionalLightData(

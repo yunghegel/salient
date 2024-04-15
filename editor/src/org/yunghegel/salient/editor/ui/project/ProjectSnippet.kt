@@ -2,7 +2,7 @@ package org.yunghegel.salient.editor.ui.project
 
 import org.yunghegel.salient.editor.project.Project
 import org.yunghegel.salient.engine.events.project.onProjectLoaded
-import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
 

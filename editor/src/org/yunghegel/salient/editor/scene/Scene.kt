@@ -1,22 +1,23 @@
 package org.yunghegel.salient.editor.scene
 
 import com.badlogic.gdx.files.FileHandle
-import kotlinx.serialization.Transient
-import org.yunghegel.salient.editor.app.dto.DTOAdapter
-import org.yunghegel.salient.editor.app.dto.SceneDTO
-import org.yunghegel.salient.editor.app.dto.SceneEnvironmentDTO
-import org.yunghegel.salient.editor.app.dto.datatypes.CameraData
+import org.yunghegel.salient.editor.asset.AssetManager
 import org.yunghegel.salient.editor.input.EditorCamera
 import org.yunghegel.salient.editor.project.Project
 import org.yunghegel.salient.engine.api.NamedObjectResource
+import org.yunghegel.salient.engine.api.dto.DTOAdapter
+import org.yunghegel.salient.engine.api.dto.SceneDTO
+import org.yunghegel.salient.engine.api.dto.datatypes.CameraData
 import org.yunghegel.salient.engine.api.model.SceneHandle
 import org.yunghegel.salient.engine.api.scene.EditorScene
+import org.yunghegel.salient.engine.api.scene.SceneEnvironment
+import org.yunghegel.salient.engine.events.lifecycle.onShutdown
 import org.yunghegel.salient.engine.graphics.scene3d.GameObject
 import org.yunghegel.salient.engine.graphics.scene3d.SceneContext
 import org.yunghegel.salient.engine.graphics.scene3d.SceneRenderer
 import org.yunghegel.salient.engine.graphics.scene3d.component.RenderableComponent
-import org.yunghegel.salient.engine.io.Paths
-import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.system.file.Paths
+import org.yunghegel.salient.engine.system.inject
 
 typealias SceneFile = FileHandle
 typealias SceneDirectory = FileHandle
@@ -29,12 +30,10 @@ class Scene(val handle:SceneHandle, val project: Project, val manager: SceneMana
 
     override val sceneGraph = SceneGraph(this)
 
-    @Transient
     override val context: SceneContext
-    @Transient
+
     override val renderer: SceneRenderer<Scene, SceneGraph>
 
-    @Transient
     val editorCamera : EditorCamera
 
     init {
@@ -42,6 +41,9 @@ class Scene(val handle:SceneHandle, val project: Project, val manager: SceneMana
         context.set(this)
         renderer = SceneRenderer(this)
         editorCamera = EditorCamera(inject(), inject())
+        onShutdown {
+            manager.saveScene(this)
+        }
 
     }
 
@@ -67,20 +69,25 @@ class Scene(val handle:SceneHandle, val project: Project, val manager: SceneMana
 
         override fun fromDTO(dto: SceneDTO) : Scene{
             val scene = Scene(dto.handle!!, inject(), inject())
-            dto.assetUsage.forEach { asset ->
-                scene.assetUsage.add(asset)
+            val assets : AssetManager = inject()
+            dto.assetIndex.forEach { asset ->
+                assets.includeAsset(asset,scene)
             }
-            CameraData.applyToCamera(scene.context.perspectiveCamera, dto.sceneContext.cameraSettings)
-            SceneEnvironmentDTO.applyToEnvironment(scene.context, dto.sceneContext.sceneEnvironment)
+            CameraData.applyDTO(scene.context.perspectiveCamera, dto.sceneContext.cameraSettings)
+            SceneEnvironment.applyDTO(scene.context, dto.sceneContext.sceneEnvironment)
+            SceneGraph.applyDTO(dto.sceneGraph,scene.sceneGraph)
             return scene
         }
 
         override fun toDTO(model: Scene): SceneDTO {
             val dto =  SceneDTO()
+            model.retrieveAssetIndex().forEach {
+                dto.assetIndex.add(it)
+            }
             dto.handle = model.handle
-            dto.assetUsage = Array(model.assetUsage.size) {model.assetUsage[it]}
-            dto.sceneContext.sceneEnvironment = dto.sceneContext.sceneEnvironment.toDTO(model.context)
+            dto.sceneContext.sceneEnvironment = SceneEnvironment.toDTO(model.context)
             dto.sceneContext.cameraSettings = CameraData.toDTO(model.context.perspectiveCamera)
+            dto.sceneGraph = SceneGraph.toDTO(model.sceneGraph)
 
             return dto
         }

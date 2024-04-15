@@ -1,4 +1,4 @@
-package org.yunghegel.salient.editor.app.dto
+package org.yunghegel.salient.engine.api.dto
 
 import kotlinx.serialization.Serializable
 

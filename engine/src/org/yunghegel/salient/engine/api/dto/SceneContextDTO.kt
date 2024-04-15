@@ -1,7 +1,7 @@
-package org.yunghegel.salient.editor.app.dto
+package org.yunghegel.salient.engine.api.dto
 
 import kotlinx.serialization.Serializable
-import org.yunghegel.salient.editor.app.dto.datatypes.CameraData
+import org.yunghegel.salient.engine.api.dto.datatypes.CameraData
 
 
 @Serializable

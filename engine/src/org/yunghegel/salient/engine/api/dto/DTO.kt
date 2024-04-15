@@ -1,6 +1,4 @@
-package org.yunghegel.salient.editor.app.dto
-
-import kotlinx.serialization.Serializable
+package org.yunghegel.salient.engine.api.dto
 
 interface DTOAdapter<Source,Model> {
 

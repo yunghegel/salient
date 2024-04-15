@@ -1,28 +1,32 @@
 package org.yunghegel.salient.editor.project
 
 import com.charleskorn.kaml.Yaml
-import org.yunghegel.salient.editor.app.dto.ProjectDTO
+import org.yunghegel.salient.editor.asset.AssetManager
 import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.editor.scene.SceneManager
 import org.yunghegel.salient.engine.api.Default
 import org.yunghegel.salient.engine.api.EditorProjectManager
+import org.yunghegel.salient.engine.api.dto.ProjectDTO
 import org.yunghegel.salient.engine.api.model.ProjectHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.lifecycle.onShutdown
 import org.yunghegel.salient.engine.events.project.ProjectChangedEvent
+import org.yunghegel.salient.engine.events.project.ProjectCreatedEvent
 import org.yunghegel.salient.engine.events.project.ProjectLoadedEvent
 import org.yunghegel.salient.engine.events.project.ProjectSavedEvent
 import org.yunghegel.salient.engine.helpers.save
-import org.yunghegel.salient.engine.io.Filepath
-import org.yunghegel.salient.engine.io.Filepath.Companion.pathOf
-import org.yunghegel.salient.engine.io.Paths
-import org.yunghegel.salient.engine.io.inject
+import org.yunghegel.salient.engine.system.file.Filepath
+import org.yunghegel.salient.engine.system.file.Filepath.Companion.pathOf
+import org.yunghegel.salient.engine.system.file.Paths
+import org.yunghegel.salient.engine.system.info
+import org.yunghegel.salient.engine.system.inject
 
 
 class ProjectManager : EditorProjectManager<Project,Scene>, Default<Project> {
 
-    val sceneManager : SceneManager by lazy { inject() }
+    private val sceneManager : SceneManager by lazy { inject() }
+    private val assetManager : AssetManager by lazy { inject() }
 
     override var currentProject: Project? = null
         set(value) {
@@ -30,6 +34,9 @@ class ProjectManager : EditorProjectManager<Project,Scene>, Default<Project> {
             val old = field
             field = value
             post(ProjectChangedEvent(old, value))
+        }
+        get() {
+            return field
         }
 
     init {
@@ -39,12 +46,10 @@ class ProjectManager : EditorProjectManager<Project,Scene>, Default<Project> {
 
     }
 
-    override fun loadProject(file: Filepath, setCurrent:Boolean): Project {
+    override fun loadProject(file: Filepath): Project {
         val handle = ProjectHandle(file.name,file)
         val project = Project(handle,this)
-        currentProject = project
         post(ProjectLoadedEvent(project))
-        if (setCurrent) initialize(project)
         return project
     }
 
@@ -53,8 +58,7 @@ class ProjectManager : EditorProjectManager<Project,Scene>, Default<Project> {
         val path = project.file.pathOf()
         path.mkfile()
         val data = Yaml.default.encodeToString(ProjectDTO.serializer(),dto)
-        println("SERIALIZING PROJECT: \n$data")
-        println(project.handle.path)
+        info("Saving project ${project.handle.name}")
         save(path.path) { data }
         project.sceneIndex.forEach { handle ->
             SceneHandle.saveToFile(handle,project)
@@ -66,17 +70,16 @@ class ProjectManager : EditorProjectManager<Project,Scene>, Default<Project> {
         post(ProjectSavedEvent(project))
     }
 
-    override fun createNew(name: String): ProjectHandle {
+    override fun createNew(name: String): Project {
         createDirectories(name)
         val handle = ProjectHandle(name, Paths.PROJECT_DIR_FOR(name))
         val project = Project(handle,this)
-        currentProject = project
-        post(ProjectLoadedEvent(project))
+        post(ProjectCreatedEvent(project))
         saveProject(project)
-        return handle
+        return project
     }
 
-    fun createDirectories(name: String) {
+    private fun createDirectories(name: String) {
         val projectDir = Paths.PROJECT_DIR_FOR(name)
         val sceneDir = Paths.SCENE_DIR_FOR(name)
         val assetDir = Paths.PROJECT_SCOPE_ASSETS_DIR_FOR(name)
@@ -87,17 +90,14 @@ class ProjectManager : EditorProjectManager<Project,Scene>, Default<Project> {
         sceneIndices.mkdir()
     }
 
-    fun indexProject(project: Project) {
-        val handle = project.handle
-    }
 
     override fun initialize(project: Project) {
+        assetManager.initializeProject(project)
         currentProject = project
     }
 
     override fun createDefault(): Project {
-        createNew("default")
-        return currentProject!!
+        return createNew("default")
     }
 
 }

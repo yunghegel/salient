@@ -1,15 +1,13 @@
 package org.yunghegel.salient.engine.api.project
 
-import org.yunghegel.salient.engine.api.*
+import org.yunghegel.salient.engine.api.EditorProjectManager
+import org.yunghegel.salient.engine.api.NamedObjectResource
 import org.yunghegel.salient.engine.api.model.AssetHandle
-import org.yunghegel.salient.engine.api.model.ProjectHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
 import org.yunghegel.salient.engine.api.scene.EditorScene
-import org.yunghegel.salient.engine.io.debug
+import org.yunghegel.salient.engine.system.debug
 
-abstract class EditorProject<P:EditorProject<P,S>,S:EditorScene>(val handle: ProjectHandle, val projectManager: EditorProjectManager<P,S>) : NamedObjectResource by handle {
-
-
+abstract class EditorProject<P:EditorProject<P,S>,S:EditorScene>(val handle: org.yunghegel.salient.engine.api.model.ProjectHandle, val projectManager: EditorProjectManager<P,S>) : NamedObjectResource by handle {
 
     abstract var currentScene : S?
 

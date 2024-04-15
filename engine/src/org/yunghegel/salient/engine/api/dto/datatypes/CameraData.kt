@@ -1,9 +1,9 @@
-package org.yunghegel.salient.editor.app.dto.datatypes
+package org.yunghegel.salient.engine.api.dto.datatypes
 
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import kotlinx.serialization.Serializable
-import org.yunghegel.salient.editor.app.dto.DTOAdapter
+import org.yunghegel.salient.engine.api.dto.DTOAdapter
 
 @Serializable
 data class CameraData(
@@ -16,7 +16,7 @@ data class CameraData(
     val rotation: Vector3Data = Vector3Data.zero
 ) {
 
-    companion object : DTOAdapter<Camera,CameraData> {
+    companion object : DTOAdapter<Camera, CameraData> {
 
         override fun fromDTO(dto: CameraData): Camera {
             return toCamera(dto)
@@ -26,7 +26,7 @@ data class CameraData(
             return fromCamera(model)
         }
 
-        fun applyToCamera(cam: Camera, data: CameraData) {
+        fun applyDTO(cam: Camera, data: CameraData) {
             cam.view.set(Matrix4Data.toMat4(data.view))
             cam.projection.set(Matrix4Data.toMat4(data.projection))
             cam.near = data.near

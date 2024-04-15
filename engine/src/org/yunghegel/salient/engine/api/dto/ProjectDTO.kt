@@ -1,10 +1,10 @@
-package org.yunghegel.salient.editor.app.dto
+package org.yunghegel.salient.engine.api.dto
 
 import kotlinx.serialization.Serializable
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.model.ProjectHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
-import org.yunghegel.salient.engine.io.Filepath
+import org.yunghegel.salient.engine.system.file.Filepath
 
 @Serializable
 class ProjectDTO {

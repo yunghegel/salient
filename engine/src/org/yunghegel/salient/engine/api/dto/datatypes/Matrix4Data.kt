@@ -1,4 +1,4 @@
-package org.yunghegel.salient.editor.app.dto.datatypes
+package org.yunghegel.salient.engine.api.dto.datatypes
 
 import com.badlogic.gdx.math.Matrix4
 import kotlinx.serialization.KSerializer

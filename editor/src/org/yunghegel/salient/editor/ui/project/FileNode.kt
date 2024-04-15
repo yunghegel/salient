@@ -13,7 +13,6 @@ class FileNode(val file: FileHandle, val fileTable : FileTable = FileTable(file)
     init {
         isExpanded = true
         actor.onClick {
-            println("Clicked on $file")
             if (file.isDirectory) {
                 isExpanded = !isExpanded
             }
@@ -54,7 +53,7 @@ class FileNode(val file: FileHandle, val fileTable : FileTable = FileTable(file)
     }
 
     fun expand() {
-        if (children.isEmpty()) {
+        if (children.isEmpty) {
             file.list().forEach {
                 add(FileNode(it))
             }

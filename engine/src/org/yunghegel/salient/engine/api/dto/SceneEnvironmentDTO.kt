@@ -1,4 +1,4 @@
-package org.yunghegel.salient.editor.app.dto
+package org.yunghegel.salient.engine.api.dto
 
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
@@ -6,12 +6,13 @@ import com.badlogic.gdx.graphics.g3d.attributes.DirectionalLightsAttribute
 import kotlinx.serialization.Serializable
 import net.mgsx.gltf.scene3d.attributes.FogAttribute
 import net.mgsx.gltf.scene3d.lights.DirectionalLightEx
-import org.yunghegel.salient.editor.app.dto.datatypes.AmbientLightData
-import org.yunghegel.salient.editor.app.dto.datatypes.DirectionalLightData
-import org.yunghegel.salient.editor.app.dto.datatypes.FogData
+import org.yunghegel.salient.engine.api.dto.datatypes.AmbientLightData
+import org.yunghegel.salient.engine.api.dto.datatypes.DirectionalLightData
+import org.yunghegel.salient.engine.api.dto.datatypes.FogData
 
 @Serializable
-data class SceneEnvironmentDTO(var fogData: FogData = FogData(), var directionalLightData: DirectionalLightData = DirectionalLightData(), var ambientLightData: AmbientLightData = AmbientLightData()) : DTOAdapter<Environment,SceneEnvironmentDTO> {
+data class SceneEnvironmentDTO(var fogData: FogData = FogData(), var directionalLightData: DirectionalLightData = DirectionalLightData(), var ambientLightData: AmbientLightData = AmbientLightData()) :
+    DTOAdapter<Environment, SceneEnvironmentDTO> {
 
         override fun fromDTO(dto: SceneEnvironmentDTO): Environment {
             val env = Environment()

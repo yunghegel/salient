@@ -6,8 +6,8 @@ import kotlinx.serialization.Transient
 import org.yunghegel.salient.engine.api.NamedObjectResource
 import org.yunghegel.salient.engine.api.project.EditorProject
 import org.yunghegel.salient.engine.helpers.save
-import org.yunghegel.salient.engine.io.Filepath
-import org.yunghegel.salient.engine.io.Paths
+import org.yunghegel.salient.engine.system.file.Filepath
+import org.yunghegel.salient.engine.system.file.Paths
 
 @Serializable
 open class SceneHandle(override val name: String, override val path: Filepath, @Transient val serializerid: Int? = null, @Transient val serialuuid: String?=null, @Transient val proj: EditorProject<*,*>? = null) : NamedObjectResource {
@@ -39,17 +39,15 @@ open class SceneHandle(override val name: String, override val path: Filepath, @
 
         fun loadFromFile(path: Filepath, proj: EditorProject<*,*>) : SceneHandle {
             val string = Paths.SCENE_INDEX_FILEPATH_FOR(proj.name,path.handle.nameWithoutExtension())
-            println(string.path)
-            val handle = Yaml.default.decodeFromString<SceneHandle>(SceneHandle.serializer(), string.readString)
+            val handle = Yaml.default.decodeFromString<SceneHandle>(serializer(), string.readString)
             return handle
         }
 
         fun saveToFile(handle: SceneHandle,editorProj: EditorProject<*,*>) {
-            val data = Yaml.default.encodeToString(SceneHandle.serializer(), handle)
+            val data = Yaml.default.encodeToString(serializer(), handle)
             val filepath = Paths.SCENE_INDEX_FILEPATH_FOR(editorProj.name,handle.name)
             filepath.mkfile()
             save(filepath.path) { data }
-            println("SERIALIZED SCENE INDEX:\n$data")
         }
 
 

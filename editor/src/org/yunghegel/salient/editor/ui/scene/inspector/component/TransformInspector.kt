@@ -8,11 +8,10 @@ import ktx.actors.onChange
 import org.yunghegel.gdx.utils.ext.padHorizontal
 import org.yunghegel.salient.editor.ui.scene.inspector.ComponentInspector
 import org.yunghegel.salient.engine.graphics.scene3d.component.TransformComponent
-import org.yunghegel.salient.engine.ui.scene2d.SImage
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
-import org.yunghegel.salient.engine.ui.widgets.value.LabeledFloatField
+import org.yunghegel.salient.engine.ui.widgets.value.widgets.LabeledFloatField
 
 class TransformInspector() : ComponentInspector<TransformComponent, Matrix4>(TransformComponent::class.java,"Transform","transform_object") {
 
@@ -138,7 +137,7 @@ class TransformInspector() : ComponentInspector<TransformComponent, Matrix4>(Tra
 
     }
 
-    override fun populate(component: TransformComponent) {
+    override fun populate(component: TransformComponent?) {
 
     }
 
