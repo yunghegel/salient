@@ -2,6 +2,7 @@ package org.yunghegel.salient.editor.app
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.ApplicationAdapter
+import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.ModelInstance
@@ -32,7 +33,6 @@ import org.yunghegel.salient.engine.api.undo.ActionHistory
 import org.yunghegel.salient.engine.api.undo.ActionHistoryKeyListener
 import org.yunghegel.salient.engine.graphics.GFX
 import org.yunghegel.salient.engine.graphics.scene3d.component.*
-import org.yunghegel.salient.engine.io.debug
 import org.yunghegel.salient.engine.io.inject
 
 
@@ -40,7 +40,7 @@ import org.yunghegel.salient.engine.io.inject
  * Application entry point. Responsible for building all resource and rendering pipelines and bootstrapping the editor context
  */
 
-class Salient : ApplicationAdapter() {
+class Salient : Game() {
 
     val registry = Registry()
 
@@ -72,13 +72,13 @@ class Salient : ApplicationAdapter() {
         GFX.buildSharedContext()
         scene = app.bootstrap() ?: throw IllegalStateException("Scene not found")
 
-        addSystem(SelectionSystem())
 
         initSystems()
         buildPipeline()
 
         configureUI()
         configureInput()
+        addSystem(SelectionSystem())
 
         sampleSceneGraph(scene.sceneGraph)
         post(EditorInitializedEvent())
@@ -101,7 +101,6 @@ class Salient : ApplicationAdapter() {
      * @see push
      */
     fun buildPipeline() {
-
             push(INIT) { delta ->
                 clearColor()
                 clearDepth()
@@ -109,18 +108,18 @@ class Salient : ApplicationAdapter() {
             }
             push(UI_LOGIC,transition = {  }) { delta ->
                 ui.act()
-                gui.viewportWidget.update()
+                gui.scenePreview.update()
             }
             push(PREPARE_SCENE) { delta ->
                 scene.update(delta)
                 scene.renderer.prepareContext(scene.context,true)
             }
             push(BEFORE_DEPTH_PASS) { delta ->
-                scene.renderer.renderContext(scene.context)
+                gui.scenePreview.viewportWidget.updateViewport(false)
+//                scene.renderer.renderContext(scene.context)
             }
             push(DEPTH_PASS) { _ ->
                 scene.renderer.renderDepth(scene,scene.context)
-                gui.viewportWidget.viewportWidget.updateViewport(false)
             }
             push(BEFORE_COLOR_PASS) { _ ->
                 scene.renderer.prepareContext(scene.context,false)
@@ -133,7 +132,6 @@ class Salient : ApplicationAdapter() {
                 ui.viewport.apply()
                 ui.draw()
             }
-
     }
 
 
@@ -199,9 +197,9 @@ class Salient : ApplicationAdapter() {
 
     fun configureInput() {
         val viewportController = ViewportController()
-        viewportController.actor = gui.viewportWidget
-        gui.viewportWidget.addListener(viewportController)
-        gui.viewportWidget.addListener(viewportController.clickListener)
+        viewportController.actor = gui.scenePreview
+        gui.scenePreview.addListener(viewportController)
+        gui.scenePreview.addListener(viewportController.clickListener)
         val historyListener = ActionHistoryKeyListener(actionHistory)
         Input.addProcessor(historyListener)
         Input.addProcessor(UI)

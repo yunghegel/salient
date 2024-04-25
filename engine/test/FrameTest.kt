@@ -1,11 +1,14 @@
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Screen
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.kotcrab.vis.ui.VisUI
 import com.ray3k.stripe.FreeTypeSkin
 import ktx.app.clearScreen
+import org.yunghegel.gdx.utils.ext.Platform
 import org.yunghegel.gdx.utils.ext.clearColor
 import org.yunghegel.gdx.utils.ext.clearDepth
 import org.yunghegel.gdx.utils.ext.notnull
@@ -24,7 +27,7 @@ class FrameTest : ApplicationAdapter() {
 
     override fun create() {
         UI.init()
-        stage = Stage()
+        stage = Stage(ScreenViewport(),Platform.createSpriteBatch())
         Gdx.input.inputProcessor = stage
         root = EditorFrame()
         stage.addActor(root)

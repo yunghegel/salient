@@ -1,9 +1,7 @@
-
 varying vec2 v_texCoord;
 varying vec2 v_camPos;
 varying vec4 v_color;
-varying vec3 v_nearPoint;
-varying vec3 v_farPoint;
+
 varying vec3 v_positon;
 varying vec3 v_eyePos;
 
@@ -18,6 +16,8 @@ uniform mat4 u_viewTrans;
 
 uniform float u_near;
 uniform float u_far;
+
+//out vec4 fragColor;
 
 const vec3 planeNormal = vec3(0.0, 1.0, 0.0);
 

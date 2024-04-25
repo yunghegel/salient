@@ -16,7 +16,7 @@ class ProjectHandle(override val name:String, override val path: Filepath) : Nam
 
     override val uuid: String = generateUUID()
 
-    override val id: Int = generateId()
+    override val id: Long = generateId()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

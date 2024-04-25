@@ -14,11 +14,11 @@ import org.yunghegel.salient.engine.io.inject
 import java.util.*
 import kotlin.reflect.KClass
 
-class GameObject(name: String, id: Int? = null) : Spatial<GameObject>(name), Iterable<GameObject>, UpdateRoutine, Tagged {
+class GameObject(name: String, id: Long? = null) : Spatial<GameObject>(name), Iterable<GameObject>, UpdateRoutine, Tagged {
 
     override val tags: MutableSet<String> = mutableSetOf()
 
-    override val id: Int = id ?: generateID()
+    override val id: Long = id ?: generateID()
 
     val components : List<EntityComponent<*>>
         get() = getComponents().filterIsInstance<EntityComponent<*>>()

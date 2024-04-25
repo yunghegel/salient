@@ -21,6 +21,11 @@ jar {
     manifest {
         attributes 'Main-Class': "$mainClassName"
     }
+    packages.each { pkg->
+        dependsOn("${pkg.value}:jar")
+    }
+
+    dependsOn(":editor:jar")
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 

@@ -10,7 +10,6 @@ import org.yunghegel.salient.editor.ui.assets.AssetsView
 import org.yunghegel.salient.editor.ui.project.ProjectView
 import org.yunghegel.salient.editor.ui.scene.SceneManagementView
 import org.yunghegel.salient.editor.ui.scene.SceneView
-import org.yunghegel.salient.editor.ui.scene.graph.SceneGraphTree
 import org.yunghegel.salient.engine.io.Memory
 import org.yunghegel.salient.engine.io.inject
 
@@ -26,7 +25,7 @@ import org.yunghegel.salient.ui.container.Panel
 class Gui : EditorFrame() {
 
 
-    val viewportWidget : ViewportPanel
+    val scenePreview : ViewportPanel
     val appBar = AppBar()
     val projectView : ProjectView
 
@@ -47,7 +46,7 @@ class Gui : EditorFrame() {
     init {
         setFillParent(true)
 
-        viewportWidget = ViewportPanel(inject())
+        scenePreview = ViewportPanel(inject())
 
         projectView = ProjectView()
         logView = LogView()
@@ -66,7 +65,7 @@ class Gui : EditorFrame() {
         addCenter("terminal", "Terminal", console)
         addLeft("asset_manager", "Assets", assetsView)
         addRight("config_secondary","Scene Management",sceneManagementView)
-        setContent(viewportWidget,scene.name)
+        setContent(scenePreview,scene.name)
         val fpsLabel = SLabel("FPS","default") {
             "${Gdx.graphics.framesPerSecond}"
         }

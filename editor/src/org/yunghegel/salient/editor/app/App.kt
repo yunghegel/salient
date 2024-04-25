@@ -48,11 +48,8 @@ class App {
     internal val scene: Scene
         get() = inject()
 
-    internal lateinit var meta: Meta
+    private lateinit var meta: Meta
 
-    val appManagement: Triple<ProjectManager, SceneManager, AssetManager> = Triple(projectManager, sceneManager, assetManager)
-
-    val appState: Pair<Project, Scene>  by lazy {Pair(project, scene)}
 
     init {
         onEditorInitialized {

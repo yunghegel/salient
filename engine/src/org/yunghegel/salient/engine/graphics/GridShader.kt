@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g3d.shaders.BaseShader
 import com.badlogic.gdx.graphics.g3d.utils.BaseShaderProvider
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
+import de.damios.guacamole.gdx.graphics.ShaderCompatibilityHelper
 
 
 val vInfo1 = MeshPartBuilder.VertexInfo()
@@ -50,8 +51,11 @@ class GridShader(val config : GridConfig = GridConfig()) : BaseShader(){
     }
 
     init {
-        val vert = Gdx.files.internal(VERTEX_PATH).readString()
-        val frag = Gdx.files.internal(FRAGMENT_PATH).readString()
+        var vert = Gdx.files.internal(VERTEX_PATH).readString()
+        var frag = Gdx.files.internal(FRAGMENT_PATH).readString()
+
+
+
         program = ShaderProgram(vert, frag)
     }
 

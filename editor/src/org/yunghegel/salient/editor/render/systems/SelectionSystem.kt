@@ -14,6 +14,7 @@ import org.yunghegel.gdx.utils.ext.clearDepth
 import org.yunghegel.gdx.utils.ext.each
 import org.yunghegel.salient.core.graphics.util.OutlineDepth
 import org.yunghegel.salient.core.graphics.util.OutlineRenderer
+import org.yunghegel.salient.editor.app.Gui
 import org.yunghegel.salient.editor.plugins.BaseSystem
 import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.engine.Pipeline
@@ -36,6 +37,8 @@ class SelectionSystem : IteratingSystem(Family.all(SelectedComponent::class.java
 
     var fbo = FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.width, Gdx.graphics.height, true)
 
+    val gui : Gui = inject()
+
 
 
     override fun processEntity(entity: Entity?, deltaTime: Float) {
@@ -44,11 +47,11 @@ class SelectionSystem : IteratingSystem(Family.all(SelectedComponent::class.java
     }
 
     override fun update(deltaTime: Float) {
-//        pipeline.once(State.UI_PASS) {
-//            batch.begin()
-//            batch.draw(scene.renderer.depthFbo.colorBufferTexture, 0f, 0f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
-//            batch.end()
-//        }
+        pipeline.once(State.COLOR_PASS) {
+            batch.begin()
+            batch.draw(scene.renderer.depthFbo.colorBufferTexture, scene.context.viewport.screenX.toFloat(), 0f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
+            batch.end()
+        }
 
     }
 

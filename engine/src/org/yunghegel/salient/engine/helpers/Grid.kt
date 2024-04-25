@@ -23,7 +23,6 @@ val vInfo4 = MeshPartBuilder.VertexInfo()
 class Grid {
     lateinit var texture: Texture
     lateinit var region: TextureRegion
-    val spriteBatch = SpriteBatch()
     val config: GridConfig = GridConfig()
     var fbo: FrameBuffer = FrameBuffer(
         Pixmap.Format.RGBA8888,

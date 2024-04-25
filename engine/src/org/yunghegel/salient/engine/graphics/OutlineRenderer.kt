@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ScreenUtils
 import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider
+import org.yunghegel.gdx.utils.ext.Platform
 import org.yunghegel.salient.engine.graphics.GenFrameBuffer
 import org.yunghegel.salient.engine.graphics.scene3d.SceneContext
 
@@ -21,8 +22,8 @@ import org.yunghegel.salient.engine.graphics.scene3d.SceneContext
 class OutlineRenderer {
     private val depthBuffer: FrameBuffer
     private val depthBatch: ModelBatch
-    var batch: SpriteBatch = SpriteBatch()
-    var buf = GenFrameBuffer(true)
+    var batch: SpriteBatch = Platform.createSpriteBatch()
+    var buf = FrameBuffer(Pixmap.Format.RGBA8888,1920,1080,true)
     var modelInstance: RenderableProvider? = null
     var outlineShaderProgram: ShaderProgram
     var modelBatch: ModelBatch = ModelBatch()
@@ -56,8 +57,8 @@ class OutlineRenderer {
 
 
     fun captureFBO(context:SceneContext) {
-        buf.ensureFboSize(Gdx.graphics.width, Gdx.graphics.height)
-        buf.begin(context.viewport)
+//        buf.ensureFboSize(Gdx.graphics.width, Gdx.graphics.height)
+        buf.begin()
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
         context.modelBatch.begin(context.perspectiveCamera)
         context.modelBatch.render(renderables)
@@ -68,7 +69,7 @@ class OutlineRenderer {
     fun renderFBO() {
         batch.begin()
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
-        batch.draw(buf.fboTexture, 0f, 0f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
+        batch.draw(buf.colorBufferTexture, 0f, 0f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
         batch.end()
     }
 

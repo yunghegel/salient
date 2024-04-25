@@ -60,6 +60,10 @@ value class Filepath(val path:String) {
 
     fun isParentOf(other: Filepath) = other.path.startsWith(path)
 
+    override fun toString() = path
+
+    fun hashcode() = path.hashCode()
+
 
     companion object {
         fun String.pathOf() = Filepath(this)

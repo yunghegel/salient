@@ -25,7 +25,7 @@ class DebugDrawer {
 
     val renderer: ShapeRenderer by lazy { inject() }
     val font: BitmapFont   by lazy { inject() }
-    var batch: SpriteBatch = SpriteBatch()
+    val batch: SpriteBatch by lazy { inject() }
 
     fun drawWireDisc(position: Vector3, axis: Vector3, radius: Float) {
         begin()

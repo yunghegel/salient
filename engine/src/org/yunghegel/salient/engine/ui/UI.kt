@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.kotcrab.vis.ui.VisUI
 import com.ray3k.stripe.FreeTypeSkin
 import ktx.scene2d.Scene2DSkin
+import org.yunghegel.gdx.utils.ext.Platform
 import org.yunghegel.salient.engine.api.Resizable
 import org.yunghegel.salient.engine.io.singleton
 import org.yunghegel.salient.engine.io.info
@@ -17,7 +18,7 @@ import org.yunghegel.salient.engine.io.provide
 import org.yunghegel.salient.engine.ui.layout.EditorFrame
 import org.yunghegel.salient.engine.ui.widgets.notif.Notifications
 
-object UI : Stage(ScreenViewport()), Resizable {
+object UI : Stage(ScreenViewport(),Platform.createSpriteBatch()), Resizable {
 
     val viewport: ScreenViewport
     lateinit var skin : Skin

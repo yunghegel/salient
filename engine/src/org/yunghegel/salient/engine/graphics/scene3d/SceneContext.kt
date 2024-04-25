@@ -16,8 +16,7 @@ import net.mgsx.gltf.scene3d.shaders.PBRDepthShader
 import net.mgsx.gltf.scene3d.shaders.PBRDepthShaderProvider
 import net.mgsx.gltf.scene3d.shaders.PBRShaderConfig
 import org.yunghegel.debug.DebugContext
-import org.yunghegel.gdx.renderer.shader.PBRShaderProvider
-import org.yunghegel.gdx.renderer.shader.WireframeShader
+
 import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.helpers.DepthBatch
 import org.yunghegel.salient.engine.helpers.Grid

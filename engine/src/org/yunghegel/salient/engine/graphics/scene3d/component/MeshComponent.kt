@@ -16,7 +16,7 @@ import org.yunghegel.salient.engine.helpers.WireBatch
 
 class MeshComponent(mesh:GdxArray<Mesh>,go: GameObject) : EntityComponent<Array<Mesh>>(null, mesh,go), Drawable,Icon by icon("mesh"){
 
-    override val renderer: Boolean = true
+    override val renderer: Boolean = false
 
     override val mask: Int = maskOf(RENDER, IS_3D, AFTER_DEPTH)
 
@@ -27,13 +27,13 @@ class MeshComponent(mesh:GdxArray<Mesh>,go: GameObject) : EntityComponent<Array<
 
 
     override fun renderDebug(debugContext: DebugContext) {
-        batch.begin(debugContext.camera)
-        batch.render(model)
-        batch.end()
+
     }
 
     override fun render(batch: ModelBatch, camera: Camera, context: SceneContext) {
-
+        batch.begin(context.perspectiveCamera)
+        batch.render(model)
+        batch.end()
     }
 
 

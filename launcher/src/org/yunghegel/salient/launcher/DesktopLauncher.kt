@@ -52,7 +52,7 @@ object DesktopLauncher {
                     stencil_bits.value,
                     graphics.video.antiAliasing.value
                 )
-                config.setOpenGLEmulation(gl_emulation, gles_major_version, gles_minor_version)
+//                config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL30, 3, 2)
             }
             with(graphics.video) {
                 config.setIdleFPS(idle_fps)

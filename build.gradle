@@ -132,6 +132,11 @@ subprojects {
 
     }
 
+    sourceSets.each { sourceSet ->
+        println(sourceSet.name)
+    }
+
+
     kotlin {
         jvmToolchain(11)
         compileKotlin{
@@ -204,11 +209,36 @@ subprojects {
         implementation("org.greenrobot:eventbus-java:3.3.1")
         implementation "com.github.tommyettinger:textratypist:0.8.0"
         implementation 'com.github.raeleus.TenPatch:tenpatch:5.2.3'
+        implementation "com.github.crykn.guacamole:gdx:$guacamoleVersion"
     }
 
 }
 
+task run(dependsOn: classes, type: JavaExec) {
+    main("${project(":launcher").mainClassName}")
+    classpath = project(":launcher").sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    workingDir = workingDir
+    ignoreExitValue = true
+    if (System.properties['os.name'].toLowerCase().contains('mac')) {
+        jvmArgs "-XstartOnFirstThread"
+        jvmArgs "-Djava.awt.headless=true"
+    }
+}
 
+task debugSourceSets {
+    doLast {
+        sourceSets.each { sourceSet ->
+            println(sourceSet.name)
+            println(sourceSet.java.srcDirs)
+            println(sourceSet.resources.srcDirs)
+        }
+        kotlin.each { obj ->
+            println(obj.key)
+            println(obj.value)
+        }
+    }
+}
 
 
 

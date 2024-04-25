@@ -12,7 +12,7 @@ import org.yunghegel.salient.engine.io.Filepath
 @Serializable
 class AssetHandle(val pth: String) : Resource,ID,Named {
 
-    override val id: Int = generateID()
+    override val id: Long = generateID()
 
     override val path: Filepath = Filepath(pth)
 

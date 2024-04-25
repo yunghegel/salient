@@ -3,3 +3,9 @@ dependencies {
         api project (pkg.value)
     }
 }
+
+jar {
+    packages.each { pkg ->
+        dependsOn("${pkg.value}:jar")
+    }
+}

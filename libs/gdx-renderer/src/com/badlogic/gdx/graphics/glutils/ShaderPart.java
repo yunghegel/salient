@@ -20,9 +20,5 @@ public class ShaderPart {
         this.source = source;
     }
 
-    public ShaderPart(ShaderStage stage, FileHandle file) {
-        String source = file.readString();
-        this.stage = stage;
-        this.source = source;
-    }
+
 }

@@ -10,13 +10,13 @@ import org.yunghegel.salient.engine.io.Filepath
 import org.yunghegel.salient.engine.io.Paths
 
 @Serializable
-open class SceneHandle(override val name: String, override val path: Filepath, @Transient val serializerid: Int? = null, @Transient val serialuuid: String?=null, @Transient val proj: EditorProject<*,*>? = null) : NamedObjectResource {
+class SceneHandle(override val name: String, override val path: Filepath, @Transient val serializerid: Long? = null, @Transient val serialuuid: String?=null, @Transient val proj: EditorProject<*,*>? = null) : NamedObjectResource {
 
     init {
         proj?.indexScene(this)
     }
 
-    override val id: Int = serializerid ?: generateID()
+    override val id: Long = serializerid ?: generateID()
 
     override val uuid: String = serialuuid ?: generateUUID()
 
@@ -33,6 +33,14 @@ open class SceneHandle(override val name: String, override val path: Filepath, @
         if (uuid != other.uuid) return false
 
         return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + path.hashCode()
+        result = 31 * result + id.hashCode()
+        result = 31 * result + uuid.hashCode()
+        return result
     }
 
     companion object {

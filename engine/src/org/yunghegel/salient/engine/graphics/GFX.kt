@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import dev.lyze.gdxtinyvg.utils.WhitePixelUtils
+import org.apache.commons.lang3.SystemUtils
+import org.yunghegel.gdx.utils.ext.Platform
 import org.yunghegel.salient.engine.helpers.Grid
 import org.yunghegel.salient.engine.io.singleton
 import org.yunghegel.salient.engine.io.Log.info
@@ -26,11 +28,11 @@ object GFX : Graphics by Gdx.graphics, GL32 by Gdx.gl32 {
     fun buildSharedContext() {
 
         whitePixel = WhitePixelUtils.createWhitePixelTexture()
-        spriteBatch = SpriteBatch()
+        spriteBatch = if (SystemUtils.IS_OS_MAC) Platform.createSpriteBatch() else SpriteBatch()
         debugDrawer = DebugDrawer()
         shapeDrawer = ShapeDrawer(spriteBatch)
         grid = Grid()
-        shapeRenderer = ShapeRenderer()
+        shapeRenderer = if (SystemUtils.IS_OS_MAC) Platform.createShapeRenderer() else ShapeRenderer()
 
         singleton(spriteBatch)
         singleton(shapeDrawer)

@@ -6,4 +6,4 @@ rootProject.name = 'salient'
 include 'launcher', 'editor', 'libs', 'engine'
 
 
-include 'libs:gdx-utils', 'libs:gdx-debug','libs:gdx-renderer'
+include 'libs:gdx-utils', 'libs:gdx-debug'

@@ -38,7 +38,7 @@ class GenFrameBuffer : Disposable {
             // frameBufferBuilder.addColorTextureAttachment(GL30.GL_RGB8, GL30.GL_RGB, GL30.GL_UNSIGNED_BYTE);
             // frameBufferBuilder.addColorTextureAttachment(GL30.GL_RGB8, GL30.GL_RGB, GL30.GL_UNSIGNED_BYTE);
             frameBufferBuilder.addDepthTextureAttachment(GL30.GL_DEPTH_COMPONENT, GL30.GL_UNSIGNED_SHORT)
-            frameBufferBuilder.addDepthRenderBuffer(GL30.GL_DEPTH_COMPONENT24)
+//            frameBufferBuilder.addDepthRenderBuffer(GL30.GL_DEPTH_COMPONENT24)
             fbo = frameBufferBuilder.build()
         }
     }

@@ -31,20 +31,23 @@ class SceneRenderer<E:EditorScene,G:EditorSceneGraph>(val scene : E) : EditorSce
     val pipeline: Pipeline = inject()
 
 
-    var depthFbo = GenFrameBuffer( Gdx.graphics.width, Gdx.graphics.height,true)
+
+
+
+    var depthFbo = FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.width, Gdx.graphics.height,true)
 
     init {
 
     }
 
     override fun renderGraph(scene: E, graph:G, context: SceneContext) {
-        renderDepth(scene, graph.root, context)
+        renderDepth(scene, graph.root)
         renderColor(scene, graph.root, context)
         renderDebug(scene, graph.root, context)
     }
 
     fun renderDepth(scene: E,context : SceneContext) {
-        renderDepth(scene, scene.sceneGraph.root, context)
+        renderDepth(scene, scene.sceneGraph.root)
     }
 
     fun renderColor(scene: E,context : SceneContext) {
@@ -55,10 +58,11 @@ class SceneRenderer<E:EditorScene,G:EditorSceneGraph>(val scene : E) : EditorSce
         renderDebug(scene, scene.sceneGraph.root, context)
     }
 
-    fun renderDepth(scene: E, go: GameObject, sceneContext: SceneContext) {
-        depthFbo.begin(sceneContext.viewport)
+    fun renderDepth(scene: E, go: GameObject) {
+        depthFbo.begin()
+        Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT or GL20.GL_COLOR_BUFFER_BIT)
         depthBatch.begin(camera)
-        go.render(Gdx.graphics.deltaTime,depthBatch,sceneContext)
+        go.render(Gdx.graphics.deltaTime,depthBatch,scene.context)
         depthBatch.end()
         depthFbo.end()
     }
@@ -125,7 +129,6 @@ class SceneRenderer<E:EditorScene,G:EditorSceneGraph>(val scene : E) : EditorSce
     }
 
     override fun resize(width: Int, height: Int) {
-        depthFbo.ensureFboSize(width, height)
     }
 
 }

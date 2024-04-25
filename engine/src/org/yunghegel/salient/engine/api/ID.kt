@@ -9,13 +9,21 @@ interface ID {
 
     val uuid: String
 
-    val id: Int
+    val id: Long
 
     fun ID.generateUUID(): String {
         return UUID.randomUUID().toString()
     }
 
-    fun ID.generateID(): Int {
+    fun ID.uuidFrom(str: String): String {
+        return UUID.fromString(str).toString()
+    }
+
+    fun ID.idFrom(str:String): Int {
+        return str.hashCode()
+    }
+
+    fun ID.generateID(): Long {
         return _id++
     }
 
@@ -23,13 +31,13 @@ interface ID {
 
         val classCache = ObjectMap<Class<*>,Int>()
 
-        private var _id = 0
+        private var _id = 0L
 
-        fun ID.generateId(): Int {
+        fun ID.generateId(): Long {
             if (classCache.containsKey(this::class.java)) {
                val id = classCache[this::class.java] + 1
                 classCache.put(this::class.java,id)
-                return id
+                return id.toLong()
             } else {
                 classCache.put(this::class.java,0)
                 return 0
