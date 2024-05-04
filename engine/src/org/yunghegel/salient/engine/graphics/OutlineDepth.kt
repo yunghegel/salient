@@ -6,17 +6,14 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
+import org.yunghegel.gdx.utils.ext.draw
+import org.yunghegel.salient.engine.graphics.OutlineSettings
 import kotlin.math.pow
 
 class OutlineDepth
-    (private val distanceFalloffEnabled: Boolean) {
-    private val shader: ShaderProgram
-    var distanceFalloff: Float = 1f
-    var size: Float = 2f
-    var depthMin: Float = .35f
-    var depthMax: Float = .9f
-    val insideColor: Color = Color(0f, 0f, 0f, .5f)
-    val outsideColor: Color = Color(0f, 0f, 0f, 1f)
+    (private val distanceFalloffEnabled: Boolean= false) {
+    val shader: ShaderProgram
+
 
     init {
         var prefix = ""
@@ -33,9 +30,10 @@ class OutlineDepth
         }
     }
 
+    context(OutlineSettings)
     fun render(batch: SpriteBatch, depthTexture: Texture?, camera: Camera) {
         shader.bind()
-        val size = 1 / this.size
+        val size = 1 / size
 
         // float depthMin = ui.outlineDepthMin.getValue() * .001f;
         val depthMin = depthMin.pow(10.0f) // 0.35f
@@ -57,9 +55,8 @@ class OutlineDepth
         }
 
         batch.shader = shader
-        batch.begin()
-        batch.draw(depthTexture, 0f, 0f, 1f, 1f, 0f, 0f, 1f, 1f)
-        batch.end()
+        depthTexture?.draw(batch)
         batch.shader = null
+
     }
 }

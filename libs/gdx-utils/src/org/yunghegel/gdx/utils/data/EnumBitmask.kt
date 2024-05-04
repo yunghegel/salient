@@ -20,7 +20,7 @@ fun interface PredicatedBitmaskAction<T : Enum<T>> {
     fun action(enum: T, value: Boolean)
 }
 
-class EnumBitmask<T : Enum<T>>(val enumClass: Class<T>) : BitmaskPredicate<T> {
+class EnumBitmask<T : Enum<T>>(val enumClass: Class<T>) : BitmaskPredicate<T> , Mask {
 
     fun getTrue(): EnumOrderedSet<T> {
         val set = EnumOrderedSet<T>(enumClass)
@@ -38,7 +38,7 @@ class EnumBitmask<T : Enum<T>>(val enumClass: Class<T>) : BitmaskPredicate<T> {
         return set
     }
 
-    var mask by observable(0)
+    override var mask by observable(0)
 
     fun set(enum: T, value: Boolean) {
         action {
@@ -94,11 +94,7 @@ class EnumBitmask<T : Enum<T>>(val enumClass: Class<T>) : BitmaskPredicate<T> {
         return copy
     }
 
-    fun forEach(action: (enum: T, value: Boolean) -> Unit) {
-        for (enum in enumClass.enumConstants) {
-            action(enum, get(enum))
-        }
-    }
+
 
     fun forEachTrue(action: BitmaskAction<T>) {
         for (enum in enumClass.enumConstants) {

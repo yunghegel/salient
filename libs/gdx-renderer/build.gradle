@@ -10,12 +10,18 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
     implementation "com.squidpony:squidlib-util:$squidlibVersion"
     implementation "com.squidpony:squidlib:$squidlibVersion"
+
+    implementation project(":libs:gdx-imgui")
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 sourceSets {
     main {
         resources {
-            srcDirs += ['assets']
+            srcDirs += ['assets',"${rootDir.path}"+"/editor/assets"]
         }
     }
 }

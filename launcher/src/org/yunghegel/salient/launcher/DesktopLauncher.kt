@@ -28,7 +28,6 @@ object DesktopLauncher {
             println("Config file found, loading")
             val config = config_file.readText()
             settings = yaml.decodeFromString(Settings.serializer(), config)
-
         }
         Settings.i = settings
     }

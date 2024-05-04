@@ -177,7 +177,6 @@ void main() {
             closeToZAxis=true;
         }
 
-    // Calculate grid line width for antialiasing
     float lineDistX = min(abs(fract(fragPos3D.x) - 0.5), abs(fract(fragPos3D.x - 0.5)));
     float lineDistZ = min(abs(fract(fragPos3D.z) - 0.5), abs(fract(fragPos3D.z - 0.5)));
     float lineWidthX = fwidth(fragPos3D.x) * dynamicThickness;
@@ -185,18 +184,12 @@ void main() {
     float alphaX = 1.0 - smoothstep(0.0, lineWidthX, lineDistX);
     float alphaZ = 1.0 - smoothstep(0.0, lineWidthZ, lineDistZ);
 
-    // Color and alpha assignment
     if (closeToXAxis) {
         gl_FragColor.xyz = axisColorX; // Full alpha for axes
     } else if (closeToZAxis) {
         gl_FragColor.xyz = axisColorZ;
     }
 
-//    if (closeToXAxis || closeToZAxis) {
-//        gl_FragColor.a = max(alphaX, alphaZ); // Antialiasing
-////        distance fallback
-//
-//    }
 
 
 

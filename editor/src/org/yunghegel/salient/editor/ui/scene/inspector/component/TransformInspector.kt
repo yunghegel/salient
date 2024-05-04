@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Align
 import ktx.actors.onChange
 import org.yunghegel.gdx.utils.ext.padHorizontal
 import org.yunghegel.salient.editor.ui.scene.inspector.ComponentInspector
-import org.yunghegel.salient.engine.graphics.scene3d.component.TransformComponent
+import org.yunghegel.salient.engine.scene3d.component.TransformComponent
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable

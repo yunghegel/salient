@@ -84,6 +84,37 @@ com.badlogic.gdx.graphics.Color: {
 		b: 1
 		a: 0.1
 	}
+	panel_title_tint: {
+		r: 0.3
+		g: 0.3
+		b: 0.3
+		a: 1
+	}
+	panel_body_tint:{
+		r: 0.4
+		g: 0.4
+		b: 0.4
+		a: 1
+	}
+
+	text_editor_bg: {
+		r: 0.11901961
+		g: 0.11901961
+		b: 0.11901961
+		a: 1
+	}
+	text_editor_gutter: {
+		r: 0.207
+		g: 0.207
+		b: 0.207
+		a: 1
+	}
+	text_editor_highlight: {
+		r: 0.28235295
+		g: 0.28235295
+		b: 0.28235295
+		a: 1
+	}
 }
 com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 	default: {
@@ -158,7 +189,7 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
 	}
 	mono: {
-		font: bmonofont.ttf
+		font: JetBrainsMono-Bold.ttf
 		size: 11
 		mono: false
 		color: white
@@ -169,11 +200,11 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		borderGamma: 1.8
 		shadowOffsetX: 0
 		shadowOffsetY: 0
-		spaceX: 0
+		spaceX: 1
 		spaceY: 0
 		kerning: true
 		flip: false
-		genMipMaps: false
+		genMipMaps: true
 		incremental: false
 		hinting: AutoFull
 		minFilter: Nearest
@@ -342,6 +373,26 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 		name: button-rounded-edge-over
 		color: half_alpha
 	}
+	panel_title_background: {
+		name:tab_down
+		color: panel_title_tint
+	}
+	panel_body_background: {
+		name:tab_panel
+		color: panel_body_tint
+	}
+	text_editor_background: {
+		name:white
+		color: text_editor_bg
+	}
+	text_editor_gutter: {
+		name:white
+		color: text_editor_gutter
+	}
+	text_editor_selection: {
+		name:white
+		color: text_editor_highlight
+	}
 }
 com.kotcrab.vis.ui.Sizes: {
 	default: {
@@ -424,7 +475,7 @@ com.kotcrab.vis.ui.widget.MenuItem$MenuItemStyle: {
 }
 com.kotcrab.vis.ui.widget.PopupMenu$PopupMenuStyle: {
 	default: {
-		background: selection-dark
+		background: button
 		border: border
 	}
 }
@@ -506,6 +557,15 @@ com.kotcrab.vis.ui.widget.VisTextField$VisTextFieldStyle: {
 		background: button-rounded-edge-over
 		backgroundOver: button-rounded-edge-blue
 		cursor: cursor
+	}
+	textArea: {
+		font:default
+		fontColor: white
+		disabledFontColor: gray
+		background: text_editor_background
+		selection: text_editor_selection
+		cursor: cursor
+
 	}
 }
 org.yunghegel.salient.engine.ui.scene2d.STree$TreeStyle: {
@@ -916,7 +976,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 		imageUp: stats
 	}
 	asset_manager: {
-		imageUp: AssetManager
+		imageUp: AssetService
 	}
 	config_secondary: {
 		imageUp: tile580
@@ -931,6 +991,19 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	}
 	find: {
 		imageUp: FindAll
+	}
+	ui_replace: {
+		imageUp: Replace
+	}
+
+	ui_swap: {
+		imageUp: UIListLayout
+		imageChecked: UITableLayout
+	}
+
+	explorer: {
+		imageUp: Explorer
+
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
@@ -977,6 +1050,13 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 		imageChecked: locked
 		font: default
 	}
+	ui_replace: {
+		imageUp: Replace
+	}
+	glsl_editor: {
+		imageUp: ScriptDocument
+		font: default
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
@@ -1021,6 +1101,15 @@ com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 		over: selection-dark
 		background: button-over
 	}
+
+	compact: {
+		font: default
+		fontColorSelected: white
+		fontColorUnselected: light_gray
+		selection: text_editor_selection
+		over: text_editor_gutter
+		background: text_editor_background
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 	default-horizontal: {
@@ -1047,6 +1136,14 @@ com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
 		scrollStyle: default
 		listStyle: default
 		backgroundOver: default-select-over
+	}
+
+	dark: {
+		background: button-rounded-edge-over
+		font: default-small
+		fontColor: white
+		scrollStyle: default
+		listStyle: compact
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
@@ -1119,10 +1216,11 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 		font: default
 	}
 	soft-blue: {
-		parent: rounded-soft
+		up: button-rounded-edge-down
 		font: default
-		fontColor: light_gray
-		over: button-rounded-edge-blue
+		fontColor: white
+		checkedFontColor: white
+		over: button-rounded-edge-over
 		checked: button-rounded-edge-blue
 	}
 	empty: {
@@ -1157,9 +1255,17 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	toast: {
 		font: default
 		fontColor: white
-		disabledFontColor: gray
 		background: button-rounded-edge-over
 		cursor: cursor
+	}
+	textArea: {
+		font:default
+		fontColor: white
+		disabledFontColor: gray
+		background: text_editor_background
+		selection: text_editor_selection
+		cursor: cursor
+
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
@@ -1176,8 +1282,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle: {
 	default: {
-		plus: progressbar-narrow
-		minus: select-down
+		plus: ArrowRight
+		minus: ArrowDown
 		over: button
 		selection: button-compact-blue
 		background: dark-gray
@@ -1204,6 +1310,15 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 		default: {
 			background: button-rounded-edge-down
 			closeButtonStyle: toast
+		}
+	}
+	org.yunghegel.salient.engine.ui.layout.Panel$PanelStyle: {
+		default: {
+			titleBackground: dark-gray
+		}
+		widget: {
+			background: panel_body_background
+			titleBackground: panel_title_background
 		}
 	}
 }

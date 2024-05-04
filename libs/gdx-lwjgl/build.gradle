@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.yunghegel.salient'
+version = '0.0.1'
+
+repositories {
+    mavenCentral()
+}
+test {
+    testLogging {
+        showStandardStreams = true
+    }
+}
+
+dependencies {
+    api platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+    implementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+    api "org.lwjgl:lwjgl-meshoptimizer"
+    implementation "org.lwjgl:lwjgl-meshoptimizer::$lwjglNatives"
+
+    api "org.lwjgl:lwjgl-nanovg"
+    implementation "org.lwjgl:lwjgl-nanovg::$lwjglNatives"
+
+    api "org.lwjgl:lwjgl-nfd"
+    implementation "org.lwjgl:lwjgl-nfd::$lwjglNatives"
+
+    api "org.lwjgl:lwjgl-par"
+    implementation "org.lwjgl:lwjgl-par::$lwjglNatives"
+
+    api "org.lwjgl:lwjgl-tinyfd"
+    implementation "org.lwjgl:lwjgl-tinyfd:$lwjglNatives"
+}

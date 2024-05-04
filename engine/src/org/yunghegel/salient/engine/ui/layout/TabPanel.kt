@@ -13,6 +13,7 @@ import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
+import org.yunghegel.salient.engine.ui.table
 import org.yunghegel.salient.engine.ui.widgets.notif.alert
 
 typealias NewTabFunction = () -> Pair<String,Actor>
@@ -21,15 +22,43 @@ class TabPanel(val factory: NewTabFunction? = null) : STable() {
 
     val tabs : MutableMap<String, Tab> = mutableMapOf()
 
+    private val actorsTable = table {
+        align(Align.right)
+        pad(0f,4f,0f,4f)
+    }
+
     private val tabTable = STable()
+
     val tabsContainer = STable()
     val addButton = SImageButton("Add","button-rounded-edge-over").apply {
         style.over = UI.skin.getDrawable("scroll")
     }
 
-
     private val highlight = UI.skin.getDrawable("white-pixel")
     private val content = STable()
+
+
+    fun addTitleActor(actor: Actor) {
+        actorsTable.add(actor).padHorizontal(3f).right().height(16f).padBottom(2f)
+    }
+
+    fun insertTitleActor(actor: Actor, last:Boolean) {
+        if (last) {
+            actorsTable.add(actor).padHorizontal(3f).right().height(16f).padBottom(2f)
+        } else {
+            val tmp = actorsTable.children.toMutableList()
+            actorsTable.clearChildren()
+            addTitleActor(actor)
+            tmp.forEach {
+                addTitleActor(it)
+            }
+
+        }
+    }
+
+    fun removeTitleActor(actor: Actor) {
+        actorsTable.removeActor(actor)
+    }
 
     var active : Tab? = null
         set(value) {
@@ -46,12 +75,18 @@ class TabPanel(val factory: NewTabFunction? = null) : STable() {
 
     init {
         align(Align.topLeft)
-        add(tabTable).height(18f).padTop(3f).growX().row()
+        add(tabTable).height(20f).padTop(3f).growX().row()
         add(Separator()).growX().height(1f).row()
         tabsContainer.align(Align.left)
         tabTable.align(Align.left)
-        tabTable.add(tabsContainer)
-        tabTable.add(addButton).padHorizontal(5f).size(16f).left()
+
+        val wrapper = table {
+            add(tabsContainer)
+            add(addButton).padHorizontal(5f).size(16f).left()
+        }
+        tabTable.add(wrapper)
+        tabTable.add(actorsTable).growX().row()
+
         add(content).grow().row()
 
         addButton.onClick {

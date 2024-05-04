@@ -24,16 +24,10 @@ data class Settings(
     var ui: UIConfig = UIConfig()
 ) {
 
-    @Transient
-    val saveThread = Thread {
-        save()
-    }
+
 
     init {
-        onShutdown {
 
-        }
-        Runtime.getRuntime().addShutdownHook(saveThread)
     }
 
 

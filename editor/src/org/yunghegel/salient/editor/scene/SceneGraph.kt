@@ -2,16 +2,19 @@ package org.yunghegel.salient.editor.scene
 
 import com.badlogic.gdx.scenes.scene2d.utils.Selection
 import kotlinx.serialization.Transient
+import mobx.core.autorun
 import org.yunghegel.gdx.utils.ext.each
+import org.yunghegel.salient.editor.ui.scene.graph.SceneGraphTree
 import org.yunghegel.salient.engine.api.dto.SceneGraphDTO
 import org.yunghegel.salient.engine.api.scene.EditorSceneGraph
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.scene.onGameObjectDeselected
 import org.yunghegel.salient.engine.events.scene.onGameObjectSelected
-import org.yunghegel.salient.engine.graphics.scene3d.GameObject
-import org.yunghegel.salient.engine.graphics.scene3d.component.SelectedComponent
-import org.yunghegel.salient.engine.graphics.scene3d.events.GameObjectAddedEvent
+import org.yunghegel.salient.engine.scene3d.GameObject
+import org.yunghegel.salient.engine.scene3d.component.SelectedComponent
+import org.yunghegel.salient.engine.scene3d.events.GameObjectAddedEvent
 import org.yunghegel.salient.engine.system.inject
+import org.yunghegel.salient.engine.system.singleton
 
 class SceneGraph(val scene:Scene):EditorSceneGraph {
 
@@ -21,8 +24,22 @@ class SceneGraph(val scene:Scene):EditorSceneGraph {
     @Transient
     override var root: GameObject = GameObject("root",scene = scene)
 
+    var sceneTree : SceneGraphTree? = null
+
+    val selection : Selection<GameObject> = Selection<GameObject>()
+
+    private val _selection : GameObject?
+        get() = selection.first()
 
     init {
+
+        autorun {
+            println("Selection: ${_selection?.name}")
+        }
+
+        singleton(selection)
+        selection.multiple = true
+
         onGameObjectSelected { event ->
             event.go.each { go ->
                 go.add(SelectedComponent(go))
@@ -30,17 +47,9 @@ class SceneGraph(val scene:Scene):EditorSceneGraph {
         }
         onGameObjectDeselected { event ->
             event.gameObjects.each { go ->
-
                 go.remove(SelectedComponent::class.java)
             }
         }
-    }
-
-    val selection : Selection<GameObject>
-        get() = inject()
-
-    fun initialize(sceneGraphDTO: SceneGraphDTO) {
-
     }
 
     override fun addGameObject(gameObject: GameObject, parent: GameObject?) {
@@ -50,6 +59,15 @@ class SceneGraph(val scene:Scene):EditorSceneGraph {
             parent.addChild(gameObject)
         }
         post(GameObjectAddedEvent(gameObject,parent))
+    }
+
+    private fun recurseGameObject(gameObject: GameObject, action: (GameObject) -> Unit) {
+        action(gameObject)
+        gameObject.getChildren().forEach { recurseGameObject(it, action) }
+    }
+
+    fun traverse(action: (GameObject) -> Unit) {
+        recurseGameObject(root, action)
     }
 
     fun newFromRoot(name:String): GameObject {
@@ -71,11 +89,16 @@ class SceneGraph(val scene:Scene):EditorSceneGraph {
         selection.add(gameObject)
     }
 
+    fun selectOnly(gameObject: GameObject) {
+        selection.clear()
+        selection.add(gameObject)
+    }
+
     fun deselect(gameObject: GameObject) {
         selection.remove(gameObject)
     }
 
-    fun clearSelection() {
+    fun selectNone() {
         selection.clear()
     }
 

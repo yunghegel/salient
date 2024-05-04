@@ -1,37 +1,70 @@
+import org.codehaus.groovy.runtime.GStringImpl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.internal.os.OperatingSystem
 
 buildscript {
-
     repositories {
         mavenCentral()
-        maven { url "https://plugins.gradle.org/m2/" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://s01.oss.sonatype.org" }
+        google()
         gradlePluginPortal()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots/" }
     }
-
     classpath(ext.build,buildscript)
 }
 
 
 plugins {
     id 'java'
+    id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
 }
 
 apply from: "$gradleHome/tests.gradle"
-apply from: "$gradleHome/libraries.gradle"
 apply from: "$gradleHome/dist.gradle"
+apply from: "gradle/project.gradle"
 
-
+sourceSets.each { sourceSet ->
+    sourceSet.java.srcDirs = []
+    sourceSet.kotlin.srcDirs = []
+    sourceSet.resources.srcDirs = []
+}
 
 ext {
+    GRADLE_USER_HOME = project.gradle.gradleUserHomeDir.path
     packages = [:]
+    core =  [project(":engine"),project(":editor"),project(":launcher")]
+    libs = project(":libs").subprojects
+    resourceDir = project(":editor").file("assets")
+
+    switch (OperatingSystem.current()) {
+        case OperatingSystem.LINUX:
+            lwjglNatives = "natives-linux"
+            def osArch = System.getProperty("os.arch")
+            if (osArch.startsWith("arm") || osArch.startsWith("aarch64")) {
+                lwjglNatives += osArch.contains("64") || osArch.startsWith("armv8") ? "-arm64" : "-arm32"
+            } else if  (osArch.startsWith("ppc")) {
+                lwjglNatives += "-ppc64le"
+            } else if  (osArch.startsWith("riscv")) {
+                lwjglNatives += "-riscv64"
+            }
+            break
+        case OperatingSystem.MAC_OS:
+            lwjglNatives = System.getProperty("os.arch").startsWith("aarch64") ? "natives-macos-arm64" : "natives-macos"
+            break
+        case OperatingSystem.WINDOWS:
+            def osArch = System.getProperty("os.arch")
+            lwjglNatives = osArch.contains("64")
+                    ? "natives-windows${osArch.startsWith("aarch64") ? "-arm64" : ""}"
+                    : "natives-windows-x86"
+            break
+    }
+
+    project(":libs").subprojects.each { project ->
+        packages[project.name] = ":libs:${project.name}"
+    }
 
 }
-
-project(":libs").subprojects.each { project ->
-    packages[project.name] = ":libs:${project.name}"
-}
-
 
 allprojects {
 
@@ -56,11 +89,6 @@ allprojects {
             implementation fileTree(dir: 'extern', include: ['*.jar'])
         }
     }
-
-    ext {
-        resourceDir = project(":editor").file("assets")
-    }
-
     spotless {
         kotlin {
             // by default the target is every '.kt' and '.kts` file in the java sourcesets
@@ -74,7 +102,6 @@ allprojects {
             target '*.gradle.kts' // default target for kotlinGradle
             ktlint() // or ktfmt() or prettier()
         }
-
         java {
             target 'src/**/*.java', 'test/**/*.java', 'generator/**/*.java'
             removeUnusedImports()
@@ -83,14 +110,6 @@ allprojects {
             target '*.gradle'
         }
     }
-
-    test {
-        testLogging {
-            showStandardStreams = true
-            events "passed", "skipped", "failed"
-        }
-    }
-
 }
 
 subprojects {
@@ -101,12 +120,6 @@ subprojects {
     apply plugin: 'kotlinx-serialization'
 
     apply from : rootDir.path + "/gradle/dependencies.gradle"
-
-
-
-
-    implement(libs.gdx_core)
-    implement(libs.gdx_ext)
 
     java {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -120,33 +133,27 @@ subprojects {
             options.incremental = true
         }
         withSourcesJar()
+    }
 
-        sourceSets.named("main") { main ->
-            main.java.srcDirs = ['src']
-            main.resources.srcDirs = ["$resourceDir"]
-        }
-        sourceSets.named("test") { test ->
-            test.java.srcDirs = [ 'test' ]
-            test.resources.srcDirs = [ "$resourceDir" ]
-        }
+//    dependencies {
+//        api fileTree(dir: 'ext', include: ['*.jar'])
+//    }
+
+    sourceSets.configure {
+        main.java.srcDirs += ['src']
+        main.kotlin.srcDirs += ['src']
+        main.resources.srcDirs += ["$resourceDir"]
+        test.java.srcDirs += [ 'test' ]
+        test.kotlin.srcDirs += [ 'test']
+        test.resources.srcDirs += [ "$resourceDir" ]
     }
 
     kotlin {
         jvmToolchain(11)
-        sourceSets.named("main") { main ->
-            main.kotlin.srcDirs = ['src']
-            main.resources.srcDirs = ["$resourceDir"]
-        }
-        sourceSets.named("test") { test ->
-            test.kotlin.srcDirs = [ 'test' ]
-            test.resources.srcDirs = [ "$resourceDir" ]
-        }
     }
-
 }
 
 
-def launcherClass = 'org.yunghegel.salient.launcher.DesktopLauncher'
 
 
 

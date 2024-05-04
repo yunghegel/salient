@@ -1,6 +1,6 @@
 package org.yunghegel.salient.engine.graphics.shapes
 
-import org.yunghegel.salient.engine.api.ID
+import org.yunghegel.gdx.utils.data.ID
 import org.yunghegel.salient.engine.graphics.shapes.primitives.*
 import kotlin.reflect.KClass
 

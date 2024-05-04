@@ -5,7 +5,7 @@ import ktx.actors.onChange
 import org.yunghegel.gdx.utils.ui.dialogInput
 import org.yunghegel.salient.editor.scene.SceneGraph
 import org.yunghegel.salient.engine.ui.scene2d.STextButton
-import org.yunghegel.salient.ui.container.Panel
+import org.yunghegel.salient.engine.ui.layout.Panel
 
 class SceneGraphViewer(pane: ScrollPane, val sceneGraph:SceneGraph) : Panel() {
 

@@ -5,6 +5,16 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.Family
 import com.badlogic.ashley.systems.IteratingSystem
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.GL30
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.glutils.FrameBuffer
+import com.badlogic.gdx.graphics.glutils.GLFrameBuffer.FrameBufferBuilder
+import net.mgsx.gltf.scene3d.scene.Scene
+import org.yunghegel.salient.engine.graphics.GFX
+import org.yunghegel.salient.engine.graphics.SharedGraphicsResources
+import org.yunghegel.salient.engine.scene3d.SceneContext
+import org.yunghegel.salient.engine.system.inject
 
 class UILogicSystem : StateSystem(State.UI_LOGIC)
 class InitStateSystem : StateSystem(State.INIT)
@@ -41,6 +51,7 @@ enum class State {
  *  i.e, the enum ordinal is an index into the array of systems
  */
 sealed class StateSystem(val state: State) : IteratingSystem(Family.all(FunctionComponent::class.java, StateComponent::class.java).get(), state.ordinal) {
+
     override fun processEntity(entity: Entity?, deltaTime: Float) {
         entity?.let {
             val stateCmp = it.getComponent(StateComponent::class.java)
@@ -64,7 +75,17 @@ class AutoremoveEntiy : Entity()
 /**
  * A component that holds a function object, to be executed by a system.
  */
-class FunctionComponent(val func: (Float) -> Unit) : Component
+class FunctionComponent(val func:(Float) -> Unit) : SceneRenderEvent {
+
+
+    override fun render(delta: Float) {
+        func(delta)
+    }
+}
+
+fun interface SceneRenderEvent : Component {
+    context(SharedGraphicsResources) fun render(delta:Float)
+}
 
 /**
  * A reference to the state we're interested in.
@@ -83,7 +104,14 @@ class StateComponent(val state: State, val transition: (() -> Unit)? = null) : C
  * The final state is the UI pass which restores the appropriate OpenGL state for 2D rendering, so it's
  * appropriate to render more things after this stage if needed (dialogs, notifications, etc)
  */
-open class Pipeline : Engine() {
+open class Pipeline() : Engine() {
+
+    var colorTex : Texture? = null
+    var depthTex : Texture? = null
+
+
+    val buffers : MutableMap<String,FrameBuffer?> = mutableMapOf()
+
 
     /**
      * Series of {@see #in  } are added to the engine - one for each state.
@@ -103,7 +131,6 @@ open class Pipeline : Engine() {
         UIPassSystem(),
         OverlayPassSystem()
     )
-
 
     /**
      * Initialization, maintains the strict ordering required
@@ -150,6 +177,20 @@ open class Pipeline : Engine() {
         for (state in State.entries) {
             push(state, transition, func)
         }
+    }
+
+    fun buildBuffer(named:String) : FrameBuffer {
+                val frameBufferBuilder = FrameBufferBuilder(
+            Gdx.graphics.width,
+            Gdx.graphics.height
+        )
+        frameBufferBuilder.addColorTextureAttachment(GL30.GL_RGBA8, GL30.GL_RGBA, GL30.GL_UNSIGNED_BYTE)
+//        frameBufferBuilder.addColorTextureAttachment(GL30.GL_RGB8, GL30.GL_RGB, GL30.GL_UNSIGNED_BYTE)
+//        frameBufferBuilder.addColorTextureAttachment(GL30.GL_RGB8, GL30.GL_RGB, GL30.GL_UNSIGNED_BYTE)
+        frameBufferBuilder.addDepthTextureAttachment(GL30.GL_DEPTH_COMPONENT24, GL30.GL_FLOAT)
+        frameBufferBuilder.addDepthRenderBuffer(GL30.GL_DEPTH_COMPONENT24)
+        val fbo = frameBufferBuilder.build()
+        return fbo
     }
 
 }

@@ -1,7 +1,13 @@
+allprojects {
+    apply plugin: 'java-library'
+}
+
+
 subprojects {
 
     apply plugin: 'maven-publish'
-    apply plugin: 'java-library'
+
+    apply from: "${GRADLE_USER_HOME}/publishing.gradle"
 
     artifacts {
         archives jar
@@ -35,5 +41,21 @@ subprojects {
         }
     }
 
+    sourceSets {
+        test.kotlin.srcDirs += ["${rootDir}/engine/src/test/kotlin"]
+        test.java.srcDirs += ["${rootDir}/engine/src/test/kotlin"]
+
+    }
+
+}
+
+sourceSets {
+    main.java.srcDirs = []
+    main.kotlin.srcDirs = []
+    main.resources.srcDirs = []
+
+    test.java.srcDirs = []
+    test.kotlin.srcDirs = []
+    test.resources.srcDirs = []
 }
 

@@ -6,9 +6,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
+import com.kotcrab.vis.ui.widget.VisWindow
 import org.yunghegel.salient.engine.ui.UI
 
-open class SWindow(title: String,closeButton: Boolean = true) : Window(title, UI.skin) {
+open class SWindow(title: String,closeButton: Boolean = true) :VisWindow(title) {
 
     init {
         if(closeButton) {

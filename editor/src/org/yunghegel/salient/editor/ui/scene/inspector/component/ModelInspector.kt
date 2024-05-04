@@ -7,18 +7,20 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup
 import ktx.actors.onChange
 import org.yunghegel.gdx.utils.ext.padHorizontal
 import org.yunghegel.salient.editor.scene.Scene
+import org.yunghegel.salient.editor.ui.scene.graph.ComponentNode
+import org.yunghegel.salient.editor.ui.scene.graph.SceneGraphTree
 import org.yunghegel.salient.editor.ui.scene.inspector.AssetsAvailable
 import org.yunghegel.salient.editor.ui.scene.inspector.ComponentInspector
 import org.yunghegel.salient.engine.api.asset.locateAsset
 import org.yunghegel.salient.engine.api.asset.type.ModelAsset
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.events.asset.onAssetIncluded
-import org.yunghegel.salient.engine.graphics.scene3d.GameObject
-import org.yunghegel.salient.engine.graphics.scene3d.component.ModelComponent
+import org.yunghegel.salient.engine.scene3d.GameObject
+import org.yunghegel.salient.engine.scene3d.component.ModelComponent
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.scene2d.SList
 import org.yunghegel.salient.engine.ui.scene2d.STextButton
-import org.yunghegel.salient.ui.container.Panel
+import org.yunghegel.salient.engine.ui.layout.Panel
 
 class ModelInspector : ComponentInspector<ModelComponent, Model>(ModelComponent::class.java, "Model", "model_object"),
     AssetsAvailable<ModelAsset, ModelComponent> {
@@ -54,7 +56,9 @@ class ModelInspector : ComponentInspector<ModelComponent, Model>(ModelComponent:
             val asset = availableAssets.find { it.name == string }!!
             if (selectedGameObject!=null) {
                 locateAsset<ModelAsset,Model>(selectedGameObject!!.scene, asset)?.let { asset ->
-                    attachSelectedAsset(asset,selectedGameObject!!)
+                    asset.useAsset(asset.value!!,selectedGameObject!!)
+                    val component = ModelComponent(asset,selectedGameObject!!)
+                    selectedGameObject!!.add(component)
                 }
             }
         }
@@ -67,7 +71,21 @@ class ModelInspector : ComponentInspector<ModelComponent, Model>(ModelComponent:
 
 
         clearModel.onChange {
-            selectedGameObject?.remove(ModelComponent::class.java)
+            selectedGameObject?.let { go ->
+                val sceneTree : SceneGraphTree = inject()
+                sceneTree.nodeMap[go]?.let { node ->
+                    node.children.forEach {
+                        it.remove()
+                    }
+                }
+                go.get(ModelComponent::class)?.let {
+                    it.usedAsset?.let { asset ->
+                        asset.removeAsset(asset.value!!,go)
+                    }
+                }
+                go.remove(ModelComponent::class.java)
+
+            }
         }
     }
 
@@ -93,7 +111,10 @@ class ModelInspector : ComponentInspector<ModelComponent, Model>(ModelComponent:
             gameObject.components.find { it is ModelComponent }?.let {
                 gameObject.remove(ModelComponent::class.java)
             }
-            gameObject.add(ModelComponent(asset.handle,gameObject,asset))
+            val cmp = ModelComponent(asset.handle,gameObject,asset)
+            gameObject.add(cmp)
+            val sceneTree : SceneGraphTree = inject()
+            sceneTree.nodeMap[gameObject]?.add(ComponentNode(cmp,gameObject))
         }
     }
 

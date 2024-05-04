@@ -1,8 +1,21 @@
 #version 150
 
-const vec3 u_wirecolor = vec3(1.0, 1.0, 0.0);
-const vec3 u_fillcolor = vec3(0.0, 0.0, 0.0);
+uniform vec3 u_wirecolor;
+
+uniform vec3 u_fillcolor;
+
 varying vec3 dist;
+
+varying vec3 v_position;
+
+uniform vec3 u_cameraPosition;
+
+uniform float u_alphaCutoff;
+
+uniform float u_alpha;
+
+uniform int u_useDistanceFalloff;
+
 void main()
 {
     // Undo perspective correction.
@@ -19,9 +32,23 @@ void main()
 
     gl_FragColor.rgb = I* u_wirecolor + (1.0 - I)* u_fillcolor;
 
-//    antialiasing
-    if (d > 0.1)
-        discard;
+    float dst = distance(v_position, u_cameraPosition);
+    float falloff = 0.5;
 
-    gl_FragColor.a = 0.5;
+    if (u_useDistanceFalloff == 0)
+    {
+        if (d>u_alphaCutoff)
+        {
+            discard;
+        }
+        gl_FragColor.a = u_alpha;
+        return;
+    }
+
+    if (d>u_alphaCutoff * (1.0 / (1.0 + dst * falloff)))
+    {
+        discard;
+    }
+
+    gl_FragColor.a = u_alpha;
 }

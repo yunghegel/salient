@@ -1,5 +1,6 @@
 package org.yunghegel.gdx.renderer.shader
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.glutils.ShaderPart
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
@@ -10,6 +11,9 @@ import com.badlogic.gdx.utils.ObjectMap
 import java.io.IOException
 
 class ShaderLoader(var root: FileHandle) {
+
+    constructor(internalPath:String) : this(Gdx.files.internal(internalPath))
+
     var snippets: ObjectMap<String, ObjectMap<String, String?>?> = ObjectMap()
     private val includes = Array<String>()
 

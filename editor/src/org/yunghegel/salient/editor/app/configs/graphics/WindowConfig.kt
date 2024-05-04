@@ -9,6 +9,7 @@ import org.yunghegel.gdx.utils.reflection.Ignore
 import org.yunghegel.salient.engine.ui.widgets.value.EditorFactory
 import org.yunghegel.salient.engine.ui.widgets.value.widgets.EnumWidget
 import org.yunghegel.salient.engine.events.lifecycle.onStartup
+import kotlin.math.min
 
 @Serializable
 data class WindowConfig(
@@ -31,8 +32,8 @@ data class WindowConfig(
         }
         onStartup {
             resolution_preset = resolveResolution()
-            resolution_width_actual = Gdx.graphics.backBufferWidth
-            resolution_height_actual = Gdx.graphics.backBufferHeight
+            resolution_width_actual = min(600f, Gdx.graphics.backBufferWidth.toFloat()).toInt()
+            resolution_height_actual = min(400f, Gdx.graphics.backBufferHeight.toFloat()).toInt()
         }
     }
 

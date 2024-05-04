@@ -60,7 +60,7 @@ abstract class DefaultFieldEditor : Table(), FieldEditor, Searchable, LabelSuppl
 
 
         labelActor?.let { label ->
-            labelDefault(table.add(label))
+            labelDefault(table.add(label).growX())
         }
         actorDefault(table.add(actor))
 

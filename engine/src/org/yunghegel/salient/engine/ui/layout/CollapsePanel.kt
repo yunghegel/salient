@@ -8,7 +8,6 @@ import org.yunghegel.gdx.utils.ui.ToggleContainer
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 import org.yunghegel.salient.engine.ui.scene2d.STable
-import org.yunghegel.salient.ui.container.Panel
 
 open class CollapsePanel(val title: String, val icon: String?=null, val contentActor: Table?=null) : Panel() {
 
@@ -24,7 +23,7 @@ open class CollapsePanel(val title: String, val icon: String?=null, val contentA
     init {
         content = contentActor ?: STable().apply { add("Empty")}
         contentContainer.actor = content
-        pad(8f)
+        pad(4f)
         contentContainer.fill()
         if(icon!=null) {
             createIcon(icon)

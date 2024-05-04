@@ -2,9 +2,15 @@ package org.yunghegel.salient.engine.events
 
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.EventBusBuilder
+import org.yunghegel.salient.engine.system.Log
+import org.yunghegel.salient.engine.system.emitEvent
 import org.yunghegel.salient.engine.system.event
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 object Bus {
+
+    val emitter = EmitContext()
 
     val eventBus: EventBus by lazy { Config.eventBusBuilder.build()  }
 
@@ -21,6 +27,15 @@ object Bus {
         eventBus.unregister(subscriber)
     }
 
+    fun emit(emission: String,log: Boolean = true) {
+        if (log) emitEvent(emission)
+        emitter.emit(emission)
+    }
+
+    fun on(emission: String, listener: (String)->Unit) {
+        emitter.on(emission,listener)
+    }
+
     object Config {
 
         val eventBusBuilder: EventBusBuilder = EventBus.builder()
@@ -32,5 +47,45 @@ object Bus {
         }
 
     }
+
+    class EmitContext {
+
+        val emitterListeners = mutableMapOf<String,MutableList<EmitterListener>>()
+
+        fun on(emission: String, listener: (String)->Unit) {
+            val listeners = emitterListeners[emission] ?: mutableListOf()
+            listeners.add(EmitterListener(listener))
+            emitterListeners[emission] = listeners
+        }
+
+        fun emit(emission: String) {
+            val listeners = emitterListeners[emission] ?: return
+            listeners.forEach { it.listener(emission) }
+        }
+
+
+
+    }
+
+    class EmitterListener(val listener: (String)->Unit)
+
+    class AutoEmitter<T:Any>(var source : T) : ReadWriteProperty<Any, T> {
+
+        override fun getValue(thisRef: Any, property: kotlin.reflect.KProperty<*>): T {
+            return source
+        }
+
+        override fun setValue(thisRef: Any, property: kotlin.reflect.KProperty<*>, value: T) {
+            source = value
+            emit(buildEmit(property,thisRef))
+
+        }
+
+        fun buildEmit(prop:KProperty<*>,ref: Any) : String {
+            return "${ref::class.simpleName}.${prop.name}"
+        }
+
+    }
+
 
 }

@@ -7,15 +7,15 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.g3d.ModelBatch
-import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.RenderableProvider
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ScreenUtils
+import com.badlogic.gdx.utils.viewport.Viewport
 import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider
-import org.yunghegel.salient.engine.graphics.GenFrameBuffer
-import org.yunghegel.salient.engine.graphics.scene3d.SceneContext
+import org.yunghegel.salient.engine.graphics.util.GenFrameBuffer
+import org.yunghegel.salient.engine.scene3d.SceneContext
 
 
 class OutlineRenderer {
@@ -55,13 +55,11 @@ class OutlineRenderer {
     }
 
 
-    fun captureFBO(context:SceneContext) {
+    fun captureFBO(viewport: Viewport, pass:()->Unit) {
         buf.ensureFboSize(Gdx.graphics.width, Gdx.graphics.height)
-        buf.begin(context.viewport)
+        buf.begin(viewport)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
-        context.modelBatch.begin(context.perspectiveCamera)
-        context.modelBatch.render(renderables)
-        context.modelBatch.end()
+        pass()
         buf.end()
     }
 
@@ -72,11 +70,7 @@ class OutlineRenderer {
         batch.end()
     }
 
-    fun render(context: SceneContext) {
-        if (renderables.isEmpty) return
-        captureFBO(context)
-        renderFBO()
-    }
+
 
     fun captureDepth(context: SceneContext) {
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST)

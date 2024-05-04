@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import ktx.math.component1
 import ktx.math.component2
 import org.yunghegel.gdx.utils.ext.toGdxArray
+import org.yunghegel.salient.engine.events.autoemit
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.scene2d.SList.SListListener
 
@@ -19,7 +20,7 @@ class SList<T>() : List<T>(UI.skin) {
         fun onSelectionChanged(list: SList<T>, previousSelectedIndex: Int, newSelectedIndex: Int)
     }
 
-    private var selectedIndex = -1
+    private var _selectedIndex = -1
     private var previousSelectedIndex = -1
 
     var selectionWidthSupplier : (() -> Vector2) ? = null
@@ -51,7 +52,7 @@ class SList<T>() : List<T>(UI.skin) {
             field = value
             changeListener = object:  ChangeListener() {
                 override fun changed(event: ChangeEvent?, actor: Actor?) {
-                    field?.onSelectionChanged(this@SList, previousSelectedIndex, selectedIndex)
+                    field?.onSelectionChanged(this@SList, previousSelectedIndex, _selectedIndex)
                 }
 
                 }
@@ -80,8 +81,8 @@ class SList<T>() : List<T>(UI.skin) {
 
 
     override fun setSelectedIndex(index: Int) {
-        previousSelectedIndex = selectedIndex
-        selectedIndex = index
+        previousSelectedIndex = _selectedIndex
+        _selectedIndex = index
         super.setSelectedIndex(index)
     }
 

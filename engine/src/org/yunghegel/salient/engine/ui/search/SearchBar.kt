@@ -7,15 +7,13 @@ import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener
 import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
-import com.ray3k.stripe.PopTableClickListener
-import org.checkerframework.checker.units.qual.A
 import org.yunghegel.gdx.utils.data.Searchable
 import org.yunghegel.gdx.utils.ui.ActorList
 import org.yunghegel.gdx.utils.ui.LabelSupplier
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.widgets.IconTextfield
-import org.yunghegel.salient.ui.container.Panel
+import org.yunghegel.salient.engine.ui.layout.Panel
 
 class SearchBar<T: Searchable,A>(searchProvider: SearchProvider<T,A>) : STable() where A : LabelSupplier, A : Actor {
 
@@ -26,7 +24,6 @@ class SearchBar<T: Searchable,A>(searchProvider: SearchProvider<T,A>) : STable()
     val resultsContainer = Panel()
     val results = SearchResults(searchProvider)
 
-    val popupListener = PopTableClickListener()
 
     val popup  = PopTable()
     init {

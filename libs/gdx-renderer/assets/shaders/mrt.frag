@@ -1,7 +1,4 @@
-z#ifdef GL_ES
-precision mediump float;
-#endif
-
+#version 330
 #ifdef texturedFlag
 uniform sampler2D u_diffuseTexture;
 uniform sampler2D u_specularTexture;

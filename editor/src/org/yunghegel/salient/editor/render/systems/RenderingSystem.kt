@@ -3,7 +3,7 @@ package org.yunghegel.salient.editor.render.systems
 import org.yunghegel.salient.editor.plugins.BaseSystem
 import org.yunghegel.salient.editor.render.RenderFunction
 
-open class RenderingSystem(val pipeline: Int) : BaseSystem(pipeline) {
+open class RenderingSystem(val pipeline: Int) : BaseSystem("rendering_system",pipeline,) {
 
     private val renderFunctions = mutableListOf<RenderFunction>()
     private val renderFunctionsDebug = mutableListOf<RenderFunction>()

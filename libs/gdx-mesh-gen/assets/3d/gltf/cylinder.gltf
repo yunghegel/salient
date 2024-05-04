@@ -1,0 +1,146 @@
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v3.2.43",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
+        {
+            "extras" : {
+                "vs" : {
+                    "export_list" : [
+                        {
+                            "name" : "Collection 1.dmx",
+                            "collection" : {
+                                "name" : "Collection 1",
+                                "type" : "Collection"
+                            },
+                            "ob_type" : "COLLECTION",
+                            "icon" : "GROUP"
+                        }
+                    ]
+                },
+                "scatter_properties" : {},
+                "batch_export" : {
+                    "file_format" : 6,
+                    "apply_mods" : 1,
+                    "gltf_preset" : "NO_PRESET",
+                    "set_scale" : 1,
+                    "prefix" : "",
+                    "directory" : "//batchgltf\\",
+                    "mode" : 1,
+                    "suffix" : ""
+                }
+            },
+            "name" : "Scene",
+            "nodes" : [
+                0
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "extras" : {
+                "vs" : {}
+            },
+            "mesh" : 0,
+            "name" : "Cylinder"
+        }
+    ],
+    "materials" : [
+        {
+            "doubleSided" : true,
+            "name" : "Material.003",
+            "pbrMetallicRoughness" : {
+                "baseColorFactor" : [
+                    0.6967073082923889,
+                    0.8000000715255737,
+                    0.06762327253818512,
+                    1
+                ],
+                "metallicFactor" : 0,
+                "roughnessFactor" : 0.5
+            }
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "Cylinder",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1,
+                        "TEXCOORD_0" : 2
+                    },
+                    "indices" : 3,
+                    "material" : 0
+                }
+            ]
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 323,
+            "max" : [
+                1,
+                1,
+                1
+            ],
+            "min" : [
+                -1,
+                -1,
+                -1
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 323,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 323,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5123,
+            "count" : 1140,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 3876,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 3876,
+            "byteOffset" : 3876
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 2584,
+            "byteOffset" : 7752
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 2280,
+            "byteOffset" : 10336
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 12616,
+            "uri" : "Cylinder.bin"
+        }
+    ]
+}

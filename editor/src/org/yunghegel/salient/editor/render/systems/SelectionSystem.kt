@@ -11,7 +11,7 @@ import org.yunghegel.salient.core.graphics.util.OutlineDepth
 import org.yunghegel.salient.core.graphics.util.OutlineRenderer
 import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.engine.Pipeline
-import org.yunghegel.salient.engine.graphics.scene3d.component.SelectedComponent
+import org.yunghegel.salient.engine.scene3d.component.SelectedComponent
 import org.yunghegel.salient.engine.system.inject
 
 class SelectionSystem : IteratingSystem(Family.all(SelectedComponent::class.java).get()) {

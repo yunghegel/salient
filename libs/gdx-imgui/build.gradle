@@ -1,0 +1,3 @@
+dependencies {
+    depend(libs.imgui,"api")
+}

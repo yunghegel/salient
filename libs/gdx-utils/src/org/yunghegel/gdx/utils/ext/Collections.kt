@@ -93,3 +93,18 @@ fun <E> MutableCollection<E>.addIfNotPresent(element: E,ifPresent: ((E) -> Unit)
         return false
     }
 }
+
+operator fun <T:Any> MutableList<T>.plus(element: T) {
+    add(element)
+}
+
+operator fun <T> MutableCollection<T>.minusAssign(element: T) {
+    remove(element)
+}
+
+fun <E> Collection<E>.singleOrNull(): E? {
+    if (size == 1) {
+        return first()
+    }
+    return null
+}

@@ -5,11 +5,12 @@ import org.yunghegel.salient.engine.api.asset.Asset
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.events.scene.onGameObjectSelected
-import org.yunghegel.salient.engine.graphics.scene3d.GameObject
+import org.yunghegel.salient.engine.scene3d.GameObject
+import org.yunghegel.salient.engine.ui.layout.ScrollPanel
 import org.yunghegel.salient.engine.ui.scene2d.STable
-import org.yunghegel.salient.ui.container.Panel
+import org.yunghegel.salient.engine.ui.widgets.menu.ContextMenu
 
-abstract class BaseInspector(val title:String, val icon:String) : Panel() {
+abstract class BaseInspector(val title:String, val icon:String) : ScrollPanel() {
 
     init {
         createIcon(icon)
@@ -24,6 +25,21 @@ abstract class BaseInspector(val title:String, val icon:String) : Panel() {
 
 }
 
+abstract class ObjectInspector<T>(title:String,icon:String) : BaseInspector(title,icon) {
+
+    var obj : T? = null
+
+    override fun createLayout() {
+        obj = injectObject()
+        populateLayout(obj)
+    }
+
+    abstract fun injectObject() : T?
+
+    abstract fun populateLayout(obj: T?)
+
+}
+
 abstract class ComponentInspector<T,C>(val type: Class<T>,title:String,icon:String) : BaseInspector(title,icon) where T:EntityComponent<C> {
 
     val settings = STable()
@@ -31,6 +47,13 @@ abstract class ComponentInspector<T,C>(val type: Class<T>,title:String,icon:Stri
     var current : T? = null
 
     var selectedGameObject : GameObject? = null
+        set(value) {
+            if (value != field && value != null) {
+                field = value
+                current = field!!.getComponent(type)
+                current?.let { setComponent(it) }
+            }
+        }
 
     init {
         onGameObjectSelected {  event ->
@@ -40,6 +63,9 @@ abstract class ComponentInspector<T,C>(val type: Class<T>,title:String,icon:Stri
                 setComponent(current!!)
             }
         }
+        val contextMenu = ContextMenu()
+        contextMenu.attachListener(this)
+        contextMenu["Test"] = {println("test")}
 
 
     }

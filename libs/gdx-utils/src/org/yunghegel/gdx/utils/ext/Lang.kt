@@ -48,3 +48,21 @@ fun <T> T?.nullOrNotNull(block: NullOrNotNull<T>.() -> Unit) {
     handler.block()
     handler.handle(this)
 }
+
+fun <T> Iterable<T>.uniqueBy(selector: (T) -> Any): List<T> {
+    val seen = mutableSetOf<Any>()
+    return filter { seen.add(selector(it)) }
+}
+
+fun <T : Any> Iterable<T>.atMostOnePerType(): List<T> {
+    val seen = mutableSetOf<Class<*>>()
+    return filter { seen.add(it::class.java) }
+}
+
+fun <T> Iterable <T>.sum(selector: (T) -> Float): Float {
+    var sum = 0f
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}

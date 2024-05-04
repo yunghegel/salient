@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.ray3k.stripe.PopTable
 import ktx.actors.onClick
+import org.yunghegel.gdx.utils.data.Range
 import org.yunghegel.gdx.utils.ext.toOpenGLCoords
 import org.yunghegel.gdx.utils.ext.topRight
 import org.yunghegel.salient.engine.Pipeline
@@ -18,6 +19,8 @@ import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 
 class ViewportPanel(val viewport : ScreenViewport) : STable() {
+
+
 
     val stack : Stack = Stack()
 
@@ -38,7 +41,7 @@ class ViewportPanel(val viewport : ScreenViewport) : STable() {
     val pipeline : Pipeline = inject()
 
 
-    internal val tools = Tools()
+    val tools = Tools()
 
 
     init {
@@ -87,9 +90,7 @@ class ViewportPanel(val viewport : ScreenViewport) : STable() {
     }
 
     override fun draw(batch: Batch?, parentAlpha: Float) {
-
         super.draw(batch, parentAlpha)
-
     }
 
 }

@@ -2,7 +2,7 @@ package org.yunghegel.salient.engine.events.scene
 
 import org.greenrobot.eventbus.Subscribe
 import org.yunghegel.salient.engine.events.Bus
-import org.yunghegel.salient.engine.graphics.scene3d.GameObject
+import org.yunghegel.salient.engine.scene3d.GameObject
 
 class GameObjectChildAddedEvent(val parent: GameObject, val child: GameObject) {
 

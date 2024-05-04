@@ -6,7 +6,7 @@ import kotlinx.serialization.Transient
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import org.yunghegel.salient.common.util.TypeMap
-import org.yunghegel.salient.engine.api.Named
+import org.yunghegel.gdx.utils.data.Named
 
 @Serializable
 open class Registry<T>(override val name: String = "null") : Named {

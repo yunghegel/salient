@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g3d.Renderable
 import com.badlogic.gdx.graphics.g3d.Shader
 import com.badlogic.gdx.graphics.g3d.shaders.BaseShader
+import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Vector3
@@ -29,6 +30,7 @@ class PickerShader : BaseShader() {
     }
 
     override fun canRender(instance: Renderable): Boolean {
+        if (instance.material[PickerIDAttribute.Type]==null) return false
         return true
     }
 
@@ -46,7 +48,7 @@ class PickerShader : BaseShader() {
     override fun render(renderable: Renderable) {
         set(UNIFORM_TRANS_MATRIX, renderable.worldTransform)
         Gdx.gl.glLineWidth(5f)
-        val goID = renderable.material[PickerIDAttribute.Type] as PickerIDAttribute
+        val goID = renderable.material[PickerIDAttribute.Type] as PickerIDAttribute?
         if (goID != null) {
             set(UNIFORM_COLOR, vec3.set(goID.r.toFloat(), goID.g.toFloat(), goID.b.toFloat()))
         }
@@ -63,7 +65,16 @@ class PickerShader : BaseShader() {
         program.dispose()
     }
 
-    companion object {
+    companion object : DefaultShaderProvider() {
+
+        override fun getShader(renderable: Renderable?): Shader {
+            return instance!!
+        }
+
+        override fun createShader(renderable: Renderable?): Shader {
+            return instance!!
+        }
+
         var instance: PickerShader? = null
             get() {
                 if (field == null) {

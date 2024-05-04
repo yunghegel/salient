@@ -98,3 +98,31 @@ fun Color.alpha(alpha: Float): Color {
     this.a = alpha
     return this
 }
+
+fun randomHue(): Color {
+    val color = Color()
+    color.fromHsv(Math.random().toFloat() * 360, 1f, 1f)
+    return color
+}
+
+fun Color.randomizeHue(): Color {
+    val hsv = FloatArray(3)
+    this.toHsv(hsv)
+    hsv[0] = Math.random().toFloat() * 360
+    return hsvToColor(this, hsv)
+}
+
+fun Color.randomizeSaturation(): Color {
+    val hsv = FloatArray(3)
+    this.toHsv(hsv)
+    hsv[1] = Math.random().toFloat()
+    return hsvToColor(this, hsv)
+}
+
+fun Color.randomizeValue(): Color {
+    val hsv = FloatArray(3)
+    this.toHsv(hsv)
+    hsv[2] = Math.random().toFloat()
+    return hsvToColor(this, hsv)
+}
+

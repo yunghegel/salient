@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Tree
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import ktx.actors.onClick
 import ktx.actors.onTouchDown
+import org.yunghegel.salient.engine.ui.Icons
 
 class FileNode(val file: FileHandle, val fileTable : FileTable = FileTable(file)) : Tree.Node<FileNode, FileHandle, FileTable>(fileTable) {
 
@@ -21,6 +22,24 @@ class FileNode(val file: FileHandle, val fileTable : FileTable = FileTable(file)
         actor.onTouchDown {
             tree?.getNodeAt(Gdx.input.y.toFloat())?.let {
                 tree?.selection?.set(it)
+            }
+        }
+
+        if (file.isDirectory) {
+            icon   = Icons.folderIcon
+
+        } else {
+            icon  = when(file.extension()){
+
+                "salient" -> Icons.projectFile
+                "mat" -> Icons.materialFile
+                "png" -> Icons.textureFile
+                "scene" -> Icons.sceneFile
+                "obj" -> Icons.modelFile
+                "fbx" -> Icons.modelFile
+                "gltf" -> Icons.modelFile
+                "glb" -> Icons.modelFile
+                else -> Icons.fileIcon
             }
         }
 

@@ -2,14 +2,18 @@ package org.yunghegel.gdx.utils.ext
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Pools
+import com.kotcrab.vis.ui.widget.MenuItem
+import com.kotcrab.vis.ui.widget.PopupMenu
 import com.kotcrab.vis.ui.widget.Tooltip
 import com.ray3k.stripe.PopTable
 import com.ray3k.stripe.PopTableClickListener
@@ -50,6 +54,10 @@ fun Cell<*>.padVertical(value: Float) : Cell<*>{
     padTop(value)
     padBottom(value)
     return this
+}
+
+fun textureDrawable(texture:Texture) : TextureRegionDrawable {
+    return TextureRegionDrawable(texture)
 }
 
 enum class ControlScale {
@@ -300,4 +308,11 @@ fun cancelAllInputFocus(stage: Stage) {
     }
     stage.setKeyboardFocus(null)
     stage.setScrollFocus(null)
+}
+
+fun PopupMenu.newItem(text:String,action: ()->Unit){
+    val menu = MenuItem(text)
+    menu.onChange {
+        action()
+    }
 }

@@ -1,4 +1,4 @@
-package org.yunghegel.salient.ui.container
+package org.yunghegel.salient.engine.ui.layout
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Touchable
@@ -6,9 +6,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Cell
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.Separator
+import ktx.actors.onClick
 import org.yunghegel.gdx.utils.ext.padHorizontal
 import org.yunghegel.salient.engine.ui.Icons
 import org.yunghegel.salient.engine.ui.UI
@@ -17,7 +19,9 @@ import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
 
 
-open class Panel : STable() {
+open class Panel(styleName: String="default") : STable() {
+
+    var style : PanelStyle
 
     var titleTable: TitleTable = TitleTable()
     internal var bodyTable: STable = STable()
@@ -29,6 +33,7 @@ open class Panel : STable() {
     private var iconify : (Boolean) -> Unit = {}
 
     override fun <T:Actor> add(actor: T): Cell<T> {
+        actor.touchable = Touchable.enabled
         return bodyTable.add(actor)
     }
 
@@ -65,9 +70,13 @@ open class Panel : STable() {
         titleTable.addButton(button)
     }
     init {
+        touchable = Touchable.enabled
+        this.style = UI.skin.get(styleName, PanelStyle::class.java)
+        background = style.background
+        titleTable.background = style.titleBackground
         build()
     }
-    internal fun build() {
+    internal open fun build() {
         clearChildren()
         align(Align.topLeft)
         titleTable.align(Align.left)
@@ -77,6 +86,10 @@ open class Panel : STable() {
         bodyTable.align(Align.topLeft)
         addInternal(bodyTable)!!.grow().row()
         bodyTable.touchable = Touchable.enabled
+    }
+
+    fun clearContents() {
+        bodyTable.clear()
     }
 
 
@@ -103,7 +116,6 @@ open class Panel : STable() {
         init {
             add(container).growX().left()
             container.align(Align.left)
-            setBackground("dark-gray")
             iconifyWindow.style.down = Icons.WINDOW_ICONIFY_OVER.drawable
             iconifyWindow.style.over = UI.skin.getDrawable("border-y")
 
@@ -154,6 +166,11 @@ open class Panel : STable() {
 
         }
 
+    }
+
+    class PanelStyle {
+        val titleBackground : Drawable? = null
+        val background : Drawable? = null
     }
 
 }

@@ -7,3 +7,9 @@ fun stringToUnsignedCharByteBuffer(string: String): java.nio.ByteBuffer {
     buffer.flip()
     return buffer
 }
+
+fun floatBufferToArrayCopy(buffer: java.nio.FloatBuffer): FloatArray {
+    val array = FloatArray(buffer.capacity())
+    buffer.get(array)
+    return array
+}

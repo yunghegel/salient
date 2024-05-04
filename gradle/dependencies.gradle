@@ -1,0 +1,64 @@
+dependencies {
+    testImplementation "org.jetbrains.kotlin:kotlin-test"
+    testImplementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    implementation "org.apache.commons:commons-lang3:$apacheCommonsVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+    implementation "com.charleskorn.kaml:kaml:$kamlVersion"
+    implementation "com.badlogicgames.ashley:ashley:$ashleyVersion"
+    implementation "com.github.lyze237:gdx-TinyVG:$tinyVgVersion"
+    implementation "space.earlygrey:shapedrawer:$shapedrawerVersion"
+    implementation "com.kotcrab.vis:vis-ui:$visUiVersion"
+    implementation "games.spooky.gdx:gdx-nativefilechooser-desktop:$nativeFileChooserVersion"
+    implementation "games.spooky.gdx:gdx-nativefilechooser:$nativeFileChooserVersion"
+    implementation "com.google.guava:guava:$guavaVersion"
+    implementation "com.github.czyzby:gdx-kiwi:$kiwiVersion"
+    implementation "com.squidpony:squidlib-util:$squidlibVersion"
+    implementation "com.squidpony:squidlib:$squidlibVersion"
+    implementation "com.github.mgsx-dev.gdx-gltf:gltf:$gdxGltfVersion"
+
+    implementation "com.github.raeleus.stripe:stripe:$stripeVersion"
+    implementation "com.github.raeleus.stripe:freetype:$freetypeVersion"
+    implementation "com.github.tommyettinger:libgdx-utils:$utilsVersion"
+
+    implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+    implementation "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
+
+    implementation "com.github.crykn.guacamole:core:$guacamoleVersion"
+    implementation "com.github.crykn.guacamole:gdx:$guacamoleVersion"
+    implementation "com.github.crykn.guacamole:gdx-desktop:$guacamoleVersion"
+
+    implementation "io.github.libktx:ktx-inject:$ktxVersion"
+    implementation "io.github.libktx:ktx-collections:$ktxVersion"
+    implementation "io.github.libktx:ktx-graphics:$ktxVersion"
+    implementation "io.github.libktx:ktx-scene2d:$ktxVersion"
+    implementation "io.github.libktx:ktx-app:$ktxVersion"
+    implementation "io.github.libktx:ktx-assets:$ktxVersion"
+    implementation "io.github.libktx:ktx-async:$ktxVersion"
+    implementation "io.github.libktx:ktx-json:$ktxVersion"
+    implementation "io.github.libktx:ktx-math:$ktxVersion"
+    implementation "io.github.libktx:ktx-style:$ktxVersion"
+    implementation "io.github.libktx:ktx-vis:$ktxVersion"
+    implementation "io.github.libktx:ktx-actors:$ktxVersion"
+    implementation "io.github.libktx:ktx-vis:$ktxVersion"
+    implementation "io.github.libktx:ktx-ashley:$ktxVersion"
+    implementation "io.github.libktx:ktx-assets-async:$ktxVersion"
+    implementation "com.github.RomanPozdeev:MobX:0.1"
+    implementation 'org.json:json:20240303'
+    implementation "org.lwjgl:lwjgl-tinyfd:3.3.3"
+    implementation "org.lwjgl:lwjgl-tinyfd:3.3.3:natives-windows"
+    implementation "org.lwjgl:lwjgl-tinyfd:3.3.3:natives-linux"
+    implementation "org.lwjgl:lwjgl-tinyfd:3.3.3:natives-macos"
+    implementation "org.lwjgl:lwjgl-tinyfd:3.3.3:natives-macos-arm64"
+    implementation("org.greenrobot:eventbus-java:3.3.1")
+    implementation "com.github.tommyettinger:textratypist:0.10.0"
+    implementation 'com.github.raeleus.TenPatch:tenpatch:5.2.3'
+
+    implement(libs.imgui)
+
+}

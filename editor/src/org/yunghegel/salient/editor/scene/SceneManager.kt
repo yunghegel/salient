@@ -28,7 +28,7 @@ class SceneManager : EditorSceneManager<Scene>, Default<Scene>{
     val project: Project by lazy { projectManager.currentProject ?: inject() }
 
     init {
-        provide<SceneGraph> { project.currentScene!!.sceneGraph }
+        provide<SceneGraph> { project.currentScene!!.graph }
     }
 
     override fun createNew(name: String): Scene {

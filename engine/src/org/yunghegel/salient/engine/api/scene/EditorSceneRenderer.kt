@@ -1,7 +1,7 @@
 package org.yunghegel.salient.engine.api.scene
 
-import org.yunghegel.salient.engine.graphics.scene3d.GameObject
-import org.yunghegel.salient.engine.graphics.scene3d.SceneContext
+import org.yunghegel.salient.engine.scene3d.GameObject
+import org.yunghegel.salient.engine.scene3d.SceneContext
 
 interface EditorSceneRenderer<T:EditorScene, G:EditorSceneGraph> {
 
@@ -11,7 +11,7 @@ interface EditorSceneRenderer<T:EditorScene, G:EditorSceneGraph> {
 
     fun renderContext(context: SceneContext)
 
-    fun prepareContext(context: SceneContext,depth: Boolean)
+    fun prepareContext(context: SceneContext, depth: Boolean)
 
 
 

@@ -1,0 +1,12 @@
+
+void core(@DelegatesTo(Project.class) Closure closure)  {
+    ext.core.each { project ->
+        configure(project, closure)
+    }
+}
+
+void libs(@DelegatesTo(Project.class) Closure closure) {
+    ext.libs.each { project ->
+        configure(project, closure)
+    }
+}

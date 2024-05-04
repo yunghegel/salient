@@ -23,6 +23,27 @@ class Observable<T>(private var value: T, private val listeners: MutableList<(T)
     }
 }
 
+class LazyMutable<T>(val initializer: () -> T) : ReadWriteProperty<Any?, T> {
+    private object UNINITIALIZED_VALUE
+    private var prop: Any? = UNINITIALIZED_VALUE
+
+    @Suppress("UNCHECKED_CAST")
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T {
+        return if (prop == UNINITIALIZED_VALUE) {
+            synchronized(this) {
+                return if (prop == UNINITIALIZED_VALUE) initializer().also { prop = it } else prop as T
+            }
+        } else prop as T
+    }
+
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+        synchronized(this) {
+            prop = value
+        }
+    }
+}
+
+fun <T> lazyMutable(initializer: () -> T) = LazyMutable(initializer)
 
 fun <T> observable(value: T, onChange: (T,T)->Unit) = Observable(value)
 

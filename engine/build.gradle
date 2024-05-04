@@ -3,3 +3,13 @@ dependencies {
         api project("$pkg.value")
     }
 }
+
+configureGroup(libs) {
+
+    sourceSets {
+
+        test.java.srcDirs += ['test']
+        test.kotlin.srcDirs += ['test']
+
+    }
+}

@@ -10,9 +10,12 @@ import org.yunghegel.gdx.utils.ext.padVertical
 import org.yunghegel.gdx.utils.reflection.Accessor
 import org.yunghegel.gdx.utils.reflection.Editable
 import org.yunghegel.gdx.utils.reflection.FieldAccessor
+import org.yunghegel.gdx.utils.reflection.Ignore
 import org.yunghegel.gdx.utils.ui.LabelSupplier
 import org.yunghegel.salient.engine.system.set_property
 import org.yunghegel.salient.engine.system.storage.Registry
+import org.yunghegel.salient.engine.ui.scene2d.STable
+import java.lang.reflect.Field
 
 class ReflectionBasedEditor(val obj: Any,val category: String = "global") : Table() {
 
@@ -53,6 +56,7 @@ class ReflectionBasedEditor(val obj: Any,val category: String = "global") : Tabl
         for (field in fields) {
             if (!field.trySetAccessible()) continue
 
+
             val identifier = FieldEditor.formatName(field.name)
             val accessor = FieldAccessor(obj, field, identifier)
             if (field.type.toString().contains("Companion") || field.type.toString().contains("KSerializer")) continue
@@ -65,7 +69,10 @@ class ReflectionBasedEditor(val obj: Any,val category: String = "global") : Tabl
                 config
             }
 
-            add(editor).growX().padRight(15f).left().padVertical(5f).padLeft(4f).row()
+            val editorContainer = STable()
+            editorContainer.align(Align.center)
+            editorContainer.add(editor).growX()
+            add(editorContainer).growX().padRight(5f).left().padVertical(5f).padLeft(4f).row()
             editors.add(editor)
 
             for (child in editor.children) {
@@ -84,6 +91,11 @@ class ReflectionBasedEditor(val obj: Any,val category: String = "global") : Tabl
             lastType = field.type
         }
 
+    }
+
+    private fun checkIgnore(field: Field) : Boolean {
+        val ignore = field.getAnnotation(Ignore::class.java)
+        return (ignore == null || (!EditorFactory.checkType(field.type)))
     }
 
     companion object AccessorRegistry : Registry<Accessor>()

@@ -9,7 +9,7 @@ import org.yunghegel.gdx.utils.ext.validateFloat
 import org.yunghegel.gdx.utils.reflection.FieldAccessor
 import org.yunghegel.salient.engine.ui.widgets.value.DefaultFieldEditor
 
-class FloatEditor : DefaultFieldEditor() {
+open class FloatEditor : DefaultFieldEditor() {
 
 
 

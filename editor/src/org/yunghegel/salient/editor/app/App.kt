@@ -17,8 +17,8 @@ import org.yunghegel.salient.engine.api.undo.ActionHistory
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.lifecycle.onEditorInitialized
 import org.yunghegel.salient.engine.events.scene.SceneDiscoveryEvent
-import org.yunghegel.salient.engine.graphics.scene3d.SceneContext
-import org.yunghegel.salient.engine.graphics.scene3d.SceneRenderer
+import org.yunghegel.salient.engine.scene3d.SceneContext
+import org.yunghegel.salient.engine.scene3d.SceneRenderer
 import org.yunghegel.salient.engine.system.*
 import org.yunghegel.salient.engine.system.file.Filepath.Companion.pathOf
 import org.yunghegel.salient.engine.system.file.Paths
@@ -34,6 +34,8 @@ typealias ui = UI
 typealias scene = Scene
 
 typealias stage = UI
+
+typealias pipeline = Salient.Companion
 
 typealias State = Pair<Project, Scene>
 
@@ -53,17 +55,11 @@ class App : AppModule() {
         bindSingleton(assetManager)
     }
 
-
-
-
-
-
     internal val project: Project
         get() = inject()
 
     internal val scene: Scene
         get() = inject()
-
 
     init {
         onEditorInitialized {

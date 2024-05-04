@@ -32,3 +32,9 @@ fun Actor.pop(conf: PopTable.() -> Unit) {
     table.originX = table.width/2
     addListener(popListener)
 }
+
+fun table(conf: STable.() -> Unit= {}) : STable {
+    val table = STable()
+    table.conf()
+    return table
+}

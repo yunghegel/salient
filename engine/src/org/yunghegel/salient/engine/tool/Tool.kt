@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.Family
 import com.badlogic.gdx.InputAdapter
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.g2d.Batch
@@ -13,17 +14,19 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import ktx.actors.onChange
+import org.yunghegel.gdx.utils.data.Named
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.ToolLoadedEvent
 import org.yunghegel.salient.engine.graphics.GridConfig
 import org.yunghegel.salient.engine.input.Input
+import org.yunghegel.salient.engine.system.debug
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 import kotlin.math.abs
 
 
-abstract class Tool(val name:String) : InputAdapter() {
+abstract class Tool(override val name:String) : InputMultiplexer(), Named {
 
 
     init {
@@ -69,12 +72,16 @@ abstract class Tool(val name:String) : InputAdapter() {
 
 
     open fun activate() {
+        debug("Activating tool $name")
+        addProcessor(UI)
         if(blocking) Input.pauseExcept(this)
         else Input.addProcessor(this)
         active = true
     }
 
     open fun deactivate() {
+        debug("Deactivating tool $name")
+        removeProcessor(UI)
         if(blocking) Input.resumeExcept(this)
         else Input.removeProcessor(this)
         active = false

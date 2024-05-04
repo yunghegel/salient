@@ -291,6 +291,7 @@ internal class MRTShader(renderable: Renderable) : Shader {
         val vert = Gdx.files.internal("shaders/mrt.vert").readString()
         val frag = Gdx.files.internal("shaders/mrt.frag").readString()
         shaderProgram = ShaderProgram(prefix + vert, prefix + frag)
+
         if (!shaderProgram.isCompiled) {
             throw GdxRuntimeException(shaderProgram.log)
         }

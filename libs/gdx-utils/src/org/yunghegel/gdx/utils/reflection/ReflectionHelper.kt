@@ -4,6 +4,7 @@ import java.lang.reflect.Field
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
+import kotlin.reflect.jvm.kotlinProperty
 
 object ReflectionHelper {
 
@@ -158,4 +159,12 @@ object ReflectionHelper {
     }
 
     class ReflectionError(e: Throwable?) : Error(e)
+}
+
+fun <T> getField(obj: Any, name: String, fieldType: Class<T>): Field {
+    val fields = obj.javaClass.declaredFields
+    fields.forEach { f -> f.trySetAccessible() }
+    val field = fields.find { it.name == name } ?: throw IllegalArgumentException("Field $name not found in ${obj.javaClass}")
+    require (field.type == fieldType) { "Field $name is not of type $fieldType" }
+    return field
 }

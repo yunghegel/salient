@@ -6,6 +6,8 @@ import com.badlogic.gdx.utils.IntFloatMap
 import com.badlogic.gdx.utils.IntMap
 import com.kotcrab.vis.ui.widget.MultiSplitPane
 import com.kotcrab.vis.ui.widget.VisSplitPane
+import org.yunghegel.gdx.utils.data.Range
+import org.yunghegel.gdx.utils.data.RangeGroup
 import org.yunghegel.gdx.utils.ext.*
 import org.yunghegel.salient.engine.events.lifecycle.onEditorInitialized
 import kotlin.math.max
@@ -19,11 +21,13 @@ open class MultiSplitPaneEx (vertical: Boolean): MultiSplitPane(vertical) {
 
     private val getters : MutableMap<Int,()->Float> = mutableMapOf()
 
-    init {
+    var ranges = listOf<Range>()
 
-    }
+    val rangeGroup : RangeGroup
+        get() = RangeGroup(ranges)
 
     override fun setSplit(handleBarIndex: Int, split: Float) {
+        println(rangeGroup.resolveRestricted(if(handleBarIndex==0) 0 else 1, split))
         val restriction = computeRestriction(handleBarIndex, split)
         if (restriction.isInfinite() || restriction.isNaN()){
             cache.put(handleBarIndex, split)
@@ -34,6 +38,23 @@ open class MultiSplitPaneEx (vertical: Boolean): MultiSplitPane(vertical) {
         }
     }
 
+    fun setMinimum(range: Int, minimum: Float) {
+       rangeGroup.setMinimum(range, minimum)
+    }
+
+    fun rangePercents() : List<Range> {
+        val total = ranges.sum { it.length }
+        val normalizedRanges  = mutableListOf<Range>()
+        var start = 0f
+        for (i in 0 until ranges.size - 1) {
+            val range = ranges[i]
+            val percent = range.length / total
+            normalizedRanges.add(Range.of(start, start + percent,1/children.size.toFloat()))
+            start += percent
+        }
+        return ranges
+    }
+
     var initialized = false
 
     init {
@@ -41,6 +62,11 @@ open class MultiSplitPaneEx (vertical: Boolean): MultiSplitPane(vertical) {
             layout()
             initialized = true
         }
+    }
+
+    override fun layout() {
+        super.layout()
+        println(rangePercents().map { it.format }.joinToString { "," })
     }
 
     fun setSplitInternal(handleBarIndex: Int, split: Float) {
@@ -104,9 +130,15 @@ class SplitPaneEx(first:Actor,second:Actor,vertical: Boolean,val reverse:Boolean
     var cached : Float = 0f
 
     override fun setSplitAmount(amount: Float) {
-        cached = evaluateRestriction(amount)
+        if (amount == 0f ) {
+            super.setSplitAmount(cached)
+        } else {
+            cached = evaluateRestriction(amount)
+            super.setSplitAmount(cached)
+        }
 
-        super.setSplitAmount(cached)
+        println("cached: $cached, current: $split, amount: $amount")
+
     }
 
     fun setSplitInternal(amount:Float) {
@@ -131,10 +163,10 @@ class SplitPaneEx(first:Actor,second:Actor,vertical: Boolean,val reverse:Boolean
 
     fun hide(orientation: Int) {
         when (orientation) {
-            LEFT -> super.setSplitAmount(0f)
+            LEFT -> setSplitInternal(0f)
             RIGHT -> super.setSplitAmount(1f)
             TOP -> super.setSplitAmount(0f)
-            BOTTOM -> super.setSplitAmount(1f)
+            BOTTOM -> setSplitInternal(1f)
         }
     }
 

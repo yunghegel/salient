@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.GLFrameBuffer.FrameBufferBuilder
 import org.lwjgl.opengl.GL30
 import org.yunghegel.salient.engine.graphics.GFX
-import org.yunghegel.salient.engine.graphics.attach
+import org.yunghegel.salient.engine.graphics.util.attach
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.tool.Tool
 

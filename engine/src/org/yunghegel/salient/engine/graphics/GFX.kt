@@ -7,19 +7,22 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import dev.lyze.gdxtinyvg.utils.WhitePixelUtils
 import ktx.inject.Context
+import org.yunghegel.gdx.utils.ext.notnull
 import org.yunghegel.salient.engine.GraphicsModule
-import org.yunghegel.salient.engine.helpers.Grid
+import org.yunghegel.salient.engine.graphics.shapes.utility.Grid
+import org.yunghegel.salient.engine.graphics.util.DebugDrawer
+import org.yunghegel.salient.engine.graphics.util.GLFormat
 import org.yunghegel.salient.engine.system.Log.info
 import space.earlygrey.shapedrawer.ShapeDrawer
 
-object GFX : GraphicsModule() {
+object GFX : GraphicsModule(), SharedGraphicsResources {
 
-    private lateinit var spriteBatch: SpriteBatch
-    private lateinit var debugDrawer: DebugDrawer
-    private lateinit var shapeDrawer: ShapeDrawer
-    private lateinit var grid : Grid
-    private lateinit var shapeRenderer: ShapeRenderer
-    private lateinit var whitePixel : TextureRegion
+    override var spriteBatch: SpriteBatch by notnull()
+    override var debugDrawer: DebugDrawer by notnull()
+    override var shapeDrawer: ShapeDrawer by notnull()
+    override var grid : Grid by notnull()
+    override var shapeRenderer: ShapeRenderer  by notnull()
+    override var whitePixel : TextureRegion by notnull()
 
     override val registry: Context.() -> Unit = {
         whitePixel = WhitePixelUtils.createWhitePixelTexture()
@@ -36,15 +39,10 @@ object GFX : GraphicsModule() {
         bindSingleton(shapeRenderer)
         bindSingleton(whitePixel)
 
+        bind(SharedGraphicsResources::class) { this }
+
         info("Shared graphics context built for injection ;")
     }
-
-    fun buildSharedContext() {
-
-
-    }
-
-
 
     val RGB8: GLFormat = GLFormat(GL30.GL_RGB8, GL20.GL_RGB, GL20.GL_UNSIGNED_BYTE)
     val RGB16: GLFormat = GLFormat(GL30.GL_RGB16F, GL20.GL_RGB, GL20.GL_FLOAT)

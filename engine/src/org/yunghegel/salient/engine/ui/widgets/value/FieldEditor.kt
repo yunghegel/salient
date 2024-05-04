@@ -23,12 +23,12 @@ interface FieldEditor {
 
     fun labelDefault(cell: Cell<*>) {
         cell.left()
-        cell.growX()
+        cell.width(100f)
+
     }
 
     fun actorDefault(cell: Cell<*>) {
         cell.right()
-        cell.growX()
     }
 
     companion object {

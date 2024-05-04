@@ -13,7 +13,7 @@ import java.util.*
 
 typealias EnumSetAction<T> = (EnumBitmask<T>) -> Unit
 
-class BitmaskConfigWidget<T : Enum<T>>(val enumMask: EnumBitmask<T>, var onChange: EnumSetAction<T>? = null) :
+class BitmaskConfigWidget<T : Enum<T>>(val enumMask: EnumBitmask<T>,val newRowAfter: Int? = null, var onChange: EnumSetAction<T>? = null) :
     STable(), PredicatedBitmaskAction<T> {
 
     private val objSet: ConfigActorSet<T, ConfigActor<T>> = ConfigActorSet()
@@ -41,16 +41,21 @@ class BitmaskConfigWidget<T : Enum<T>>(val enumMask: EnumBitmask<T>, var onChang
 
         }
 
-        enumMask.enumClass.enumConstants.forEach { enum ->
+       EnumSet.allOf(enumMask.enumClass).forEach { enum ->
             val actor = ConfigActor(enum, enumMask)
+
             objSet.add(actor)
         }
 
         val group = VerticalGroup()
         group.grow().space(5f).columnLeft()
-
+        var index = 1
         objSet.forEach { actor ->
-            add(actor).left().growX().padBottom(5f).row()
+           val cell=  add(actor).left().growX().padBottom(5f)
+            if (newRowAfter != null && index++ % newRowAfter ==0) {
+                cell.row()
+            }
+
         }
         align(Align.left)
 
@@ -92,7 +97,8 @@ class ConfigActor<T : Enum<T>>(val enum: T, enumMask: EnumBitmask<T>) : SCheckBo
             enumMask.toggle(enum)
         }
 
-        setText(enum.name.lowercase().replaceFirst(enum.name[0].lowercase(), enum.name[0].uppercase()))
+//        proper noun case
+        setText(enum.name.lowercase().split("_").joinToString(" ") { it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } })
     }
 
 }

@@ -14,7 +14,7 @@ const val LOCKED = 32
 @Suppress("UNCHECKED_CAST")
 open class SpatialEntity : Entity() {
 
-    val entityComponents : MutableMap<Class<*>, EntityComponent<*>> = mutableMapOf()
+    val entityComponents : MutableMap<Class<out BaseComponent>,BaseComponent> = mutableMapOf()
 
     init {
         flags = VISIBLE
@@ -44,27 +44,27 @@ open class SpatialEntity : Entity() {
         return this.flags and flags == flags
     }
 
-    fun <T> getComponent(type: Class<T>): T? {
-        return entityComponents[type]?.value as T?
+    fun <T:BaseComponent> getComponent(type: Class<out T>): T? {
+        return entityComponents[type] as T?
     }
 
-    fun <T> checkComponent(type: Class<T>): Boolean {
+    fun <T:BaseComponent> checkComponent(type: Class<T>): Boolean {
         return entityComponents.containsKey(type)
     }
 
     override fun add(component: Component): Entity {
-        if (component is EntityComponent<*>) {
-            if (component.type!=null)
-            entityComponents[component.type] = component
+        if (component is BaseComponent) {
+            entityComponents[component.javaClass] = component
         }
         return super.add(component)
     }
 
-    override fun <T : Component?> remove(componentClass: Class<T>?): T {
-        if (componentClass != null) {
-            entityComponents.remove(componentClass)
+    override fun <T : Component> remove(componentClass: Class<T>?): T? {
+        val item = super.remove(componentClass)
+        if (item is BaseComponent) {
+            entityComponents.remove(item.javaClass)
         }
-        return super.remove(componentClass)
+        return item
     }
 
     override fun removeAll() {

@@ -2,14 +2,14 @@ package org.yunghegel.salient.engine.api.model
 
 import com.badlogic.gdx.files.FileHandle
 import kotlinx.serialization.Serializable
-import org.yunghegel.salient.engine.api.ID
-import org.yunghegel.salient.engine.api.Named
+import org.yunghegel.gdx.utils.data.ID
+import org.yunghegel.gdx.utils.data.Named
 import org.yunghegel.salient.engine.api.Resource
 import org.yunghegel.salient.engine.system.file.FileType
 import org.yunghegel.salient.engine.system.file.Filepath
 
 @Serializable
-class AssetHandle(val pth: String="") : Resource,ID,Named {
+class AssetHandle(val pth: String="") : Resource, ID, Named {
 
     constructor(handle:FileHandle) : this(handle.path())
 

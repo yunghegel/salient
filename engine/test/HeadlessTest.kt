@@ -2,7 +2,7 @@ import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.backends.headless.HeadlessApplication
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration
-import com.badlogic.gdx.graphics.Texture
+import org.yunghegel.gdx.lwjgl.par.HeadlessTest
 import kotlin.test.Test
 
 open class HeadlessTest : ApplicationAdapter() {

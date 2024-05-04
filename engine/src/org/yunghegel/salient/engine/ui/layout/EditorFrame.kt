@@ -10,58 +10,65 @@ import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.Cell
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.utils.Array
 import com.kotcrab.vis.ui.widget.Separator
 import ktx.actors.onClick
+import org.yunghegel.gdx.utils.data.Range
 import org.yunghegel.gdx.utils.ext.*
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
+import org.yunghegel.salient.engine.ui.widgets.PredicateSeparator
+import kotlin.math.max
 
 open class EditorFrame : STable() {
 
-    val split = MultiSplitPaneEx(false)
+    val split = ConstrainedMultiSplitPane(false)
     val centerContent = TabPanel()
 
     val menubarSlot = STable()
     val footerSlot = STable()
 
-    val left = PanelGroup(LEFT)
-    val right = PanelGroup(RIGHT)
-    val center = PanelGroup(CENTER)
+    val left = PanelGroup(LEFT,0.15f)
+    val right = PanelGroup(RIGHT,0.6f)
+    val center = PanelGroup(BOTTOM,0.8f)
 
-    val centerSplit = SplitPaneEx(centerContent, center.container, true)
+    val centerSplit = ConstrainedMultiSplitPane(true)
 
     init {
         create()
         footerSlot.align(Align.left)
     }
 
+    val panelRanges = Array<Range>()
+
     fun create() {
         split.setWidgets(left.container, centerSplit, right.container)
+        centerSplit.setWidgets(centerContent, center.container)
+
         add(menubarSlot).growX().colspan(5).row()
         add(Separator().apply{color.alpha(0.5f)}).growX().colspan(5).row()
         add(left.toolbar).growY().width(22f).align(Align.top)
-        add(Separator()).growY()
+        add(PredicateSeparator(){!left.hidden}).growY()
         add(split).expand().fill()
-        add(Separator()).growY()
+        add(PredicateSeparator(){!right.hidden}).growY()
         add(right.toolbar).growY().width(22f).row()
-        add(Separator()).growX().colspan(5).row()
+        add(PredicateSeparator(){!center.hidden}).growX().colspan(5).row()
         add(center.toolbar).growX().colspan(5)
 
+        split.rangeResolutionFor(left.container) { left.toNormalized(width) }
+        split.rangeResolutionFor(centerSplit) { center.toNormalized(width) }
+        split.rangeResolutionFor(right.container) { right.toNormalized(width) }
 
-        split.registerComputed(1) { (split.width-300)/split.width }
-        split.registerComputed(0) { 220f/split.width }
+        split.prefs[left.container] = .15f
+        split.prefs[centerSplit] = 0.8f
+        split.prefs[right.container] = .8f
 
-        split.setSplit(0, 0.15f )
-        split.setSplit(1, 0.18f)
+        centerSplit.rangeResolutionFor(centerContent) { center.toNormalized(height) }
 
-        centerSplit.setSplitAmount(0.2f)
-        centerSplit.setComputation { (((Gdx.graphics.height-300f))/Gdx.graphics.height) }
-    }
+        centerSplit.prefs[centerContent] = 0.8f
+        centerSplit.prefs[center.container] = 0.2f
 
-    fun setMenubarTable(table: STable) {
-        menubarSlot.clearChildren()
-        menubarSlot.add(table).growX()
     }
 
     fun <T:Actor> addFooterItem(actor: T) : Cell<T> {
@@ -84,59 +91,41 @@ open class EditorFrame : STable() {
         center.addPanel(PanelContent(icon, title, content, overflow))
     }
 
-    fun configureListener(viewportActor: Actor, listener: InputListener) {
-        addListener(object:InputListener(){
-            override fun exit(event: InputEvent?, x: Float, y: Float, pointer: Int, fromActor: Actor?) {
-                fromActor?.let { actor ->
-                    event?.relatedActor.run {
-                        if(this!!.isDescendantOf(viewportActor)) {
-                            stage.setKeyboardFocus(viewportActor)
-                            stage.cancelTouchFocus(fromActor)
-
-                        }
-
-                    }
-                }
-            }
-
-        })
-    }
-
     fun hide(pos: Int) {
         when(pos) {
             LEFT ->  {
-                split.hide(0, LEFT)
+                split.hide(LEFT)
                 left.hidden = true
                 left.container.touchable = Touchable.disabled
             }
             RIGHT -> {
-                split.hide(1, RIGHT)
+                split.hide(RIGHT)
                 right.hidden = true
                 right.container.touchable = Touchable.disabled
             }
-            CENTER or BOTTOM -> {
+            BOTTOM -> {
                 centerSplit.hide(BOTTOM)
                 center.hidden = true
                 center.container.touchable = Touchable.disabled
             }
         }
-
     }
 
     fun show(pos: Int) {
         when(pos) {
             LEFT -> {
-                split.restoreSplit(0)
+                split.restore(LEFT,left.container)
                 left.hidden = false
                 left.container.touchable = Touchable.enabled
             }
             RIGHT -> {
-                split.restoreSplit(1)
+                split.cache[right.container] = max(left.prefererred,split.cache[right.container] ?: 0.8f)
+                split.restore(RIGHT,right.container)
                 right.hidden = false
                 right.container.touchable = Touchable.enabled
             }
-            CENTER or BOTTOM -> {
-                centerSplit.restoreSplit()
+            BOTTOM -> {
+                centerSplit.setSplit(0,centerSplit.cache[centerContent] ?: 0.8f)
                 center.hidden = false
                 center.container.touchable = Touchable.enabled
             }
@@ -148,7 +137,27 @@ open class EditorFrame : STable() {
         var button : PanelGroup.ToolbarButton? = null
     }
 
-    inner class PanelGroup(val pos: Int) {
+    inner class PanelGroup(val pos: Int, override var prefererred: Float=-1f) : Range {
+
+        override var end: Float = 0f
+            get() = when(pos) {
+                LEFT -> start + container.width + toolbar.width
+                RIGHT -> container.x+container.width
+                CENTER -> container.x+container.width
+                else -> 0f
+            }
+
+
+
+
+        override var start: Float = 0f
+            get() = when(pos) {
+                LEFT -> container.x
+                RIGHT -> container.x
+                CENTER -> container.x
+                else -> 0f
+            }
+
         val container = STable()
         private val header = STable()
         private val content = STable()
@@ -201,7 +210,6 @@ open class EditorFrame : STable() {
         private fun createToolbarButton(panel: PanelContent) : ToolbarButton {
            panel.button =  ToolbarButton(panel) { from->
                 setPanel(from)
-
             }
             return panel.button!!
         }
@@ -255,7 +263,7 @@ open class EditorFrame : STable() {
                     RIGHT -> {
                         bounds.set(x-6f,y+6f,title.width+btn.width+14f, title.width+btn.width+6f)
                     }
-                    CENTER -> {
+                    BOTTOM -> {
                         bounds.set(x,y,width,height)
                     }
                 }
@@ -290,6 +298,7 @@ open class EditorFrame : STable() {
 
             val buttonGroup = STable()
             val extras = STable()
+            val buttons = mutableListOf<ToolbarButton>()
 
             init {
                 touchable = Touchable.enabled
@@ -301,7 +310,7 @@ open class EditorFrame : STable() {
                 when(pos) {
                     LEFT -> align(Align.top)
                     RIGHT -> align(Align.top)
-                    CENTER -> align(Align.left)
+                    BOTTOM -> align(Align.left)
                 }
 
                 addListener(object:ClickListener(){
@@ -313,11 +322,12 @@ open class EditorFrame : STable() {
             }
 
             fun addPanel(panel: ToolbarButton) {
+                buttons.add(panel)
                 panel.orient(pos)
                 when(pos) {
                     LEFT -> buttonGroup.add(panel).width(24f).padTop(panel.title.width+panel.btn.width).row()
                     RIGHT -> buttonGroup.add(panel).width(24f).padBottom(panel.title.width+panel.btn.width).padTop(6f).row()
-                    CENTER -> buttonGroup.add(panel).height(22f).padRight(30f).left().growX()
+                    BOTTOM -> buttonGroup.add(panel).height(22f).padRight(30f).left().growX()
                 }
             }
 

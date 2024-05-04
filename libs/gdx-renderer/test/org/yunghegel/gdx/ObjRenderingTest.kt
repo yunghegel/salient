@@ -1,7 +1,10 @@
 package org.yunghegel.gdx
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
+import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.math.Vector3
+import com.kotcrab.vis.ui.widget.file.FileChooser.Mode
 import org.yunghegel.gdx.renderer.Renderer
 import org.yunghegel.gdx.util.*
 
@@ -9,26 +12,18 @@ class ObjRenderingTest : App() {
 
     lateinit var testKit: TestKit
     lateinit var renderer: Renderer
+    lateinit var instance : ModelInstance
 
 
     override fun create() {
-        testKit = TestKit {
-            model = SampleModels.TORUS_KNOT.load("models","obj")
-            instance = model.toInstance()
-            cam.position.set(2.5f,3f,3f)
-            cam.lookAt(0f,0f,0f)
-            println(model.meshes.first().vertexAttributes)
-            cam.update()
-        }
+        var model = SampleModels.TORUS_KNOT.load("models","obj")
+        instance = ModelInstance(model)
         renderer = Renderer()
     }
 
     override fun render() {
         super.render()
-        testKit.render {
-
-        }
-        renderer.render(listOf(testKit.instance))
+        renderer.render(listOf(instance))
     }
 
 
@@ -36,5 +31,7 @@ class ObjRenderingTest : App() {
 }
 
 fun main() {
-    ObjRenderingTest().run()
+    ObjRenderingTest().run() {
+        this.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL32,3,2)
+    }
 }

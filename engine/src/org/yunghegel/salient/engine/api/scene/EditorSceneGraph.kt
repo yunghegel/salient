@@ -1,7 +1,7 @@
 package org.yunghegel.salient.engine.api.scene
 
 import org.yunghegel.salient.engine.api.UpdateRoutine
-import org.yunghegel.salient.engine.graphics.scene3d.GameObject
+import org.yunghegel.salient.engine.scene3d.GameObject
 
 interface EditorSceneGraph : UpdateRoutine {
 
@@ -11,11 +11,7 @@ interface EditorSceneGraph : UpdateRoutine {
 
     fun removeGameObject(gameObject: GameObject)
 
-    fun traverse(function: (GameObject?) -> Unit, go: GameObject? = root) {
-        function(go)
-        if (go?.children == null) return
-        go.children.forEach { traverse(function, it) }
-    }
+
 
 
 

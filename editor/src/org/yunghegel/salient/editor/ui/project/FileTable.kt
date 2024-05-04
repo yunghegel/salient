@@ -2,6 +2,7 @@ package org.yunghegel.salient.editor.ui.project
 
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import org.yunghegel.salient.engine.system.file.FileType
 import org.yunghegel.salient.engine.ui.Icons
@@ -12,7 +13,7 @@ import org.yunghegel.salient.engine.ui.scene2d.STextButton
 
 class FileTable(val file: FileHandle) : STable() {
 
-    val icon : TextureRegionDrawable
+
     val name : SLabel
 
     val button : STextButton
@@ -22,6 +23,8 @@ class FileTable(val file: FileHandle) : STable() {
     init {
         touchable = Touchable.enabled
         button= STextButton(file.name(),"empty")
+        val icon : Drawable
+
         if (file.isDirectory) {
             icon   = Icons.folderIcon
 
@@ -39,9 +42,10 @@ class FileTable(val file: FileHandle) : STable() {
                 else -> Icons.fileIcon
             }
         }
-        add(SImage(icon)).size(16f).padRight(4f)
-        add(button).growX()
         name = SLabel(file.name())
+        name.wrap = true
+        name.setEllipsis(true)
+        add(name).growX().left().minWidth(100f)
     }
 
 

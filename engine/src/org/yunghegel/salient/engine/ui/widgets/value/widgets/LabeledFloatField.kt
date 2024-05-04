@@ -5,7 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener
 
-class LabeledFloatField(labelText: String, width: Int=-1, allowNegative: Boolean=false) : LabeledTextField(labelText,width) {
+open class LabeledFloatField(labelText: String, width: Int=-1, allowNegative: Boolean=false) : LabeledTextField(labelText,width) {
 
     init {
         addScrollListener()

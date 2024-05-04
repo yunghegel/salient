@@ -9,12 +9,12 @@ import org.yunghegel.salient.engine.api.UpdateRoutine
 import org.yunghegel.salient.engine.api.asset.Asset
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
-import org.yunghegel.salient.engine.graphics.scene3d.SceneContext
+import org.yunghegel.salient.engine.scene3d.SceneContext
 
 abstract class EditorScene(val ref: SceneHandle, val sceneManager: EditorSceneManager<*>) : UpdateRoutine,
     RendererRoutine, ResizeRoutine, Disposable, Mask {
 
-    override val mask: Int = 0
+    override var mask: Int = 0
 
     private val assetIndex : MutableList<AssetHandle> = mutableListOf()
 
@@ -22,7 +22,7 @@ abstract class EditorScene(val ref: SceneHandle, val sceneManager: EditorSceneMa
 
     abstract val renderer: EditorSceneRenderer<*,*>
 
-    abstract val sceneGraph: EditorSceneGraph
+    abstract val graph: EditorSceneGraph
 
     abstract val context: SceneContext
 

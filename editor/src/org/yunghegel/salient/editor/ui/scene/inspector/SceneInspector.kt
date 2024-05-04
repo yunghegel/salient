@@ -1,5 +1,6 @@
 package org.yunghegel.salient.editor.ui.scene.inspector
 
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent
 import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.Separator
@@ -26,6 +27,7 @@ class SceneInspector : STable() {
     val inspectors : List<BaseInspector> = types.map { it.getDeclaredConstructor().newInstance() }
 
 
+
     fun set(inspector: BaseInspector) {
         inspectorSidebar.buttonGroup.buttons.forEach {
             if (it.actor == inspector) {
@@ -39,6 +41,7 @@ class SceneInspector : STable() {
         add(inspectorSidebar).growY().width(22f)
         add(Separator()).growY()
         add(content).grow()
+
         content.align(Align.center)
         inspectors.forEachIndexed { index, inspector ->
             if (inspector is ComponentInspector<*,*>) {

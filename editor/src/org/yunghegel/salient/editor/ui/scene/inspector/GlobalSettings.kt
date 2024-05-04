@@ -1,10 +1,13 @@
 package org.yunghegel.salient.editor.ui.scene.inspector
 
+import org.yunghegel.gdx.renderer.shader.WireframeShader
 import org.yunghegel.gdx.utils.ext.padVertical
 import org.yunghegel.gdx.utils.reflection.FieldAccessor
 import org.yunghegel.gdx.utils.ui.ActorList
+import org.yunghegel.salient.core.graphics.util.OutlineDepth
 import org.yunghegel.salient.editor.app.configs.Settings
-import org.yunghegel.salient.engine.helpers.Grid
+import org.yunghegel.salient.editor.plugins.outline.lib.Outliner
+import org.yunghegel.salient.engine.graphics.shapes.utility.Grid
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.system.props
 import org.yunghegel.salient.engine.ui.layout.CollapsePanel
@@ -22,12 +25,13 @@ class GlobalSettings : BaseInspector("Global","config"), SearchBar.SearchProvide
         val grid : Grid = inject()
         val config = grid.config
         addEditor(config,"Grid")
+        addEditor(Outliner.settings,"Outline")
+        addEditor(WireframeShader.settings,"Wireframe")
 
         with (Settings.i) {
             addEditor(graphics.window,"Window")
             addEditor(graphics.opengl,"OpenGL")
             addEditor(graphics.video,"Video")
-
         }
 
 

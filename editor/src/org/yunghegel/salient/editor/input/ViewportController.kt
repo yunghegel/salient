@@ -2,6 +2,8 @@ package org.yunghegel.salient.editor.input
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
+import com.badlogic.gdx.InputAdapter
+import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Plane
@@ -9,6 +11,7 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener
 import com.badlogic.gdx.utils.viewport.ScreenViewport
@@ -54,7 +57,7 @@ class ViewportController : DragListener() {
     var timeElapsed = 0f
 
     var translateUnits = 15f
-    var scrollUnits  = 50f
+    var scrollUnits  = 100f
     var rotationSteps = 90f
 
     var rotateAngle = 360f
@@ -62,6 +65,8 @@ class ViewportController : DragListener() {
 
     var maxDist = 50f
     var minDist = 2f
+
+    var inputDelegate : InputProcessor? = null
 
     val clickListener = object : ClickListener() {
         override fun clicked(event: InputEvent?, x: Float, y: Float) {
@@ -111,18 +116,18 @@ class ViewportController : DragListener() {
         numEventsPolled = 0
         lastDeltaX = 0f
         lastDeltaY = 0f
-
-
-
+        inputDelegate?.touchDown(x.toInt(), y.toInt(), pointer, button)
         return super.touchDown(event, x, y, pointer, button)
     }
 
     override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
         this.button = -1
+        inputDelegate?.touchUp(x.toInt(), y.toInt(), pointer, button)
         super.touchUp(event, x, y, pointer, button)
     }
 
     override fun mouseMoved(event: InputEvent?, x: Float, y: Float): Boolean {
+        inputDelegate?.mouseMoved(x.toInt(), y.toInt())
         return super.mouseMoved(event, x, y)
     }
 
@@ -137,6 +142,7 @@ class ViewportController : DragListener() {
 
     override fun scrolled(event: InputEvent?, x: Float, y: Float, amountX: Float, amountY: Float): Boolean {
         zoom(amountY * scrollUnits * Gdx.graphics.deltaTime * (1/camera.distanceFalloff(target,maxDist,minDist)))
+        inputDelegate?.scrolled(amountX, amountY)
         return super.scrolled(event, x, y, amountX, amountY)
     }
 
@@ -154,18 +160,20 @@ class ViewportController : DragListener() {
         this.key = keycode
         stage.keyboardFocus = actor
         processKey(keycode)
+        inputDelegate?.keyDown(keycode)
         return super.keyDown(event, keycode)
     }
 
     override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
         this.key = -1
+        inputDelegate?.keyUp(keycode)
         return super.keyUp(event, keycode)
     }
 
     fun zoom(amount: Float): Boolean {
         camera.translate(tmpV1.set(camera.direction).scl(amount))
         update()
-        return true
+        return false
     }
 
     fun translate(deltaX: Float, deltaY: Float): Boolean {
@@ -173,7 +181,7 @@ class ViewportController : DragListener() {
         camera.translate(tmpV2.set(camera.up).scl(-deltaY * translateUnits))
         camera.position.add(tmpV1).add(tmpV2)
         update()
-        return true
+        return false
     }
 
     fun rotate(deltaX: Float, deltaY: Float): Boolean {
@@ -181,7 +189,7 @@ class ViewportController : DragListener() {
         camera.rotateAround(target, tmpV1.nor(), deltaY * rotateAngle)
         camera.rotateAround(target, Vector3.Y, deltaX * -rotateAngle)
         update()
-        return true
+        return false
     }
 
     override fun touchDragged(event: InputEvent?, x: Float, y: Float, pointer: Int) {
@@ -254,7 +262,8 @@ class ViewportController : DragListener() {
         camera.update()
 
     }
+}
 
-
-
+fun delegateInput(controller: ViewportController = inject(), listener: InputProcessor?) {
+   controller.inputDelegate = listener
 }

@@ -2,10 +2,13 @@ package org.yunghegel.gdx.renderer.shader
 
 import com.badlogic.gdx.graphics.g3d.Attribute
 import com.badlogic.gdx.graphics.g3d.Renderable
+import com.badlogic.gdx.graphics.g3d.Shader
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 
 class ShaderPrefix(var prefix: String,val renderable: Renderable) {
-    val setters : MutableList<(DefaultShader,Renderable)->Unit>
+    val setters : MutableList<(Shader,Renderable)->Unit>
+
+    constructor(renderable: Renderable) : this("",renderable)
 
     init {
         setters = mutableListOf()
@@ -14,7 +17,7 @@ class ShaderPrefix(var prefix: String,val renderable: Renderable) {
     }
 
 
-    fun addSetter(setter: (DefaultShader,Renderable?)->Unit) : ShaderPrefix {
+    fun addSetter(setter: (Shader,Renderable?)->Unit) : ShaderPrefix {
         setters.add(setter)
         return this
     }

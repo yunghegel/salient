@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.model.Node
 import com.badlogic.gdx.graphics.g3d.model.NodePart
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder
+import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.BoundingBox
 import com.badlogic.gdx.utils.Array
@@ -226,3 +227,15 @@ fun createRayRenderable(origin: Vector3?, direction: Vector3, length: Float, col
     val model = modelBuilder.end()
     return ModelInstance(model)
 }
+
+val Model.boundingRadius get() = run {
+    var radius = 0f
+
+    for (mesh in meshes) {
+        val r = mesh.calculateRadius(Vector3(), 0, mesh.numIndices, Matrix4().idt())
+        if (r > radius) radius = r
+    }
+    radius
+}
+
+val Model.instance get() = ModelInstance(this)

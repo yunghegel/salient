@@ -9,10 +9,19 @@ interface Pickable {
 
     val material: Material
 
-    fun renderPick(batch: ModelBatch?)
+    fun renderPick(batch: ModelBatch)
 
     fun encode() {
         val attr = PickerColorEncoder.encodeRaypickColorId(id)
         material.set(attr)
     }
+
+    fun whenPicked(previousPick: Pickable? = null) {}
+
+    fun whenUnpicked() {}
+
+    fun setSource(obj: Any) {}
+
+    fun getSource() : Any? = null
+
 }

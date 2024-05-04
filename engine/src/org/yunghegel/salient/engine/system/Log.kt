@@ -66,7 +66,7 @@ object Log {
         logWriter?.println("Salient log file created at ${Date()}")
     }
 
-    fun log(msg: String, level: LogLevel = LogLevel.DEBUG) {
+    fun log(msg: String, level: LogLevel = LogLevel.Debug) {
         val info = getCallerInfo()
         val time = getTime()
         val logRef = LogReference(info.first, info.second, info.third, time, level, msg)
@@ -76,7 +76,7 @@ object Log {
     }
 
     fun info(msg: String) {
-        log(msg, LogLevel.INFO)
+        log(msg, LogLevel.Info)
     }
 
     fun handle(logRef: LogReference) {
@@ -104,12 +104,12 @@ object Log {
 
     fun ansify(msg: String, level: LogLevel): String {
         return when (level) {
-            LogLevel.INFO -> colorize(msg, Ansi.WHITE)
-            LogLevel.DEBUG -> colorize(msg, Ansi.BLUE)
-            LogLevel.ERROR -> colorize(msg, Ansi.RED)
-            LogLevel.WARN -> colorize(msg, Ansi.PURPLE)
-            LogLevel.STATE -> colorize(msg, Ansi.YELLOW)
-            LogLevel.EVENT -> colorize(msg, Ansi.GREEN)
+            LogLevel.Info -> colorize(msg, Ansi.WHITE)
+            LogLevel.Debug -> colorize(msg, Ansi.BLUE)
+            LogLevel.Error -> colorize(msg, Ansi.RED)
+            LogLevel.Warn -> colorize(msg, Ansi.PURPLE)
+            LogLevel.State -> colorize(msg, Ansi.YELLOW)
+            LogLevel.Event -> colorize(msg, Ansi.GREEN)
         }
     }
 
@@ -120,31 +120,35 @@ fun log(msg: String) {
 }
 
 fun info(msg: String) {
-    Log.log(msg, LogLevel.INFO)
+    Log.log(msg, LogLevel.Info)
 }
 
 fun debug(msg: String) {
-    Log.log(msg, LogLevel.DEBUG)
+    Log.log(msg, LogLevel.Debug)
 }
 
 fun error(msg: String) {
-    Log.log(msg, LogLevel.ERROR)
+    Log.log(msg, LogLevel.Error)
 }
 
 fun error(msg:String, triggerDialog: Boolean = false,createDialog: (()->Unit) = { }) {
-    Log.log(msg, LogLevel.ERROR)
+    Log.log(msg, LogLevel.Error)
     if(triggerDialog) {
         val dialog = createDialog.invoke()
     }
 }
 
 fun event(type: Class<*>) {
-    Log.log(type.simpleName, LogLevel.EVENT)
+    Log.log(type.simpleName, LogLevel.Event)
+}
+
+fun emitEvent(emission: String) {
+    Log.log(emission, LogLevel.Event)
 }
 
 
 fun warn(msg: String) {
-    Log.log(msg, LogLevel.WARN)
+    Log.log(msg, LogLevel.Warn)
 }
 
 
@@ -156,8 +160,8 @@ fun interface LogHandler {
 
 }
 
-enum class LogLevel(val color: Color) {
-    INFO(Color.WHITE), DEBUG(Color.CYAN), WARN(Color.CORAL), ERROR(Color.FIREBRICK), STATE(Color.GOLD), EVENT(Color.FOREST)
+enum class LogLevel(val color: Color, val ansi: Ansi) {
+    Info(Color.WHITE,Ansi.WHITE), Debug(Color.CYAN,Ansi.CYAN), Warn(Color.CORAL,Ansi.YELLOW), Error(Color.FIREBRICK,Ansi.RED), State(Color.GOLD,Ansi.GREEN), Event(Color.FOREST,Ansi.GREEN)
 }
 
 data class LogReference(
@@ -176,12 +180,12 @@ data class LogReference(
 
     fun formatColored(): String {
         return when (level) {
-            LogLevel.INFO -> "$time ${Log.ansify(level.name, level)} $className.$methodName:$line - $msg"
-            LogLevel.DEBUG -> "$time ${Log.ansify(level.name, level)} $className.$methodName:$line - $msg"
-            LogLevel.ERROR -> "$time ${Log.ansify(level.name, level)} $className.$methodName:$line - $msg"
-            LogLevel.WARN -> "$time ${Log.ansify(level.name, level)} $className.$methodName:$line - $msg"
-            LogLevel.STATE -> "$time ${Log.ansify(level.name, level)} $className.$methodName:$line - $msg"
-            LogLevel.EVENT -> "${Log.ansify(msg, level)} [$className.$methodName:$line]"
+            LogLevel.Info -> "$time ${Log.ansify(level.name, level)} $className.$methodName:$line - $msg"
+            LogLevel.Debug -> "$time ${Log.ansify(level.name, level)} $className.$methodName:$line - $msg"
+            LogLevel.Error -> "$time ${Log.ansify(level.name, level)} $className.$methodName:$line - $msg"
+            LogLevel.Warn -> "$time ${Log.ansify(level.name, level)} $className.$methodName:$line - $msg"
+            LogLevel.State -> "$time ${Log.ansify(level.name, level)} $className.$methodName:$line - $msg"
+            LogLevel.Event -> "${Log.ansify(msg, level)} [$className.$methodName:$line]"
         }
     }
 

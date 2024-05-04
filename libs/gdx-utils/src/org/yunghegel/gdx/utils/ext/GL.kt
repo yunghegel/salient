@@ -4,8 +4,14 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.GL30
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.BufferUtils
+import ktx.app.clearScreen
+import java.awt.Frame
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -45,7 +51,6 @@ private fun ensureComplete() {
     if (!complete) {
         textureMinSize = 4
         textureMaxSize = getInt(GL20.GL_MAX_TEXTURE_SIZE)
-
         complete = true
     }
 }
@@ -127,4 +132,24 @@ fun toOpenGLCoords(x: Int, y: Int): Vector2 {
 
 fun toOpenGLCoords(x: Int, y: Int, w: Int, h: Int): Vector2 {
     return toOpenGLCoords(Vector2(x.toFloat(), y.toFloat()), Vector2(w.toFloat(), h.toFloat()))
+}
+
+fun pass(fbo:FrameBuffer,x:Int=0,y:Int =0, width: Int = appwidth, height: Int = appheight, pass: (FrameBuffer)->Unit) : Texture{
+    glEnable(GL30.GL_DEPTH_TEST)
+    Gdx.gl.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0)
+    fbo.begin()
+    pass(fbo)
+    fbo.end()
+    val tex = fbo.colorBufferTexture
+//    flip
+    return tex
+}
+
+
+
+fun Texture.draw(batch: SpriteBatch,x:Int=0,y:Int =0, width: Int = appwidth, height: Int = appheight,conf:SpriteBatch.()->Unit = {}) {
+    batch.conf()
+    batch.begin()
+    batch.draw(this,x.toFloat(),y.toFloat(),width.toFloat(),height.toFloat(),0f,0f,1f,1f)
+    batch.end()
 }

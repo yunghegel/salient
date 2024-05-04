@@ -12,54 +12,50 @@ import org.yunghegel.salient.engine.api.model.SceneHandle
 import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.api.scene.SceneEnvironment
 import org.yunghegel.salient.engine.events.lifecycle.onShutdown
-import org.yunghegel.salient.engine.graphics.scene3d.GameObject
-import org.yunghegel.salient.engine.graphics.scene3d.SceneContext
-import org.yunghegel.salient.engine.graphics.scene3d.SceneRenderer
-import org.yunghegel.salient.engine.graphics.scene3d.component.RenderableComponent
+import org.yunghegel.salient.engine.scene3d.GameObject
+import org.yunghegel.salient.engine.scene3d.SceneContext
+import org.yunghegel.salient.engine.scene3d.SceneRenderer
+import org.yunghegel.salient.engine.scene3d.component.RenderableComponent
 import org.yunghegel.salient.engine.system.file.Paths
 import org.yunghegel.salient.engine.system.inject
+import org.yunghegel.salient.engine.system.singleton
 
 typealias SceneFile = FileHandle
 typealias SceneDirectory = FileHandle
 
 class Scene(val handle:SceneHandle, val project: Project, val manager: SceneManager) : EditorScene(handle,manager), NamedObjectResource by handle {
 
-    val folder : SceneDirectory = Paths.SCENE_DIR_FOR(project.name).handle
-
-    val file : SceneFile  = Paths.SCENE_FILE_FOR(project.name,handle.name).handle
-
-    override val sceneGraph = SceneGraph(this)
+    override val graph = SceneGraph(this)
 
     override val context: SceneContext
 
     override val renderer: SceneRenderer<Scene, SceneGraph>
 
-    val editorCamera : EditorCamera
+    val selection = GameObjectSelectionManager(graph.selection)
 
     init {
+        singleton(selection)
         context = SceneContext(this)
         context.set(this)
         renderer = SceneRenderer(this)
-        editorCamera = EditorCamera(inject(), inject())
         onShutdown {
             manager.saveScene(this)
         }
-
     }
 
     override fun update(delta: Float) {
-        renderer.updateGraph(this, sceneGraph.root, context)
+        renderer.updateGraph(this, graph.root, context)
     }
 
     override fun render(delta: Float) {
         renderer.renderContext(context)
-        renderer.renderGraph(this, sceneGraph, context)
+        renderer.renderGraph(this, graph, context)
     }
 
     fun render(go: GameObject, parent: GameObject? = null) {
         go.components.forEach { cmp ->
             if (cmp is RenderableComponent) {
-                context.modelBatch.render(cmp, context)
+                cmp.render(context.modelBatch,context.perspectiveCamera,context)
             }
         }
         go.getChildren().forEach { render(it, go) }
@@ -75,7 +71,7 @@ class Scene(val handle:SceneHandle, val project: Project, val manager: SceneMana
             }
             CameraData.applyDTO(scene.context.perspectiveCamera, dto.sceneContext.cameraSettings)
             SceneEnvironment.applyDTO(scene.context, dto.sceneContext.sceneEnvironment)
-            SceneGraph.applyDTO(dto.sceneGraph,scene.sceneGraph)
+            SceneGraph.applyDTO(dto.sceneGraph,scene.graph)
             return scene
         }
 
@@ -87,7 +83,7 @@ class Scene(val handle:SceneHandle, val project: Project, val manager: SceneMana
             dto.handle = model.handle
             dto.sceneContext.sceneEnvironment = SceneEnvironment.toDTO(model.context)
             dto.sceneContext.cameraSettings = CameraData.toDTO(model.context.perspectiveCamera)
-            dto.sceneGraph = SceneGraph.toDTO(model.sceneGraph)
+            dto.sceneGraph = SceneGraph.toDTO(model.graph)
 
             return dto
         }
