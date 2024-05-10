@@ -62,8 +62,9 @@ abstract class DefaultFieldEditor : Table(), FieldEditor, Searchable, LabelSuppl
         labelActor?.let { label ->
             labelDefault(table.add(label).growX())
         }
-        actorDefault(table.add(actor))
-
+        val cell = (table.add(actor))
+        actorDefault(cell)
+        cell.maxWidth(100f)
         return table
     }
     open fun createLabel(accessor: FieldAccessor,editable: Editable? = null) : Label? {

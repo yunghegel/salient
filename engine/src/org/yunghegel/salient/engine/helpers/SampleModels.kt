@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package org.yunghegel.salient.engine.helpers
 
 import com.badlogic.gdx.Gdx

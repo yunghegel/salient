@@ -538,7 +538,7 @@ com.ray3k.stripe.DraggableList$DraggableListStyle: {
 }
 com.ray3k.stripe.PopTable$PopTableStyle: {
 	default: {
-		background: button-rounded-edge-blue
+		background: button-rounded-edge-over
 	}
 }
 com.kotcrab.vis.ui.widget.VisTextField$VisTextFieldStyle: {
@@ -1005,6 +1005,12 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 		imageUp: Explorer
 
 	}
+	asset_browser: {
+		imageUp: ObjectBrowser
+	}
+	folder_open: {
+		imageUp: default-folder-open
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 	default: {
@@ -1321,4 +1327,5 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 			titleBackground: panel_title_background
 		}
 	}
+
 }

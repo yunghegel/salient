@@ -8,8 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import ktx.actors.onClick
 import ktx.actors.onTouchDown
 import org.yunghegel.salient.engine.ui.Icons
+import java.nio.file.Path
+import java.nio.file.Paths
 
-class FileNode(val file: FileHandle, val fileTable : FileTable = FileTable(file)) : Tree.Node<FileNode, FileHandle, FileTable>(fileTable) {
+class FileNode(val file: FileHandle, val fileTable : FileTable = FileTable(file)) : Tree.Node<FileNode, FileHandle, FileTable>(fileTable), Comparable<Path> {
+
+    val path : Path = Paths.get(file.path())
 
     init {
         isExpanded = true
@@ -65,6 +69,14 @@ class FileNode(val file: FileHandle, val fileTable : FileTable = FileTable(file)
             }
 
         })
+    }
+
+    override fun compareTo(other: Path): Int {
+        return path.compareTo(other)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return path == (other as FileNode).path
     }
 
     override fun toString(): String {

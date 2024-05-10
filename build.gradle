@@ -18,9 +18,9 @@ buildscript {
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
+    id 'com.asarkar.gradle.build-time-tracker' version "4.3.0"
 }
 
-apply from: "$gradleHome/tests.gradle"
 apply from: "$gradleHome/dist.gradle"
 apply from: "gradle/project.gradle"
 
@@ -32,6 +32,7 @@ sourceSets.each { sourceSet ->
 
 ext {
     GRADLE_USER_HOME = project.gradle.gradleUserHomeDir.path
+    INCLUDE_DIR = file("include")
     packages = [:]
     core =  [project(":engine"),project(":editor"),project(":launcher")]
     libs = project(":libs").subprojects
@@ -67,28 +68,39 @@ ext {
 }
 
 allprojects {
+    apply plugin: 'com.adarshr.test-logger'
+    apply plugin: "com.diffplug.spotless"
+
 
     group = "$groupId"
     project.version = "$salientVersion"
-    apply plugin: "com.diffplug.spotless"
 
-    tasks.withType(Jar).configureEach {
-        archiveFileName = "${rootProject.name}-$project.name.${project.version.toString()}.jar"
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    }
-
-    tasks.withType(KotlinCompile).configureEach {
-        configure(kotlinOptions) {
-            freeCompilerArgs += ['-Xcontext-receivers']
+    test {
+        testLogging {
+            events "passed", "skipped", "failed"
         }
+        testlogger {
+            theme 'mocha' // project level
+            slowThreshold 5000
+            showExceptions true
+            showStackTraces true
+            showFullStackTraces false
+            showCauses true
+            slowThreshold 2000
+            showSummary true
+            showSimpleNames true
+            showPassed true
+            showSkipped true
+            showFailed true
+            showStandardStreams false
+            showPassedStandardStreams true
+            showSkippedStandardStreams true
+            showFailedStandardStreams true
+            logLevel 'lifecycle'
+        }
+        useJUnitPlatform()
     }
 
-    tasks.withType(JavaCompile).configureEach {
-        options.encoding = 'UTF-8'
-        dependencies {
-            implementation fileTree(dir: 'extern', include: ['*.jar'])
-        }
-    }
     spotless {
         kotlin {
             // by default the target is every '.kt' and '.kts` file in the java sourcesets
@@ -109,6 +121,13 @@ allprojects {
         groovyGradle {
             target '*.gradle'
         }
+    }
+
+    spotlessApply {
+        java
+        kotlin
+        gradle
+
     }
 }
 
@@ -131,13 +150,16 @@ subprojects {
             options.release = 11
             options.fork = true
             options.incremental = true
+            options.encoding = 'UTF-8'
         }
         withSourcesJar()
+
+
     }
 
-//    dependencies {
-//        api fileTree(dir: 'ext', include: ['*.jar'])
-//    }
+    dependencies {
+        api fileTree(dir: rootProject.file("include"), include: ['*.jar'])
+    }
 
     sourceSets.configure {
         main.java.srcDirs += ['src']
@@ -150,8 +172,79 @@ subprojects {
 
     kotlin {
         jvmToolchain(11)
+        compilerOptions {
+            freeCompilerArgs = ['-Xcontext-receivers', '-java-parameters']
+        }
     }
 }
+
+def launcher = project(':launcher')
+def releaseDir = project.file("release")
+
+jar {
+    subprojects.each { project ->
+        dependsOn project.jar
+    }
+
+    doFirst {
+       releaseDir.mkdirs()
+    }
+
+    group "salient"
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes 'Main-Class': "org.yunghegel.salient.launcher.DesktopLauncher"
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+
+}
+
+
+task dist(type: Copy) {
+    group "salient"
+    from launcher.jar
+    into project.file("release")
+    from sourceSets.main.resources
+    into project.file("release")
+
+        def executable = new File(project.file("release"), "salient")
+        executable.createNewFile()
+        executable.text = "#!/bin/bash\njava -jar salient-${version}.jar \$@"
+        executable.setExecutable(true)
+
+
+    doLast {
+        releaseDir.listFiles().each { file ->
+            file.setExecutable(true)
+        }
+    }
+
+
+}
+
+configure(launcher) {
+    task run(type: JavaExec) {
+
+
+
+        dependsOn classes
+        group "salient"
+        main(mainClassName)
+        classpath sourceSets.main.runtimeClasspath
+        standardInput = System.in
+        workingDir = resourceDir
+        ignoreExitValue = true
+        if (System.properties['os.name'].toLowerCase().contains('mac')) {
+            jvmArgs "-XstartOnFirstThread"
+            jvmArgs "-Djava.awt.headless=true"
+        }
+    }
+}
+
+
 
 
 

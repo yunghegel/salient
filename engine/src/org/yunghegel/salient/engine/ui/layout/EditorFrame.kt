@@ -147,9 +147,6 @@ open class EditorFrame : STable() {
                 else -> 0f
             }
 
-
-
-
         override var start: Float = 0f
             get() = when(pos) {
                 LEFT -> container.x
@@ -157,6 +154,8 @@ open class EditorFrame : STable() {
                 CENTER -> container.x
                 else -> 0f
             }
+
+        private var headerBuilder : ((STable)->Unit)? = null
 
         val container = STable()
         private val header = STable()
@@ -169,6 +168,10 @@ open class EditorFrame : STable() {
         var hidden = false
 
         private val panels = mutableListOf<PanelContent>()
+
+        fun customizeHeader(builder:(STable)->Unit) {
+            headerBuilder = builder
+        }
 
         init {
             container.add(header).growX()
@@ -194,6 +197,9 @@ open class EditorFrame : STable() {
             content.clearChildren()
             content.add(panel.content).grow()
             createContentHeader(panel)
+            headerBuilder?.let { builder ->
+                builder(header)
+            }
         }
 
 

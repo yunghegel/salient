@@ -53,6 +53,7 @@ class App : AppModule() {
         bindSingleton(projectManager)
         bindSingleton(sceneManager)
         bindSingleton(assetManager)
+
     }
 
     internal val project: Project
@@ -70,38 +71,44 @@ class App : AppModule() {
     }
 
     fun bootstrap() : State{
+        profile("bootstrap app state") {
+            provide {
+                projectManager.currentProject ?: projectManager.createDefault().also { projectManager.initialize(it) }
+            }
+            provide { if (projectManager.currentProject != null && projectManager.currentProject?.currentScene != null) projectManager.currentProject?.currentScene!! else sceneManager.createDefault() }
+            provide<SceneContext> { scene.context }
+            provide<SceneRenderer<Scene, SceneGraph>> { scene.renderer }
 
-        provide { projectManager.currentProject ?: projectManager.createDefault().also { projectManager.initialize(it)} }
-        provide { if (projectManager.currentProject != null && projectManager.currentProject?.currentScene != null) projectManager.currentProject?.currentScene!! else sceneManager.createDefault() }
-        provide<SceneContext> { scene.context }
-        provide<SceneRenderer<Scene, SceneGraph>> { scene.renderer }
-
-        ensureDirectoryStructure()
+            ensureDirectoryStructure()
 
 
-        var project : Project by notnull()
-        var scene : Scene by notnull()
+            var project: Project by notnull()
+            var scene: Scene by notnull()
 
-        meta = fetchMeta().conf {
-            lastLoadedProject.nullOrNotNull {
-                notNull { lastProject ->
-                    project = projectManager.loadProject(lastProject.path).also { projectManager.initialize(it) }
-                    rebuildIndexes(project, this@conf).nullOrNotNull {
-                        notNull { last ->
-                            scene = sceneManager.loadScene(last.path,true).also { scene = it }
+            meta = fetchMeta().conf {
+                lastLoadedProject.nullOrNotNull {
+                    notNull { lastProject ->
+                        profile("load project from file") {
+                            project = projectManager.loadProject(lastProject.path).also { projectManager.initialize(it) }
                         }
-                        isNull {
-                            scene = sceneManager.createDefault().also { sceneManager.initialize(it, true)}
+                        rebuildIndexes(project, this@conf).nullOrNotNull {
+                            notNull { last ->
+                                profile("load scene from file") {
+                                scene = sceneManager.loadScene(last.path, true).also { scene = it }
+                            }
+                            }
+                            isNull {
+                                scene = sceneManager.createDefault().also { sceneManager.initialize(it, true) }
+                            }
                         }
+
                     }
-
-                }
-                isNull {
-                    project = projectManager.createDefault().also { projectManager.initialize(it) }
-                    scene = sceneManager.createDefault().also { sceneManager.initialize(it, true) }
+                    isNull {
+                        project = projectManager.createDefault().also { projectManager.initialize(it) }
+                        scene = sceneManager.createDefault().also { sceneManager.initialize(it, true) }
+                    }
                 }
             }
-        }
 
 //        meta = fetchMeta().conf {
 //            if (lastLoadedProject != null) {
@@ -124,8 +131,8 @@ class App : AppModule() {
 //            if (meta.bootstrapDefaultScene) scene = sceneManager.createDefault().also {
 //                sceneManager.initialize(it, true).also { debug("Bootstrapped default project for fresh configuration") } }
 //        }
-        singleton(meta)
-
+            singleton(meta)
+        }
         return State(project, scene)
     }
 
@@ -170,31 +177,36 @@ class App : AppModule() {
     }
 
     fun rebuildIndexes(project: Project, appMeta: Meta): SceneHandle? {
+        profile("rebuild directory indices") {
 
-
-        project.path.child("scenes").children.filter {it.value.isDirectory }.forEach { it.value.list().filter { it.extension() == "scene" }.forEach { file ->
-            ({ SceneHandle(file.nameWithoutExtension(), file.pathOf()) }.let {
-                project.sceneIndex.add(it().also { post(SceneDiscoveryEvent(it)) }.also { debug("Scene discovery: $it ") })
-            })
-        }}
-
-
-        val refs = mutableListOf<AssetHandle>().apply {
-            project.path.child("assets").children
-                .filter { file -> !file.value.isDirectory && (file.value.extension().equals("asset")) }
-                .forEach { (file, _) ->
-                    ({ AssetHandle(file.path) }.run { add(this()) })
+            project.path.child("scenes").children.filter { it.value.isDirectory }.forEach {
+                it.value.list().filter { it.extension() == "scene" }.forEach { file ->
+                    ({ SceneHandle(file.nameWithoutExtension(), file.pathOf()) }.let {
+                        project.sceneIndex.add(it().also { post(SceneDiscoveryEvent(it)) }
+                            .also { debug("Scene discovery: $it ") })
+                    })
                 }
-        }
-        refs.forEach {
-            debug(it.toString())
-            Yaml.default.decodeFromString(AssetHandle.serializer(), it.path.readString).let { asset ->
-                project.assetIndex.add(asset)
             }
-        }
 
+
+            val refs = mutableListOf<AssetHandle>().apply {
+                project.path.child("assets").children
+                    .filter { file -> !file.value.isDirectory && (file.value.extension().equals("asset")) }
+                    .forEach { (file, _) ->
+                        ({ AssetHandle(file.path) }.run { add(this()) })
+                    }
+            }
+            refs.forEach {
+                debug(it.toString())
+                Yaml.default.decodeFromString(AssetHandle.serializer(), it.path.readString).let { asset ->
+                    project.assetIndex.add(asset)
+                }
+            }
+
+
+        }
         var mostRecentScene = project.sceneIndex.maxByOrNull { it.path.lastModified }
-        mostRecentScene?.let { handle -> debug("Discovered most recent scene: ${handle.name}")}
+        mostRecentScene?.let { handle -> debug("Discovered most recent scene: ${handle.name}") }
         return mostRecentScene
     }
 

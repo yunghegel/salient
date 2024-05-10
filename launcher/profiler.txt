@@ -1,0 +1,8 @@
+init modules: 1217
+load project from file: 27
+rebuild directory indices: 8
+load scene from file: 257
+bootstrap app state: 374
+load plugin picking_plugin: 2
+load plugin gizmo_plugin: 1
+load plugin outline_plugin: 3

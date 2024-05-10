@@ -11,7 +11,7 @@ dependencies {
     implementation "com.squidpony:squidlib-util:$squidlibVersion"
     implementation "com.squidpony:squidlib:$squidlibVersion"
 
-    implementation project(":libs:gdx-imgui")
+    implementation project(":libs:gdx-cli")
 }
 
 processResources {

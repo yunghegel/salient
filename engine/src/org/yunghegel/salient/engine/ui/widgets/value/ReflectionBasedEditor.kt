@@ -75,17 +75,7 @@ class ReflectionBasedEditor(val obj: Any,val category: String = "global") : Tabl
             add(editorContainer).growX().padRight(5f).left().padVertical(5f).padLeft(4f).row()
             editors.add(editor)
 
-            for (child in editor.children) {
-                if (child is Label) {
-                    editor.getCell(child).minWidth(35f)
-                }
-                if (child is VisTextField) {
-                    editor.getCell(child).maxWidth(70f)
-                }
-                if (child is SelectBox<*>) {
-                    editor.getCell(child).maxWidth(70f)
-                }
-            }
+
 
             count++
             lastType = field.type

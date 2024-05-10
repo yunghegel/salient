@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package org.yunghegel.salient.engine.api.model
 
 import com.badlogic.gdx.files.FileHandle

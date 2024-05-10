@@ -1,11 +1,15 @@
 package org.yunghegel.salient.engine.ui
 
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.ui.Cell
 import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
 import com.ray3k.stripe.PopTableTooltipListener
+import ktx.actors.onChange
+import ktx.actors.onClick
 import ktx.scene2d.vis.visTooltip
 import org.yunghegel.salient.engine.ui.scene2d.SCheckBox
+import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
 
 fun Actor.addTooltip(conf: STable.() -> Unit) {
@@ -24,17 +28,49 @@ fun flag(label:String,value: Boolean, change: (Boolean) -> Unit) : SCheckBox {
 fun Actor.pop(conf: PopTable.() -> Unit) {
     val popListener = PopTableTooltipListener(Align.center,UI.skin)
 
+    onClick {
+        val popListener = PopTableTooltipListener(Align.center,UI.skin)
+        val table = popListener.popTable
+        table.attachToActor(this)
+        table.isHideOnUnfocus = true
 
-    val table = popListener.popTable
-    table.attachToActor(this)
-    table.conf()
-    table.layout()
-    table.originX = table.width/2
-    addListener(popListener)
+        table.conf()
+        table.layout()
+        table.originX = table.width/2
+        addListener(popListener)
+        table.show(UI)
+    }
+
+
+
+
+
 }
 
-fun table(conf: STable.() -> Unit= {}) : STable {
+fun table(conf: STable.(STable) -> Unit= {}) : STable {
     val table = STable()
-    table.conf()
+    table.conf(table)
     return table
 }
+
+fun label(text: String) : SLabel {
+    return SLabel(text)
+}
+
+fun textbutton(text: String, action: ()->Unit) : SLabel {
+    val label = SLabel(text)
+    label.onClick {
+        action()
+    }
+    return label
+}
+
+fun STable.child(conf: STable.(STable) -> Unit) : Cell<STable> {
+    val table = STable()
+    table.conf(table)
+    return add(table)
+}
+
+
+
+

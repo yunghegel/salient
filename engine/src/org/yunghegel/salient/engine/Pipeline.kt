@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.glutils.GLFrameBuffer.FrameBufferBuilder
 import net.mgsx.gltf.scene3d.scene.Scene
 import org.yunghegel.salient.engine.graphics.GFX
 import org.yunghegel.salient.engine.graphics.SharedGraphicsResources
+import org.yunghegel.salient.engine.helpers.Pools
 import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.system.inject
 
@@ -66,7 +67,9 @@ sealed class StateSystem(val state: State) : IteratingSystem(Family.all(Function
 
         if (entity is AutoremoveEntiy) {
             engine.removeEntity(entity)
+            Pools.autotoremoveEntityPool.free(entity)
         }
+
     }
 }
 
@@ -163,7 +166,7 @@ open class Pipeline() : Engine() {
     }
 
     fun once(state: State, transition: (() -> Unit)? = null,func: (Float) -> Unit, ) {
-        val entity = AutoremoveEntiy()
+        val entity = Pools.autotoremoveEntityPool.obtain()
         entity.add(FunctionComponent(func))
         entity.add(StateComponent(state, transition))
         addEntity(entity)
@@ -173,13 +176,14 @@ open class Pipeline() : Engine() {
      * Middleware utility. Example usage would be to profile the time taken to render a certain state, or log the number of texture bindings that occured during a state
      */
 
-    fun each(transition: (() -> Unit)? = null,func: (Float) -> Unit ) {
+    @OptIn(ExperimentalStdlibApi::class)
+    fun each(transition: (() -> Unit)? = null, func: (Float) -> Unit ) {
         for (state in State.entries) {
             push(state, transition, func)
         }
     }
 
-    fun buildBuffer(named:String) : FrameBuffer {
+    fun buildBuffer(named:String, depth: Boolean = true) : FrameBuffer {
                 val frameBufferBuilder = FrameBufferBuilder(
             Gdx.graphics.width,
             Gdx.graphics.height
@@ -187,8 +191,11 @@ open class Pipeline() : Engine() {
         frameBufferBuilder.addColorTextureAttachment(GL30.GL_RGBA8, GL30.GL_RGBA, GL30.GL_UNSIGNED_BYTE)
 //        frameBufferBuilder.addColorTextureAttachment(GL30.GL_RGB8, GL30.GL_RGB, GL30.GL_UNSIGNED_BYTE)
 //        frameBufferBuilder.addColorTextureAttachment(GL30.GL_RGB8, GL30.GL_RGB, GL30.GL_UNSIGNED_BYTE)
-        frameBufferBuilder.addDepthTextureAttachment(GL30.GL_DEPTH_COMPONENT24, GL30.GL_FLOAT)
-        frameBufferBuilder.addDepthRenderBuffer(GL30.GL_DEPTH_COMPONENT24)
+        if (depth) {
+            frameBufferBuilder.addDepthTextureAttachment(GL30.GL_DEPTH_COMPONENT24, GL30.GL_FLOAT)
+            frameBufferBuilder.addDepthRenderBuffer(GL30.GL_DEPTH_COMPONENT24)
+        }
+
         val fbo = frameBufferBuilder.build()
         return fbo
     }

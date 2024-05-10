@@ -107,6 +107,7 @@ class SearchBar<T: Searchable,A>(searchProvider: SearchProvider<T,A>) : STable()
             var items = provider.search(provider.term(),searchables)
             items = sortAlphabetically(items)
             provider.rebuildList(list,items)
+            provider.processResults(items)
         }
 
         private fun sortAlphabetically(arrayList: List< T >): List< T >{
@@ -128,6 +129,9 @@ class SearchBar<T: Searchable,A>(searchProvider: SearchProvider<T,A>) : STable()
         fun rebuildList(list: ActorList, searchables: List<T>)
 
         fun collectSearchable(): List<T>
+
+        open fun processResults(results: List<T>) {}
+
     }
 
 }

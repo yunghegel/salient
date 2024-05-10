@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop
@@ -19,6 +20,7 @@ import ktx.inject.Context
 import ktx.scene2d.Scene2DSkin
 import org.yunghegel.salient.engine.UIModule
 import org.yunghegel.salient.engine.api.Resizable
+import org.yunghegel.salient.engine.events.lifecycle.onWindowResized
 import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.system.provide
 import org.yunghegel.salient.engine.system.singleton
@@ -128,6 +130,8 @@ object UI : UIModule(), Resizable {
 
 
 
+    object DialogStage : Stage()  {
 
+    }
 
 }

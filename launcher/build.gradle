@@ -1,5 +1,4 @@
 apply plugin:'edu.sc.seis.launch4j'
-apply plugin: 'application'
 allprojects {
     mainClassName = mainClassName
 }
@@ -19,6 +18,15 @@ sourceSets {
 }
 
 jar {
+
+    packages.each { pkg ->
+        dependsOn project("$pkg.value").jar
+    }
+    dependsOn project(":editor").jar
+    dependsOn project(":engine").jar
+
+    archiveFileName = "salient-${version}.jar"
+
     manifest {
         attributes 'Main-Class': "org.yunghegel.salient.launcher.DesktopLauncher"
     }
@@ -28,12 +36,16 @@ jar {
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
+
+    doLast {
+//        jar executable
+    }
 }
 
-application {
-    group "salient"
-    mainClass = "org.yunghegel.salient.launcher.DesktopLauncher"
-}
+//application {
+//    group "salient"
+//    mainClass = "org.yunghegel.salient.launcher.DesktopLauncher"
+//}
 
 def releaseDir =  "${rootDir}/release"
 

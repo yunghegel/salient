@@ -4,6 +4,7 @@ import com.badlogic.gdx.files.FileHandle
 import org.yunghegel.salient.editor.asset.AssetManager
 import org.yunghegel.salient.editor.input.EditorCamera
 import org.yunghegel.salient.editor.project.Project
+import org.yunghegel.salient.editor.project.ProjectManager
 import org.yunghegel.salient.engine.api.NamedObjectResource
 import org.yunghegel.salient.engine.api.dto.DTOAdapter
 import org.yunghegel.salient.engine.api.dto.SceneDTO
@@ -66,9 +67,11 @@ class Scene(val handle:SceneHandle, val project: Project, val manager: SceneMana
         override fun fromDTO(dto: SceneDTO) : Scene{
             val scene = Scene(dto.handle!!, inject(), inject())
             val assets : AssetManager = inject()
-            dto.assetIndex.forEach { asset ->
-                assets.includeAsset(asset,scene)
-            }
+            val project : ProjectManager = inject()
+            assets.initializeScene(scene,project.currentProject!!)
+//            dto.assetIndex.forEach { asset ->
+//                scene.indexAsset(asset)
+//            }
             CameraData.applyDTO(scene.context.perspectiveCamera, dto.sceneContext.cameraSettings)
             SceneEnvironment.applyDTO(scene.context, dto.sceneContext.sceneEnvironment)
             SceneGraph.applyDTO(dto.sceneGraph,scene.graph)

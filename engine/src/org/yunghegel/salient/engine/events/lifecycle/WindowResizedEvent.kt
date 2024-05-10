@@ -24,3 +24,4 @@ fun onWindowResized(once: Boolean = false , action: (WindowResizedEvent) -> Unit
         action(event)
     }
 }
+

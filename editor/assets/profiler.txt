@@ -1,0 +1,18 @@
+init modules: 1055
+load project from file: 53
+rebuild directory indices: 5
+load_asset_Suzanne: 163
+inlcude/load asset Suzanne: 169
+load_asset_prototype_grid_grey: 29
+inlcude/load asset prototype_grid_grey: 33
+load_asset_prototype_solid_dark: 25
+inlcude/load asset prototype_solid_dark: 30
+load_asset_prototype_solid_grey: 23
+inlcude/load asset prototype_solid_grey: 27
+load_asset_prototype_grid_dark: 21
+inlcude/load asset prototype_grid_dark: 24
+load scene from file: 574
+bootstrap app state: 669
+load plugin picking_plugin: 1
+load plugin gizmo_plugin: 1
+load plugin outline_plugin: 2

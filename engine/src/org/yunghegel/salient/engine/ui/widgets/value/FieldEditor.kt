@@ -2,6 +2,7 @@ package org.yunghegel.salient.engine.ui.widgets.value
 
 import com.badlogic.gdx.scenes.scene2d.ui.Cell
 import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import org.yunghegel.gdx.utils.ext.*
 import org.yunghegel.gdx.utils.reflection.Accessor
 import org.yunghegel.gdx.utils.reflection.Editable
@@ -28,6 +29,9 @@ interface FieldEditor {
     }
 
     fun actorDefault(cell: Cell<*>) {
+        if (cell.actor is TextField) {
+            cell.maxWidth(20f)
+        }
         cell.right()
     }
 

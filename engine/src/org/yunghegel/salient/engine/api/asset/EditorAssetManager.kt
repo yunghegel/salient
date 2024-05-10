@@ -4,7 +4,10 @@ import com.badlogic.gdx.files.FileHandle
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.project.EditorProject
 import org.yunghegel.salient.engine.api.scene.EditorScene
+import org.yunghegel.salient.engine.api.scene.EditorScene.Companion.folder
 import org.yunghegel.salient.engine.system.info
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 
 interface EditorAssetManager<P,S> where P: EditorProject<P,S>, S: EditorScene {
 
@@ -18,12 +21,19 @@ interface EditorAssetManager<P,S> where P: EditorProject<P,S>, S: EditorScene {
 //        first, file discovery; this reads the filesystem and includes them in the scene object's asset usage
         val indexed = loadSceneIndex(scene,project)
 //        then, we load the assets into memory
+
+        info("ensuring that an asset folder exists for this scene")
+
+        if (!scene.ref.path.exists) {
+            scene.folder.mkdir()
+        }
+
         indexed.forEach { handle ->
             require(project.assetIndex.contains(handle)) { "Asset not found in project index" }
             includeAsset(handle,scene)
         }
-
     }
+
 
 
 
@@ -68,10 +78,19 @@ interface EditorAssetManager<P,S> where P: EditorProject<P,S>, S: EditorScene {
     fun deserializeHandle(file: FileHandle) : Result<AssetHandle>
     
     /**
-     * Export an asset handle to a filepath, i.e. serialize it to a file.
+     * Export an asset handle to a filepath, i.e. serialize it to a file, and index it in the project
+     * files.
      * @param asset The handle to serialize.
      */
     fun serializeHandle(asset: AssetHandle, project: P) : Result<Unit>
+
+    /**
+     * Serialize an asset handle to a file, and index it in the scene files.
+     * @param asset The handle to serialize.
+     */
+
+    fun serializeHandle(asset: AssetHandle, project: P, scene: S) : Result<Unit>
+
 
     /**
      * Include an asset (previously indexed) for usage in a scene, exposing the object it represents
