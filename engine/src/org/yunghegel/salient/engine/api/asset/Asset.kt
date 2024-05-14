@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetLoaderParameters
 import com.badlogic.gdx.files.FileHandle
 import org.yunghegel.gdx.utils.data.Searchable
 import org.yunghegel.salient.engine.api.model.AssetHandle
+import org.yunghegel.salient.engine.system.file.FileType
 import org.yunghegel.salient.engine.system.file.Filepath
 
 abstract class Asset<T:Any>(val path : Filepath, type: Class<T>, var handle:AssetHandle=AssetHandle(path.toString()),params: AssetLoaderParameters<T>?=null)
@@ -20,6 +21,8 @@ abstract class Asset<T:Any>(val path : Filepath, type: Class<T>, var handle:Asse
     val meta = Meta(handle.uuid,path.lastModified,path.size)
 
     data class Meta(val uuid: String, val lastModified: String, val size: Long)
+
+    val assetType = FileType.parse(path.extension)
 
     abstract val loader : Loader<T>
 

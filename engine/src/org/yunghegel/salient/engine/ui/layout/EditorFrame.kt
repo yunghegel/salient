@@ -155,7 +155,7 @@ open class EditorFrame : STable() {
                 else -> 0f
             }
 
-        private var headerBuilder : ((STable)->Unit)? = null
+        private var headerBuilder : ((STable, PanelContent)->Unit)? = null
 
         val container = STable()
         private val header = STable()
@@ -169,7 +169,7 @@ open class EditorFrame : STable() {
 
         private val panels = mutableListOf<PanelContent>()
 
-        fun customizeHeader(builder:(STable)->Unit) {
+        fun customizeHeader(builder:(STable,PanelContent)->Unit) {
             headerBuilder = builder
         }
 
@@ -197,9 +197,7 @@ open class EditorFrame : STable() {
             content.clearChildren()
             content.add(panel.content).grow()
             createContentHeader(panel)
-            headerBuilder?.let { builder ->
-                builder(header)
-            }
+
         }
 
 
@@ -210,6 +208,9 @@ open class EditorFrame : STable() {
             val overflow = SImageButton("overflow-menu")
             header.add(icon).width(22f).padRight(5f)
             header.add(title).growX()
+            headerBuilder?.let { builder ->
+                builder(header,panel)
+            }
             header.add(overflow).width(22f)
         }
 

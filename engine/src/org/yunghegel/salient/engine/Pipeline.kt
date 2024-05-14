@@ -16,6 +16,7 @@ import org.yunghegel.salient.engine.graphics.SharedGraphicsResources
 import org.yunghegel.salient.engine.helpers.Pools
 import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.system.inject
+import org.yunghegel.salient.engine.system.perf.profile
 
 class UILogicSystem : StateSystem(State.UI_LOGIC)
 class InitStateSystem : StateSystem(State.INIT)
@@ -198,6 +199,10 @@ open class Pipeline() : Engine() {
 
         val fbo = frameBufferBuilder.build()
         return fbo
+    }
+
+    override fun update(deltaTime: Float) {
+        super.update(deltaTime)
     }
 
 }
