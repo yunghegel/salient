@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.Mesh
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.ModelBatch
+import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.RenderableProvider
 import com.badlogic.gdx.math.collision.BoundingBox
 import ktx.collections.GdxArray
@@ -30,6 +31,12 @@ class BoundsComponent(bounds: GdxArray<BoundingBox>,go: GameObject) : EntityComp
 
         implements(debug)
         debugCondition { go.has(DRAW_BOUNDS) }
+        val transform = go.getComponent(TransformComponent::class.java)
+        renderable.each { renderable ->
+            if (renderable is ModelInstance) {
+                renderable.transform = transform?.value
+            }
+        }
 
     }
 

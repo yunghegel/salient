@@ -18,7 +18,7 @@ buildscript {
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
-    id 'com.asarkar.gradle.build-time-tracker' version "4.3.0"
+    id "com.osacky.doctor" version "0.10.0"
 }
 
 apply from: "$gradleHome/dist.gradle"
@@ -68,8 +68,6 @@ ext {
 }
 
 allprojects {
-    apply plugin: 'com.adarshr.test-logger'
-    apply plugin: "com.diffplug.spotless"
 
 
     group = "$groupId"
@@ -79,56 +77,9 @@ allprojects {
         testLogging {
             events "passed", "skipped", "failed"
         }
-        testlogger {
-            theme 'mocha' // project level
-            slowThreshold 5000
-            showExceptions true
-            showStackTraces true
-            showFullStackTraces false
-            showCauses true
-            slowThreshold 2000
-            showSummary true
-            showSimpleNames true
-            showPassed true
-            showSkipped true
-            showFailed true
-            showStandardStreams false
-            showPassedStandardStreams true
-            showSkippedStandardStreams true
-            showFailedStandardStreams true
-            logLevel 'lifecycle'
-        }
         useJUnitPlatform()
     }
 
-    spotless {
-        kotlin {
-            // by default the target is every '.kt' and '.kts` file in the java sourcesets
-            ktfmt()    // has its own section below
-            ktlint()   // has its own section below
-            diktat()   // has its own section below
-            prettier() // has its own section below
-            licenseHeader '/* (C)$YEAR */' // or licenseHeaderFile
-        }
-        kotlinGradle {
-            target '*.gradle.kts' // default target for kotlinGradle
-            ktlint() // or ktfmt() or prettier()
-        }
-        java {
-            target 'src/**/*.java', 'test/**/*.java', 'generator/**/*.java'
-            removeUnusedImports()
-        }
-        groovyGradle {
-            target '*.gradle'
-        }
-    }
-
-    spotlessApply {
-        java
-        kotlin
-        gradle
-
-    }
 }
 
 subprojects {
@@ -204,16 +155,19 @@ jar {
 
 
 task dist(type: Copy) {
+
+    doFirst {
+        releaseDir.mkdirs()
+    }
+
     group "salient"
     from launcher.jar
     into project.file("release")
     from sourceSets.main.resources
     into project.file("release")
 
-        def executable = new File(project.file("release"), "salient")
-        executable.createNewFile()
-        executable.text = "#!/bin/bash\njava -jar salient-${version}.jar \$@"
-        executable.setExecutable(true)
+    makeExecutable(OperatingSystem.current())
+
 
 
     doLast {
@@ -225,25 +179,46 @@ task dist(type: Copy) {
 
 }
 
-configure(launcher) {
-    task run(type: JavaExec) {
+//configure(launcher) {
+//    task run(type: JavaExec) {
+//
+//
+//
+//        dependsOn classes
+//        group "salient"
+//        main(mainClassName)
+//        classpath sourceSets.main.runtimeClasspath
+//        standardInput = System.in
+//        workingDir = resourceDir
+//        ignoreExitValue = true
+//        if (System.properties['os.name'].toLowerCase().contains('mac')) {
+//            jvmArgs "-XstartOnFirstThread"
+//            jvmArgs "-Djava.awt.headless=true"
+//        }
+//    }
+//}
 
-
-
-        dependsOn classes
-        group "salient"
-        main(mainClassName)
-        classpath sourceSets.main.runtimeClasspath
-        standardInput = System.in
-        workingDir = resourceDir
-        ignoreExitValue = true
-        if (System.properties['os.name'].toLowerCase().contains('mac')) {
-            jvmArgs "-XstartOnFirstThread"
-            jvmArgs "-Djava.awt.headless=true"
-        }
+void makeExecutable(OperatingSystem os) {
+    switch (os) {
+        case OperatingSystem.LINUX:
+            def executable = new File(project.file("release"), "salient")
+            executable.createNewFile()
+            executable.text = "#!/bin/bash\njava -jar salient-${version}.jar \$@"
+            executable.setExecutable(true)
+            break
+        case OperatingSystem.MAC_OS:
+            def executable = new File(project.file("release"), "salient")
+            executable.createNewFile()
+            executable.text = "#!/bin/bash\njava -jar salient-${version}.jar \$@"
+            executable.setExecutable(true)
+            break
+        case OperatingSystem.WINDOWS:
+            def executable = new File(project.file("release"), "salient.bat")
+            executable.createNewFile()
+            executable.text = "@echo off\njava -jar salient-${version}.jar %*"
+            break
     }
 }
-
 
 
 

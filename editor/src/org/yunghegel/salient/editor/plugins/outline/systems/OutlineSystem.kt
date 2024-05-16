@@ -3,6 +3,7 @@ package org.yunghegel.salient.editor.plugins.outline.systems
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.Family
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider
@@ -16,6 +17,8 @@ import org.yunghegel.salient.editor.app.Salient.Companion.once
 import org.yunghegel.salient.editor.plugins.BaseSystem
 import org.yunghegel.salient.editor.plugins.outline.lib.Outliner
 import org.yunghegel.salient.engine.State
+import org.yunghegel.salient.engine.api.flags.GameObjectFlag
+import org.yunghegel.salient.engine.api.flags.HOVERED
 import org.yunghegel.salient.engine.api.flags.SELECTED
 import org.yunghegel.salient.engine.events.lifecycle.onWindowResized
 import org.yunghegel.salient.engine.scene3d.GameObject
@@ -54,26 +57,34 @@ class OutlineSystem(val outliner: OutlineDepth) : BaseSystem("outline_system", S
 
     override fun processEntity(p0: Entity?, p1: Float) {
         val go = p0 as GameObject
-        if (!go.has(SELECTED)) return
-        once(State.OVERLAY_PASS) {
-            val pickable = go.get<RenderableComponent>()
-            val depthtexture = pass(outlinefbo) {
-                clearScreen(0f,0f,0f,0f)
-                gui.updateviewport()
-                with(scene.context) {
-                    depthbatch.begin(perspectiveCamera)
-                    depthbatch.render(pickable?.renderableProvider,scene.context)
-                    depthbatch.end()
+        if (go.has(SELECTED) || go.has(GameObjectFlag.HOVERED)) {
+            once(State.OVERLAY_PASS) {
+                if (go.has(HOVERED)) {
+                    renderOutline(go, Color.ORANGE.cpy().alpha(0.5f))
+                } else{
+                    renderOutline(go, Color.WHITE.cpy().alpha(0.5f))
                 }
-            }
-            Outliner.settings.run {
-                outliner.render(inject(),depthtexture,scene.context.perspectiveCamera)
-            }
 
+            }
         }
 
+    }
 
-
+    fun renderOutline(entity: Entity, color: Color = Outliner.settings.outsideColor) {
+        val pickable = entity.get<RenderableComponent>()
+        val depthtexture = pass(outlinefbo) {
+            clearScreen(0f,0f,0f,0f)
+            gui.updateviewport()
+            with(scene.context) {
+                depthbatch.begin(perspectiveCamera)
+                depthbatch.render(pickable?.renderableProvider,scene.context)
+                depthbatch.end()
+            }
+        }
+        Outliner.settings.run {
+            outsideColor.set(color)
+            outliner.render(inject(),depthtexture,scene.context.perspectiveCamera)
+        }
     }
 
 }

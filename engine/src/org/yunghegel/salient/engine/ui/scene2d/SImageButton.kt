@@ -20,6 +20,15 @@ open class SImageButton(style: ImageButtonStyle) : ImageButton(style) {
             }
             return style
         }
+
+        fun create(drawable: Drawable): ImageButtonStyle {
+            return ImageButtonStyle().apply { imageUp = drawable }
+        }
+
+        fun fromNamedDrawable(name: String) : SImageButton {
+            val drawable = UI.skin.getDrawable(name)
+            return SImageButton(drawable)
+        }
     }
 
 }

@@ -37,6 +37,7 @@ val DRAW_ORIGIN = GameObjectFlag.DRAW_ORIGIN
 val LOCKED = GameObjectFlag.LOCKED
 val DEBUG_ALL = GameObjectFlag.DEBUG_ALL
 val DRAW_OUTLINE = GameObjectFlag.DRAW_OUTLINE
+val HOVERED = GameObjectFlag.HOVERED
 
 enum class GameObjectFlag {
     SELECTED,
@@ -47,5 +48,6 @@ enum class GameObjectFlag {
     DRAW_ORIGIN,
     DRAW_OUTLINE,
     LOCKED,
-    DEBUG_ALL
+    DEBUG_ALL,
+    HOVERED
 }

@@ -21,3 +21,5 @@ val delta : Float
 fun glEnable(glenum: Int) = Gdx.gl.glEnable(glenum)
 
 fun glDisable(glenum: Int) = Gdx.gl.glDisable(glenum)
+
+fun glBlendMode(src:Int,dst:Int) = Gdx.gl.glBlendFunc(src,dst)

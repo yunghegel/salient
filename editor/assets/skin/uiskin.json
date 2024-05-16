@@ -55,9 +55,15 @@ com.badlogic.gdx.graphics.Color: {
 		a: 1
 	}
 	light_gray: {
-		r: 0.9098039
-		g: 0.9098039
-		b: 0.9098039
+		r: 0.6598039
+		g: 0.6598039
+		b: 0.6598039
+		a: 1
+	}
+	lighter_gray: {
+		r: 0.7
+		g: 0.7
+		b: 0.7
 		a: 1
 	}
 	list_selection: {
@@ -77,6 +83,12 @@ com.badlogic.gdx.graphics.Color: {
 		g: 0.9529412
 		b: 0.9529412
 		a: 1
+	}
+	soft_white: {
+		r: 0.9
+		g: 0.9
+		b: 0.9
+		a: 0.5
 	}
 	white_transparent: {
 		r: 1
@@ -115,13 +127,14 @@ com.badlogic.gdx.graphics.Color: {
 		b: 0.28235295
 		a: 1
 	}
+
 }
 com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 	default: {
-		font: bfont.ttf
-		size: 10
+		font:Inter.ttf
+		size: 9
 		mono: false
-		color: light_gray
+		color: white
 		gamma: 1.8
 		renderCount: 2
 		borderWidth: 0
@@ -212,7 +225,7 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
 	}
 	default-large: {
-		font: bfont.ttf
+		font: Inter.ttf
 		size: 16
 		mono: false
 		color: white
@@ -235,10 +248,10 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
 	}
 	default-small: {
-		font: DejaVuSans.ttf
-		size: 10
+		font:Inter.ttf
+		size: 8
 		mono: false
-		color: light_gray
+		color: white
 		gamma: 1.8
 		renderCount: 2
 		borderWidth: 0
@@ -393,6 +406,14 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 		name:white
 		color: text_editor_highlight
 	}
+	button_underline_dark: {
+		name:button-underline
+		color: light_gray
+	}
+	button_underline_over_dark: {
+		name:button-underline
+		color: lighter_gray
+	}
 }
 com.kotcrab.vis.ui.Sizes: {
 	default: {
@@ -448,7 +469,7 @@ com.kotcrab.vis.ui.widget.VisSplitPane$VisSplitPaneStyle: {
 com.kotcrab.vis.ui.widget.Menu$MenuStyle: {
 	default: {
 		openButtonStyle: menu
-		border: border
+		border: border-light
 	}
 	viewport: {
 		openButtonStyle: rounded-soft
@@ -468,14 +489,14 @@ com.kotcrab.vis.ui.widget.MenuItem$MenuItemStyle: {
 		subMenu: select-down
 		font: default-small
 		fontColor: white
-		over: button-over
+		over: button_underline_over_dark
 		disabledFontColor: gray
-		up: button-underline
+		up: button_underline_dark
 	}
 }
 com.kotcrab.vis.ui.widget.PopupMenu$PopupMenuStyle: {
 	default: {
-		background: button
+		background: panel_body_background
 		border: border
 	}
 }
@@ -1011,6 +1032,12 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	folder_open: {
 		imageUp: default-folder-open
 	}
+	zoom_in: {
+		imageUp: ZoomIn
+	}
+	zoom_out: {
+		imageUp: ZoomOut
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 	default: {
@@ -1063,23 +1090,24 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 		imageUp: ScriptDocument
 		font: default
 	}
+
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
 		font: default
-		fontColor: light_gray
+		fontColor: white
 	}
 	mono: {
-		font: mono
-		fontColor: light_gray
+		font: default
+		fontColor: white
 	}
 	bold: {
 		font: bold
-		fontColor: light_gray
+		fontColor: white
 	}
 	default-alternative: {
 		font: default-medium
-		fontColor: light_gray
+		fontColor:white
 	}
 	default-gray: {
 		font: default-small
@@ -1087,15 +1115,15 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	}
 	default-small: {
 		font: default-small
-		fontColor: light_gray
+		fontColor: white
 	}
 	default-medium: {
 		font: default-medium
-		fontColor: light_gray
+		fontColor: white
 	}
 	menuitem-shortcut: {
 		font: default
-		fontColor: light_gray
+		fontColor: white
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
@@ -1243,7 +1271,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: {
 		font: default
-		fontColor: light_gray
+		fontColor: white
 		disabledFontColor: gray
 		background: button-down
 		focusedBackground: button-over
@@ -1309,12 +1337,12 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 			parent: compact
 		}
 		toast: {
-			imageUp: window-close
+			imageUp: CloseWidget
 		}
 	}
 	com.kotcrab.vis.ui.widget.toast.Toast$ToastStyle: {
 		default: {
-			background: button-rounded-edge-down
+
 			closeButtonStyle: toast
 		}
 	}

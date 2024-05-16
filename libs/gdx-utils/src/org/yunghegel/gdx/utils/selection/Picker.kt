@@ -12,6 +12,7 @@ import java.util.logging.Logger
 
 class Picker {
     var fbo: FrameBuffer? = null
+    var pm : Pixmap? = null
 
     init {
         var width = Gdx.graphics.width
@@ -53,11 +54,11 @@ class Picker {
         begin(viewport)
         renderPickables(batch, cam, pickables)
         end()
-        val pm = getFrameBufferPixmap(viewport)
+        pm = getFrameBufferPixmap(viewport)
 
         val x = screenX - viewport.screenX
         val y = screenY - (Gdx.graphics.height - (viewport.screenY + viewport.screenHeight))
-        val id = PickerColorEncoder.decode(pm.getPixel(x, y))
+        val id = PickerColorEncoder.decode(pm!!.getPixel(x, y))
         for (pickable in pickables) {
             if (pickable.id.equals(id)) {
                 return pickable
@@ -88,10 +89,11 @@ class Picker {
         HdpiUtils.setMode(HdpiMode.Pixels)
         fbo!!.begin()
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
-        HdpiUtils.glViewport(
-            viewport.screenX, viewport.screenY, viewport.screenWidth,
-            viewport.screenHeight
-        )
+        viewport.apply()
+//        HdpiUtils.glViewport(
+//            viewport.screenX, viewport.screenY, viewport.screenWidth,
+//            viewport.screenHeight
+//        )
     }
 
     protected fun end() {

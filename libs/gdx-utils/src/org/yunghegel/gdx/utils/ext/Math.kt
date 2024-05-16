@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.*
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.GdxRuntimeException
 import com.badlogic.gdx.utils.NumberUtils
+import com.badlogic.gdx.utils.viewport.Viewport
 import org.yunghegel.gdx.utils.Pools
 import kotlin.math.atan2
 import kotlin.math.pow
@@ -146,7 +147,18 @@ fun Rectangle.bottomRight(): Vector2 {
     return Vector2(x + width, y)
 }
 
+fun transformInput(x:Float,y:Float,current: Rectangle,target:Rectangle) : Vector2 {
+    val x = MathUtils.map(x, current.x, current.x + current.width, target.x, target.x + target.width)
+    val y = MathUtils.map(y, current.y, current.y + current.height, target.y, target.y + target.height)
+    return Vector2(x,y)
 
+}
+
+fun Viewport.projectInput(x:Float, y:Float) : Vector2 {
+    val res = Vector2(x,y)
+    project(res)
+    return res
+}
 
 object MathUtils {
     const val PI: Float = Math.PI.toFloat()

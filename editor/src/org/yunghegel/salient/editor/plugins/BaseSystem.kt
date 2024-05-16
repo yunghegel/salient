@@ -2,7 +2,7 @@ package org.yunghegel.salient.editor.plugins
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.Family
-import org.yunghegel.gdx.utils.data.Index
+import org.yunghegel.salient.engine.system.Index
 import org.yunghegel.gdx.utils.data.Named
 import org.yunghegel.salient.editor.app.App
 import org.yunghegel.salient.editor.project.Project

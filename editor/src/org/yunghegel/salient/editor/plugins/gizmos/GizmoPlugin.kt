@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Engine
 import ktx.inject.Context
 import org.yunghegel.salient.editor.app.salient
 import org.yunghegel.salient.editor.plugins.gizmos.systems.GizmoSystem
+import org.yunghegel.salient.editor.plugins.gizmos.tools.PlacementTool
 import org.yunghegel.salient.editor.plugins.gizmos.tools.RotateTool
 import org.yunghegel.salient.editor.plugins.gizmos.tools.ScaleTool
 import org.yunghegel.salient.editor.plugins.gizmos.tools.TranslateTool
@@ -18,19 +19,21 @@ class GizmoPlugin : Plugin {
     val rotateTool = RotateTool(system)
     val scaleTool = ScaleTool(system)
     val translateTool = TranslateTool(system)
+    val placementTool = PlacementTool()
 
 
 
 
     override val systems: MutableList<System<*, *>> = mutableListOf(system)
 
-    override val tools: MutableList<Tool> = mutableListOf(rotateTool,scaleTool,translateTool)
+    override val tools: MutableList<Tool> = mutableListOf(rotateTool,scaleTool,translateTool,placementTool)
 
     override val registry: Context.() -> Unit = {
         bindSingleton(system)
         bindSingleton(rotateTool)
         bindSingleton(scaleTool)
         bindSingleton(translateTool)
+        bindSingleton(placementTool)
     }
 
     override fun init(engine: Engine) {

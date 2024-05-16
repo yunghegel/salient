@@ -12,6 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Pools
@@ -71,6 +73,14 @@ fun createColorPixel(color: Color): TextureRegion {
     return TextureRegion(Texture(pixmap))
 }
 
+fun Table.clearbackground() {
+    background = null
+}
+fun Skin.drawable(name:String, color : Color? = null) : Drawable {
+    val drawable = getDrawable(name)
+    if (drawable is NinePatchDrawable && color !=null) return drawable.tint(color)
+    return drawable
+}
 enum class ControlScale {
     LIN, LOG
 }

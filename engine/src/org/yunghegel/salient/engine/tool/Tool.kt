@@ -18,6 +18,7 @@ import org.yunghegel.gdx.utils.data.Named
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.ToolLoadedEvent
 import org.yunghegel.salient.engine.graphics.GridConfig
+import org.yunghegel.salient.engine.graphics.util.DebugDrawer
 import org.yunghegel.salient.engine.input.Input
 import org.yunghegel.salient.engine.system.debug
 import org.yunghegel.salient.engine.system.inject
@@ -42,9 +43,11 @@ abstract class Tool(override val name:String) : InputMultiplexer(), Named {
 
     val camera : PerspectiveCamera by lazy { inject() }
 
+    val debugDrawer : DebugDrawer by lazy {inject()}
+
     open val blocking = false
 
-    internal var active = false
+    var active = false
 
 
     fun createActor(icon:com.badlogic.gdx.scenes.scene2d.utils.Drawable) : SImageButton {

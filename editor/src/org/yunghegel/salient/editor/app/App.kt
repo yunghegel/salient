@@ -106,6 +106,7 @@ class App : AppModule() {
                     isNull {
                         project = projectManager.createDefault().also { projectManager.initialize(it) }
                         scene = sceneManager.createDefault().also { sceneManager.initialize(it, true) }
+                        sceneManager.saveScene(scene)
                     }
                 }
             }

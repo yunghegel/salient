@@ -1,4 +1,8 @@
-apply plugin:'edu.sc.seis.launch4j'
+
+//apply plugin:'edu.sc.seis.l
+
+apply plugin: 'application'
+
 allprojects {
     mainClassName = mainClassName
 }
@@ -16,14 +20,23 @@ sourceSets {
     }
 
 }
+def releaseDir =  "${rootDir}/release"
 
+task release(type: Copy) {
+
+    group "salient"
+
+    from jar
+    into releaseDir
+
+}
 jar {
 
-    packages.each { pkg ->
-        dependsOn project("$pkg.value").jar
-    }
-    dependsOn project(":editor").jar
-    dependsOn project(":engine").jar
+//    packages.each { pkg ->
+//        dependsOn project("$pkg.value").jar
+//    }
+//    dependsOn project(":editor").jar
+//    dependsOn project(":engine").jar
 
     archiveFileName = "salient-${version}.jar"
 
@@ -40,32 +53,21 @@ jar {
     doLast {
 //        jar executable
     }
+
+    finalizedBy project.release
 }
 
-//application {
-//    group "salient"
-//    mainClass = "org.yunghegel.salient.launcher.DesktopLauncher"
-//}
-
-def releaseDir =  "${rootDir}/release"
-
-task release(type: Copy) {
-
+application {
     group "salient"
-
-    from jar
-    into releaseDir
-
-    from sourceSets.main.resources
-    into releaseDir
-
-    from createAllExecutables
-    into releaseDir
-
-    doLast {
-        create_launch_script
-    }
+    mainClass = "org.yunghegel.salient.launcher.DesktopLauncher"
 }
+
+run {
+    group "salient"
+    setIgnoreExitValue(true)
+}
+
+
 
 //task create_launch_script(type: Copy) {
 //
@@ -85,18 +87,10 @@ task release(type: Copy) {
 //    into releaseDir
 //}
 
-launch4j {
-    mainClassName = "$mainClassName"
-    jarTask = jar
-    icon = "$resourceDir/icon.png"
-    outfile = "${artifactId}.exe"
-}
+//launch4j {
+//    mainClassName = "$mainClassName"
+//    jarTask = jar
+//    icon = "$resourceDir/icon.png"
+//    outfile = "${artifactId}.exe"
+//}
 
-distributions {
-    main {
-        contents {
-            from createExe
-            into new File("release")
-        }
-    }
-}

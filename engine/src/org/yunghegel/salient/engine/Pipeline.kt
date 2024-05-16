@@ -15,8 +15,10 @@ import org.yunghegel.salient.engine.graphics.GFX
 import org.yunghegel.salient.engine.graphics.SharedGraphicsResources
 import org.yunghegel.salient.engine.helpers.Pools
 import org.yunghegel.salient.engine.scene3d.SceneContext
+import org.yunghegel.salient.engine.scene3d.SceneGraphicsResources
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.system.perf.profile
+import org.yunghegel.salient.engine.ui.widgets.notif.notify
 
 class UILogicSystem : StateSystem(State.UI_LOGIC)
 class InitStateSystem : StateSystem(State.INIT)
@@ -64,6 +66,14 @@ sealed class StateSystem(val state: State) : IteratingSystem(Family.all(Function
 
             func(deltaTime)
             stateCmp.transition?.let { transition -> transition() }
+
+            val autoremoveCondition = it.getComponent(AutoremoveConditionComponent::class.java)
+            if (autoremoveCondition != null && autoremoveCondition.condition()) {
+                notify("Automatically removed render routine according to condition")
+                engine.removeEntity(it)
+                Pools.entityPool.free(it)
+            }
+
         }
 
         if (entity is AutoremoveEntiy) {
@@ -79,6 +89,7 @@ class AutoremoveEntiy : Entity()
 /**
  * A component that holds a function object, to be executed by a system.
  */
+
 class FunctionComponent(val func:(Float) -> Unit) : SceneRenderEvent {
 
 
@@ -99,6 +110,12 @@ fun interface SceneRenderEvent : Component {
  * logging
  */
 class StateComponent(val state: State, val transition: (() -> Unit)? = null) : Component
+
+/**
+ * A component that holds a condition that is checked every frame. If the condition is true, the entity is removed from the engine
+ */
+
+class AutoremoveConditionComponent(val condition: () -> Boolean) : Component
 
 
 /**
@@ -159,11 +176,21 @@ open class Pipeline() : Engine() {
      *  Then, we access it later, and render things that depend on that state.
      *
      */
-    fun push(state: State, transition: (() -> Unit)? = null, func: (Float) -> Unit) {
+    fun push(state: State, transition: (() -> Unit)? = null,autoadd: Boolean = true, func: (Float) -> Unit) : Entity {
         val entity = Entity()
         entity.add(FunctionComponent(func))
         entity.add(StateComponent(state, transition))
+        if (autoadd) addEntity(entity)
+        return entity
+    }
+
+    fun push (entity:Entity) {
+        require (entity.getComponent(FunctionComponent::class.java) != null && entity.getComponent(StateComponent::class.java) !=null) { "Entity must have FunctionComponent and StateComponent" }
         addEntity(entity)
+    }
+
+    fun pull(entity:Entity) {
+        removeEntity(entity)
     }
 
     fun once(state: State, transition: (() -> Unit)? = null,func: (Float) -> Unit, ) {
@@ -173,6 +200,19 @@ open class Pipeline() : Engine() {
         addEntity(entity)
     }
 
+
+    fun createRoutine(state:State,name:String,condition: (()->Boolean)? = null, func: (Float) -> Unit) : Entity {
+        val entity = Entity()
+        val buf = buildBuffer(name)
+        buffers[name] = buf
+        if (condition !=  null) {
+            entity.add(AutoremoveConditionComponent(condition))
+        }
+        entity.add(FunctionComponent(func))
+        entity.add(StateComponent(state))
+        return entity
+    }
+
     /**
      * Middleware utility. Example usage would be to profile the time taken to render a certain state, or log the number of texture bindings that occured during a state
      */
@@ -180,7 +220,7 @@ open class Pipeline() : Engine() {
     @OptIn(ExperimentalStdlibApi::class)
     fun each(transition: (() -> Unit)? = null, func: (Float) -> Unit ) {
         for (state in State.entries) {
-            push(state, transition, func)
+            push(state, transition, true, func)
         }
     }
 

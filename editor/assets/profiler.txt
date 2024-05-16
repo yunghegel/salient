@@ -1,18 +1,31 @@
-init modules: 1055
-load project from file: 53
-rebuild directory indices: 5
-load_asset_Suzanne: 163
-inlcude/load asset Suzanne: 169
-load_asset_prototype_grid_grey: 29
-inlcude/load asset prototype_grid_grey: 33
-load_asset_prototype_solid_dark: 25
-inlcude/load asset prototype_solid_dark: 30
-load_asset_prototype_solid_grey: 23
-inlcude/load asset prototype_solid_grey: 27
-load_asset_prototype_grid_dark: 21
-inlcude/load asset prototype_grid_dark: 24
-load scene from file: 574
-bootstrap app state: 669
-load plugin picking_plugin: 1
+init modules: 1549
+load project from file: 519
+rebuild directory indices: 8
+load_asset_greybox_dark_solid: 51
+inlcude/load asset greybox_dark_solid: 57
+load_asset_AmbientOcclusion: 40
+inlcude/load asset AmbientOcclusion: 42
+load_asset_Normal: 103
+inlcude/load asset Normal: 106
+load_asset_greybox_dark_grid: 12
+inlcude/load asset greybox_dark_grid: 16
+load_asset_roundcube: 64
+inlcude/load asset roundcube: 66
+load_asset_torusknot: 30
+inlcude/load asset torusknot: 33
+load_asset_Diffuse: 84
+inlcude/load asset Diffuse: 88
+load_asset_Specular: 53
+inlcude/load asset Specular: 57
+load_asset_greybox_light_solid: 14
+inlcude/load asset greybox_light_solid: 17
+load_asset_greybox_light_grid: 13
+inlcude/load asset greybox_light_grid: 15
+load_asset_suzanne: 26
+inlcude/load asset suzanne: 32
+load scene from file: 960
+bootstrap app state: 1556
+load plugin picking_plugin: 3
 load plugin gizmo_plugin: 1
 load plugin outline_plugin: 2
+load plugin intersection_plugin: 1

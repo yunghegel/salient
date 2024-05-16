@@ -3,6 +3,7 @@ package org.yunghegel.salient.engine.system
 import ktx.inject.Context
 import ktx.inject.register
 import ktx.reflect.Reflection
+import kotlin.properties.Delegates
 
 object InjectionContext : Context() {
 
@@ -23,3 +24,5 @@ inline fun <reified T:Any> provide(noinline provider: ()->T) = InjectionContext.
 
 @OptIn(Reflection::class)
 inline fun register(action: Context.()->Unit) = InjectionContext.register { InjectionContext.action() }
+
+//inline fun <reified T:Any> lazyInject() =

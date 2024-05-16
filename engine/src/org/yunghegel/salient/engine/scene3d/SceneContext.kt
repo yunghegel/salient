@@ -16,6 +16,7 @@ import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider
 import org.yunghegel.debug.DebugContext
 import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.api.scene.SceneEnvironment
+import org.yunghegel.salient.engine.graphics.BasicRenderer
 import org.yunghegel.salient.engine.graphics.GFX
 import org.yunghegel.salient.engine.graphics.SharedGraphicsResources
 import org.yunghegel.salient.engine.helpers.DepthBatch
@@ -35,6 +36,7 @@ class SceneContext(private var scene:EditorScene) : SceneEnvironment(), Disposab
     override val viewport: ScreenViewport
     override val debugContext : DebugContext
     override val shapeCache : ShapeCache
+    val renderer : BasicRenderer
 
     init {
 
@@ -46,6 +48,7 @@ class SceneContext(private var scene:EditorScene) : SceneEnvironment(), Disposab
         viewport = ScreenViewport(perspectiveCamera)
         shapeCache = ShapeCache()
         debugContext = DebugContext(inject(), perspectiveCamera, inject(), inject(), modelBatch,shapeCache)
+        renderer= BasicRenderer(perspectiveCamera,this)
         supplyDependencies()
     }
 

@@ -2,14 +2,20 @@ package org.yunghegel.salient.engine.helpers
 
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.*
+import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.Model
+import com.badlogic.gdx.graphics.g3d.ModelBatch
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 import com.badlogic.gdx.graphics.glutils.GLFrameBuffer
 import com.badlogic.gdx.math.MathUtils.degreesToRadians
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.BoundingBox
 import com.badlogic.gdx.utils.ScreenUtils
 import ktx.assets.toAbsoluteFile
+import net.mgsx.gltf.scene3d.attributes.PBRTextureAttribute
+import net.mgsx.gltf.scene3d.utils.MaterialConverter
 import org.yunghegel.gdx.utils.ext.MathUtils
+import org.yunghegel.gdx.utils.ext.convertToPBR
 import org.yunghegel.gdx.utils.ext.instance
 import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.scene3d.SceneGraphicsResources
@@ -19,6 +25,16 @@ import kotlin.math.tan
 class PreviewImage(val model : Model, val context : SceneContext) : SceneGraphicsResources by context {
 
     val texture : Texture = generate()
+    val tmp = mutableListOf<Material>()
+
+    init {
+        model.materials.forEach { mat ->
+
+            MaterialConverter.makeCompatible(mat)
+
+        }
+
+    }
 
     fun save(path: String,pixmap :Pixmap) {
         val file = path.toAbsoluteFile()
@@ -60,9 +76,9 @@ class PreviewImage(val model : Model, val context : SceneContext) : SceneGraphic
 
             fbo.begin()
             ScreenUtils.clear(bgcolor, true)
-            modelBatch.begin(cam)
-            modelBatch.render(model.instance, context)
-            modelBatch.end()
+            batch.begin(cam)
+            batch.render(model.instance, context)
+            batch.end()
 
             val p = Pixmap.createFromFrameBuffer(0, 0, width, height)
             // Flip the pixmap
@@ -86,6 +102,10 @@ class PreviewImage(val model : Model, val context : SceneContext) : SceneGraphic
             flipped.dispose()
 
             return texture
+    }
+
+    companion object {
+        val batch = ModelBatch()
     }
 
 }

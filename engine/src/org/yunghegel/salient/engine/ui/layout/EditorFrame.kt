@@ -204,7 +204,7 @@ open class EditorFrame : STable() {
         private fun createContentHeader(panel :PanelContent) {
             header.clear()
             val icon = SImageButton(panel.icon)
-            val title = SLabel(panel.title)
+            val title = SLabel(panel.title,"bold")
             val overflow = SImageButton("overflow-menu")
             header.add(icon).width(22f).padRight(5f)
             header.add(title).growX()

@@ -3,22 +3,17 @@ package org.yunghegel.salient.editor.app
 import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Pixmap
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader
-import com.badlogic.gdx.graphics.glutils.FrameBuffer
-import com.badlogic.gdx.utils.ScreenUtils
-import com.github.czyzby.kiwi.util.gdx.viewport.Viewports.update
 import ktx.app.clearScreen
-import ktx.async.KtxAsync
-import org.yunghegel.gdx.utils.data.Index
+import org.yunghegel.salient.engine.system.Index
 import org.yunghegel.gdx.utils.data.Named
 import org.yunghegel.gdx.utils.ext.*
 import org.yunghegel.salient.core.graphics.util.OutlineDepth
 import org.yunghegel.salient.editor.app.configs.Settings
 import org.yunghegel.salient.editor.input.ViewportController
 import org.yunghegel.salient.editor.plugins.gizmos.GizmoPlugin
+import org.yunghegel.salient.editor.plugins.intersect.IntersectionPlugin
 import org.yunghegel.salient.editor.plugins.outline.OutlinerPlugin
 import org.yunghegel.salient.editor.plugins.outline.lib.Outliner
 import org.yunghegel.salient.editor.plugins.picking.PickingPlugin
@@ -28,7 +23,6 @@ import org.yunghegel.salient.editor.scene.SceneGraph
 import org.yunghegel.salient.engine.InterfaceInitializedEvent
 import org.yunghegel.salient.engine.Pipeline
 import org.yunghegel.salient.engine.State.*
-import org.yunghegel.salient.engine.api.Resizable
 import org.yunghegel.salient.engine.api.ecs.DEBUG_ALL
 import org.yunghegel.salient.engine.api.ecs.System
 import org.yunghegel.salient.engine.api.model.AssetHandle
@@ -48,7 +42,8 @@ import org.yunghegel.salient.engine.scene3d.component.RenderableComponent
 import org.yunghegel.salient.engine.system.*
 import org.yunghegel.salient.engine.tool.Tool
 import org.yunghegel.salient.engine.ui.UI
-import org.yunghegel.salient.engine.ui.layout.EditorFrame
+import org.yunghegel.salient.engine.ui.widgets.notif.AlertStrategy
+import org.yunghegel.salient.engine.ui.widgets.notif.notify
 
 
 /**
@@ -108,16 +103,21 @@ class Salient : ApplicationAdapter() {
     configureUI()
     configureInput()
 
-    val (picking, gizmo, outline) = listOf(PickingPlugin(), GizmoPlugin(), OutlinerPlugin()).onEach { plugin ->
+    val (picking, gizmo, outline) = listOf(PickingPlugin(), GizmoPlugin(), OutlinerPlugin(), IntersectionPlugin()).onEach { plugin ->
         createPlugin(plugin)
     }
 
-    scene.manager.saveScene(scene)
-    post(EditorInitializedEvent())
+        Netgraph.add("tools") {
+            index.types[Tool::class.java]?.filter { it is Tool && it.active }?.joinToString { it.name } ?: "null"
+        }
+
+
+        post(EditorInitializedEvent())
+
 
     }
 
-    fun createPlugin(plugin: Plugin) {
+    private fun createPlugin(plugin: Plugin) {
         profile("load plugin ${plugin.name}") {
             plugin.init(engine as Engine)
             plugin.systems.forEach { index.list(System::class.java)?.add(it) }
@@ -125,6 +125,7 @@ class Salient : ApplicationAdapter() {
             plugin.registry(InjectionContext)
             index.list(Plugin::class.java)?.add(plugin)
         }
+
     }
 
 
@@ -228,6 +229,18 @@ class Salient : ApplicationAdapter() {
             with(Outliner.settings) {
                 outliner.render(spriteBatch,depthTex,perspectiveCamera)
             }
+
+
+        }
+        once(OVERLAY_PASS) { _ ->
+            index.list(Tool::class.java)?.filterIsInstance<Tool>()?.forEach {
+                if (it.active) {
+                    it.update(delta)
+                    it.render(shapeRenderer)
+                    it.render(spriteBatch)
+                }
+
+            }
         }
     }
 
@@ -272,6 +285,8 @@ fun salient(run: Salient.() -> Unit) {
     val salient : Salient = inject()
     salient.run()
 }
+
+val index : Index<Named> by lazy { inject() }
 
 fun sampleSceneGraph(graph:SceneGraph) {
 

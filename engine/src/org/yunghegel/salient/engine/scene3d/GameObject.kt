@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.graphics.g3d.ModelBatch
+import com.badlogic.gdx.math.Matrix4
 import mobx.core.observable
 import org.yunghegel.debug.AFTER_DEPTH
 import org.yunghegel.debug.DebugContext
@@ -16,6 +17,7 @@ import org.yunghegel.gdx.utils.ext.delta
 import org.yunghegel.gdx.utils.ext.each
 import org.yunghegel.salient.engine.Pipeline
 import org.yunghegel.salient.engine.State
+import org.yunghegel.salient.engine.api.Store
 import org.yunghegel.salient.engine.api.Tagged
 import org.yunghegel.salient.engine.api.UpdateRoutine
 import org.yunghegel.salient.engine.api.dto.GameObjectDTO
@@ -35,20 +37,26 @@ import org.yunghegel.salient.engine.scene3d.component.TransformComponent
 import org.yunghegel.salient.engine.scene3d.graph.Spatial
 import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.system.inject
+import org.yunghegel.salient.engine.ui.widgets.notif.notify
 import java.util.*
 import kotlin.reflect.KClass
 
 const val VISIBLE = 1
 
 
-class GameObject(name: String, id: Int? = null,val scene:EditorScene) : Spatial<GameObject>(name), Iterable<GameObject>, UpdateRoutine, Tagged,
-    EnumMask<GameObjectFlag> {
+class GameObject(name: String, id_val: Int = getUniqueID(), transform: Matrix4 = Matrix4(), val scene:EditorScene) : Spatial<GameObject>(name), Iterable<GameObject>, UpdateRoutine, Tagged,
+    EnumMask<GameObjectFlag>, Store {
+
+
+
 
     override val bitmask = EnumBitmask(GameObjectFlag::class.java)
 
     override val tags: MutableSet<String> = mutableSetOf()
 
-    override val id: Int = id ?: generateID()
+    override val map: MutableMap<String, String> = mutableMapOf()
+
+    override val id: Int = id_val
 
     val pipeline : Pipeline by lazy { inject() }
 
@@ -62,7 +70,8 @@ class GameObject(name: String, id: Int? = null,val scene:EditorScene) : Spatial<
         add(TransformComponent(this))
         engine.addEntity(this)
         tag(name)
-        setAll(DRAW_BOUNDS, DRAW_WIREFRAME, DRAW_ORIGIN, RENDER, ALLOW_SELECTION)
+        setAll(DRAW_BOUNDS, DRAW_ORIGIN, RENDER, ALLOW_SELECTION)
+
     }
 
     override fun add(component: Component): Entity {
@@ -135,8 +144,29 @@ class GameObject(name: String, id: Int? = null,val scene:EditorScene) : Spatial<
 
 
     companion object {
+
+        private val trackedIDs = mutableSetOf<Int>()
+
+        fun checkID(id: Int) = trackedIDs.contains(id)
+
+        fun getUniqueID(): Int {
+            var id = gameObjectCount
+            while (trackedIDs.contains(id)) {
+                id = gameObjectCount
+            }
+            return id
+        }
+
+        private var gameObjectCount = 0
+            get() {
+                field++
+                trackedIDs.add(field)
+                return field
+            }
+
         fun fromDTO(dto: GameObjectDTO, scene: EditorScene): GameObject {
-            val go = GameObject(dto.name,dto.id.toInt(),scene)
+
+            val go = GameObject(dto.name,dto.id.toInt(),Matrix4(),scene)
             go.combined.set(Matrix4Data.toMat4(dto.transform))
             dto.tags.forEach { go.tag(it) }
             dto.children.forEach { go.addChild(fromDTO(it,scene)) }
@@ -172,6 +202,7 @@ class GameObject(name: String, id: Int? = null,val scene:EditorScene) : Spatial<
         }
     }
 
+
     private class GameObjectIterator(root: GameObject) : Iterator<GameObject> {
 
         private val stack: Stack<GameObject>
@@ -195,6 +226,8 @@ class GameObject(name: String, id: Int? = null,val scene:EditorScene) : Spatial<
         }
 
     }
+
+
 
 
 

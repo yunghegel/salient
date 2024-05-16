@@ -3,27 +3,50 @@ package org.yunghegel.salient.engine.ui.widgets.value.widgets
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
+import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener
+import ktx.actors.onChange
+import ktx.actors.onTouchDown
+import ktx.actors.onTouchEvent
 
-open class LabeledFloatField(labelText: String, width: Int=-1, allowNegative: Boolean=false) : LabeledTextField(labelText,width) {
+open class LabeledFloatField(labelText: String, width: Int=50, allowNegative: Boolean=false) : LabeledTextField(labelText,width) {
 
     init {
         addScrollListener()
         addDragListener()
         textField.textFieldFilter = FloatOnlyFilter(allowNegative)
+        touchable = Touchable.enabled
+        onTouchEvent { event, x, y ->
+            if (hit(x, y, false) == textField) {
+               stage.setKeyboardFocus(textField)
+            } else {
+                stage.keyboardFocus = null
+            }
+        }
     }
 
 
     fun isValid(): Boolean {
-        return textField.text.matches(Regex("-?\\d+(\\.\\d+)?"))
+        return textField.text.matches(Regex("-?\\d*\\.?\\d*"))
     }
 
-    val float: Float
+    fun changed(action: (Float) -> Unit) {
+        textField.onChange {
+            if (isValid()) {
+                action(float)
+            }
+        }
+    }
+
+    var float: Float
         get() {
             if (isValid()) {
                 return java.lang.Float.parseFloat(textField.text)
             }
             return 0f
+        }
+        set(value) {
+            textField.text = value.toString()
         }
 
     private fun addDragListener(){

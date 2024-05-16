@@ -6,6 +6,7 @@ import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.history.ActionExecutedEvent
 import org.yunghegel.salient.engine.events.history.ActionUndoneEvent
 import org.yunghegel.salient.engine.system.debug
+import org.yunghegel.salient.engine.ui.widgets.notif.notify
 
 class ActionHistory(private val limit: Int) {
 
@@ -65,6 +66,7 @@ class ActionHistory(private val limit: Int) {
     fun goBack(): Int {
         if (pointer >= 0) {
             commands.get(pointer).undo()
+            notify("Undo: ${commands.get(pointer).name}")
             post(ActionUndoneEvent(commands.get(pointer)))
             pointer--
         }
@@ -76,6 +78,7 @@ class ActionHistory(private val limit: Int) {
         if (pointer < commands.size - 1) {
             pointer++
             commands.get(pointer).exec()
+            notify("Redo: ${commands.get(pointer).name}")
             post(ActionExecutedEvent(commands.get(pointer)))
         }
 

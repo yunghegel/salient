@@ -1,11 +1,15 @@
 package org.yunghegel.salient.engine.system
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import org.yunghegel.gdx.utils.ext.Ansi
 import org.yunghegel.gdx.utils.ext.colorize
 
 import org.yunghegel.salient.engine.events.lifecycle.onShutdown
 import org.yunghegel.salient.engine.system.file.Paths
+import org.yunghegel.salient.engine.ui.widgets.notif.Severity
+import org.yunghegel.salient.engine.ui.widgets.notif.alert
+import org.yunghegel.salient.engine.ui.widgets.notif.notify
 import java.io.File
 import java.io.FileWriter
 import java.io.PrintWriter
@@ -149,6 +153,7 @@ fun emitEvent(emission: String) {
 
 fun warn(msg: String) {
     Log.log(msg, LogLevel.Warn)
+    if (Gdx.graphics != null) alert(msg)
 }
 
 

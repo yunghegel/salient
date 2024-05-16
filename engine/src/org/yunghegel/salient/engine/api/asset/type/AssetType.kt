@@ -2,8 +2,10 @@
 
 package org.yunghegel.salient.engine.api.asset.type
 
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import org.yunghegel.salient.engine.api.asset.Asset
 import org.yunghegel.salient.engine.system.file.FileType
+import org.yunghegel.salient.engine.ui.UI
 
 enum class AssetType(val filetype: FileType,assetClass: Class<out Asset<*>>) {
 
@@ -16,6 +18,16 @@ enum class AssetType(val filetype: FileType,assetClass: Class<out Asset<*>>) {
     companion object {
         fun fromFiletype(filetype: FileType): AssetType {
             return entries.first { it.filetype == filetype }
+        }
+
+        fun iconFor(filetype: AssetType): Drawable {
+            return when (filetype) {
+                Model -> UI.drawable("model_file")
+                Texture -> UI.drawable("image_icon")
+                Material -> UI.drawable("material_file")
+                Shader -> UI.drawable("Script")
+                Other -> UI.drawable("File")
+            }
         }
 
         val allExt = getAllExtensions()

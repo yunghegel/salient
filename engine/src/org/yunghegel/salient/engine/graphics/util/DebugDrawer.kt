@@ -272,8 +272,8 @@ class DebugDrawer {
     }
 
     companion object {
-        private var camera: Camera? = null
-        private var color: Color = Color.BLACK
+        private var camera: PerspectiveCamera? = null
+        private var color: Color = Color.WHITE
 
         fun setColor(color: Color) {
             Companion.color = color

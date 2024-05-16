@@ -8,7 +8,7 @@ import kotlin.math.pow
 
 data class OutlineSettings (
     var distanceFalloff: Float = 1f,
-    var size: Float = 2f,
+    var size: Float = 1f,
     var depthMin: Float = .35f,
     var depthMax: Float = .9f,
     val insideColor: Color = Color(0f, 0f, 0f, 0f),

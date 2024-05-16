@@ -2,30 +2,24 @@ package org.yunghegel.salient.editor.plugins.picking.systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.Family
-import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.PerspectiveCamera
+import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.Viewport
-import ktx.ashley.has
-import ktx.collections.GdxArray
+import org.yunghegel.gdx.utils.ext.delta
 import org.yunghegel.gdx.utils.selection.Pickable
 import org.yunghegel.gdx.utils.selection.Picker
 import org.yunghegel.gdx.utils.selection.PickerShader
-import org.yunghegel.salient.editor.app.salient
 import org.yunghegel.salient.editor.plugins.BaseSystem
 import org.yunghegel.salient.editor.scene.GameObjectSelectionManager
-import org.yunghegel.salient.engine.api.VIEWPORT_SOURCE
-import org.yunghegel.salient.engine.api.flags.SELECTED
-import org.yunghegel.salient.engine.scene3d.GameObject
-import org.yunghegel.salient.engine.scene3d.ModelRenderable
 import org.yunghegel.salient.engine.scene3d.component.PickableComponent
-import org.yunghegel.salient.engine.system.debug
 import org.yunghegel.salient.engine.system.inject
+import org.yunghegel.salient.engine.ui.UI
 
-class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComponent::class.java).get()) {
+open class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComponent::class.java).get()) {
 
     val picker = Picker()
 
@@ -45,10 +39,15 @@ class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComponent
     private var key = -1
     private var double = false
 
+    var updateHoverFbo = false
+    var hoverPM : Pixmap? = null
+
 
     val selectionManager : GameObjectSelectionManager = inject()
 
     var listeners = mutableListOf<PickListener>()
+
+    var exec : ((Pickable)->Unit)? = null
 
     init {
         listeners += (PickListener { pick , removed ->
@@ -73,7 +72,10 @@ class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComponent
 //        pick the candidate
         val pick = picker.pick(viewport,batch,cam,tmp.x.toInt(),tmp.y.toInt(),pickables)
 
-        if (pick!=null) handleSelection(pick)
+        if (pick!=null){
+            if(exec != null) exec?.invoke(pick)
+            else handleSelection(pick)
+        }
 //        reset the system
         reset()
     }
@@ -83,7 +85,7 @@ class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComponent
         pickables.addAll(candidates)
     }
 
-    fun handleSelection(pick: Pickable) {
+    private fun handleSelection(pick: Pickable) {
         if (pick is PickableComponent) {
             val go = pick.go
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
@@ -104,12 +106,28 @@ class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComponent
         }
     }
 
-    fun pick(x:Float,y:Float,button:Int,key:Int,double:Boolean) {
+    fun pick(x:Float,y:Float,button:Int,key:Int,double:Boolean, action:((Pickable)->Unit)? = null) {
         getPick = true
+        this.exec = action
         this.button = button
         this.key = key
         this.double = double
-        tmp.set(x,y)
+        val coords = UI.viewportToScreen(x.toInt(),y.toInt())
+        tmp.set(coords.first,coords.second)
+    }
+
+    fun hover(x:Int,y:Int,refresh:Boolean) : Pickable? {
+        if (hoverPM == null || refresh) {
+            super.update(delta)
+            hoverPM = picker.pm
+            pickables.clear()
+
+        }
+        val coords = UI.viewportToScreen(x,y)
+        tmp.set(coords.first,coords.second)
+        val picked = picker.pick(viewport,batch,cam,x,y,pickables)
+
+        return picked
     }
 
     fun reset() {
@@ -117,6 +135,7 @@ class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComponent
         button = -1
         key = -1
         double = false
+        exec = null
     }
 
 

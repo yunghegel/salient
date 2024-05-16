@@ -23,6 +23,7 @@ import org.yunghegel.salient.engine.scene3d.component.LightComponent
 import org.yunghegel.salient.engine.scene3d.component.MaterialsComponent
 import org.yunghegel.salient.engine.scene3d.component.MeshComponent
 import org.yunghegel.salient.engine.scene3d.component.ModelComponent
+import org.yunghegel.salient.engine.scene3d.events.onGameObjectAdded
 import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.system.singleton
 import org.yunghegel.salient.engine.ui.UI
@@ -72,6 +73,10 @@ class SceneGraphTree(private var graph: SceneGraph) : Tree<SNode<*, *, GameObjec
                 }
             }
 
+        }
+
+        onGameObjectAdded { event ->
+          validateOrCreate(event.go)
         }
         graph.sceneTree = this
     }

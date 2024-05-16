@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport
 import org.yunghegel.gdx.utils.ext.distanceFalloff
 import org.yunghegel.salient.editor.app.stage
 import org.yunghegel.salient.editor.app.ui
+import org.yunghegel.salient.editor.plugins.picking.systems.HoverSystem
 import org.yunghegel.salient.engine.system.inject
 
 class ViewportController : DragListener() {
@@ -67,6 +68,8 @@ class ViewportController : DragListener() {
     var minDist = 2f
 
     var inputDelegate : InputProcessor? = null
+
+    val hover : HoverSystem by lazy {inject()}
 
     val clickListener = object : ClickListener() {
         override fun clicked(event: InputEvent?, x: Float, y: Float) {

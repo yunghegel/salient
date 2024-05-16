@@ -3,6 +3,7 @@ package org.yunghegel.salient.engine.ui
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
@@ -20,7 +21,6 @@ import ktx.inject.Context
 import ktx.scene2d.Scene2DSkin
 import org.yunghegel.salient.engine.UIModule
 import org.yunghegel.salient.engine.api.Resizable
-import org.yunghegel.salient.engine.events.lifecycle.onWindowResized
 import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.system.provide
 import org.yunghegel.salient.engine.system.singleton
@@ -37,7 +37,7 @@ object UI : UIModule(), Resizable {
 
     lateinit var font : BitmapFont
     lateinit var mono : BitmapFont
-    private lateinit var notifications : Notifications
+    lateinit var notifications : Notifications
 
 
     var loaded = false
@@ -104,11 +104,15 @@ object UI : UIModule(), Resizable {
     fun layout(layout: EditorFrame) {
         root = layout
         provide<EditorFrame> {layout}
-        notifications = Notifications(this)
-        singleton(notifications)
-
         addActor(root)
     }
+
+    fun attachNotifications(notifications: Notifications) {
+        this.notifications = notifications
+        singleton(UI.notifications)
+    }
+
+
 
     fun drawable(name:String, color : Color? = null) : Drawable {
         val drawable = skin.getDrawable(name)
@@ -116,8 +120,14 @@ object UI : UIModule(), Resizable {
         return drawable
     }
 
-    fun buildSharedContext() {
+    fun screenToViewport(x: Int, y: Int): Pair<Float, Float> {
+        val proj = root.centerContent.screenToLocalCoordinates(Vector2(x.toFloat(), y.toFloat()))
+        return proj.x to proj.y
+    }
 
+    fun viewportToScreen(x: Int, y: Int): Pair<Float, Float> {
+        val proj = root.centerContent.localToScreenCoordinates(Vector2(x.toFloat(), y.toFloat()))
+        return proj.x to proj.y
     }
 
     private fun loadSkin(path:String): Skin  {

@@ -1,5 +1,7 @@
 package org.yunghegel.gdx.utils.ext
 
+import kotlin.reflect.KClass
+
 inline infix fun (() -> Unit).then(crossinline other: () -> Unit) = { ->
     this()
     other()
@@ -42,6 +44,11 @@ class NullOrNotNull<T> {
         }
     }
 }
+fun Pair<Float,Float>.int() = Pair(first.toInt(),second.toInt())
+
+fun Pair<Float,Float>.toVector2() = com.badlogic.gdx.math.Vector2(first,second)
+
+fun Pair<Int,Int>.float() = Pair(first.toFloat(),second.toFloat())
 
 fun <T> T?.nullOrNotNull(block: NullOrNotNull<T>.() -> Unit) {
     val handler = NullOrNotNull<T>()
@@ -66,3 +73,11 @@ fun <T> Iterable <T>.sum(selector: (T) -> Float): Float {
     }
     return sum
 }
+
+fun <T:Any,K:Any> T.ifInstance(type: KClass<K>, block: (T) -> Unit) {
+    if (type.isInstance(this)) {
+        block(this)
+    }
+}
+
+fun keyvalue(key: String, value: String) : Pair<String,String> = key to value

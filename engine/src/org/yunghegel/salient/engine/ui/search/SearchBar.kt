@@ -12,12 +12,12 @@ import org.yunghegel.gdx.utils.ui.ActorList
 import org.yunghegel.gdx.utils.ui.LabelSupplier
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.scene2d.STable
-import org.yunghegel.salient.engine.ui.widgets.IconTextfield
+import org.yunghegel.gdx.utils.ui.IconTextfield
 import org.yunghegel.salient.engine.ui.layout.Panel
 
 class SearchBar<T: Searchable,A>(searchProvider: SearchProvider<T,A>) : STable() where A : LabelSupplier, A : Actor {
 
-    val search = IconTextfield(IconTextfield.Option.LEFT, "FindAll", "")
+    val search = IconTextfield(IconTextfield.Option.LEFT,skin, "FindAll", "")
 
     var searchContext = SearchContext<T>()
 
@@ -108,6 +108,16 @@ class SearchBar<T: Searchable,A>(searchProvider: SearchProvider<T,A>) : STable()
             items = sortAlphabetically(items)
             provider.rebuildList(list,items)
             provider.processResults(items)
+        }
+
+        inline fun < reified A : Actor> updateItems (items: List<T>, transformer: (T) -> A) {
+            val actors = items.map { transformer(it) }
+            list.items.clear()
+            list.setItems(actors.toTypedArray()) {
+                height(20f)
+                growX()
+            }
+
         }
 
         private fun sortAlphabetically(arrayList: List< T >): List< T >{

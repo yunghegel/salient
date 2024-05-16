@@ -13,7 +13,7 @@ open class Spatial<T: Spatial<T>>(name:String) : BaseNode<T>(name) {
     private val localRotation: Quaternion
     private val localScale: Vector3
 
-    internal val combined: Matrix4
+    val combined: Matrix4
 
 
     init {
