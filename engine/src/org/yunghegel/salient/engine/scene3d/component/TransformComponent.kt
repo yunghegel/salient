@@ -16,7 +16,7 @@ class TransformComponent(go: GameObject) : EntityComponent<Matrix4>(go.combined,
 
     override val listeners: MutableList<DirtyListener<TransformComponent>> = mutableListOf()
 
-    override val iconDrawableName: String = "transform"
+    override val iconName: String = "transform_object"
 
     override var dirty: Boolean = false
 

@@ -3,14 +3,15 @@ package org.yunghegel.salient.engine.api.model
 import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import org.yunghegel.salient.engine.api.NamedObjectResource
+import org.yunghegel.salient.engine.api.properties.NamedObjectResource
 import org.yunghegel.salient.engine.api.project.EditorProject
 import org.yunghegel.salient.engine.helpers.save
 import org.yunghegel.salient.engine.system.file.Filepath
 import org.yunghegel.salient.engine.system.file.Paths
 
 @Serializable
-open class SceneHandle(override val name: String, override val path: Filepath, @Transient val serializerid: Int? = null, @Transient val serialuuid: String?=null, @Transient val proj: EditorProject<*,*>? = null) : NamedObjectResource {
+open class SceneHandle(override val name: String, override val path: Filepath, @Transient val serializerid: Int? = null, @Transient val serialuuid: String?=null, @Transient val proj: EditorProject<*,*>? = null) :
+    NamedObjectResource {
 
     init {
         proj?.indexScene(this)

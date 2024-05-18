@@ -2,7 +2,7 @@ package org.yunghegel.salient.engine.ui
 
 interface Icon {
 
-    val iconDrawableName : String
+    val iconName : String
 
 
 
@@ -10,6 +10,6 @@ interface Icon {
 
 fun icon(name:String) : Icon {
     return object : Icon {
-        override val iconDrawableName: String = name
+        override val iconName: String = name
     }
 }

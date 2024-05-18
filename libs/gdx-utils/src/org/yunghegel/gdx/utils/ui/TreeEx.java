@@ -150,6 +150,7 @@ public class TreeEx<N extends TreeEx.Node, V> extends WidgetGroup
             actorIndex = before.actor.getZIndex() + before.countActors();
         }
         node.addToTree(this , actorIndex);
+        fire(new ChangeListener.ChangeEvent());
     }
 
     public void remove(N node) {
@@ -552,6 +553,7 @@ public class TreeEx<N extends TreeEx.Node, V> extends WidgetGroup
             node.setExpanded(false);
             collapseAll(node.children);
         }
+        nodes.first().getTree().fire(new ChangeListener.ChangeEvent());
     }
 
     public void expandAll() {
@@ -619,6 +621,7 @@ public class TreeEx<N extends TreeEx.Node, V> extends WidgetGroup
                     ( (N) children[i] ).removeFromTree(tree , actorIndex);
                 }
             }
+            getTree().fire(new ChangeListener.ChangeEvent());
         }
 
         /**

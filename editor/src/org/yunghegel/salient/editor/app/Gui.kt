@@ -22,6 +22,7 @@ import org.yunghegel.salient.editor.ui.ViewportContextMenu
 import org.yunghegel.salient.editor.ui.ViewportSplit
 import org.yunghegel.salient.editor.ui.assets.browser.AssetBrowser
 import org.yunghegel.salient.editor.ui.assets.AssetsView
+import org.yunghegel.salient.editor.ui.project.ProjectControls
 import org.yunghegel.salient.editor.ui.project.ProjectView
 import org.yunghegel.salient.editor.ui.scene.SceneManagementView
 import org.yunghegel.salient.editor.ui.scene.SceneView
@@ -198,6 +199,10 @@ class Gui : EditorFrame() {
 
     fun configure() {
         menubarSlot.add(appBar.table).growX().colspan(5).row()
+        val projControls =ProjectControls()
+        left.customizeHeader { table, panelContent ->
+            table.add(projControls).right().growX().height(20f)
+        }
         addLeft("project", "Project", projectView)
         addRight("scene_icon", "Scene", sceneTree)
         addCenter("log_view", "Log", logView)
@@ -226,6 +231,10 @@ class Gui : EditorFrame() {
 
 
         addFooterItem(fpsLabel).right().padRight(5f).width(30f)
+
+
+        addFooterItem(notifications.button).padHorizontal(4f)
+
     }
 
     fun updateviewport() {

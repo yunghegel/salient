@@ -31,12 +31,15 @@ import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.scene.GameObjectChildAddedEvent
 import org.yunghegel.salient.engine.events.scene.GameObjectComponentAddedEvent
 import org.yunghegel.salient.engine.events.scene.GameObjectComponentRemovedEvent
+import org.yunghegel.salient.engine.scene3d.component.LightComponent
 import org.yunghegel.salient.engine.scene3d.component.ModelComponent
 import org.yunghegel.salient.engine.scene3d.component.PickableComponent
 import org.yunghegel.salient.engine.scene3d.component.TransformComponent
 import org.yunghegel.salient.engine.scene3d.graph.Spatial
 import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.system.inject
+import org.yunghegel.salient.engine.ui.Hoverable
+import org.yunghegel.salient.engine.ui.Icon
 import org.yunghegel.salient.engine.ui.widgets.notif.notify
 import java.util.*
 import kotlin.reflect.KClass
@@ -44,10 +47,17 @@ import kotlin.reflect.KClass
 const val VISIBLE = 1
 
 
-class GameObject(name: String, id_val: Int = getUniqueID(), transform: Matrix4 = Matrix4(), val scene:EditorScene) : Spatial<GameObject>(name), Iterable<GameObject>, UpdateRoutine, Tagged,
-    EnumMask<GameObjectFlag>, Store {
+open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:EditorScene) : Spatial<GameObject>(name), Iterable<GameObject>, UpdateRoutine, Tagged,
+    EnumMask<GameObjectFlag>, Store, Hoverable.HoverQueryable, Icon {
 
-
+    override val iconName: String
+        get() = when {
+            taggedAny("point_light", "spot_light", "directional_light") -> "light_object"
+            tagged("camera") -> "camera_object"
+            tagged("model") -> "geometry"
+            tagged("root") -> "scene_tree"
+            else -> "transform_object"
+        }
 
 
     override val bitmask = EnumBitmask(GameObjectFlag::class.java)
@@ -56,14 +66,14 @@ class GameObject(name: String, id_val: Int = getUniqueID(), transform: Matrix4 =
 
     override val map: MutableMap<String, String> = mutableMapOf()
 
-    override val id: Int = id_val
+    override var id: Int = getUniqueID()
 
-    val pipeline : Pipeline by lazy { inject() }
+    val pipeline: Pipeline by lazy { inject() }
 
-    val components : List<BaseComponent>
+    val components: List<BaseComponent>
         get() = getComponents().filterIsInstance<BaseComponent>()
 
-    private val engine : Engine = inject()
+    private val engine: Engine = inject()
 
 
     init {
@@ -75,8 +85,11 @@ class GameObject(name: String, id_val: Int = getUniqueID(), transform: Matrix4 =
     }
 
     override fun add(component: Component): Entity {
-        post(GameObjectComponentAddedEvent(this,component))
+        post(GameObjectComponentAddedEvent(this, component))
         if (component is BaseComponent) component.onComponentAdded(this)
+        if (component is ModelComponent) tag("model")
+        if (component is PickableComponent) tag("pickable")
+        if (component is LightComponent) tag("light")
         super.add(component)
         return this
     }
@@ -90,12 +103,12 @@ class GameObject(name: String, id_val: Int = getUniqueID(), transform: Matrix4 =
 
     override fun addChild(child: GameObject) {
 
-        post(GameObjectChildAddedEvent(this,child))
+        post(GameObjectChildAddedEvent(this, child))
         super.addChild(child)
     }
 
     override fun removeChild(child: GameObject) {
-        post(GameObjectChildAddedEvent(this,child))
+        post(GameObjectChildAddedEvent(this, child))
         super.removeChild(child)
     }
 
@@ -104,12 +117,12 @@ class GameObject(name: String, id_val: Int = getUniqueID(), transform: Matrix4 =
     }
 
     fun renderDepth(delta: Float, batch: ModelBatch, context: SceneContext) {
-        components.filter{ it.implDepth }.forEach { cmp ->
+        components.filter { it.implDepth }.forEach { cmp ->
             with(context) {
                 cmp.renderDepth(delta)
             }
         }
-        children.forEach { it.renderDepth(delta,batch,context) }
+        children.forEach { it.renderDepth(delta, batch, context) }
     }
 
     fun renderColor(delta: Float, batch: ModelBatch, context: SceneContext) {
@@ -120,11 +133,11 @@ class GameObject(name: String, id_val: Int = getUniqueID(), transform: Matrix4 =
                 }
             }
         }
-        children.forEach { it.renderColor(delta,batch,context )}
+        children.forEach { it.renderColor(delta, batch, context) }
     }
 
     fun renderDebug(context: SceneContext) {
-        components.filter{ it.implDebug}.forEach { cmp ->
+        components.filter { it.implDebug }.forEach { cmp ->
             if (cmp.shouldRenderDebug) {
                 with(context) {
                     cmp.renderDebug(delta)
@@ -138,10 +151,12 @@ class GameObject(name: String, id_val: Int = getUniqueID(), transform: Matrix4 =
         return GameObjectIterator(this)
     }
 
-    fun <T:Component> get(type:KClass<T>)  : T? {
+    fun <T : Component> get(type: KClass<T>): T? {
         return getComponents().find { it::class == type } as T?
     }
-
+    override fun toString(): String {
+        return "GameObject[$name:$id:(${tags.joinToString { "," }})]"
+    }
 
     companion object {
 
@@ -150,30 +165,26 @@ class GameObject(name: String, id_val: Int = getUniqueID(), transform: Matrix4 =
         fun checkID(id: Int) = trackedIDs.contains(id)
 
         fun getUniqueID(): Int {
-            var id = gameObjectCount
-            while (trackedIDs.contains(id)) {
-                id = gameObjectCount
-            }
-            return id
+            return gameObjectCount
         }
 
         private var gameObjectCount = 0
             get() {
                 field++
-                trackedIDs.add(field)
                 return field
             }
 
         fun fromDTO(dto: GameObjectDTO, scene: EditorScene): GameObject {
 
-            val go = GameObject(dto.name,dto.id.toInt(),Matrix4(),scene)
+            val go = GameObject(dto.name, Matrix4(), scene)
+            go.id = dto.id.toInt()
             go.combined.set(Matrix4Data.toMat4(dto.transform))
             dto.tags.forEach { go.tag(it) }
-            dto.children.forEach { go.addChild(fromDTO(it,scene)) }
+            dto.children.forEach { go.addChild(fromDTO(it, scene)) }
             dto.components.each {
                 info("Component type: ${it.type}")
-                when(it.type) {
-                    "ModelComponent" -> ModelComponent.fromDTO(it as ModelComponentDTO,scene,go)?.let { it1 ->
+                when (it.type) {
+                    "ModelComponent" -> ModelComponent.fromDTO(it as ModelComponentDTO, scene, go)?.let { it1 ->
                         go.add(it1)
                         info("ModelComponent added to GameObject")
                     }
@@ -189,9 +200,9 @@ class GameObject(name: String, id_val: Int = getUniqueID(), transform: Matrix4 =
             dto.transform = Matrix4Data.fromMat4(model.combined)
             model.tags.forEach { dto.tags.add(it) }
             model.components.forEach {
-                when(it) {
-                    is ModelComponent ->{
-                        dto.components.add(ModelComponent.toDTO(it,model))
+                when (it) {
+                    is ModelComponent -> {
+                        dto.components.add(ModelComponent.toDTO(it, model))
                         info("ModelComponent added to DTO")
                     }
                 }
@@ -200,7 +211,9 @@ class GameObject(name: String, id_val: Int = getUniqueID(), transform: Matrix4 =
 
             return dto
         }
-    }
+
+
+
 
 
     private class GameObjectIterator(root: GameObject) : Iterator<GameObject> {
@@ -229,10 +242,8 @@ class GameObject(name: String, id_val: Int = getUniqueID(), transform: Matrix4 =
 
 
 
-
-
-
-
+}
+    override var isHovered: (x: Float, y: Float) -> Boolean = {  x, y -> false }
 
 }
 

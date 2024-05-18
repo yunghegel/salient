@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.Separator
+import org.yunghegel.gdx.utils.ext.defaults
 
 open class ScrollPanel : Panel() {
 
@@ -15,6 +16,7 @@ open class ScrollPanel : Panel() {
 
     override fun build() {
         if(pane == null) pane = ScrollPane(bodyTable)
+        pane!!.defaults()
         clearChildren()
         align(Align.topLeft)
         titleTable.align(Align.left)

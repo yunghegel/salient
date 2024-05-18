@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup
 import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.util.ToastManager
 import com.kotcrab.vis.ui.widget.VisImageButton
@@ -24,12 +25,15 @@ import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.child
 import org.yunghegel.salient.engine.ui.layout.EditorFrame
+import org.yunghegel.salient.engine.ui.layout.PanelWindow
+import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.scene2d.STextButton
 import org.yunghegel.salient.engine.ui.table
 import org.yunghegel.salient.engine.ui.widgets.InputTable
 import org.yunghegel.salient.engine.ui.widgets.Result
+import org.yunghegel.salient.engine.ui.widgets.viewport.button
 import java.util.*
 import javax.swing.text.StyleConstants.setAlignment
 import kotlin.concurrent.timer
@@ -55,14 +59,29 @@ class Notifications(val stage: Stage,group: Group) : ToastManager(group) {
         super.show(toast, timeSec)
     }
 
+
+
+    var button : SImageButton = SImageButton("notifications")
+
+    val menu = PanelWindow("Notifications","notifications")
+
+    fun showNotificationsMenu() {
+        while (!pending.isEmpty()) {
+            val notif = pending.pop()
+            menu.add(notif.mainTable).growX().row()
+        }
+
+        UI.addActor(menu)
+    }
+
     init  {
         setAlignment(BOTTOM_LEFT)
-
     }
 
 
 
     fun push(notification: SToast) {
+        pending.push(notification)
         if (notification.configItem) { current?.closeToast(); show(notification) }
         else show(notification, 5f)
 
@@ -70,8 +89,36 @@ class Notifications(val stage: Stage,group: Group) : ToastManager(group) {
 
     fun post(notification: SToast, next: SToast? = if (pending.isNotEmpty()) pending.pop() else null) {
         pending.push(notification)
+    }
+
+    class NotificationButton(icon: String,val queryAlerts: ()->Int) : WidgetGroup() {
+        val buttonIcon = SImageButton(icon)
+        var numberAlerts : Int = 0
+        val label = SLabel(numberAlerts.toString(),"default-small")
+        val stack = com.badlogic.gdx.scenes.scene2d.ui.Stack()
+
+        init {
+            addActor(stack)
+            stack.add(buttonIcon)
+            stack.add(label)
+        }
 
 
+        fun update() {
+            numberAlerts  = queryAlerts()
+        }
+
+        override fun layout() {
+            label.setOrigin(5f,5f)
+        }
+
+        override fun getPrefWidth(): Float {
+            return 18f
+        }
+
+        override fun getPrefHeight(): Float {
+            return 18f
+        }
 
     }
 

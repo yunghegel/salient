@@ -18,7 +18,6 @@ buildscript {
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
-    id "com.osacky.doctor" version "0.10.0"
 }
 
 apply from: "$gradleHome/dist.gradle"

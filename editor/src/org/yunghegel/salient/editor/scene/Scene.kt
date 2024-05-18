@@ -2,10 +2,9 @@ package org.yunghegel.salient.editor.scene
 
 import com.badlogic.gdx.files.FileHandle
 import org.yunghegel.salient.editor.asset.AssetManager
-import org.yunghegel.salient.editor.input.EditorCamera
 import org.yunghegel.salient.editor.project.Project
 import org.yunghegel.salient.editor.project.ProjectManager
-import org.yunghegel.salient.engine.api.NamedObjectResource
+import org.yunghegel.salient.engine.api.properties.NamedObjectResource
 import org.yunghegel.salient.engine.api.dto.DTOAdapter
 import org.yunghegel.salient.engine.api.dto.SceneDTO
 import org.yunghegel.salient.engine.api.dto.datatypes.CameraData
@@ -17,7 +16,6 @@ import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.scene3d.SceneRenderer
 import org.yunghegel.salient.engine.scene3d.component.RenderableComponent
-import org.yunghegel.salient.engine.system.file.Paths
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.system.singleton
 

@@ -4,8 +4,10 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.ui.Tree
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.badlogic.gdx.scenes.scene2d.utils.Layout
 import com.badlogic.gdx.utils.OrderedSet
 import dev.lyze.gdxtinyvg.utils.WhitePixelUtils
@@ -13,8 +15,10 @@ import ktx.actors.onChange
 import ktx.collections.GdxArray
 import org.yunghegel.gdx.utils.ext.alpha
 import org.yunghegel.gdx.utils.ext.createColorPixel
+import org.yunghegel.gdx.utils.ext.drawable
 import org.yunghegel.gdx.utils.ui.TreeEx
 import org.yunghegel.salient.engine.ui.UI
+import org.yunghegel.salient.engine.ui.child
 import kotlin.math.max
 import kotlin.math.min
 
@@ -25,11 +29,12 @@ abstract class TreeWidget<Node, Object, A >(rootobject: Object) : TreeEx<Node, O
 
     var parentRef : Actor? = null
 
-    val white = createColorPixel(Color(1f,1f,1f, 0.2f))
+    val pix = createColorPixel(Color(.2f,.2f,.2f, 1f))
 
     abstract val resolveParent : (Object) -> Object?
 
     abstract val resolveChildren : (Object) -> List<Object>?
+    val row : Drawable = UI.skin.drawable("selection-dark")
 
     var root : Node = constructNode(rootobject)
 
@@ -37,13 +42,27 @@ abstract class TreeWidget<Node, Object, A >(rootobject: Object) : TreeEx<Node, O
 
     var _padding = 4f
 
+    var visualCount = 0
+
+
+
     val changeActor = object : Actor() {
 
         init {
             onChange { handleSelection( selection.items()) }
             setPadding(_padding)
-
+            dnd.addSource(object : DragAndDrop.Source(this) {
+                override fun dragStart(event: InputEvent?, x: Float, y: Float, pointer: Int): DragAndDrop.Payload? {
+                    val payload = DragAndDrop.Payload()
+                    val over = getNodeAt(y)
+                    payload.dragActor = (over.actor)
+                    payload.`object` = over.obj
+                    return payload
+                }
+            })
         }
+
+
 
 
 
@@ -58,7 +77,7 @@ abstract class TreeWidget<Node, Object, A >(rootobject: Object) : TreeEx<Node, O
 
         add(root)
         map[rootobject] = root
-        buildTree(root, rootobject)
+
     }
 
     val rowWidth  = { node : Node ->
@@ -107,9 +126,10 @@ abstract class TreeWidget<Node, Object, A >(rootobject: Object) : TreeEx<Node, O
         }
     }
 
-    fun buildTree(node: Node, obj: Object) {
+    fun buildTree(node: Node, obj: Object, conf: (Node) -> Unit = {}) {
         resolveChildren(obj)?.forEach {
             val child = constructNode(it)
+            conf(child)
             node.add(child)
             map[it] = child
             buildTree(child, it)
@@ -139,9 +159,6 @@ abstract class TreeWidget<Node, Object, A >(rootobject: Object) : TreeEx<Node, O
             }
         }
     }
-
-
-
 
 
 }

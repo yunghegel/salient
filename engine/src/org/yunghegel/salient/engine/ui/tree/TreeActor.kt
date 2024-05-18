@@ -13,21 +13,13 @@ import org.yunghegel.salient.engine.ui.scene2d.STable
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Tree
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
-import com.badlogic.gdx.utils.Align
 import dev.lyze.gdxtinyvg.utils.WhitePixelUtils
 import org.yunghegel.gdx.utils.data.Named
-import org.yunghegel.gdx.utils.ext.alpha
+import org.yunghegel.gdx.utils.ext.drawable
 import org.yunghegel.gdx.utils.ext.notnull
-import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.Icon
-import org.yunghegel.salient.engine.ui.UI
-import org.yunghegel.salient.engine.ui.child
-import org.yunghegel.salient.engine.ui.layout.ConstrainedMultiSplitPane
-import org.yunghegel.salient.engine.ui.layout.EditorFrame
 import org.yunghegel.salient.engine.ui.scene2d.SImage
-import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
-import org.yunghegel.salient.engine.ui.table
 
 abstract class TreeActor<Object>(val obj: Object) : STable()  {
 
@@ -35,7 +27,9 @@ abstract class TreeActor<Object>(val obj: Object) : STable()  {
     var dragging = false
     val origin = Vector2()
 
-    val pixel = WhitePixelUtils.createWhitePixelTexture()
+    var visualIndex = -1
+
+    open val pixel = WhitePixelUtils.createWhitePixelTexture()
 
     var nodename: String?=null
         set(value) {
@@ -47,13 +41,13 @@ abstract class TreeActor<Object>(val obj: Object) : STable()  {
     var node: TreeNode<*,*> by notnull()
 
     open var title : SLabel = SLabel(if (obj is Named) obj.name else obj.toString())
-    open var icon : Drawable? = if (obj is Icon) skin.getDrawable(obj.iconDrawableName) else null
+    open var icon : Drawable? = null
     var iconImage : SImage by notnull()
     val actors = mutableListOf<Actor>()
 
     init {
         touchable = Touchable.enabled
-        buildActor(obj)
+
     }
 
     fun prependActor(actor: Actor) : Cell<out Actor> {
@@ -125,10 +119,7 @@ abstract class TreeActor<Object>(val obj: Object) : STable()  {
 
 
 
-    override fun drawBackground(batch: Batch, parentAlpha: Float, x: Float, y: Float) {
-        var level = node.level
-//        }
-    }
+
 
     fun drawRow(batch: Batch, textureRegion: TextureRegion, x: Float, y: Float, width: Float, height: Float) {
         batch.draw(textureRegion, x, y, width, height)

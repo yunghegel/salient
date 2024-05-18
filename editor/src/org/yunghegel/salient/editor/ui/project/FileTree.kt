@@ -48,6 +48,7 @@ class FileTree(val rootObj: FileHandle) : TreeWidget<TreeNode<FileHandle, FileTr
     init {
         createDragAndDrop()
         style.over = null
+        buildTree(root,rootObj)
     }
 
     private var state = object {
@@ -61,7 +62,9 @@ class FileTree(val rootObj: FileHandle) : TreeWidget<TreeNode<FileHandle, FileTr
     var dragging = false
 
     override fun constructNode(obj: FileHandle): TreeNode<FileHandle,FileTable> {
-        return FileNode(obj)
+        val node = FileNode(obj)
+        node.actor.buildActor(obj)
+        return node
     }
         
     override val resolveParent: (FileHandle) -> FileHandle? = { file ->

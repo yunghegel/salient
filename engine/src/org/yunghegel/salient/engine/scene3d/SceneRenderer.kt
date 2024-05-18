@@ -8,7 +8,7 @@ import org.yunghegel.debug.AFTER_DEPTH
 import org.yunghegel.debug.DebugDrawable
 import org.yunghegel.salient.engine.Pipeline
 import org.yunghegel.salient.engine.State
-import org.yunghegel.salient.engine.api.Resizable
+import org.yunghegel.salient.engine.api.properties.Resizable
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.api.scene.EditorSceneGraph

@@ -48,6 +48,13 @@ com.badlogic.gdx.graphics.Color: {
 		b: 0.14117648
 		a: 1
 	}
+	offwhite: {
+		r: 0.8
+		g: 0.8
+		b: 0.8
+		a: 1
+
+	}
 	gray: {
 		r: 0.5176471
 		g: 0.5176471
@@ -77,6 +84,12 @@ com.badlogic.gdx.graphics.Color: {
 		g: 0
 		b: 0
 		a: 0.7
+	}
+	orange: {
+		r: 1
+		g: 0.64705884
+		b: 0
+		a: 1
 	}
 	white: {
 		r: 0.9529412
@@ -414,6 +427,57 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 		name:button-underline
 		color: lighter_gray
 	}
+	Mesh: {
+		name:BlockMesh
+		color: offwhite
+	}
+
+	Mesh_Checked: {
+		name:BlockMesh
+		color: orange
+	}
+
+	Model_Object: {
+		name:Part_Block
+		color: offwhite
+	}
+	Model_Object_Checked: {
+		name:Part_Block
+		color: orange
+	}
+	Geometry_Checked : {
+		name : Geometry
+		color: orange
+	}
+	Material : {
+		name:Texture
+		color:offwhite
+	}
+	Material_Checked: {
+		name:Texture
+		color:orange
+	}
+	undo: {
+		name:Undo
+		color: offwhite
+	}
+	undo_disabled: {
+		name:Undo
+		color: lighter_gray
+	}
+	redo: {
+		name:Redo
+		color: offwhite
+	}
+	redo_disabled: {
+		name:Redo
+		color:lighter_gray
+	}
+	save:{
+		name:Save
+		color: lighter_gray
+	}
+
 }
 com.kotcrab.vis.ui.Sizes: {
 	default: {
@@ -677,7 +741,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 		parent: round
 	}
 	delete: {
-		imageUp: icon-trash
+		imageUp: Cleanup
 		imageDown: icon-trash-disabled
 	}
 	close-window: {
@@ -773,6 +837,9 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	wireframe_icon: {
 		imageUp: view_wireframe
 	}
+	close: {
+		imageUp: CloseWidget
+	}
 	select: {
 		parent: soft-blue
 		imageUp: selection_tool_icon
@@ -820,9 +887,8 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 		imageChecked: add
 	}
 	eye: {
-		imageUp: visible
-		imageChecked: invisible
-		unpressedOffsetX: -1
+		imageUp: UIOn
+		imageChecked: UIOff
 	}
 	plus-minus: {
 		imageUp: plus
@@ -853,15 +919,22 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 		imageChecked: light_object_on
 	}
 	mesh_object: {
+		imageUp: Mesh
+		imageChecked: Mesh_Checked
+	}
+
+	game_object: {
 		imageUp: mesh_down
 		imageChecked: mesh
 	}
+
 	model_object: {
-		imageUp: model_file
+		imageUp: Geometry
+		imageChecked: Geometry_Checked
 	}
 	material_object: {
-		imageUp: material
-		imageChecked: material-on
+		imageUp: Material
+		imageChecked: Material_Checked
 	}
 	config: {
 		imageUp: config
@@ -922,6 +995,9 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	cone: {
 		imageUp: cone
 	}
+	Save: {
+		imageUp: save
+	}
 	plane: {
 		imageUp: plane
 	}
@@ -933,8 +1009,8 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 		imageChecked: directional-light
 	}
 	model-geometry: {
-		imageUp: cube
-		imageChecked: geometry-on
+		imageUp: Geometry
+		imageChecked: Geometry_Checked
 	}
 	overflow-menu: {
 		imageUp: overflow-menu
@@ -960,7 +1036,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 		imageUp: copy
 	}
 	refresh: {
-		imageUp: tile094
+		imageUp: icon-refresh
 	}
 	parent: {
 		imageUp: tile093
@@ -1038,6 +1114,29 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	zoom_out: {
 		imageUp: ZoomOut
 	}
+	undo: {
+		imageUp: undo
+		imageDisabled: undo_disabled
+	}
+	redo: {
+		imageUp: redo
+		imageDisabled: redo_disabled
+	}
+	back: {
+		imageUp: Back
+	}
+	forward: {
+		imageUp: Fwd
+	}
+	save: {
+		imageUp: save
+	}
+	notifications: {
+		imageUp: MessagingService
+	}
+	messasge: {
+		imageUp: Message
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 	default: {
@@ -1055,11 +1154,11 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 	}
 	file_scene: {
 		imageUp: file_scene
-		font: bold
+		font: default
 	}
 	project: {
 		imageUp: drive
-		font: bold
+		font: default
 	}
 	salient: {
 		imageUp: logo24
@@ -1318,7 +1417,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle: {
 	default: {
 		plus: ArrowRight
 		minus: ArrowDown
-		over: button
+		over: thumbnail
+
 		selection: button-compact-blue
 		background: dark-gray
 	}
@@ -1327,6 +1427,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	default: {
 		background: window-noborder
 		titleFont: default-small
+	}
+	custom: {
+		titleFont: default-small
+		background: empty-button
 	}
 	dialog: {
 		parent: default

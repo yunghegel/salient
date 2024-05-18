@@ -21,7 +21,7 @@ import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.UI.viewportToScreen
 
-class HoverSystem() : BaseSystem("picking_system",8, Family.all(PickableComponent::class.java).get()) {
+class HoverSystem() : BaseSystem("picking_system",8, Family.one(PickableComponent::class.java).get()) {
 
     val picker = Picker()
 

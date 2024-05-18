@@ -49,7 +49,7 @@ class AssetBrowser : STable(), SearchManager<Asset<*>,AssetActor,AssetsContainer
 
     init {
         add(container).grow()
-        container.head.add(searchBar).growX().maxWidth(200f).left().padHorizontal(25f)
+        container.head.add(searchBar).growX().maxWidth(300f).right().padHorizontal(25f)
 
         setAllItems()
     }

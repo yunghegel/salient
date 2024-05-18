@@ -1,21 +1,14 @@
 package org.yunghegel.salient.editor.ui.scene.graph
 
 import com.badlogic.ashley.core.Component
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.ui.Tree
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.Selection
 import ktx.actors.onChange
-import ktx.collections.GdxArray
-import ktx.collections.toGdxArray
-import org.yunghegel.gdx.utils.ext.each
-import org.yunghegel.gdx.utils.ext.singleOrNull
 import org.yunghegel.salient.editor.scene.GameObjectSelectionManager
 import org.yunghegel.salient.editor.scene.SceneGraph
-import org.yunghegel.salient.engine.api.UI_SOURCE
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
-import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.scene.*
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.input.Input
@@ -24,6 +17,7 @@ import org.yunghegel.salient.engine.scene3d.component.MaterialsComponent
 import org.yunghegel.salient.engine.scene3d.component.MeshComponent
 import org.yunghegel.salient.engine.scene3d.component.ModelComponent
 import org.yunghegel.salient.engine.scene3d.events.onGameObjectAdded
+import org.yunghegel.salient.engine.scene3d.events.onGameObjectRemoved
 import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.system.singleton
 import org.yunghegel.salient.engine.ui.UI
@@ -59,9 +53,7 @@ class SceneGraphTree(private var graph: SceneGraph) : Tree<SNode<*, *, GameObjec
             }
             selection.set(nodeMap[go])
         }
-
         onChange {
-
             if (selection.isEmpty) {
                 selectionManager.selection.items().forEach {
                     selectionManager.deselect(it)
@@ -72,12 +64,17 @@ class SceneGraphTree(private var graph: SceneGraph) : Tree<SNode<*, *, GameObjec
                     selectionManager.select(node.obj,true)
                 }
             }
-
         }
 
         onGameObjectAdded { event ->
           validateOrCreate(event.go)
         }
+        onGameObjectRemoved { event ->
+            val node = nodeMap[event.go]
+            node?.remove()
+            nodeMap.remove(event.go)
+        }
+
         graph.sceneTree = this
     }
 
@@ -128,7 +125,6 @@ class SceneGraphTree(private var graph: SceneGraph) : Tree<SNode<*, *, GameObjec
         go.clearChildren()
         go.go.components.filter { comp -> valid(comp)}.forEach { component ->
             val node = go.map[component] ?: ComponentNode(component,go.go)
-            go.add(node)
         }
     }
 
@@ -187,7 +183,7 @@ class SceneGraphTree(private var graph: SceneGraph) : Tree<SNode<*, *, GameObjec
         })
     }
 
-    fun handleComponentSelect(node: ComponentNode,right: Boolean) {
+    fun handleComponentSelect(node: ComponentNode, right: Boolean) {
 
     }
 

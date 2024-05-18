@@ -11,8 +11,29 @@ import org.yunghegel.salient.engine.ui.widgets.notif.notify
 class ActionHistory(private val limit: Int) {
 
      var pointer: Int = 0
-        private set
+         private set(pointer) {
+             field = pointer
+             listeners.forEach {
+                 if (pointer < 0) {
+                     it.undoNowImpossible()
+                 } else {
+                     it.undoNowPossible()
+                 }
+                 if (pointer < commands.size - 1) {
+                     it.redoNowPossible()
+                 } else {
+                     it.redoNowImpossible()
+                 }
+             }
+         }
+
+    val listeners = GdxArray<UndoRedoListener>()
+
     private val commands: GdxArray<Action> = GdxArray(limit)
+
+    fun listen (undoPossible: (Boolean) -> Unit, redoPossible: (Boolean) -> Unit) {
+        listeners.add(UndoRedoListener.build(redoPossible, undoPossible))
+    }
 
     init {
         pointer = -1
@@ -123,6 +144,37 @@ class ActionHistory(private val limit: Int) {
     companion object {
 
        var DEFAULT_LIMIT = 50
+    }
+
+    interface UndoRedoListener {
+        fun undoNowImpossible()
+        fun redoNowImpossible()
+
+        fun redoNowPossible()
+        fun undoNowPossible()
+        companion object {
+            fun build (redoPossible: (Boolean) -> Unit, undoPossible: (Boolean) -> Unit) : UndoRedoListener {
+                return object : UndoRedoListener {
+                    override fun undoNowImpossible() {
+                        undoPossible(false)
+                    }
+
+                    override fun redoNowImpossible() {
+                        redoPossible(false)
+                    }
+
+                    override fun redoNowPossible() {
+                        redoPossible(true)
+                    }
+
+                    override fun undoNowPossible() {
+                        undoPossible(true)
+                    }
+                }
+            }
+        }
+
+
     }
 
 }

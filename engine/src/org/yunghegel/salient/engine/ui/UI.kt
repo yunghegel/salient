@@ -1,5 +1,6 @@
 package org.yunghegel.salient.engine.ui
 
+import assimp.format.md3.Q3Shader.loadSkin
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
@@ -19,8 +20,9 @@ import com.kotcrab.vis.ui.VisUI
 import com.ray3k.stripe.FreeTypeSkin
 import ktx.inject.Context
 import ktx.scene2d.Scene2DSkin
+import org.yunghegel.gdx.utils.ext.lazyMutable
 import org.yunghegel.salient.engine.UIModule
-import org.yunghegel.salient.engine.api.Resizable
+import org.yunghegel.salient.engine.api.properties.Resizable
 import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.system.provide
 import org.yunghegel.salient.engine.system.singleton
@@ -43,7 +45,7 @@ object UI : UIModule(), Resizable {
     var loaded = false
         private set
 
-    lateinit var root: EditorFrame
+     var root: EditorFrame by lazyMutable { EditorFrame() }
 
     var dnd = DragAndDrop()
 

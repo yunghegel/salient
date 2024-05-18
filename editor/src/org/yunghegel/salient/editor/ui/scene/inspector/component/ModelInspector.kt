@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup
 import ktx.actors.onChange
 import org.yunghegel.gdx.utils.ext.padHorizontal
 import org.yunghegel.salient.editor.scene.Scene
-import org.yunghegel.salient.editor.ui.scene.graph.ComponentNode
+import org.yunghegel.salient.editor.ui.scene.graph.ObjectComponentNode
 import org.yunghegel.salient.editor.ui.scene.graph.SceneGraphTree
 import org.yunghegel.salient.editor.ui.scene.inspector.AssetsAvailable
 import org.yunghegel.salient.editor.ui.scene.inspector.ComponentInspector
@@ -114,7 +114,7 @@ class ModelInspector : ComponentInspector<ModelComponent, Model>(ModelComponent:
             val cmp = ModelComponent(asset.handle,gameObject,asset)
             gameObject.add(cmp)
             val sceneTree : SceneGraphTree = inject()
-            sceneTree.nodeMap[gameObject]?.add(ComponentNode(cmp,gameObject))
+//            sceneTree.nodeMap[gameObject]?.add(ObjectComponentNode(cmp,gameObject))
         }
     }
 

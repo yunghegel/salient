@@ -10,8 +10,8 @@ import org.yunghegel.salient.engine.ui.Icon
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.scene3d.GameObject
 
-class MaterialsComponent(val materials: GdxArray<Material>,go: GameObject) : EntityComponent<GdxArray<Material>>(materials,go) ,
-    Icon {
+class MaterialsComponent(val materials: GdxArray<Material>,go: GameObject) : EntityComponent<GdxArray<Material>>(materials,go)
+    {
 
         init {
             materials.each { mat ->
@@ -21,7 +21,7 @@ class MaterialsComponent(val materials: GdxArray<Material>,go: GameObject) : Ent
             }
         }
 
-    override val iconDrawableName: String = "material"
+    override val iconName: String = "material_object"
 
     constructor(material: Material,go: GameObject) : this(GdxArray.with(material),go)
 

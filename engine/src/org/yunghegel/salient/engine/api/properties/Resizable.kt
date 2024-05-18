@@ -1,4 +1,4 @@
-package org.yunghegel.salient.engine.api
+package org.yunghegel.salient.engine.api.properties
 
 interface Resizable {
 

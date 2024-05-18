@@ -3,7 +3,9 @@ package org.yunghegel.salient.editor.ui.scene
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import org.yunghegel.gdx.textedit.selection
+import org.yunghegel.gdx.utils.ext.defaults
 import org.yunghegel.salient.editor.scene.GameObjectSelectionManager
+import org.yunghegel.salient.editor.ui.scene.graph.ObjectTree
 import org.yunghegel.salient.editor.ui.scene.graph.SceneGraphTree
 import org.yunghegel.salient.editor.ui.scene.graph.SceneGraphViewer
 import org.yunghegel.salient.editor.ui.scene.inspector.ComponentInspector
@@ -23,7 +25,7 @@ import org.yunghegel.salient.engine.ui.table
 class SceneView : STable() {
 
     val graphPane : ScrollPane
-    val graph : SceneGraphTree
+    val graph : ObjectTree
 
     val inspector : SceneInspector
 
@@ -33,9 +35,9 @@ class SceneView : STable() {
 
     init {
 
-        graph = SceneGraphTree(inject())
+        graph = ObjectTree(inject())
         graphPane = ScrollPane(graph)
-        graphPane.setScrollingDisabled(true,false)
+        graphPane.defaults()
         val graphView = SceneGraphViewer(graphPane,inject())
 
 
@@ -60,7 +62,7 @@ class SceneView : STable() {
         split.setSplitAmount( 0.4f)
 
         onSceneInitialized { event ->
-            graph.rebuild(event.scene.graph.root)
+            graph.buildTree(graph.root,graph.graph.root)
             inspector.updateAll()
         }
 
@@ -75,7 +77,7 @@ class SceneView : STable() {
 
     fun notifySelection(gameobject: GameObject, removed: Boolean) {
         if (removed) {
-            graph.nodeMap[gameobject]?.let { graph.selection.remove(it) }
+            graph.map[gameobject]?.let { graph.selection.remove(it) }
             inspector.inspectors.filter { it is ComponentInspector<*,*> }.forEach {
                 (it as ComponentInspector<*,*>).selectedGameObject = null
             }
@@ -87,7 +89,7 @@ class SceneView : STable() {
             inspector.inspectors.find { it is SelectionView }?.let { it as SelectionView
                 it.populateLayout(gameobject)
             }
-            graph.nodeMap[gameobject]?.let {graph.selection.set(graph.nodeMap[gameobject])}
+            graph.map[gameobject]?.let {graph.selection.set(graph.map[gameobject])}
             inspector.inspectors.filter { it is ComponentInspector<*,*> }.forEach {
                 (it as ComponentInspector<*,*>).selectedGameObject = gameobject
             }

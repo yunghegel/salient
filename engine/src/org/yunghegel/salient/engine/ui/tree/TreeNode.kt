@@ -2,6 +2,7 @@ package org.yunghegel.salient.engine.ui.tree
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Tree
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop
 import org.yunghegel.gdx.utils.data.Named
 import org.yunghegel.gdx.utils.ui.TreeEx
@@ -19,6 +20,11 @@ abstract class TreeNode<T,A : TreeActor<T>>(val id: String? = null, var obj :T, 
         }
 
     val label = SLabel(nodeName)
+    override fun setExpanded(expanded: Boolean) {
+
+        super.setExpanded(expanded)
+        if (tree != null) tree.fire(ChangeEvent())
+    }
 
     val map : MutableMap<out TreeNode<T,A>, Any> = mutableMapOf()
 

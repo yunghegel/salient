@@ -1,7 +1,7 @@
 package org.yunghegel.salient.engine.api.project
 
 import org.yunghegel.salient.engine.api.EditorProjectManager
-import org.yunghegel.salient.engine.api.NamedObjectResource
+import org.yunghegel.salient.engine.api.properties.NamedObjectResource
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
 import org.yunghegel.salient.engine.api.scene.EditorScene

@@ -73,6 +73,10 @@ fun createColorPixel(color: Color): TextureRegion {
     return TextureRegion(Texture(pixmap))
 }
 
+fun ScrollPane.defaults() {
+    setScrollingDisabled(true,false); setScrollbarsVisible(true); setOverscroll(false,false); setFlingTime(0f)
+}
+
 fun Table.clearbackground() {
     background = null
 }

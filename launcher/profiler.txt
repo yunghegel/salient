@@ -1,1 +1,23 @@
-init modules: 1116
+init modules: 968
+load project from file: 377
+rebuild directory indices: 7
+load_asset_Prototype_grey_dark_32x32px: 44
+inlcude/load asset Prototype_grey_dark_32x32px: 53
+load_asset_Prototype_checkers_04_32x32px_normal: 2
+inlcude/load asset Prototype_checkers_04_32x32px_normal: 4
+load_asset_suzanne: 56
+inlcude/load asset suzanne: 59
+load_asset_Prototype_checkers_03_32x32px_normal: 2
+inlcude/load asset Prototype_checkers_03_32x32px_normal: 3
+load_asset_bunny: 190
+inlcude/load asset bunny: 193
+load_asset_teapot: 5
+inlcude/load asset teapot: 8
+load_asset_Prototype_blue_persian_32x32px: 1
+inlcude/load asset Prototype_blue_persian_32x32px: 2
+load scene from file: 703
+bootstrap app state: 1139
+load plugin picking_plugin: 2
+load plugin gizmo_plugin: 1
+load plugin outline_plugin: 3
+load plugin intersection_plugin: 0

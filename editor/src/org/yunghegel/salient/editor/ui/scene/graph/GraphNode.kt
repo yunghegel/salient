@@ -3,23 +3,14 @@ package org.yunghegel.salient.editor.ui.scene.graph
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle
 import com.badlogic.gdx.scenes.scene2d.ui.Tree
-import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
-import com.ray3k.stripe.PopTableClickListener
-import ktx.actors.onClick
-import ktx.actors.onClickEvent
-import org.yunghegel.salient.editor.app.stage
-import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.engine.api.ecs.BaseComponent
-import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.component.MaterialsComponent
 import org.yunghegel.salient.engine.scene3d.component.MeshComponent
 import org.yunghegel.salient.engine.scene3d.component.ModelComponent
 import org.yunghegel.salient.engine.scene3d.component.TransformComponent
-import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
-import org.yunghegel.salient.engine.ui.scene2d.STextButton
 import org.yunghegel.salient.engine.ui.scene2d.TreeNodeTable
 import org.yunghegel.salient.engine.ui.widgets.menu.ContextMenu
 

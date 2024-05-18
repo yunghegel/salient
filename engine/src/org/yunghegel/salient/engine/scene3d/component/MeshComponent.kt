@@ -18,10 +18,11 @@ import org.yunghegel.salient.engine.helpers.TextRenderer.camera
 import org.yunghegel.salient.engine.helpers.WireBatch
 
 class MeshComponent(mesh:GdxArray<Mesh>,go: GameObject) : EntityComponent<Array<Mesh>>(mesh,go),
-    Icon by icon("mesh") {
+    Icon {
 
 
 
+    override val iconName: String = "mesh_object"
 
 
 

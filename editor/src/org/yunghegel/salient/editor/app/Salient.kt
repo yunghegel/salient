@@ -44,6 +44,7 @@ import org.yunghegel.salient.engine.tool.Tool
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.widgets.notif.AlertStrategy
 import org.yunghegel.salient.engine.ui.widgets.notif.notify
+import kotlin.reflect.KClass
 
 
 /**
@@ -287,6 +288,11 @@ fun salient(run: Salient.() -> Unit) {
 }
 
 val index : Index<Named> by lazy { inject() }
+
+fun <T:Plugin> plugin(type: KClass<T>, use:T.()->Unit)  {
+    val plugin =  index.list(Plugin::class.java)?.find { it::class == type } as T?
+    plugin?.let { use(it) }
+}
 
 fun sampleSceneGraph(graph:SceneGraph) {
 

@@ -20,6 +20,8 @@ class ModelComponent(model: ID, go: GameObject, modelAsset: ModelAsset? = null) 
         model.useAsset(model.value!!,go)
     }
 
+    override val iconName: String = "model_object"
+
 
 
     val meta = Meta(model)

@@ -1,7 +1,6 @@
-package org.yunghegel.salient.engine.api
+package org.yunghegel.salient.engine.api.properties
 
 import com.badlogic.ashley.core.Engine
-import com.badlogic.ashley.core.Entity
 
 interface Initializable {
 
