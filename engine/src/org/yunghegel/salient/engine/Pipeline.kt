@@ -9,15 +9,15 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
+import com.badlogic.gdx.graphics.glutils.GLFormat
 import com.badlogic.gdx.graphics.glutils.GLFrameBuffer.FrameBufferBuilder
 import net.mgsx.gltf.scene3d.scene.Scene
+import org.yunghegel.salient.engine.api.properties.Resizable
+import org.yunghegel.salient.engine.graphics.FBO
 import org.yunghegel.salient.engine.graphics.GFX
 import org.yunghegel.salient.engine.graphics.SharedGraphicsResources
 import org.yunghegel.salient.engine.helpers.Pools
-import org.yunghegel.salient.engine.scene3d.SceneContext
-import org.yunghegel.salient.engine.scene3d.SceneGraphicsResources
-import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.system.perf.profile
+
 import org.yunghegel.salient.engine.ui.widgets.notif.notify
 
 class UILogicSystem : StateSystem(State.UI_LOGIC)
@@ -42,6 +42,7 @@ enum class State {
     DEPTH_PASS,
     BEFORE_COLOR_PASS,
     COLOR_PASS,
+    AFTER_COLOR_PASS,
     UI_PASS,
     OVERLAY_PASS;
 }
@@ -224,26 +225,20 @@ open class Pipeline() : Engine() {
         }
     }
 
-    fun buildBuffer(named:String, depth: Boolean = true) : FrameBuffer {
-                val frameBufferBuilder = FrameBufferBuilder(
-            Gdx.graphics.width,
-            Gdx.graphics.height
-        )
-        frameBufferBuilder.addColorTextureAttachment(GL30.GL_RGBA8, GL30.GL_RGBA, GL30.GL_UNSIGNED_BYTE)
-//        frameBufferBuilder.addColorTextureAttachment(GL30.GL_RGB8, GL30.GL_RGB, GL30.GL_UNSIGNED_BYTE)
-//        frameBufferBuilder.addColorTextureAttachment(GL30.GL_RGB8, GL30.GL_RGB, GL30.GL_UNSIGNED_BYTE)
-        if (depth) {
-            frameBufferBuilder.addDepthTextureAttachment(GL30.GL_DEPTH_COMPONENT24, GL30.GL_FLOAT)
-            frameBufferBuilder.addDepthRenderBuffer(GL30.GL_DEPTH_COMPONENT24)
+    fun buildBuffer(named:String, depth: Boolean = true, multisample: Boolean = false, width: Int = Gdx.graphics.backBufferWidth, height: Int = Gdx.graphics.backBufferHeight ) : FrameBuffer {
+        val buf = if (multisample) {
+            FBO.createMultisample(GLFormat.RGBA32, width,height, depth, 4)
+        } else {
+            FBO.create(GLFormat.RGBA32, width,height, depth)
         }
-
-        val fbo = frameBufferBuilder.build()
-        return fbo
+        buffers[named] = buf
+        return buf
     }
 
     override fun update(deltaTime: Float) {
         super.update(deltaTime)
     }
+
 
 }
 

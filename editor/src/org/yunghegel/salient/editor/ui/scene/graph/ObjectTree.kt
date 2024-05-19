@@ -40,47 +40,6 @@ class ObjectTree(val graph : SceneGraph = inject()) : TreeWidget<ObjectNode,Game
         val node =  ObjectNode(obj)
         node.populate()
         node.actor.node = node
-        dnd.addTarget( object : DragAndDrop.Target(node.actor) {
-            override fun drag(
-                source: DragAndDrop.Source?,
-                payload: DragAndDrop.Payload?,
-                x: Float,
-                y: Float,
-                pointer: Int
-            ): Boolean {
-                val over = getNodeAt(y)
-                val go = over.obj
-                val sourceGo = payload?.`object` as GameObject
-                if (go == sourceGo) return false
-                return true
-            }
-
-            override fun reset(source: DragAndDrop.Source?, payload: DragAndDrop.Payload?) {
-                super.reset(source, payload)
-            }
-
-            override fun drop(
-                source: DragAndDrop.Source?,
-                payload: DragAndDrop.Payload?,
-                x: Float,
-                y: Float,
-                pointer: Int
-            ) {
-                val over = getNodeAt(y)
-                val go = over.obj
-                val sourceNode = map[payload?.`object` as GameObject]
-                val sourceGo = sourceNode?.obj
-                val parent = resolveParent(go)
-                parent.let { it?.removeChild(sourceGo!!) }
-                sourceGo?.setParent(go)
-                sourceNode?.remove()
-                validateOrCreate(sourceGo!!)
-
-
-
-
-            }
-        })
         return node
     }
 

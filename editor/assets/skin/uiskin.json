@@ -144,7 +144,7 @@ com.badlogic.gdx.graphics.Color: {
 }
 com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 	default: {
-		font:Inter.ttf
+		font:bfont.ttf
 		size: 9
 		mono: false
 		color: white
@@ -261,7 +261,7 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
 	}
 	default-small: {
-		font:Inter.ttf
+		font:bfont.ttf
 		size: 8
 		mono: false
 		color: white
@@ -740,6 +740,16 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	round: {
 		parent: round
 	}
+	new: {
+		imageUp: New
+	}
+	expand_all: {
+		imageUp: ExpandAll
+	}
+	collapse_all:{
+		imageUp: CollapseAll
+	}
+
 	delete: {
 		imageUp: Cleanup
 		imageDown: icon-trash-disabled

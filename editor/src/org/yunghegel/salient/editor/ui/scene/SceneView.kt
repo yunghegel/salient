@@ -1,10 +1,18 @@
 package org.yunghegel.salient.editor.ui.scene
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
-import org.yunghegel.gdx.textedit.selection
+import ktx.actors.onChange
+import ktx.actors.onEnter
+import ktx.actors.onTouchEvent
+import ktx.actors.setScrollFocus
 import org.yunghegel.gdx.utils.ext.defaults
+import org.yunghegel.gdx.utils.ext.each
+import org.yunghegel.salient.editor.app.scene
 import org.yunghegel.salient.editor.scene.GameObjectSelectionManager
+import org.yunghegel.salient.editor.scene.SceneGraph
 import org.yunghegel.salient.editor.ui.scene.graph.ObjectTree
 import org.yunghegel.salient.editor.ui.scene.graph.SceneGraphTree
 import org.yunghegel.salient.editor.ui.scene.graph.SceneGraphViewer
@@ -25,20 +33,29 @@ import org.yunghegel.salient.engine.ui.table
 class SceneView : STable() {
 
     val graphPane : ScrollPane
-    val graph : ObjectTree
+    val graph : SceneGraphTree
 
     val inspector : SceneInspector
 
     val split : SplitPaneEx
     val selection : GameObjectSelectionManager = inject()
     val inspectorHeader : InspectorHeader
-
+    val sg : SceneGraph = inject()
     init {
 
-        graph = ObjectTree(inject())
+        graph = SceneGraphTree(inject())
         graphPane = ScrollPane(graph)
+
+
+
         graphPane.defaults()
         val graphView = SceneGraphViewer(graphPane,inject())
+        graphView.expandAll.onChange {
+            graph.expandAll()
+        }
+        graphView.collapseAll.onChange {
+            graph.root.children.each { it.collapseAll() }
+        }
 
 
         inspector = SceneInspector()
@@ -62,7 +79,7 @@ class SceneView : STable() {
         split.setSplitAmount( 0.4f)
 
         onSceneInitialized { event ->
-            graph.buildTree(graph.root,graph.graph.root)
+            graph.build(sg.root)
             inspector.updateAll()
         }
 
@@ -77,7 +94,7 @@ class SceneView : STable() {
 
     fun notifySelection(gameobject: GameObject, removed: Boolean) {
         if (removed) {
-            graph.map[gameobject]?.let { graph.selection.remove(it) }
+            graph.nodeMap[gameobject]?.let { graph.selection.remove(it) }
             inspector.inspectors.filter { it is ComponentInspector<*,*> }.forEach {
                 (it as ComponentInspector<*,*>).selectedGameObject = null
             }
@@ -89,7 +106,7 @@ class SceneView : STable() {
             inspector.inspectors.find { it is SelectionView }?.let { it as SelectionView
                 it.populateLayout(gameobject)
             }
-            graph.map[gameobject]?.let {graph.selection.set(graph.map[gameobject])}
+            graph.nodeMap[gameobject]?.let {graph.selection.set(graph.nodeMap[gameobject])}
             inspector.inspectors.filter { it is ComponentInspector<*,*> }.forEach {
                 (it as ComponentInspector<*,*>).selectedGameObject = gameobject
             }

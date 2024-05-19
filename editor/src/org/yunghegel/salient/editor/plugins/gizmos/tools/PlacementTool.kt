@@ -40,7 +40,7 @@ import org.yunghegel.salient.engine.scene3d.component.TransformComponent
 import org.yunghegel.salient.engine.scene3d.events.GameObjectAddedEvent
 import org.yunghegel.salient.engine.system.Netgraph
 import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.tool.InputTool
+import org.yunghegel.salient.engine.api.tool.InputTool
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.widgets.notif.notify
 import kotlin.math.max

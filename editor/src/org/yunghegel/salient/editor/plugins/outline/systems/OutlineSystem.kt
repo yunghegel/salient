@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
+import com.badlogic.gdx.graphics.glutils.GLFormat
 import ktx.app.clearScreen
 import ktx.ashley.get
 import org.yunghegel.gdx.utils.ext.*
@@ -21,6 +22,7 @@ import org.yunghegel.salient.engine.api.flags.GameObjectFlag
 import org.yunghegel.salient.engine.api.flags.HOVERED
 import org.yunghegel.salient.engine.api.flags.SELECTED
 import org.yunghegel.salient.engine.events.lifecycle.onWindowResized
+import org.yunghegel.salient.engine.graphics.FBO
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.component.PickableComponent
 import org.yunghegel.salient.engine.scene3d.component.RenderableComponent
@@ -35,13 +37,10 @@ class OutlineSystem(val outliner: OutlineDepth) : BaseSystem("outline_system", S
     val batch : SpriteBatch = SpriteBatch()
     val gui : Gui = inject()
 
-    var outlinefbo = FrameBuffer(Pixmap.Format.RGBA8888, appwidth, appheight,true)
+    var outlinefbo = FBO.createMultisample(GLFormat.RGBA32, true, 4)
 
     fun ensureFBO(w:Int,h:Int) {
-        if (outlinefbo.width != w || outlinefbo.height != h) {
-            outlinefbo.dispose()
-            outlinefbo = FrameBuffer(Pixmap.Format.RGBA8888, w, h, true)
-        }
+        outlinefbo = FBO.ensureSize(outlinefbo, GLFormat.RGBA32, w,h,true, 4)
     }
 
     override fun addedToEngine(engine: Engine?) {

@@ -9,12 +9,12 @@ import com.badlogic.gdx.utils.Align
 import ktx.actors.onChange
 import ktx.scene2d.textTooltip
 import net.mgsx.gltf.scene3d.attributes.PBRTextureAttribute
-import org.yunghegel.gdx.textedit.SimpleTextEditor
+import org.yunghegel.gdx.utils.TypedPayload
+import org.yunghegel.salient.engine.ui.widgets.SimpleTextEditor
 import org.yunghegel.gdx.utils.ext.*
 import org.yunghegel.salient.editor.app.configs.ui.LayoutConfig
 import org.yunghegel.salient.editor.app.configs.ui.UIConfig
 import org.yunghegel.salient.editor.plugins.gizmos.tools.PlacementTool
-import org.yunghegel.salient.editor.plugins.intersect.tools.IntersectorTool
 import org.yunghegel.salient.editor.plugins.picking.tools.HoverTool
 import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.editor.ui.AppBar
@@ -253,7 +253,7 @@ class Gui : EditorFrame() {
                 p3: Float,
                 p4: Int
             ): Boolean {
-                res.handleDrag(p1!!, p2.toInt(), p3.toInt())
+                res.handleDrag(p1 as TypedPayload<Asset<*>>, p2.toInt(), p3.toInt())
                 if (p1 != null) return res.shouldAccept(p1) else return false
             }
 

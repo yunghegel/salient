@@ -74,9 +74,9 @@ fun <T> Iterable <T>.sum(selector: (T) -> Float): Float {
     return sum
 }
 
-fun <T:Any,K:Any> T.ifInstance(type: KClass<K>, block: (T) -> Unit) {
+fun <T:Any,K:Any> T.ifInstance(type: KClass<K>, block: (K) -> Unit) {
     if (type.isInstance(this)) {
-        block(this)
+        block(this as K)
     }
 }
 

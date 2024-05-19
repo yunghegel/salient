@@ -29,6 +29,8 @@ open class ConstrainedMultiSplitPane(val vertical:Boolean) : MultiSplitPane(vert
 
     val rangeResolution = mutableMapOf<Actor, (Actor)->Range>()
 
+    val constraintCalculations = mutableMapOf<Actor, (Actor)->Float>()
+
     override fun setWidgets(vararg actors: Actor) {
         super.setWidgets(*actors)
         actors.forEach {
@@ -59,6 +61,7 @@ open class ConstrainedMultiSplitPane(val vertical:Boolean) : MultiSplitPane(vert
         } else {
             super.setSplit(handleBarIndex, cache[actor] ?: prefs[actor] ?: 0f)
         }
+        println(cache[actor])
     }
 
     fun setSplitInternal(handleBarIndex: Int, split: Float) {

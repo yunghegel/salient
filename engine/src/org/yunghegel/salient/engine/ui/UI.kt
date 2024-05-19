@@ -1,6 +1,5 @@
 package org.yunghegel.salient.engine.ui
 
-import assimp.format.md3.Q3Shader.loadSkin
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
@@ -78,7 +77,7 @@ object UI : UIModule(), Resizable {
             initialTime = 0.5f
             resetTime = 0.5f
             offsetX = -10f
-            offsetY = 10f
+            offsetY = 25f
         }
         KnownFonts.setAssetPrefix("skin/")
 

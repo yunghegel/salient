@@ -21,6 +21,8 @@ class GridConfig(
 
 ) {
 
+    internal var injected = false
+
     fun set(
         gridSize: Float,
         gridCellSize: Float,

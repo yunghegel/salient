@@ -22,6 +22,12 @@ subprojects {
         withSourcesJar()
     }
 
+    sourceSets {
+        test.java.srcDirs += ["$testSrcDir"]
+        test.kotlin.srcDirs += ["$testSrcDir"]
+        test.resources.srcDirs += ["$testSrcDir"]
+    }
+
     publishing {
         repositories {
             maven {

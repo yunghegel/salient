@@ -9,7 +9,7 @@ import org.yunghegel.salient.engine.api.flags.GameObjectFlag
 import org.yunghegel.salient.engine.scene3d.component.PickableComponent
 import org.yunghegel.salient.engine.system.Netgraph
 import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.tool.InputTool
+import org.yunghegel.salient.engine.api.tool.InputTool
 import org.yunghegel.salient.engine.ui.UI
 
 class HoverTool(val pickingSystem: HoverSystem) : InputTool("hover_tool"){

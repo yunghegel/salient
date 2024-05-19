@@ -4,8 +4,8 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.graphics.g2d.Batch
 import org.yunghegel.salient.editor.plugins.outline.systems.OutlineSystem
 import org.yunghegel.salient.engine.scene3d.component.RenderableComponent
-import org.yunghegel.salient.engine.tool.ComponentTool
-import org.yunghegel.salient.engine.tool.Tool
+import org.yunghegel.salient.engine.api.tool.ComponentTool
+import org.yunghegel.salient.engine.api.tool.Tool
 
 class OutlineTool(val system: OutlineSystem) : ComponentTool<RenderableComponent>("outline_tool",RenderableComponent::class.java) {
 

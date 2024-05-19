@@ -153,3 +153,10 @@ fun Texture.draw(batch: SpriteBatch,x:Int=0,y:Int =0, width: Int = appwidth, hei
     batch.draw(this,x.toFloat(),y.toFloat(),width.toFloat(),height.toFloat(),0f,0f,1f,1f)
     batch.end()
 }
+
+fun Texture.drawf(batch: SpriteBatch,x:Float=0f,y:Float =0f, width: Float = appwidth.toFloat(), height: Float = appheight.toFloat(),conf:SpriteBatch.()->Unit = {}) {
+    batch.conf()
+    batch.begin()
+    batch.draw(this,x.toFloat(),y.toFloat(),width.toFloat(),height.toFloat(),0f,0f,1f,1f)
+    batch.end()
+}

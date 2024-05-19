@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL30
 import org.yunghegel.salient.engine.graphics.GFX
 import org.yunghegel.salient.engine.graphics.util.attach
 import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.tool.Tool
+import org.yunghegel.salient.engine.api.tool.Tool
 
 class FrameBuffers : Tool("fbo_tool") {
 

@@ -1,6 +1,7 @@
 package org.yunghegel.salient.engine.scene3d.graph
 
 import com.badlogic.gdx.utils.Array
+import org.yunghegel.salient.engine.api.properties.Parent
 
 interface GraphNode<T> {
 

@@ -1,5 +1,4 @@
-import org.codehaus.groovy.runtime.GStringImpl
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 import org.gradle.internal.os.OperatingSystem
 
 buildscript {
@@ -22,12 +21,19 @@ plugins {
 
 apply from: "$gradleHome/dist.gradle"
 apply from: "gradle/project.gradle"
+apply from: "gradle/utils.gradle"
+
 
 sourceSets.each { sourceSet ->
     sourceSet.java.srcDirs = []
     sourceSet.kotlin.srcDirs = []
     sourceSet.resources.srcDirs = []
 }
+
+salient {
+
+}
+
 
 ext {
     GRADLE_USER_HOME = project.gradle.gradleUserHomeDir.path
@@ -36,8 +42,8 @@ ext {
     core =  [project(":engine"),project(":editor"),project(":launcher")]
     libs = project(":libs").subprojects
     resourceDir = project(":editor").file("assets")
-
-    switch (OperatingSystem.current()) {
+    os = OperatingSystem.current()
+    switch (os) {
         case OperatingSystem.LINUX:
             lwjglNatives = "natives-linux"
             def osArch = System.getProperty("os.arch")
@@ -64,21 +70,20 @@ ext {
         packages[project.name] = ":libs:${project.name}"
     }
 
+    launchTests = gradle.startParameter.projectProperties.get('test') != null
+
 }
 
 allprojects {
-
-
     group = "$groupId"
     project.version = "$salientVersion"
-
     test {
         testLogging {
             events "passed", "skipped", "failed"
+            showStandardStreams = true
         }
         useJUnitPlatform()
     }
-
 }
 
 subprojects {
@@ -103,23 +108,19 @@ subprojects {
             options.encoding = 'UTF-8'
         }
         withSourcesJar()
-
-
     }
 
-    dependencies {
-        api fileTree(dir: rootProject.file("include"), include: ['*.jar'])
-    }
 
-    sourceSets.configure {
-        main.java.srcDirs += ['src']
-        main.kotlin.srcDirs += ['src']
-        main.resources.srcDirs += ["$resourceDir"]
-        test.java.srcDirs += [ 'test' ]
-        test.kotlin.srcDirs += [ 'test']
-        test.resources.srcDirs += [ "$resourceDir" ]
+    if (!project.name.equals( "tests")) {
+        sourceSets.configure {
+            main.java.srcDirs += ['src']
+            main.kotlin.srcDirs += ['src']
+            main.resources.srcDirs += ["$resourceDir"]
+            test.java.srcDirs += ['test']
+            test.kotlin.srcDirs += ['test']
+            test.resources.srcDirs += ["$resourceDir"]
+        }
     }
-
     kotlin {
         jvmToolchain(11)
         compilerOptions {
@@ -128,18 +129,14 @@ subprojects {
     }
 }
 
-def launcher = project(':launcher')
-def releaseDir = project.file("release")
 
 jar {
     subprojects.each { project ->
         dependsOn project.jar
     }
-
     doFirst {
        releaseDir.mkdirs()
     }
-
     group "salient"
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
@@ -148,26 +145,37 @@ jar {
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
+}
+
+configure(testing) {
+//    only build if instruicted
+
+    if (launchTests) {
+        tasks.withType(Test) {
+            useJUnitPlatform()
+        }
+        
+    }
+    dependencies {
+        packages.each { pkg->
+            implementation project("$pkg.value")
+        }
+    }
+
 
 
 }
 
 
 task dist(type: Copy) {
-
     doFirst {
         releaseDir.mkdirs()
     }
-
     group "salient"
     from launcher.jar
     into project.file("release")
     from sourceSets.main.resources
     into project.file("release")
-
-    makeExecutable(OperatingSystem.current())
-
-
 
     doLast {
         releaseDir.listFiles().each { file ->
@@ -175,29 +183,33 @@ task dist(type: Copy) {
         }
     }
 
-
 }
 
-//configure(launcher) {
-//    task run(type: JavaExec) {
-//
-//
-//
-//        dependsOn classes
-//        group "salient"
-//        main(mainClassName)
-//        classpath sourceSets.main.runtimeClasspath
-//        standardInput = System.in
-//        workingDir = resourceDir
-//        ignoreExitValue = true
-//        if (System.properties['os.name'].toLowerCase().contains('mac')) {
-//            jvmArgs "-XstartOnFirstThread"
-//            jvmArgs "-Djava.awt.headless=true"
-//        }
-//    }
-//}
 
-void makeExecutable(OperatingSystem os) {
+configure(launcher) {
+    if (launchTests) {
+        dependencies {
+            testImplementation project(":tests")
+        }
+    }
+
+
+    task run(type: JavaExec) {
+        dependsOn classes
+        group "salient"
+        main(launchTests ? "org.yunghegel.salient.tests.MainKt" : "org.yunghegel.salient.launcher.exe.DesktopLauncher")
+        classpath sourceSets.main.runtimeClasspath
+        standardInput = System.in
+        workingDir = resourceDir
+        ignoreExitValue = true
+        if (System.properties['os.name'].toLowerCase().contains('mac')) {
+            jvmArgs "-XstartOnFirstThread"
+            jvmArgs "-Djava.awt.headless=true"
+        }
+    }
+}
+
+task makeExecutable(type: Copy) {
     switch (os) {
         case OperatingSystem.LINUX:
             def executable = new File(project.file("release"), "salient")

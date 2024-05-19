@@ -11,9 +11,9 @@ import java.nio.file.*
 @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
 object nio {
 
-    val async = newSingleThreadAsyncContext()
+    val asyncContext = newSingleThreadAsyncContext()
 
-    val thread = newSingleThreadContext("nio")
+    val nioContext = newSingleThreadContext("nio")
 
     private var daemon : WatchService? = null
 

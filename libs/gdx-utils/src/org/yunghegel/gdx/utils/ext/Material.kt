@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
-import imgui.stb.te
 import net.mgsx.gltf.scene3d.attributes.PBRTextureAttribute
 
 fun diffuse(tex: Texture) : TextureAttribute {

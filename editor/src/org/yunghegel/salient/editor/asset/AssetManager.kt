@@ -1,7 +1,6 @@
 package org.yunghegel.salient.editor.asset
 
 import com.badlogic.gdx.files.FileHandle
-import org.yunghegel.gdx.utils.data.Searchable
 import org.yunghegel.gdx.utils.data.serialize
 import org.yunghegel.gdx.utils.ext.addIfNotPresent
 import org.yunghegel.gdx.utils.ext.each
@@ -24,7 +23,6 @@ import org.yunghegel.salient.engine.system.file.FileType
 import org.yunghegel.salient.engine.system.file.Paths
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.system.profile
-import org.yunghegel.salient.engine.system.threading.doAsync
 import org.yunghegel.salient.engine.system.warn
 
 class AssetManager() : EditorAssetManager<Project, Scene> {

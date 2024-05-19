@@ -1,6 +1,5 @@
 dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-test"
-    testImplementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
 
     implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"

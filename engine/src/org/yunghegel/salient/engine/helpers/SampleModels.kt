@@ -10,10 +10,19 @@ import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader
+import ktx.assets.async.AssetStorage
+import net.mgsx.gltf.loaders.glb.GLBAssetLoader
+import net.mgsx.gltf.loaders.gltf.GLTFAssetLoader
 import net.mgsx.gltf.loaders.gltf.GLTFLoader
+import net.mgsx.gltf.scene3d.scene.SceneAsset
+import org.yunghegel.gdx.renderer.util.toInternalFile
 import org.yunghegel.gdx.utils.ext.instance
 import org.yunghegel.gdx.utils.ext.randomHue
+import org.yunghegel.salient.engine.api.asset.buildParameters
+import org.yunghegel.salient.engine.system.async
 import java.util.Random
+
+typealias Models = SampleModels
 
 enum class SampleModels(val model: String) {
     CONE("Cone"),
@@ -32,7 +41,9 @@ enum class SampleModels(val model: String) {
     TORUS_KNOT("TorusKnot"),
     TWISTED_TORUS("TwistedTorus");
 
-    fun load(basePath:String = "models/", ext: String = "obj") : Model {
+    val path : (String, String)->String = {basePath, ext -> "${basePath}/${ext}/${model}.${ext}"}
+
+    fun load(basePath:String = "models/", ext: String = "obj", cb: (Model)->Unit = {}) : Model {
         val path = "${basePath}/${ext}/${model}.${ext}"
         if (ext == "obj") return ObjLoader(InternalFileHandleResolver()).loadModel(Gdx.files.internal(path)).apply {
             materials.first().apply {
@@ -44,6 +55,31 @@ enum class SampleModels(val model: String) {
         else if (ext == "gltf") return GLTFLoader().load(Gdx.files.internal(path)).scene.model
         else throw IllegalArgumentException("Unsupported file type")
     }
+
+
+    suspend fun loadAsync(basePath: String = "models/", ext: String = "obj", await: suspend (Model?)->Unit) : AssetStorage {
+        val path = "${basePath}/${ext}/${model}.${ext}"
+        val storage = AssetStorage()
+        val model = when (ext) {
+            "obj" -> {
+                storage.setLoader<Model>(ext) { ObjLoader() }
+                storage.loadAsync<Model>(path).await()
+            }
+            "gltf" -> {
+                storage.setLoader<SceneAsset>(ext) { GLTFAssetLoader() }
+                storage.loadAsync<SceneAsset>(path).await().scene?.model
+            }
+            "glb" -> {
+                storage.setLoader<SceneAsset>(ext) { GLBAssetLoader() }
+                storage.loadAsync<SceneAsset>(path).await().scene?.model
+
+            }
+            else -> throw IllegalArgumentException("Unsupported file type")
+        }
+        await(model)
+        return storage
+    }
+
 
     companion object {
         fun random() : Model {
@@ -67,6 +103,8 @@ enum class SampleModels(val model: String) {
         fun randomCount(count: Int) = (1..count).map { random() }
 
         fun randomInstanceCount(count: Int) = (1..count).map { randomInstance() }
+
+        fun each(action: (SampleModels) -> Unit) = entries.forEach(action)
 
 
     }

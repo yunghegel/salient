@@ -12,9 +12,9 @@ import org.yunghegel.salient.editor.plugins.picking.systems.PickingSystem
 import org.yunghegel.salient.editor.plugins.picking.tools.HoverTool
 import org.yunghegel.salient.editor.plugins.picking.tools.PickingTool
 import org.yunghegel.salient.engine.api.ecs.System
-import org.yunghegel.salient.engine.plugin.Plugin
+import org.yunghegel.salient.engine.api.plugin.Plugin
 import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.tool.Tool
+import org.yunghegel.salient.engine.api.tool.Tool
 
 class PickingPlugin : Plugin {
 

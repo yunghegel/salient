@@ -25,6 +25,24 @@ fun Int.pow(exp: Int): Int {
     return result
 }
 
+fun vec3(x: Float, y: Float, z: Float): Vector3 {
+    return Vector3(x, y, z)
+}
+
+fun vec2(x: Float, y: Float): Vector2 {
+    return Vector2(x, y)
+}
+
+fun vec2(x: Int, y: Int): Vector2 {
+    return Vector2(x.toFloat(), y.toFloat())
+}
+
+fun vec3(x: Int, y: Int, z: Int): Vector3 {
+    return Vector3(x.toFloat(), y.toFloat(), z.toFloat())
+}
+
+
+
 fun barryCentric(p1: Vector3, p2: Vector3, p3: Vector3, pos: Vector2): Float {
     val det = (p2.z - p3.z) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.z - p3.z)
     val l1 = ((p2.z - p3.z) * (pos.x - p3.x) + (p3.x - p2.x) * (pos.y - p3.z)) / det

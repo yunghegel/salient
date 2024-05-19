@@ -2,8 +2,8 @@ package org.yunghegel.salient.engine.system
 
 import org.yunghegel.gdx.utils.data.Named
 import org.yunghegel.salient.engine.api.ecs.System
-import org.yunghegel.salient.engine.plugin.Plugin
-import org.yunghegel.salient.engine.tool.Tool
+import org.yunghegel.salient.engine.api.plugin.Plugin
+import org.yunghegel.salient.engine.api.tool.Tool
 
 
 class Index<T> where T: Named {

@@ -13,6 +13,7 @@ import org.yunghegel.gdx.utils.ext.delta
 import org.yunghegel.gdx.utils.selection.Pickable
 import org.yunghegel.gdx.utils.selection.Picker
 import org.yunghegel.gdx.utils.selection.PickerShader
+import org.yunghegel.salient.editor.app.pipeline
 import org.yunghegel.salient.editor.plugins.BaseSystem
 import org.yunghegel.salient.editor.scene.GameObjectSelectionManager
 import org.yunghegel.salient.engine.scene3d.component.PickableComponent
@@ -71,6 +72,8 @@ open class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComp
         super.update(deltaTime)
 //        pick the candidate
         val pick = picker.pick(viewport,batch,cam,tmp.x.toInt(),tmp.y.toInt(),pickables)
+
+        engine.buffers["picking_buffer"] = picker.fbo
 
         if (pick!=null){
             if(exec != null) exec?.invoke(pick)

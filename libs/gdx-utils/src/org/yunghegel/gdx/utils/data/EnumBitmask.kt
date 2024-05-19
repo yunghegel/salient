@@ -38,6 +38,12 @@ class EnumBitmask<T : Enum<T>>(val enumClass: Class<T>) : BitmaskPredicate<T> , 
         return set
     }
 
+    fun eachTrue(action: (T) -> Unit) {
+        for (enum in enumClass.enumConstants) {
+            if (get(enum)) action(enum)
+        }
+    }
+
     override var mask by observable(0)
 
     fun set(enum: T, value: Boolean) {

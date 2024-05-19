@@ -1,0 +1,30 @@
+dependencies {
+    testImplementation "org.jetbrains.kotlin:kotlin-test"
+    implementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+//\
+//    implementation project(':engine')
+
+    implementation project(":editor")
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = [rootProject.file('/editor/assets')]
+        }
+        java {
+            srcDirs = ['src']
+        }
+        kotlin {
+            srcDirs = ['src']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['test']
+        }
+        kotlin {
+            srcDirs = ['test']
+        }
+    }
+}

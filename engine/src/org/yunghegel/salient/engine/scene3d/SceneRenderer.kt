@@ -4,8 +4,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import ktx.app.clearScreen
-import org.yunghegel.debug.AFTER_DEPTH
-import org.yunghegel.debug.DebugDrawable
+import org.yunghegel.salient.engine.graphics.debug.AFTER_DEPTH
+import org.yunghegel.salient.engine.graphics.debug.DebugDrawable
 import org.yunghegel.salient.engine.Pipeline
 import org.yunghegel.salient.engine.State
 import org.yunghegel.salient.engine.api.properties.Resizable

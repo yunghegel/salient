@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.utils.ShapeCache
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import org.yunghegel.debug.DebugContext
+import org.yunghegel.salient.engine.graphics.debug.DebugContext
 import org.yunghegel.salient.engine.helpers.DepthBatch
 import org.yunghegel.salient.engine.helpers.WireBatch
 

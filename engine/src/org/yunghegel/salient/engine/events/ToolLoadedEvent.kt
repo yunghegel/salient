@@ -1,7 +1,7 @@
 package org.yunghegel.salient.engine.events
 
 import org.greenrobot.eventbus.Subscribe
-import org.yunghegel.salient.engine.tool.Tool
+import org.yunghegel.salient.engine.api.tool.Tool
 
 class ToolLoadedEvent(val tool: Tool) {
 

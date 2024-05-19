@@ -1,12 +1,80 @@
+import org.gradle.internal.os.OperatingSystem
 
-void core(@DelegatesTo(Project.class) Closure closure)  {
-    ext.core.each { project ->
-        configure(project, closure)
+enum OS {
+    LINUX,
+    MAC_OS,
+    WINDOWS
+}
+
+static OS resolveOS()  {
+    switch (OperatingSystem.current()) {
+        case OperatingSystem.LINUX:
+            return OS.LINUX
+        case OperatingSystem.MAC_OS:
+            return OS.MAC_OS
+        case OperatingSystem.WINDOWS:
+            return OS.WINDOWS
+    }
+    return null
+}
+
+ext {
+    releaseDir = project.file("release")
+    testSrcDir = project.file("tests/src")
+    testing = project(":tests")
+    editor = project(":editor")
+    launcher = project(":launcher")
+    os = resolveOS()
+}
+
+class SalientPlugin implements Plugin<Project> {
+
+
+
+    void apply(Project project) {
+
+        project.extensions.create("salient",SalientExt,project)
     }
 }
 
-void libs(@DelegatesTo(Project.class) Closure closure) {
-    ext.libs.each { project ->
-        configure(project, closure)
+class SalientExt {
+
+    Project project
+    SalientProjects projects = new SalientProjects()
+
+    SalientExt(Project project) {
+        this.project = project
+    }
+
+    void salient(@DelegatesTo(SalientProjects) Closure closure) {
+        closure.delegate = projects
+        closure()
+    }
+
+    void launcher(@DelegatesTo(Project) Closure closure) {
+        project.ext.launcher.configure(project, closure)
+    }
+
+}
+
+class SalientProjects {
+
+    Project project
+
+    SalientProjects(Project project){
+        this.project = project
+    }
+
+        static final List<String> projects = [
+            "core",
+            "editor",
+            "launcher",
+            "tests"
+        ]
+
+    void launcher(@DelegatesTo(Project) Closure closure) {
+        ext.launcher.configure(project, closure)
     }
 }
+
+apply plugin: SalientPlugin

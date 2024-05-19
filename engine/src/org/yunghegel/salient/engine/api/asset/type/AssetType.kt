@@ -2,6 +2,7 @@
 
 package org.yunghegel.salient.engine.api.asset.type
 
+import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import org.yunghegel.salient.engine.api.asset.Asset
 import org.yunghegel.salient.engine.system.file.FileType
@@ -44,6 +45,12 @@ enum class AssetType(val filetype: FileType,assetClass: Class<out Asset<*>>) {
                 }
             }
             return finalArray
+        }
+
+        fun fromFile(file: FileHandle) : AssetType? {
+            val filetype = FileType.parse(file.extension())
+            val type = try { fromFiletype(filetype) } catch (e:Exception) { Other }
+            return type
         }
 
     }

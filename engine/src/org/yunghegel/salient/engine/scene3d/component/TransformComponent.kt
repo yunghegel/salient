@@ -14,14 +14,14 @@ import org.yunghegel.salient.engine.ui.Icon
 
 class TransformComponent(go: GameObject) : EntityComponent<Matrix4>(go.combined,go), Icon,Dirty<TransformComponent> {
 
-    override val listeners: MutableList<DirtyListener<TransformComponent>> = mutableListOf()
+    override val dirtySubscribers: MutableList<DirtyListener<TransformComponent>> = mutableListOf()
 
     override val iconName: String = "transform_object"
 
     override var dirty: Boolean = false
 
     init {
-        listeners.add {
+        dirtySubscribers.add {
             go.combined.set(value)
         }
     }

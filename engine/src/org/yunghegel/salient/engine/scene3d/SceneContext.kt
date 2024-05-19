@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import net.mgsx.gltf.scene3d.scene.SceneRenderableSorter
 import net.mgsx.gltf.scene3d.shaders.PBRDepthShaderProvider
 import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider
-import org.yunghegel.debug.DebugContext
+import org.yunghegel.salient.engine.graphics.debug.DebugContext
 import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.api.scene.SceneEnvironment
 import org.yunghegel.salient.engine.graphics.BasicRenderer

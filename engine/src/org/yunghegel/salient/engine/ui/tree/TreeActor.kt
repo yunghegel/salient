@@ -42,7 +42,7 @@ abstract class TreeActor<Object>(val obj: Object) : STable()  {
 
     open var title : SLabel = SLabel(if (obj is Named) obj.name else obj.toString())
     open var icon : Drawable? = null
-    var iconImage : SImage by notnull()
+    open var iconImage : SImage by notnull()
     val actors = mutableListOf<Actor>()
 
     init {

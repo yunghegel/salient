@@ -3,6 +3,7 @@ package org.yunghegel.salient.engine.system
 import ktx.inject.Context
 import ktx.inject.register
 import ktx.reflect.Reflection
+import org.yunghegel.gdx.utils.reflection.newInstance
 import kotlin.properties.Delegates
 
 object InjectionContext : Context() {
@@ -10,7 +11,11 @@ object InjectionContext : Context() {
 
 }
 
-inline fun <reified T:Any> inject() = InjectionContext.inject<T>()
+inline fun <reified T:Any> inject() =
+   try { InjectionContext.inject<T>() } catch (e:Exception) {
+       info("Injection failed for ${T::class.simpleName} - ${e.message}")
+       newInstance(T::class)
+   }
 
 inline fun <reified T:Any> injectUnsafe(clazz:Class<T> = T::class.java) : T{
     return inject<T>()

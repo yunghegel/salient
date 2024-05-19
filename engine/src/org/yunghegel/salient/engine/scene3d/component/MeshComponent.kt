@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.RenderableProvider
 import com.badlogic.gdx.utils.Array
 import ktx.collections.GdxArray
-import org.yunghegel.debug.*
 import org.yunghegel.gdx.renderer.util.maskOf
 import org.yunghegel.salient.engine.ui.Icon
 import org.yunghegel.salient.engine.api.ecs.EntityComponent

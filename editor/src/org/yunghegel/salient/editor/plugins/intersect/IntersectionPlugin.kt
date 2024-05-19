@@ -5,8 +5,8 @@ import ktx.inject.Context
 import org.yunghegel.salient.editor.app.salient
 import org.yunghegel.salient.editor.plugins.intersect.tools.IntersectorTool
 import org.yunghegel.salient.engine.api.ecs.System
-import org.yunghegel.salient.engine.plugin.Plugin
-import org.yunghegel.salient.engine.tool.Tool
+import org.yunghegel.salient.engine.api.plugin.Plugin
+import org.yunghegel.salient.engine.api.tool.Tool
 
 class IntersectionPlugin : Plugin {
 

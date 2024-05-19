@@ -42,13 +42,5 @@ class ParPrimitives {
 
 }
 fun main(){
-headlessTest {
-val par = ParPrimitives()
- val cylinder = par.createCylinder(10, 10)
- val size = cylinder?.npoints()
- val positions = cylinder?.normals(size!! * 3)
- val arr = positions!!.array()
- println(size)
- println(arr)
-}
+
 }

@@ -3,8 +3,8 @@ package org.yunghegel.salient.editor.plugins.picking.tools
 import org.yunghegel.salient.editor.input.delegateInput
 import org.yunghegel.salient.editor.plugins.picking.systems.PickingSystem
 import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.tool.InputTool
-import org.yunghegel.salient.engine.tool.Tool
+import org.yunghegel.salient.engine.api.tool.InputTool
+import org.yunghegel.salient.engine.api.tool.Tool
 
 class PickingTool( val pickingSystem : PickingSystem) : InputTool("picking_tool") {
 

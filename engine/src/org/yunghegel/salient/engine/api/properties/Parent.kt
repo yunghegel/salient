@@ -1,5 +1,8 @@
 package org.yunghegel.salient.engine.api.properties
 
-interface Parent<T:Subtype> : Type {
-    val children : List<T>
+import com.badlogic.gdx.utils.Array
+
+interface Parent<T> : Type {
+    val children : Array<T>
+    val parent : T?
 }

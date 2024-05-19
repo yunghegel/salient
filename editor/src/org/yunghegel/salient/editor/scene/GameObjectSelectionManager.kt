@@ -1,6 +1,7 @@
 package org.yunghegel.salient.editor.scene
 
 import com.badlogic.gdx.scenes.scene2d.utils.Selection
+import ktx.collections.GdxArray
 import org.yunghegel.salient.editor.app.Gui
 import org.yunghegel.salient.editor.ui.scene.graph.SceneGraphTree
 import org.yunghegel.salient.editor.ui.scene.inspector.ComponentInspector
@@ -10,6 +11,7 @@ import org.yunghegel.salient.engine.api.SelectionManager
 import org.yunghegel.salient.engine.api.UI_SOURCE
 import org.yunghegel.salient.engine.api.VIEWPORT_SOURCE
 import org.yunghegel.salient.engine.api.flags.SELECTED
+import org.yunghegel.salient.engine.api.undo.SelectionListener
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.scene.SingleGameObjectDeselectedEvent
 import org.yunghegel.salient.engine.events.scene.SingleGameObjectSelectedEvent
@@ -30,6 +32,7 @@ class GameObjectSelectionManager(selection : Selection<GameObject>) : BaseSelect
             return (Input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) ||
                     (Input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Input.isKeyPressed(Input.Keys.CONTROL_RIGHT))
         }
+    override val listeners: GdxArray<SelectionListener<GameObject>> = GdxArray()
 
     override fun select(go: GameObject, append: Boolean): Boolean {
         val result = super.select(go, append)

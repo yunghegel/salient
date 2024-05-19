@@ -26,6 +26,8 @@ import ktx.actors.onChange
 import ktx.actors.onClick
 import ktx.scene2d.Scene2DSkin
 import org.yunghegel.gdx.utils.ui.ColorBox
+import squidpony.StringKit.padLeft
+import squidpony.StringKit.padRight
 import kotlin.math.log10
 
 const val CENTER = 1
@@ -46,8 +48,16 @@ fun <T: Actor> T.tip(conf: Table.() -> Unit) {
 
 }
 
+fun Actor.sizeHashCode(): Int {
+    return (width * 1000 + height).toInt()
+}
+
 fun Actor.getBounds(out:Rectangle) {
     out.set(x, y, width, height)
+}
+
+fun Actor.getBounds(): Rectangle {
+    return Rectangle(x, y, width, height)
 }
 
 fun Cell<*>.padHorizontal(value: Float) : Cell<*> {

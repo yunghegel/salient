@@ -7,7 +7,8 @@ import org.yunghegel.salient.engine.api.ecs.SpatialEntity
 
 @Suppress("UNCHECKED_CAST")
 abstract class BaseNode<T: GraphNode<T>>(override var name:String, uuid:String?=null, id:Int?=null ) : SpatialEntity(),
-    GraphNode<T>, ID, Named {
+
+     GraphNode<T>, ID, Named {
 
     override val uuid: String =uuid ?: generateUUID()
 

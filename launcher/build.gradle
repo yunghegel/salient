@@ -1,15 +1,22 @@
 
 //apply plugin:'edu.sc.seis.l
 
-apply plugin: 'application'
+//apply plugin: 'application'
 
 allprojects {
     mainClassName = mainClassName
+
 }
 
+ext {
+    testMainClassName = "MainKt"
+}
 
 dependencies {
+
     implementation project(":editor")
+    testImplementation project(":tests")
+
 }
 
 sourceSets {
@@ -18,25 +25,16 @@ sourceSets {
             srcDirs = ['assets']
         }
     }
-
 }
 def releaseDir =  "${rootDir}/release"
 
 task release(type: Copy) {
-
     group "salient"
-
     from jar
     into releaseDir
-
 }
-jar {
 
-//    packages.each { pkg ->
-//        dependsOn project("$pkg.value").jar
-//    }
-//    dependsOn project(":editor").jar
-//    dependsOn project(":engine").jar
+jar {
 
     archiveFileName = "salient-${version}.jar"
 
@@ -57,15 +55,22 @@ jar {
     finalizedBy project.release
 }
 
-application {
-    group "salient"
-    mainClass = "org.yunghegel.salient.launcher.DesktopLauncher"
-}
+//application {
+//    group "salient"
+//    mainClass = "org.yunghegel.salient.launcher.DesktopLauncher"
+//}
 
-run {
-    group "salient"
-    setIgnoreExitValue(true)
-}
+//run {
+//    group "salient"
+//    setIgnoreExitValue(true)
+//    workingDir = file(releaseDir)
+//    standardOutput = System.out
+//    if (launchTests) {
+//        jvmArgs = ["-test"]
+//    }
+//}
+
+
 
 
 

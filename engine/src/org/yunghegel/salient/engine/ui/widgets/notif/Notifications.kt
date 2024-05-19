@@ -1,6 +1,7 @@
 package org.yunghegel.salient.engine.ui.widgets.notif
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
@@ -13,7 +14,6 @@ import com.kotcrab.vis.ui.util.ToastManager
 import com.kotcrab.vis.ui.widget.VisImageButton
 import com.kotcrab.vis.ui.widget.VisTable
 import com.kotcrab.vis.ui.widget.toast.Toast
-import imgui.ImGui.style
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import ktx.actors.onChange
@@ -146,6 +146,11 @@ fun toast(submitButton:Boolean = true, strategy:AlertStrategy= AlertStrategy.IMM
     val content = InputTable(title)
     content.config(build)
     val toast = SToast(content,title)
+    if (submitButton) {
+
+        content.add(content.submitButton).pad(4f)
+    }
+
     UI.notifications.push(toast)
     return toast
 }
@@ -161,6 +166,7 @@ class SToast(val strategy:AlertStrategy, val severity: Severity,val content: Tab
             title.setText(value)
         }
     var onClose : ()->Unit = {}
+    var useResult : (Result)->Unit = {}
     var configItem = true
 
     val title = SLabel(titleText).apply {
@@ -194,9 +200,10 @@ class SToast(val strategy:AlertStrategy, val severity: Severity,val content: Tab
                 setBackground("panel_body_background")
             }.grow().row()
         }).grow()
-        mainTable.add(table{STextButton("Submit"){
-            (content as InputTable).submit((content as InputTable).result)
-        } }).right()
+        if (content is InputTable) {
+            useResult = content.submit
+            content.submitButton.onChange { closeToast() }
+        }
     }
 
     fun closeToast() {
@@ -205,6 +212,7 @@ class SToast(val strategy:AlertStrategy, val severity: Severity,val content: Tab
 
     override fun close() {
         onClose()
+        result?.let { useResult(it) }
         super.close()
     }
 }

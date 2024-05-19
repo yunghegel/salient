@@ -27,11 +27,11 @@ open class ObjectTable(obj: GameObject) : TreeActor<GameObject>(obj) {
 
     open val button : SImageButton = SImageButton(obj.iconName)
     open val label : SLabel = SLabel(obj.name)
-    val overflow = SImageButton("overflow-menu")
+
 
     val buttonLabelContainer = STable()
     val otherActorsTable = STable()
-
+    val overflow = SImageButton("overflow-menu")
     val visibleToggle = SImageButton("eye")
     val lockToggle = SImageButton("lock")
 

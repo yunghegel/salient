@@ -8,8 +8,6 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.RenderableProvider
 import com.badlogic.gdx.math.collision.BoundingBox
 import ktx.collections.GdxArray
-import org.yunghegel.debug.*
-import org.yunghegel.gdx.renderer.util.maskOf
 import org.yunghegel.gdx.utils.ext.collectNodes
 import org.yunghegel.gdx.utils.ext.createBoundsRenderable
 import org.yunghegel.gdx.utils.ext.each

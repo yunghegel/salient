@@ -6,14 +6,14 @@ interface Dirty<T:Dirty<T>> {
 
     var dirty : Boolean
 
-    val listeners: MutableList<DirtyListener<T>>
+    val dirtySubscribers: MutableList<DirtyListener<T>>
 
     fun markDirty(dirty: Boolean = true) {
         this.dirty = dirty
         info("marked ${this::class.simpleName} as dirty")
         if (dirty) {
             onDirty()
-            listeners.forEach { listener ->
+            dirtySubscribers.forEach { listener ->
                 listener.onDirty(this)
             }
         }

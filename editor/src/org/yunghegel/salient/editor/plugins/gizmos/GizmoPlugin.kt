@@ -9,8 +9,8 @@ import org.yunghegel.salient.editor.plugins.gizmos.tools.RotateTool
 import org.yunghegel.salient.editor.plugins.gizmos.tools.ScaleTool
 import org.yunghegel.salient.editor.plugins.gizmos.tools.TranslateTool
 import org.yunghegel.salient.engine.api.ecs.System
-import org.yunghegel.salient.engine.plugin.Plugin
-import org.yunghegel.salient.engine.tool.Tool
+import org.yunghegel.salient.engine.api.plugin.Plugin
+import org.yunghegel.salient.engine.api.tool.Tool
 
 class GizmoPlugin : Plugin {
 

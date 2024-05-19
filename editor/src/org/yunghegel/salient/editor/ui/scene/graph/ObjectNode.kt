@@ -1,9 +1,7 @@
 package org.yunghegel.salient.editor.ui.scene.graph
 
-import assimp.format.obj.Object
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent
-import imgui.demo.ShowDemoWindowLayout.`Widgets Width`.f
-import kool.a
+
 import org.yunghegel.gdx.utils.ext.uniqueBy
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.scene3d.GameObject
@@ -35,3 +33,5 @@ open class ObjectNode(go: GameObject, table: ObjectTable? = null, name: String =
         tree?.let { it.fire(ChangeEvent()) }
     }
 }
+
+open class ObjectChildNode<Parent>

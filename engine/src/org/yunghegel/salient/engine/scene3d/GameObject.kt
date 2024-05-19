@@ -5,18 +5,11 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.math.Matrix4
-import mobx.core.observable
-import org.yunghegel.debug.AFTER_DEPTH
-import org.yunghegel.debug.DebugContext
-import org.yunghegel.debug.DebugDrawable
-import org.yunghegel.gdx.utils.data.Bitset
 import org.yunghegel.gdx.utils.data.EnumBitmask
 import org.yunghegel.gdx.utils.data.EnumMask
-import org.yunghegel.gdx.utils.data.Mask
 import org.yunghegel.gdx.utils.ext.delta
 import org.yunghegel.gdx.utils.ext.each
 import org.yunghegel.salient.engine.Pipeline
-import org.yunghegel.salient.engine.State
 import org.yunghegel.salient.engine.api.Store
 import org.yunghegel.salient.engine.api.Tagged
 import org.yunghegel.salient.engine.api.UpdateRoutine
@@ -24,7 +17,6 @@ import org.yunghegel.salient.engine.api.dto.GameObjectDTO
 import org.yunghegel.salient.engine.api.dto.component.ModelComponentDTO
 import org.yunghegel.salient.engine.api.dto.datatypes.Matrix4Data
 import org.yunghegel.salient.engine.api.ecs.BaseComponent
-import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.api.flags.*
 import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.events.Bus.post
@@ -38,9 +30,8 @@ import org.yunghegel.salient.engine.scene3d.component.TransformComponent
 import org.yunghegel.salient.engine.scene3d.graph.Spatial
 import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.ui.Hoverable
+import org.yunghegel.gdx.utils.ui.Hoverable
 import org.yunghegel.salient.engine.ui.Icon
-import org.yunghegel.salient.engine.ui.widgets.notif.notify
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -55,7 +46,7 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
             taggedAny("point_light", "spot_light", "directional_light") -> "light_object"
             tagged("camera") -> "camera_object"
             tagged("model") -> "geometry"
-            tagged("root") -> "scene_tree"
+            tagged("root") -> "tree"
             else -> "transform_object"
         }
 
@@ -170,8 +161,8 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
 
         private var gameObjectCount = 0
             get() {
-                field++
-                return field
+                val id = field++
+                return id
             }
 
         fun fromDTO(dto: GameObjectDTO, scene: EditorScene): GameObject {

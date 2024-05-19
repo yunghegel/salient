@@ -1,6 +1,6 @@
 package org.yunghegel.salient.editor.input
 
-import org.yunghegel.salient.engine.plugin.module
+import org.yunghegel.salient.engine.api.plugin.module
 import org.yunghegel.salient.editor.render.systems.SelectionSystem
 import org.yunghegel.salient.engine.input.Input
 import org.yunghegel.salient.engine.ui.UI

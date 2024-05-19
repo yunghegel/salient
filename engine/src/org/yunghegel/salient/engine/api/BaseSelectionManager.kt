@@ -1,12 +1,14 @@
 package org.yunghegel.salient.engine.api
 
 import com.badlogic.gdx.scenes.scene2d.utils.Selection
+import org.yunghegel.salient.engine.api.properties.Selectable
+import org.yunghegel.salient.engine.api.undo.SelectionListener
 
-val UI_SOURCE = SelectionManager.SelectionSource.UI
-val VIEWPORT_SOURCE = SelectionManager.SelectionSource.VIEWPORT
-val CODE_SOURCE = SelectionManager.SelectionSource.PROGRAMMATIC
+val UI_SOURCE = SelectionSource.UI
+val VIEWPORT_SOURCE = SelectionSource.VIEWPORT
+val CODE_SOURCE = SelectionSource.PROGRAMMATIC
 
-abstract class BaseSelectionManager<T>(override val selection: Selection<T> = Selection()) : SelectionManager<T> {
+abstract class BaseSelectionManager<T:Selectable>(override val selection: Selection<T> = Selection()) : SelectionManager<T> {
 
     override val allowMultiple: Boolean = false
 
@@ -45,6 +47,15 @@ abstract class BaseSelectionManager<T>(override val selection: Selection<T> = Se
 
     override fun checkPresent(go: T): Boolean {
         return selection.contains(go)
+    }
+
+    fun effect(kind: SelectionSource =SelectionSource.ALL, effect : (T?, T?, Boolean) -> Unit) {
+        val listener = object : SelectionListener<T> {
+            override fun onSelectionChanged(old: T?, new: T?, source: SelectionSource) {
+                effect(old,new,source == CODE_SOURCE)
+            }
+        }
+        listeners.add(listener)
     }
 
 }

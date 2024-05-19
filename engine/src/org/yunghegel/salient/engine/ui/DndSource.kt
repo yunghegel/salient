@@ -4,8 +4,10 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop
 import com.badlogic.gdx.utils.Null
+import org.checkerframework.checker.units.qual.A
+import org.yunghegel.gdx.utils.TypedPayload
 
-interface DndSource<T> {
+interface DndSource<A:Actor,T> {
 
     fun endDrag(x:Float, y:Float, source: DragAndDrop.Source,payload: DragAndDrop.Payload)
 
@@ -13,13 +15,17 @@ interface DndSource<T> {
 
     fun whileDragging(x:Float, y:Float, source: DragAndDrop.Source, payload: DragAndDrop.Payload)
 
-    class Builder<T>() {
+    fun createPayload(actor: A) : TypedPayload<T>
+
+    class Builder<A:Actor,T>(val actor: Actor) {
 
         var end: ((Float, Float, DragAndDrop.Source, DragAndDrop.Payload)->Unit)? = null
 
         var start: ((Float, Float, DragAndDrop.Source)->TypedPayload<T>)? = null
 
         var drag: ((Float, Float)->Unit)? = null
+
+        var makePayload: ((A) -> TypedPayload<T>)? = null
 
         fun endDrag(action: (Float, Float, DragAndDrop.Source, DragAndDrop.Payload)->Unit) {
             this.end = action
@@ -33,10 +39,10 @@ interface DndSource<T> {
             this.drag = action
         }
 
-        fun makeSource(actor:Actor) : DragAndDrop.Source {
+        fun makeSource() : DragAndDrop.Source {
             return object : DragAndDrop.Source(actor) {
                 override fun dragStart(event: InputEvent, x: Float, y: Float, pointer: Int): DragAndDrop.Payload {
-                    val payload = start?.invoke(x, y, this) ?: TypedPayload()
+                    val payload = makePayload?.invoke(actor as A) ?:  start?.invoke(x, y, this) ?: TypedPayload()
                     return payload
                 }
 
@@ -57,8 +63,8 @@ interface DndSource<T> {
             }
         }
 
-        fun build() : DndSource<T> {
-            return object : DndSource<T> {
+        fun build() : DndSource<A,T> {
+            return object : DndSource<A,T> {
                 override fun endDrag(x: Float, y: Float, source: DragAndDrop.Source, payload: DragAndDrop.Payload) {
                     end?.let { fn -> fn(x, y, source, payload) }
                 }
@@ -70,15 +76,22 @@ interface DndSource<T> {
                 override fun whileDragging(x: Float, y: Float, source: DragAndDrop.Source, payload: DragAndDrop.Payload) {
                     drag?.let { fn -> fn(x, y) }
                 }
+
+                override fun createPayload(actor: A): TypedPayload<T> {
+                    TODO("Not yet implemented")
+                }
             }
         }
     }
 
     companion object {
 
-            fun <T> build(init: Builder<T>.() -> Unit) : DndSource<T> {
-                return Builder<T>().apply(init).build()
-            }
+
     }
 
+}
+
+fun <T:Actor,Object> T.createDropSource(dnd: DragAndDrop, value: Object, builder: DndSource.Builder<T,Object>.()->Unit) : DragAndDrop.Source {
+    val b = DndSource.Builder<T,Object>(this)
+    return b.apply(builder).makeSource()
 }

@@ -1,18 +1,22 @@
 package org.yunghegel.salient.engine.ui.widgets
 
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Cell
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.Separator
 import ktx.actors.onChange
 import ktx.actors.onClick
 import ktx.collections.toGdxArray
+import org.yunghegel.gdx.utils.ext.drawable
 import org.yunghegel.gdx.utils.ext.padHorizontal
+import org.yunghegel.gdx.utils.ext.padVertical
 import org.yunghegel.salient.engine.ui.scene2d.*
 import org.yunghegel.salient.engine.ui.table
 import org.yunghegel.salient.engine.ui.widgets.value.widgets.LabeledFloatField
 import org.yunghegel.salient.engine.ui.widgets.value.widgets.LabeledTextField
 
-class InputTable(val title: String) : STable() {
+class InputTable(val title: String="") : STable() {
 
     val result = Result()
 
@@ -20,15 +24,41 @@ class InputTable(val title: String) : STable() {
     val content = table()
 
     init {
-       pad(15f)
+        pad(4f)
         add(content).grow().row()
-
     }
 
+    var tmpT = STable()
+    var tmp : MutableList<Actor> = mutableListOf()
+
+    override fun row(): Cell<*> {
+        return super.row()
+    }
+
+    var submitButton = STextButton("Submit")
+
+    var addsubmit = true
+
     fun addSubmit() {
-        add(STextButton("Submit"){
-            submit(result)
-        }).right().pad(5f)
+        addsubmit = true
+    }
+
+    fun addSubmit(with: (Result)->Unit) {
+        addsubmit = true
+        separator()
+        row()
+        submitButton.onChange {
+            with(result)
+        }
+        content.add(submitButton)
+    }
+
+    fun InputTable.row(conf: InputTable.()->Unit) : Cell<*> {
+        val table = InputTable()
+        table.conf()
+        val cell =add(table).padVertical(3f)
+        cell.row()
+        return cell
     }
 
     fun floatInput(name: String, default: Float = 0f, change: (Float)->Unit = {}) : Cell<LabeledFloatField> {
@@ -40,6 +70,7 @@ class InputTable(val title: String) : STable() {
             result[name] = floatfield.float
             submit(result)
         }
+        add(floatfield)
         return content.add(floatfield)
     }
 
@@ -49,10 +80,27 @@ class InputTable(val title: String) : STable() {
             action()
             submit(result)
         }
+        add(button)
         return content.add(button)
     }
 
-    fun textInput(name: String, default: String) : Cell<LabeledTextField> {
+    fun label(text:String) : Cell<SLabel> {
+        val label = SLabel(text)
+        return content.add(label)
+    }
+
+    fun image(drawable: String) : Cell<SImage> {
+        val d = skin.drawable(drawable)
+        val img = SImage(d)
+        return content.add(img)
+    }
+
+    fun image(drawable: Drawable) : Cell<SImage> {
+        val img = SImage(drawable)
+        return content.add(img)
+    }
+
+    fun textInput(name: String, default: String, change: (String)->Unit = {}) : Cell<LabeledTextField> {
         val textfield = LabeledTextField(name)
         result[name] = default
         textfield.onChange {
@@ -62,13 +110,12 @@ class InputTable(val title: String) : STable() {
        return content.add(textfield)
     }
 
-    fun option(name: String, default: Boolean = false) : Cell<SCheckBox> {
-        val button = SCheckBox(if(default) "True" else "False")
+    fun option(name: String, default: Boolean = false, text: String = "", change: (Boolean)->Unit= {}) : Cell<SCheckBox> {
+        val button = SCheckBox("")
         result[name] = default
-        button.onClick {
-            result[name] = !default
-            button.setText(if(result[name] as Boolean) "True" else "False")
-            submit(result)
+        button.onChange {
+            result[name] = button.isChecked
+            change(button.isChecked)
         }
         return content.add(button)
     }
@@ -112,7 +159,7 @@ class InputTable(val title: String) : STable() {
     }
 
     fun separator() {
-        add(Separator()).colspan(2).fillX().expandX().align(Align.center)
+        add(Separator()).colspan(2).fillX().expandX().align(Align.center).row()
     }
 
     fun withResult(action: (Result) -> Unit) {
@@ -121,10 +168,8 @@ class InputTable(val title: String) : STable() {
 
     fun config(action: InputTable.() -> Unit) {
         action()
-        row()
-        add(table{STextButton("Submit"){
-            submit(result)
-        } }).right()
+
+
 
     }
 

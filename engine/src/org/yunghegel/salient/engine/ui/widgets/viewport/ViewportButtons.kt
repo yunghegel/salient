@@ -4,7 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup
 import com.badlogic.gdx.utils.Align
 import ktx.scene2d.*
-import org.yunghegel.salient.engine.tool.Tool
+import org.yunghegel.salient.engine.api.tool.Tool
 import org.yunghegel.salient.engine.ui.ToolButton
 
 

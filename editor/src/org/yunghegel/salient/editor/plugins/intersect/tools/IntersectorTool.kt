@@ -15,7 +15,7 @@ import org.yunghegel.salient.editor.plugins.intersect.lib.IntersectionQuery
 import org.yunghegel.salient.engine.helpers.TextRenderer.camera
 import org.yunghegel.salient.engine.system.Netgraph
 import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.tool.ClickTool
+import org.yunghegel.salient.engine.api.tool.ClickTool
 import org.yunghegel.salient.engine.ui.UI
 
 class IntersectorTool : ClickTool("intersector_tool") {

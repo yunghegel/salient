@@ -30,8 +30,6 @@ class Grid {
         Gdx.graphics.width,
         Gdx.graphics.height,
         true
-
-
     )
 
 
@@ -40,7 +38,12 @@ class Grid {
 
     init {
         grid = createGridModel()
+    }
+
+    fun supplyConfig() {
+        if (config.injected) return
         singleton(config)
+        config.injected = true
     }
 
     fun createGridModel(): ModelInstance {

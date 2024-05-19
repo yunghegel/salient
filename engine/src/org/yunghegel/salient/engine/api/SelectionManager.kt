@@ -3,12 +3,18 @@ package org.yunghegel.salient.engine.api
 import com.badlogic.gdx.scenes.scene2d.utils.Selection
 import ktx.collections.GdxArray
 import ktx.collections.addAll
+import org.yunghegel.salient.engine.api.properties.Selectable
+import org.yunghegel.salient.engine.api.undo.SelectionListener
 
-interface SelectionManager<T> {
+interface SelectionManager<T: Selectable> {
 
     val allowMultiple : Boolean
 
+    val listeners : GdxArray<SelectionListener<T>>
+
     val selection : Selection<T>
+
+
     
     fun select(go: T, append: Boolean = allowMultiple) : Boolean
     
@@ -48,9 +54,5 @@ interface SelectionManager<T> {
         return true
     }
 
-    enum class SelectionSource {
-        UI,VIEWPORT, PROGRAMMATIC
-    }
-    
 
 }

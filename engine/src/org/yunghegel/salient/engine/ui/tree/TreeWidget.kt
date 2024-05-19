@@ -17,6 +17,7 @@ import org.yunghegel.gdx.utils.ext.alpha
 import org.yunghegel.gdx.utils.ext.createColorPixel
 import org.yunghegel.gdx.utils.ext.drawable
 import org.yunghegel.gdx.utils.ui.TreeEx
+import org.yunghegel.salient.engine.api.properties.Selectable
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.child
 import kotlin.math.max
@@ -36,7 +37,7 @@ abstract class TreeWidget<Node, Object, A >(rootobject: Object) : TreeEx<Node, O
     abstract val resolveChildren : (Object) -> List<Object>?
     val row : Drawable = UI.skin.drawable("selection-dark")
 
-    var root : Node = constructNode(rootobject)
+    open var root : Node = constructNode(rootobject)
 
     val map : MutableMap<Object,Node> = mutableMapOf()
 
@@ -47,7 +48,6 @@ abstract class TreeWidget<Node, Object, A >(rootobject: Object) : TreeEx<Node, O
 
 
     val changeActor = object : Actor() {
-
         init {
             onChange { handleSelection( selection.items()) }
             setPadding(_padding)

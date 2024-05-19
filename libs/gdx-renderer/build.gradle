@@ -21,7 +21,8 @@ processResources {
 sourceSets {
     main {
         resources {
-            srcDirs += ['assets',"${rootDir.path}"+"/editor/assets"]
+            srcDirs += ['assets', "${rootDir.path}" + "/editor/assets"]
         }
     }
+
 }

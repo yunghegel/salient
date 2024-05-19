@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Payload
 import com.badlogic.gdx.scenes.scene2d.utils.Selection
 import com.badlogic.gdx.utils.Scaling
+import org.yunghegel.gdx.utils.TypedPayload
 import org.yunghegel.gdx.utils.ext.*
 import org.yunghegel.gdx.utils.ui.LabelSupplier
 import org.yunghegel.salient.editor.app.Gui
@@ -110,7 +111,7 @@ class AssetActor(val asset : Asset<*>) : STable(), LabelSupplier {
 
     fun createDND(dnd: DragAndDrop) : DragAndDrop.Source {
         val source = object: DragAndDrop.Source(this) {
-        var pl : Payload? = null
+        var pl : TypedPayload<Asset<*>>? = null
             override fun dragStop(
                 event: InputEvent?,
                 x: Float,
@@ -120,14 +121,14 @@ class AssetActor(val asset : Asset<*>) : STable(), LabelSupplier {
                 target: DragAndDrop.Target?
             ) {
                 super.dragStop(event, x, y, pointer, payload, target)
-                pl = payload
+                payload?.ifInstance(TypedPayload::class) { pl = it as TypedPayload<Asset<*>> }
                 background = inactive
                 placementTool.stop()
                 hovertool.deactivate()
             }
 
             override fun dragStart(p0: InputEvent?, p1: Float, p2: Float, p3: Int): DragAndDrop.Payload {
-                val payload  = Payload()
+                val payload  = TypedPayload<Asset<*>>()
                 pl = payload
                 payload.`object` = asset
                 background = active
