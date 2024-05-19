@@ -1,4 +1,4 @@
-package org.yunghegel.salient.engine.ui
+package org.yunghegel.gdx.utils
 
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop
 
