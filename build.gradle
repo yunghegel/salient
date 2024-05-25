@@ -197,7 +197,10 @@ task dist(type: Copy) {
 //    }
 //}
 
-void makeExecutable(OperatingSystem os) {
+void makeExecutable(OperatingSystem os, File releaseDir = project.file("release")) {
+
+    releaseDir.mkdirs()
+
     switch (os) {
         case OperatingSystem.LINUX:
             def executable = new File(project.file("release"), "salient")
