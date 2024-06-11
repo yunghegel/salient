@@ -27,7 +27,7 @@ import org.yunghegel.salient.engine.system.inject
 
 class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComponent::class.java).get()) {
 
-    val picker = Picker()
+
 
     val pickables : MutableList<Pickable> = mutableListOf()
 
@@ -122,6 +122,10 @@ class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComponent
 
     fun interface PickListener {
         fun pickChanged(picked:Pickable, removed:Boolean)
+    }
+
+    companion object {
+        val picker = Picker()
     }
 
 }

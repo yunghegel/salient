@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package org.yunghegel.salient.engine.api.asset.type
 
 import org.yunghegel.salient.engine.api.asset.Asset

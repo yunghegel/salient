@@ -6,12 +6,15 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.utils.ShapeCache
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import org.yunghegel.debug.DebugContext
+import org.yunghegel.salient.engine.api.scene.SceneEnvironment
+import org.yunghegel.salient.engine.helpers.BlinnPhongBatch
 import org.yunghegel.salient.engine.helpers.DepthBatch
 import org.yunghegel.salient.engine.helpers.WireBatch
 
 interface SceneGraphicsResources {
 
     val modelBatch: ModelBatch
+    val blinnPhongBatch: BlinnPhongBatch
     val depthBatch : DepthBatch
     val wireBatch : WireBatch
     val perspectiveCamera: PerspectiveCamera
@@ -19,5 +22,6 @@ interface SceneGraphicsResources {
     val viewport: ScreenViewport
     val debugContext : DebugContext
     val shapeCache : ShapeCache
+    val environment: SceneEnvironment
 
 }

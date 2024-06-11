@@ -1,12 +1,14 @@
 package org.yunghegel.salient.editor.ui.assets
 
 import com.badlogic.gdx.utils.Align
+import org.yunghegel.gdx.utils.ext.each
 import org.yunghegel.gdx.utils.ui.ActorList
 import org.yunghegel.gdx.utils.ui.LabelSupplier
 import org.yunghegel.salient.editor.asset.AssetManager
 import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.editor.scene.SceneManager
 import org.yunghegel.salient.engine.api.model.AssetHandle
+import org.yunghegel.salient.engine.events.asset.onAssetIncluded
 import org.yunghegel.salient.engine.events.asset.onAssetIndexed
 import org.yunghegel.salient.engine.events.asset.onAssetUnindexed
 import org.yunghegel.salient.engine.events.scene.onSceneInitialized
@@ -23,7 +25,7 @@ class SceneAssetsList(val sceneManager: SceneManager, val scene: Scene, val asse
         align(Align.top)
         createTitle("Scene Assets")
         contentContainer.actor = list
-
+        scene.retrieveAssetIndex().each { indexed -> indexAsset(indexed)}
         buildListeners()
 
 
@@ -43,6 +45,9 @@ class SceneAssetsList(val sceneManager: SceneManager, val scene: Scene, val asse
         }
         onSceneInitialized {
             scene.retrieveAssetIndex().forEach { indexAsset(it) }
+        }
+        onAssetIncluded { event ->
+            list.setItems(scene.retrieveAssetIndex().map { AssetTable(it) }.toTypedArray())
         }
     }
 

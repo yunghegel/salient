@@ -7,3 +7,4 @@ fun Iterable<FileHandle>.withExtension(ext: String): List<FileHandle> {
     return this.filter { it.extension() == ext }
 }
 
+val FileHandle.name: String get() = nameWithoutExtension()

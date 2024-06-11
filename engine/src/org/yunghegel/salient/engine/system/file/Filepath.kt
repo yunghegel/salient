@@ -3,11 +3,11 @@ package org.yunghegel.salient.engine.system.file
 import com.badlogic.gdx.files.FileHandle
 import kotlinx.serialization.Serializable
 import java.io.Writer
+import java.nio.file.Path
 
-@JvmInline
+
 @Serializable
-value class Filepath(val path:String) {
-
+class Filepath(val path:String) : Path by Path.of(path) {
 
     val handle : FileHandle
         get() = FileHandle(path)
@@ -48,6 +48,10 @@ value class Filepath(val path:String) {
     val size : Long
         get() = handle.length()
 
+
+    fun containsChild(file : FileHandle) : Boolean {
+        return (!list.contains(file))
+    }
 
     fun move(target: Filepath) = handle.moveTo(target.handle)
 

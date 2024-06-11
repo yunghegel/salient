@@ -2,13 +2,16 @@ package org.yunghegel.gdx.utils.ext
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Pools
@@ -19,6 +22,7 @@ import com.ray3k.stripe.PopTable
 import com.ray3k.stripe.PopTableClickListener
 import ktx.actors.onChange
 import ktx.actors.onClick
+import ktx.scene2d.Scene2DSkin
 import org.yunghegel.gdx.utils.ui.ColorBox
 import kotlin.math.log10
 
@@ -60,26 +64,81 @@ fun textureDrawable(texture:Texture) : TextureRegionDrawable {
     return TextureRegionDrawable(texture)
 }
 
+fun createColorPixel(color: Color): TextureRegion {
+    val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
+    pixmap.setColor(color)
+    pixmap.fill()
+    return TextureRegion(Texture(pixmap))
+}
+
 enum class ControlScale {
     LIN, LOG
 }
 
 const val DEFAULT_PADDING = 4f
 
-fun Actor.newPopupTable(conf: PopTableClickListener.() -> Unit = {}): PopTable {
-    val listener = PopTableClickListener()
+fun Actor.newPopupTable(uiStage:Stage, conf: PopTableClickListener.() -> Unit = {}): PopTable {
+    val listener = PopTableClickListener(Scene2DSkin.defaultSkin)
+    listener.popTable.isModal = false
+    listener.popTable.isHideOnUnfocus = true
+
+
     listener.apply {
         conf()
     }
     addListener(listener)
     val table = listener.popTable
     table.attachToActor(this, Align.topLeft, Align.bottomLeft)
+
+
     onClick {
-        if (stage != null) {
+
+
+        if (listener.popTable.isVisible) {
+            table.hide()
+        } else if (stage != null)  {
             table.show(stage)
-        } else table.hide()
+        }
+    }
+
+    return table
+}
+
+fun popupMenu(actor: Actor, conf: PopTable.() -> Unit) : PopTable {
+
+    val table = PopTable(Scene2DSkin.defaultSkin)
+    table.isHideOnUnfocus = true
+    table.attachToActor(actor,Align.bottomRight,Align.bottomLeft)
+    table.conf()
+
+    val listener = object : ClickListener() {
+        override fun clicked(event: InputEvent?, x: Float, y: Float) {
+            if (table.isHidden) table.show(actor.stage)
+            else table.hide()
+        }
+    }
+
+
+
+
+    actor.addListener(listener)
+    actor.onChange {
+        if (table.isVisible) table.hide()
     }
     return table
+}
+
+
+fun PopTable.option(text: String, action: () -> Unit) {
+    val menu = MenuItem(text)
+    menu.onChange {
+        action()
+        hide()
+    }
+}
+
+fun PopTableClickListener.table(conf: Table.() -> Unit) {
+    popTable.conf()
 }
 
 fun Slider.onChangeComplete(complete: (Float) -> Unit) {

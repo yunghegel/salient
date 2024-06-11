@@ -32,6 +32,8 @@ object DesktopLauncher {
         Settings.i = settings
     }
 
+
+
     @JvmStatic
     fun main(args: Array<String>) {
         val config = createConfig()
@@ -41,6 +43,11 @@ object DesktopLauncher {
             addLifecycleListener(nativeService)
         }
     }
+
+
+
+
+
 
     private fun createConfig(): Lwjgl3ApplicationConfiguration {
         val config = Lwjgl3ApplicationConfiguration()

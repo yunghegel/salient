@@ -14,6 +14,7 @@ import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.editor.ui.AppBar
 import org.yunghegel.salient.editor.ui.ViewportContextMenu
 import org.yunghegel.salient.editor.ui.ViewportSplit
+import org.yunghegel.salient.editor.ui.assets.AssetBrowser
 import org.yunghegel.salient.editor.ui.assets.AssetsView
 import org.yunghegel.salient.editor.ui.project.ProjectView
 import org.yunghegel.salient.editor.ui.scene.SceneManagementView
@@ -45,6 +46,7 @@ class Gui : EditorFrame() {
     val sceneTree : SceneView
     val assetsView : AssetsView
     val sceneManagementView : SceneManagementView
+    val assetBrowser : AssetBrowser
 
 
     val textEditor: SimpleTextEditor = SimpleTextEditor(skin,"Shader Editor")
@@ -82,6 +84,7 @@ class Gui : EditorFrame() {
         assetsView = AssetsView()
         sceneTree = SceneView()
         sceneManagementView = SceneManagementView()
+        assetBrowser = AssetBrowser()
 
 
 
@@ -95,6 +98,7 @@ class Gui : EditorFrame() {
         addCenter("terminal", "Terminal", console)
         addLeft("asset_manager", "Assets", assetsView)
         addRight("config_secondary","Scene Management",sceneManagementView)
+        addCenter("asset_browser","Asset Browser",assetBrowser)
         setContent(viewportSplit,scene.name)
         val fpsLabel = SLabel("FPS","default") {
             "${Gdx.graphics.framesPerSecond}"

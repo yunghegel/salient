@@ -8,6 +8,7 @@ import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.MathUtils
@@ -44,7 +45,7 @@ abstract class Tool(override val name:String) : InputMultiplexer(), Named {
 
     open val blocking = false
 
-    internal var active = false
+    var active = false
 
 
     fun createActor(icon:com.badlogic.gdx.scenes.scene2d.utils.Drawable) : SImageButton {
@@ -132,7 +133,7 @@ abstract class Tool(override val name:String) : InputMultiplexer(), Named {
 
     }
 
-    open fun render(modelBatch: ModelBatch) {
+    open fun render(modelBatch: ModelBatch, env: Environment?=null) {
 
     }
 

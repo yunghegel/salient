@@ -29,12 +29,12 @@ class PickingPlugin : Plugin {
     override val registry: Context.() -> Unit = {
         bindSingleton(pickingSystem)
         bindSingleton(pickerTool)
+        bindSingleton(PickingSystem.picker)
     }
 
     override fun init(engine: Engine) {
         salient {
             addSystem(pickingSystem)
-            pipeline.buffers["picking"] = pickingSystem.picker.fbo
             gui.viewportWidget.tools.createTool("select",pickerTool)
         }
     }

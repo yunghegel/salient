@@ -12,12 +12,9 @@ import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.scene.SceneLoadedEvent
 import org.yunghegel.salient.engine.events.scene.SceneSavedEvent
 import org.yunghegel.salient.engine.helpers.save
-import org.yunghegel.salient.engine.system.debug
+import org.yunghegel.salient.engine.system.*
 import org.yunghegel.salient.engine.system.file.Filepath
 import org.yunghegel.salient.engine.system.file.Paths
-import org.yunghegel.salient.engine.system.info
-import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.system.provide
 
 
 class SceneManager : EditorSceneManager<Scene>, Default<Scene>{
@@ -50,16 +47,22 @@ class SceneManager : EditorSceneManager<Scene>, Default<Scene>{
     }
 
     override fun loadScene(file: Filepath, makeCurrent: Boolean): Scene {
-        val path = Paths.SCENE_FILE_FOR(projectManager.currentProject?.name!!,file.handle.nameWithoutExtension())
-        val handle = projectManager.currentProject?.sceneIndex?.find { it.path == path } ?: projectManager.currentProject?.scenes!!.find { it.handle.name == file.name }?.let {it.handle} ?: SceneHandle(file.name,path)
 
-        val data = handle.path.readString
-        val dto = Yaml.default.decodeFromString(SceneDTO.serializer(),data)
-        val scene: Scene =  Scene.fromDTO(dto)
-        post(SceneLoadedEvent(scene))
-        if (makeCurrent) {
-            initialize(scene,makeCurrent = true)
-        }
+            val path = Paths.SCENE_FILE_FOR(projectManager.currentProject?.name!!, file.handle.nameWithoutExtension())
+            val handle = projectManager.currentProject?.sceneIndex?.find { it.path == path }
+                ?: projectManager.currentProject?.scenes!!.find { it.handle.name == file.name }?.let { it.handle }
+                ?: SceneHandle(file.name, path)
+
+            val data = handle.path.readString
+            val dto = Yaml.default.decodeFromString(SceneDTO.serializer(), data)
+
+            val scene: Scene = Scene.fromDTO(dto)
+
+            post(SceneLoadedEvent(scene))
+            if (makeCurrent) {
+                initialize(scene, makeCurrent = true)
+            }
+
         return scene
     }
 

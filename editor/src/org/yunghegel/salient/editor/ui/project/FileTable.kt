@@ -10,6 +10,7 @@ import org.yunghegel.salient.engine.ui.scene2d.SImage
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.scene2d.STextButton
+import org.yunghegel.salient.engine.ui.tree.TreeNode
 
 class FileTable(val file: FileHandle) : STable() {
 

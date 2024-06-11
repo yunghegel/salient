@@ -18,6 +18,7 @@ import org.yunghegel.gdx.utils.ext.*
 import org.yunghegel.salient.core.graphics.util.OutlineDepth
 import org.yunghegel.salient.editor.app.configs.Settings
 import org.yunghegel.salient.editor.input.ViewportController
+import org.yunghegel.salient.editor.plugins.BaseSystem
 import org.yunghegel.salient.editor.plugins.gizmos.GizmoPlugin
 import org.yunghegel.salient.editor.plugins.outline.OutlinerPlugin
 import org.yunghegel.salient.editor.plugins.outline.lib.Outliner
@@ -25,6 +26,7 @@ import org.yunghegel.salient.editor.plugins.picking.PickingPlugin
 import org.yunghegel.salient.editor.project.Project
 import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.editor.scene.SceneGraph
+import org.yunghegel.salient.engine.InterfaceInitializedEvent
 import org.yunghegel.salient.engine.Pipeline
 import org.yunghegel.salient.engine.State.*
 import org.yunghegel.salient.engine.api.Resizable
@@ -44,11 +46,10 @@ import org.yunghegel.salient.engine.scene3d.component.MaterialsComponent
 import org.yunghegel.salient.engine.scene3d.component.MeshComponent
 import org.yunghegel.salient.engine.scene3d.component.ModelComponent
 import org.yunghegel.salient.engine.scene3d.component.RenderableComponent
-import org.yunghegel.salient.engine.system.InjectionContext
-import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.system.singleton
+import org.yunghegel.salient.engine.system.*
 import org.yunghegel.salient.engine.tool.Tool
 import org.yunghegel.salient.engine.ui.UI
+import org.yunghegel.salient.engine.ui.layout.EditorFrame
 
 
 /**
@@ -60,78 +61,78 @@ class Salient : ApplicationAdapter() {
 
     val app = App()
 
-    var gui : Gui by notnull()
+    var gui: Gui by notnull()
 
-    var scene : Scene by notnull()
+    var scene: Scene by notnull()
 
-    var project : Project by notnull()
+    var project: Project by notnull()
 
-    private var state : State by notnull()
+    private var state: State by notnull()
 
-    val pipeline : Pipeline = Companion
-    var depth : FrameBuffer by notnull()
-    var color : FrameBuffer by notnull()
+    val pipeline: Pipeline = Companion
 
 
     val index = Index<Named>()
 
-    val resizeListeners = mutableListOf<Resizable>()
+    data class PluginSet(val tools:MutableList<Tool>?,val systems:MutableList<System<Project,Scene>>?,val plugins:MutableList<Plugin>?)
+
+    val registry : PluginSet
 
     init {
         index.types[Tool::class.java] = mutableListOf()
         index.types[System::class.java] = mutableListOf()
         index.types[Plugin::class.java] = mutableListOf()
+
+        registry = PluginSet(index.list(Tool::class.java)!! as MutableList<Tool>,index.list(System::class.java)!! as MutableList<System<Project,Scene>>,index.list(Plugin::class.java)!! as MutableList<Plugin>)
+
+        val (tools, systems, plugins) = registry
     }
 
-
     override fun create() {
-        KtxAsync.initiate()
 
+    /* allow asyncronous actions when we need it */
+    threading.init()
+    run {
         singleton(this)
-        run {
-            singleton(index)
-            singleton(app)
-            singleton<Engine>(engine as Engine)
-            singleton<Pipeline>(engine as Pipeline)
-        }
-
-        listOf(app,UI,GFX,Input).forEach { module ->
+        singleton(index)
+        singleton(app)
+        singleton<Engine>(engine as Engine)
+        singleton<Pipeline>(engine as Pipeline)
+    }
+    profile("init modules")
+    {
+        listOf(app, UI, GFX, Input).forEach { module ->
             module.initialize()
         }
+    }
 
+    val (project, scene) = app.bootstrap()
+    this.project = project
+    this.scene = scene
 
-        state = app.bootstrap()
-        project = state.first
-        scene = state.second
+    initSystems()
+    buildPipeline()
 
-        color = buildBuffer("color")
-        depth =  FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.width, Gdx.graphics.height, false)
-        initSystems()
-        buildPipeline()
+    configureUI()
+    configureInput()
 
-        buffers["depth"] = depth
-        buffers["color"] = color
+    val (picking, gizmo, outline) = listOf(PickingPlugin(), GizmoPlugin(), OutlinerPlugin()).onEach { plugin ->
+        createPlugin(plugin)
+    }
 
+    scene.manager.saveScene(scene)
+    post(EditorInitializedEvent())
 
-        configureUI()
-        configureInput()
-
-        createPlugin(PickingPlugin())
-        createPlugin(GizmoPlugin())
-        createPlugin(OutlinerPlugin())
-
-
-
-        scene.manager.saveScene(scene)
-        post(EditorInitializedEvent())
     }
 
     fun createPlugin(plugin: Plugin) {
-        plugin.init(engine as Engine)
-        plugin.systems.forEach { index.list(System::class.java)?.add(it)}
-        plugin.tools.forEach { index.list(Tool::class.java)?.add(it) }
-        plugin.registry(InjectionContext)
-        index.list(Plugin::class.java)?.add(plugin)
+        profile("load plugin ${plugin.name}") {
+            plugin.init(engine as Engine)
+            plugin.systems.forEach { index.list(System::class.java)?.add(it) }
+            plugin.tools.forEach { index.list(Tool::class.java)?.add(it) }
+            plugin.registry(InjectionContext)
+            index.list(Plugin::class.java)?.add(plugin)
+        }
     }
 
 
@@ -150,6 +151,13 @@ class Salient : ApplicationAdapter() {
      * @see push
      */
     private fun buildPipeline() {
+
+        val color = buildBuffer("color")
+        val depth =  buildBuffer("depth",false)
+
+        buffers["depth"] = depth
+        buffers["color"] = color
+
             push(INIT) { delta ->
                 clearScreen(.1f,.1f,.1f,0f)
             }
@@ -167,9 +175,18 @@ class Salient : ApplicationAdapter() {
             push(BEFORE_COLOR_PASS) { _ ->
                 scene.renderer.prepareContext(scene.context,false)
             }
+
+
+
             push(UI_PASS) { delta ->
                 ui.viewport.apply()
                 ui.draw()
+
+                UI.DialogStage.apply {
+                    act()
+                    draw()
+                }
+
             }
     }
 
@@ -205,38 +222,39 @@ class Salient : ApplicationAdapter() {
 //            }
 //        }
         once(COLOR_PASS) { _ ->
-            colorTex = pass(color) {
+            colorTex = pass(buffers["color"]!!) {
                 clearScreen(0f, 0f, 0f, 0f)
                 gui.updateviewport()
                 modelBatch.begin(perspectiveCamera)
                 graph.root.renderColor(delta, modelBatch, scene.context)
                 graph.root.renderDebug(scene.context)
                 modelBatch.end()
-
             }
             colorTex?.draw(spriteBatch)
-
         }
         val outliner : OutlineDepth = inject()
+
+        once(AFTER_COLOR_PASS) { _ ->
+            registry.tools?.let { toolset ->
+                for (i in 0 until toolset.size) {
+                    val tool = toolset[i]
+                    if (tool.active) {
+                        tool.render(modelBatch,environment)
+                    }
+                }
+            }
+        }
+
         once(OVERLAY_PASS) {_ ->
             val buf = buffers["outline"]
             with(Outliner.settings) {
                 outliner.render(spriteBatch,depthTex,perspectiveCamera)
             }
-
-
         }
-
-
-
-
-
-
     }
 
     override fun resize(width: Int, height: Int) {
         UI.resize(width, height)
-        resizeListeners.forEach { it.resize(width, height) }
         post(WindowResizedEvent(width, height),false)
         super.resize(width, height)
 
@@ -253,8 +271,8 @@ class Salient : ApplicationAdapter() {
         gui.configure()
         singleton(gui)
         ui.layout(gui)
-        resizeListeners.add(ui)
         gui.restore(Settings.i.ui)
+        post(InterfaceInitializedEvent())
     }
 
     private fun configureInput() {
@@ -306,9 +324,6 @@ fun sampleSceneGraph(graph:SceneGraph) {
 
 }
 
-fun addResizer(resizable: Resizable) {
-    val salient : Salient = inject()
-    salient.resizeListeners.add(resizable)
-}
+
 
 

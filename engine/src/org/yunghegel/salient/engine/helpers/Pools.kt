@@ -1,11 +1,13 @@
 package org.yunghegel.salient.engine.helpers
 
+import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.graphics.g3d.Renderable
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.FlushablePool
 import com.badlogic.gdx.utils.Pool
+import org.yunghegel.salient.engine.AutoremoveEntiy
 
 object Pools {
     val vector2Pool: Pool<Vector2> = object : Pool<Vector2>() {
@@ -63,4 +65,36 @@ object Pools {
             return renderable
         }
     }
+
+    val entityPool = object : Pool<Entity>() {
+
+        override fun newObject(): Entity {
+            return Entity()
+        }
+
+        override fun reset(entity: Entity) {
+            entity.removeAll()
+        }
+
+
+    }
+
+    val autotoremoveEntityPool = object : Pool<AutoremoveEntiy>() {
+
+            override fun newObject(): AutoremoveEntiy {
+                return AutoremoveEntiy()
+            }
+
+            override fun reset(entity: AutoremoveEntiy) {
+                entity.removeAll()
+            }
+    }
+
+    init {
+        entityPool.fill(16)
+        autotoremoveEntityPool.fill(16)
+        
+    }
+
+
 }

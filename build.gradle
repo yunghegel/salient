@@ -18,6 +18,7 @@ buildscript {
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
+    id 'com.asarkar.gradle.build-time-tracker' version "4.3.0"
 }
 
 apply from: "$gradleHome/tests.gradle"
@@ -32,6 +33,7 @@ sourceSets.each { sourceSet ->
 
 ext {
     GRADLE_USER_HOME = project.gradle.gradleUserHomeDir.path
+    INCLUDE_DIR = file("include")
     packages = [:]
     core =  [project(":engine"),project(":editor"),project(":launcher")]
     libs = project(":libs").subprojects
@@ -67,7 +69,6 @@ ext {
 }
 
 allprojects {
-
     group = "$groupId"
     project.version = "$salientVersion"
     apply plugin: "com.diffplug.spotless"
@@ -135,9 +136,9 @@ subprojects {
         withSourcesJar()
     }
 
-//    dependencies {
-//        api fileTree(dir: 'ext', include: ['*.jar'])
-//    }
+    dependencies {
+        api fileTree(dir: rootProject.file("include"), include: ['*.jar'])
+    }
 
     sourceSets.configure {
         main.java.srcDirs += ['src']

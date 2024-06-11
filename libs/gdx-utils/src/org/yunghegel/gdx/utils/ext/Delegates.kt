@@ -1,8 +1,11 @@
 package org.yunghegel.gdx.utils.ext
 
+import java.util.concurrent.locks.ReentrantLock
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
+import kotlin.reflect.jvm.isAccessible
 
 
 fun <T:Any> notnull() : ReadWriteProperty<Any?, T> = Delegates.notNull<T>()
@@ -47,3 +50,110 @@ fun <T> lazyMutable(initializer: () -> T) = LazyMutable(initializer)
 
 fun <T> observable(value: T, onChange: (T,T)->Unit) = Observable(value)
 
+
+private typealias Effect = () -> Unit
+private typealias Getter<T> = () -> T
+private typealias Reactor<T> = (T) -> Unit
+
+private val lock = ReentrantLock()
+private var atomicEffect: Effect? = null
+
+private var atomicReact: Reactor<*>? = null
+
+
+internal interface Gettable<T> {
+
+    operator fun getValue(thisRef: Any, property: KProperty<*>): T?
+}
+
+internal interface Settable<T> {
+
+    operator fun setValue(thisRef: Any, property: KProperty<*>, value: T)
+}
+
+abstract class Ref<T> : Gettable<T> {
+
+    val subscribers = HashSet<Effect>()
+
+    protected fun <T> track() {
+        atomicEffect?.let { subscribers.add(it) }
+    }
+
+    protected fun <T> trigger() {
+        /* TODO: de-duplicate effects */
+        subscribers.forEach { it() }
+    }
+}
+
+class MutableRef<T : Any>(initial: T) : Ref<T>(), Settable<T>, ReadWriteProperty<Any, T> {
+
+    private var _value = initial
+
+    override operator fun getValue(thisRef: Any, property: KProperty<*>): T {
+        track<T>()
+        return _value
+    }
+
+    override operator fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+        _value = value
+        trigger<T>()
+    }
+
+}
+
+
+
+
+class Computed<T>(
+    private val getter: Getter<T>
+) : Ref<T>() {
+
+    override operator fun getValue(thisRef: Any, property: KProperty<*>): T {
+        track<T>()
+        return getter()
+    }
+}
+
+fun watchEffect(update: Effect) {
+    lateinit var effect: Effect
+    effect = {
+        lock.lock()
+        try {
+            atomicEffect = effect
+            update()
+            atomicEffect = null
+        } finally {
+            lock.unlock()
+        }
+    }
+
+    effect()
+}
+
+fun <T : Any> KMutableProperty0<T>.watch(effect: () -> Unit): MutableRef<T>? {
+    // Use "isAccessible = true" to make the property accessible
+    isAccessible = true
+
+    var d = this.getDelegate()
+    val delegate = this.getDelegate() as? MutableRef<T>
+    if (delegate != null) {
+        delegate.subscribers.add(effect)
+        return delegate
+    } else {
+        val obj = this.get()
+
+    }
+    return null
+}
+
+fun <T : Any> T.watcheffects(effect: (T) -> Unit) {
+    // Use "isAccessible = true" to make the property accessible
+    watchEffect {
+        effect(this)
+    }
+
+}
+
+fun <T> computed(getter: Getter<T>) = Computed(getter)
+
+inline fun <reified T : Any> ref(initial: T) = MutableRef(initial)

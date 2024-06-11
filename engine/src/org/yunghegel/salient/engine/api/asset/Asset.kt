@@ -21,6 +21,7 @@ abstract class Asset<T:Any>(val path : Filepath, type: Class<T>, var handle:Asse
     abstract val loader : Loader<T>
 
     fun load() : T {
+
         loaded = true
         value = loader.load(handle)
         return value!!
