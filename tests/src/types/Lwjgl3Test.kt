@@ -1,6 +1,8 @@
 package types
 
 import com.badlogic.gdx.ApplicationAdapter
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import com.badlogic.gdx.graphics.GL20
@@ -30,10 +32,25 @@ import org.yunghegel.salient.engine.ui.widgets.value.ReflectionBasedEditor.Acces
 import org.yunghegel.salient.engine.ui.widgets.value.widgets.FloatOnlyFilter
 
 
-open class Lwjgl3Test (override val name: String = "Lwjgl3Test") : Test {
+open class Lwjgl3Test (name: String = "Lwjgl3Test") : BaseTest(name) {
 
-    override fun show() {
+    override fun create() {
+        bundle.init2D()
+        bundle.init3D()
+        Gdx.input.inputProcessor = bundle.input
         execCreate()
+        if(Gdx.input.inputProcessor is InputMultiplexer) {
+            val multiplexer = Gdx.input.inputProcessor as InputMultiplexer
+            if (bundle.stage !in multiplexer.processors) {
+                multiplexer.addProcessor(bundle.stage)
+            }
+        }
+
+    }
+
+    var config = Lwjgl3ApplicationConfiguration().apply {
+        setTitle(name)
+        setWindowedMode(800,600)
     }
 
     init {
@@ -41,8 +58,6 @@ open class Lwjgl3Test (override val name: String = "Lwjgl3Test") : Test {
     }
 
     val bundle : TestBundle by lazy { TestBundle() }
-
-    var config = Lwjgl3ApplicationConfiguration().apply {setWindowedMode(800,600)}
 
     var drawAxes = true
     var drawRotateHelper = true
@@ -60,9 +75,9 @@ open class Lwjgl3Test (override val name: String = "Lwjgl3Test") : Test {
 
     }
 
-    var execCreate : ()->Unit = {}
+    override var execCreate : ()->Unit = {}
 
-    var execRender : ()->Unit = {}
+    override var execRender : ()->Unit = {}
 
     fun use(block: TestBundle.()->Unit) {
         with(bundle) {
@@ -184,7 +199,7 @@ open class Lwjgl3Test (override val name: String = "Lwjgl3Test") : Test {
         }
     }
 
-    override fun build() {
+    fun build() {
         glEnable(GL20.GL_DEPTH_TEST)
         glEnable(GL20.GL_CULL_FACE)
         async.init()
@@ -194,7 +209,7 @@ open class Lwjgl3Test (override val name: String = "Lwjgl3Test") : Test {
         }
     }
 
-    override fun render(delta:Float) {
+    override fun render() {
             clearScreen(0.1f,0.1f,0.1f,0f)
 //        if(drawGrid) {
 //            bundle.grid.render(bundle.cam)
@@ -203,6 +218,12 @@ open class Lwjgl3Test (override val name: String = "Lwjgl3Test") : Test {
                 execRender()
             }
             drawText("$renderProfile",20f,20f)
+            if(bundle.root.children.size > 0) {
+
+
+                bundle.stage.act()
+                bundle.stage.draw()
+            }
 //        if(drawAxes) {
 //            clearDepth()
 //            with(bundle) {
@@ -214,7 +235,7 @@ open class Lwjgl3Test (override val name: String = "Lwjgl3Test") : Test {
 //
     }
 
-    override fun destroy() {
+   fun destroy() {
         bundle.dispose()
     }
 
@@ -223,8 +244,12 @@ open class Lwjgl3Test (override val name: String = "Lwjgl3Test") : Test {
 
     }
 
-    fun run() {
+    fun toApplication(cfg: Lwjgl3ApplicationConfiguration) {
+        Lwjgl3Application(this,cfg)
+    }
 
+    fun run() {
+        toApplication(config)
     }
 
     fun reset() {
@@ -239,6 +264,8 @@ open class Lwjgl3Test (override val name: String = "Lwjgl3Test") : Test {
     operator fun invoke() {
         run()
     }
+
+
 
 }
 

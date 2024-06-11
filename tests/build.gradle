@@ -1,11 +1,16 @@
+def includeDir = rootProject.file('include')
+
 dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-test"
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
 //\
 //    implementation project(':engine')
-
+    implementation fileTree(dir: includeDir , include: ['*.jar'])
     implementation project(":editor")
 }
+
+def test_types = ['lwjgl3', 'headless']
 
 sourceSets {
     main {
@@ -28,3 +33,41 @@ sourceSets {
         }
     }
 }
+
+task createTestTasks {
+    def dir = file('src')
+    dir.eachFile { file ->
+
+        if (file.isDirectory()) {
+            if (!test_types.contains(file.name)) return
+            file.eachFile {child ->
+                if (child.name.endsWith('Test.kt')) {
+                    def name = child.name.substring(0, child.name.length() - 7)
+                    def taskName = "${name.capitalize()}"
+                    def classname = "${file.name}."+"${child.name}" - ".kt"
+                    def category = file.name
+
+                    tasks.create(name: "${child.name}" -".kt", type: JavaExec) {
+                        group "tests/$category"
+                        dependsOn classes
+                        main(classname)
+
+                    }
+                }
+            }
+
+        }
+
+
+    }
+}
+
+
+
+tasks.createTestTasks.dependsOn(tasks.compileKotlin)
+tasks.createTestTasks.dependsOn(tasks.compileJava)
+defaultTasks('createTestTasks')
+tasks.withType(JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+}
+

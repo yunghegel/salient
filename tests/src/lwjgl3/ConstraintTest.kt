@@ -1,3 +1,5 @@
+package lwjgl3
+
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.kotcrab.vis.ui.widget.MultiSplitPane
 import org.yunghegel.salient.engine.ui.layout.*

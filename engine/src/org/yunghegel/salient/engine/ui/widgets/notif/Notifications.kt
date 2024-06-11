@@ -34,6 +34,7 @@ import org.yunghegel.salient.engine.ui.table
 import org.yunghegel.salient.engine.ui.widgets.InputTable
 import org.yunghegel.salient.engine.ui.widgets.Result
 import org.yunghegel.salient.engine.ui.widgets.viewport.button
+import java.io.PrintStream
 import java.util.*
 import javax.swing.text.StyleConstants.setAlignment
 import kotlin.concurrent.timer

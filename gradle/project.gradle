@@ -20,8 +20,8 @@ static OS resolveOS()  {
 
 ext {
     releaseDir = project.file("release")
-    testSrcDir = project.file("tests/src")
-    testing = project(":tests")
+//    testSrcDir = project.file("tests/src")
+//    testing = project(":tests")
     editor = project(":editor")
     launcher = project(":launcher")
     os = resolveOS()

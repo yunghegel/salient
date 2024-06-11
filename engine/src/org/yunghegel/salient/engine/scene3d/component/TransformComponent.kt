@@ -6,11 +6,13 @@ import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector3
 import org.yunghegel.salient.engine.api.Dirty
 import org.yunghegel.salient.engine.api.DirtyListener
+import org.yunghegel.salient.engine.api.ecs.BaseComponent
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.ui.Icon
+import kotlin.reflect.KClass
 
 class TransformComponent(go: GameObject) : EntityComponent<Matrix4>(go.combined,go), Icon,Dirty<TransformComponent> {
 
@@ -19,6 +21,8 @@ class TransformComponent(go: GameObject) : EntityComponent<Matrix4>(go.combined,
     override val iconName: String = "transform_object"
 
     override var dirty: Boolean = false
+
+    override val type: KClass<out BaseComponent> = TransformComponent::class
 
     init {
         dirtySubscribers.add {
@@ -29,6 +33,10 @@ class TransformComponent(go: GameObject) : EntityComponent<Matrix4>(go.combined,
     fun configure(renderableComponent: RenderableComponent) {
         val instance = (renderableComponent.renderableProvider as? ModelInstance)
         instance?.transform = go.combined
+    }
+
+    override fun clone(): Any {
+        return TransformComponent(go)
     }
 
     override fun update(scene: EditorScene, go: GameObject, context: SceneContext) {

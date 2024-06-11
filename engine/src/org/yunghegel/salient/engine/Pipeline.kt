@@ -93,7 +93,7 @@ class AutoremoveEntiy : Entity()
 
 class FunctionComponent(val func:(Float) -> Unit) : SceneRenderEvent {
 
-
+    context(SharedGraphicsResources)
     override fun render(delta: Float) {
         func(delta)
     }

@@ -18,8 +18,10 @@ import org.yunghegel.salient.editor.app.Salient.Companion.once
 import org.yunghegel.salient.editor.plugins.BaseSystem
 import org.yunghegel.salient.editor.plugins.outline.lib.Outliner
 import org.yunghegel.salient.engine.State
+import org.yunghegel.salient.engine.api.ecs.VISIBLE
 import org.yunghegel.salient.engine.api.flags.GameObjectFlag
 import org.yunghegel.salient.engine.api.flags.HOVERED
+import org.yunghegel.salient.engine.api.flags.RENDER
 import org.yunghegel.salient.engine.api.flags.SELECTED
 import org.yunghegel.salient.engine.events.lifecycle.onWindowResized
 import org.yunghegel.salient.engine.graphics.FBO
@@ -56,6 +58,7 @@ class OutlineSystem(val outliner: OutlineDepth) : BaseSystem("outline_system", S
 
     override fun processEntity(p0: Entity?, p1: Float) {
         val go = p0 as GameObject
+        if (!go.has(RENDER)) return
         if (go.has(SELECTED) || go.has(GameObjectFlag.HOVERED)) {
             once(State.OVERLAY_PASS) {
                 if (go.has(HOVERED)) {

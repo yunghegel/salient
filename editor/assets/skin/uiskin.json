@@ -168,7 +168,7 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
 	}
 	bold: {
-		font: DejaVuSans-Bold.ttf
+		font: bfont.ttf
 		size: 10
 		mono: false
 		color: white
@@ -238,8 +238,8 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
 	}
 	default-large: {
-		font: Inter.ttf
-		size: 16
+		font: bfont.ttf
+		size: 13
 		mono: false
 		color: white
 		gamma: 1.8
@@ -824,8 +824,8 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 		imageUp: play_icon
 	}
 	geometry: {
-		imageUp: cube
-		imageChecked: geometry-on
+		imageUp: Geometry
+		imageChecked: Geometry_Checked
 	}
 	mesh: {
 		imageUp: mesh_down
@@ -1230,6 +1230,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 		font: default-medium
 		fontColor: white
 	}
+	default-large: {
+		font: default-large
+		fontColor: white
+	}
 	menuitem-shortcut: {
 		font: default
 		fontColor: white
@@ -1427,6 +1431,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle: {
 	default: {
 		plus: ArrowRight
 		minus: ArrowDown
+		minusOver: ArrowDown
 		over: thumbnail
 
 		selection: button-compact-blue

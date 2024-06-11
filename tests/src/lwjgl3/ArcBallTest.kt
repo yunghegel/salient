@@ -1,4 +1,4 @@
-
+package lwjgl3
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.Camera
@@ -19,7 +19,7 @@ import kotlin.math.acos
 import kotlin.math.min
 import kotlin.math.sqrt
 
-val ArcBallTest  =  lwjgl3test("ArcBallTest") {
+val _ArcBallTest  =  lwjgl3test("ArcBallTest") {
 
     var arcballController: ArcballTool by notnull()
 
@@ -38,11 +38,18 @@ val ArcBallTest  =  lwjgl3test("ArcBallTest") {
         }
     }
 
+
+
 }
 
-fun main() = ArcBallTest()
+object ArcBallTest {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        _ArcBallTest()
+    }
+}
 
-
+fun main() = _ArcBallTest()
 
 class ArcballTool(val target: Matrix4,val radius:Float) : InputAdapter() {
     private var isDragging = false

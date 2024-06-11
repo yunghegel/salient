@@ -13,13 +13,18 @@ import org.yunghegel.salient.engine.ui.scene2d.STable
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Tree
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
+import com.kotcrab.vis.ui.widget.PopupMenu
 import dev.lyze.gdxtinyvg.utils.WhitePixelUtils
+import ktx.actors.onClick
 import org.yunghegel.gdx.utils.data.Named
 import org.yunghegel.gdx.utils.ext.drawable
 import org.yunghegel.gdx.utils.ext.notnull
+import org.yunghegel.gdx.utils.ext.padHorizontal
 import org.yunghegel.salient.engine.ui.Icon
 import org.yunghegel.salient.engine.ui.scene2d.SImage
+import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
+import org.yunghegel.salient.engine.ui.widgets.OptionMenu
 
 abstract class TreeActor<Object>(val obj: Object) : STable()  {
 
@@ -28,8 +33,10 @@ abstract class TreeActor<Object>(val obj: Object) : STable()  {
     val origin = Vector2()
 
     var visualIndex = -1
+    val overflow = SImageButton("overflow-menu")
+    private val options = mutableListOf<OptionMenu.Option>()
 
-    open val pixel = WhitePixelUtils.createWhitePixelTexture()
+    open val pixel: TextureRegion = WhitePixelUtils.createWhitePixelTexture()
 
     var nodename: String?=null
         set(value) {
@@ -47,7 +54,6 @@ abstract class TreeActor<Object>(val obj: Object) : STable()  {
 
     init {
         touchable = Touchable.enabled
-
     }
 
     fun prependActor(actor: Actor) : Cell<out Actor> {
@@ -69,7 +75,18 @@ abstract class TreeActor<Object>(val obj: Object) : STable()  {
         actors.add(actor)
     }
 
+    fun createOverflowMenu(configIconCell: (Cell<*>) -> Unit = {}){
+        add(overflow).padHorizontal(2f)
+        overflow.onClick {
+            val menu = OptionMenu(configIconCell)
+            options.forEach { menu.addOption(it) }
+            menu.showMenu(stage, overflow)
+        }
+    }
 
+    fun addOverflowOption(name : String, icon : String?, action: () -> Unit) {
+        options.add(OptionMenu.option(name, icon, action))
+    }
 
     fun drag(x:Int,y:Int) {
         val hit = hit(x.toFloat(), y.toFloat(), true)
@@ -115,19 +132,6 @@ abstract class TreeActor<Object>(val obj: Object) : STable()  {
     override fun act(delta: Float) {
         if (dragging) ensureReturn()
         super.act(delta)
-    }
-
-
-
-
-
-    fun drawRow(batch: Batch, textureRegion: TextureRegion, x: Float, y: Float, width: Float, height: Float) {
-        batch.draw(textureRegion, x, y, width, height)
-    }
-
-    companion object {
-
-
     }
 
 }

@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Component
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import org.yunghegel.salient.engine.api.model.AssetHandle
+import org.yunghegel.salient.engine.api.properties.Type
 import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.SceneContext

@@ -1,3 +1,5 @@
+package lwjgl3
+
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Mesh
 import ktx.app.clearScreen

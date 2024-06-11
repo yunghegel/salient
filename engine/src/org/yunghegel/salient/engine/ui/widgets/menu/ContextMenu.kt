@@ -14,7 +14,7 @@ import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.pop
 import java.awt.SystemColor.menu
 
-class ContextMenu() : PopTableClickListener() {
+open class ContextMenu() : PopTableClickListener() {
 
     val options = mutableMapOf<String,ContextItem>()
     val popup = getPopTable()
@@ -60,7 +60,4 @@ class ContextMenu() : PopTableClickListener() {
         }
         return super.touchDown(event, x, y, pointer, button)
     }
-
-
-
 }

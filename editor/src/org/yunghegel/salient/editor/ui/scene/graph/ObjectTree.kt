@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop
 import com.badlogic.gdx.utils.OrderedSet
 import ktx.actors.onChange
@@ -74,6 +75,10 @@ class ObjectTree(val graph : SceneGraph = inject()) : TreeWidget<ObjectNode,Game
         }
         buildTree(root,graph.root)
         root.isExpanded = true
+
+        root.isSelectable = false
+        root.actor.touchable = Touchable.childrenOnly
+
         var count = 0
         onChange {
             visualOrder.clear()
@@ -101,7 +106,7 @@ class ObjectTree(val graph : SceneGraph = inject()) : TreeWidget<ObjectNode,Game
             val pref = frame.sceneTree.graphPane.height
             return pref
         } else {
-            return 0f
+            return super.getPrefHeight()
         }
     }
 

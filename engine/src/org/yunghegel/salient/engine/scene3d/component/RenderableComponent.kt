@@ -8,12 +8,14 @@ import com.badlogic.gdx.graphics.g3d.RenderableProvider
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Pool
 import org.yunghegel.gdx.utils.ext.convertToPBR
+import org.yunghegel.salient.engine.api.ecs.BaseComponent
 import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.api.flags.GameObjectFlags
 import org.yunghegel.salient.engine.api.flags.RENDER
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.SceneContext
+import kotlin.reflect.KClass
 
 class RenderableComponent (val renderableProvider: RenderableProvider?,go: GameObject) : EntityComponent<RenderableProvider>(renderableProvider,go) {
 
@@ -24,6 +26,8 @@ class RenderableComponent (val renderableProvider: RenderableProvider?,go: GameO
     private val renderableElements = Array<Renderable>()
 
     private val renderablesPool = mutableListOf<RenderableProvider>()
+
+    override val type: KClass<out BaseComponent> = RenderableComponent::class
 
     init {
         implements(color)

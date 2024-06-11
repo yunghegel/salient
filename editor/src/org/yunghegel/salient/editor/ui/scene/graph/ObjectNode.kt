@@ -7,13 +7,21 @@ import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.component.*
 import org.yunghegel.salient.engine.ui.Icon
+import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.tree.TreeNode
 import kotlin.reflect.KClass
 
 open class ObjectNode(go: GameObject, table: ObjectTable? = null, name: String = "${go.name}:${go.id}" ) :  TreeNode<GameObject,ObjectTable>(name, go,table ?: ObjectTable(go)) ,
-    Icon by go {
+    Icon {
 
         val componentNodes = mutableMapOf<KClass<out EntityComponent<*>>, ObjectComponentNode>()
+
+        override val iconName: String = go.iconName
+
+        init {
+
+        }
+
 
         fun populate() {
             actor.buildActor(obj)

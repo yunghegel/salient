@@ -3,12 +3,12 @@ package org.yunghegel.salient.engine.scene3d
 import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
+import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.math.Matrix4
 import org.yunghegel.gdx.utils.data.EnumBitmask
 import org.yunghegel.gdx.utils.data.EnumMask
-import org.yunghegel.gdx.utils.ext.delta
-import org.yunghegel.gdx.utils.ext.each
+import org.yunghegel.gdx.utils.ext.*
 import org.yunghegel.salient.engine.Pipeline
 import org.yunghegel.salient.engine.api.Store
 import org.yunghegel.salient.engine.api.Tagged
@@ -23,14 +23,15 @@ import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.scene.GameObjectChildAddedEvent
 import org.yunghegel.salient.engine.events.scene.GameObjectComponentAddedEvent
 import org.yunghegel.salient.engine.events.scene.GameObjectComponentRemovedEvent
-import org.yunghegel.salient.engine.scene3d.component.LightComponent
-import org.yunghegel.salient.engine.scene3d.component.ModelComponent
-import org.yunghegel.salient.engine.scene3d.component.PickableComponent
-import org.yunghegel.salient.engine.scene3d.component.TransformComponent
 import org.yunghegel.salient.engine.scene3d.graph.Spatial
 import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.gdx.utils.ui.Hoverable
+import org.yunghegel.salient.engine.api.asset.type.ModelAsset
+import org.yunghegel.salient.engine.api.ecs.ComponentCloneable
+import org.yunghegel.salient.engine.scene3d.component.*
+import org.yunghegel.salient.engine.system.debug
+import org.yunghegel.salient.engine.system.ifSuccess
 import org.yunghegel.salient.engine.ui.Icon
 import java.util.*
 import kotlin.reflect.KClass
@@ -39,16 +40,40 @@ const val VISIBLE = 1
 
 
 open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:EditorScene) : Spatial<GameObject>(name), Iterable<GameObject>, UpdateRoutine, Tagged,
-    EnumMask<GameObjectFlag>, Store, Hoverable.HoverQueryable, Icon {
+    EnumMask<GameObjectFlag>, Store, Hoverable.HoverQueryable, Icon, Cloneable, Deferrable {
 
     override val iconName: String
         get() = when {
             taggedAny("point_light", "spot_light", "directional_light") -> "light_object"
             tagged("camera") -> "camera_object"
             tagged("model") -> "geometry"
-            tagged("root") -> "tree"
+            tagged("root") -> "scene_tree"
             else -> "transform_object"
         }
+
+    override val deferred: Stack<Deferred> = Stack()
+
+    public override fun clone(): GameObject {
+        val go = GameObject(name + "Copy", combined.cpy(), scene)
+        val modelComp = components.find { it is ModelComponent } as ModelComponent?
+        if (modelComp === null) debug("ModelComponent not found in cloned gameObject with id ${go.id}")
+        modelComp?.let {
+            val copy = if (it.usedAsset == null) ModelComponent(it.meta.id, go) else ModelComponent(it.usedAsset!!, go)
+            val renderable = RenderableComponent(it.value!!.instance,go)
+            val meshes = MeshComponent(it.value!!.meshes,go)
+            val mdlPickable = ModelRenderable(modelComp.value!!.instance, go)
+            val pickable = PickableComponent(mdlPickable,go)
+            val materials = MaterialsComponent(it.value!!.materials,go)
+            val bounds = BoundsComponent(BoundsComponent.getBounds(it.value!!),go)
+            val components : List<BaseComponent> = listOf(copy,renderable,meshes,pickable,materials,bounds)
+            components.forEach { comp -> go.add(comp); debug("Added ${comp::class.simpleName} to cloned gameObject with id ${go.id}") }
+        }
+
+
+
+
+        return go
+    }
 
 
     override val bitmask = EnumBitmask(GameObjectFlag::class.java)
@@ -105,6 +130,7 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
 
     override fun update(delta: Float) {
         children.forEach { it.update(delta) }
+        execDeferred()
     }
 
     fun renderDepth(delta: Float, batch: ModelBatch, context: SceneContext) {
@@ -162,6 +188,7 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
         private var gameObjectCount = 0
             get() {
                 val id = field++
+                println("GameObject count: $id")
                 return id
             }
 

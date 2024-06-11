@@ -1,3 +1,5 @@
+package lwjgl3
+
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Align

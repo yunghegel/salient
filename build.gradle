@@ -24,16 +24,6 @@ apply from: "gradle/project.gradle"
 apply from: "gradle/utils.gradle"
 
 
-sourceSets.each { sourceSet ->
-    sourceSet.java.srcDirs = []
-    sourceSet.kotlin.srcDirs = []
-    sourceSet.resources.srcDirs = []
-}
-
-salient {
-
-}
-
 
 ext {
     GRADLE_USER_HOME = project.gradle.gradleUserHomeDir.path
@@ -42,6 +32,7 @@ ext {
     core =  [project(":engine"),project(":editor"),project(":launcher")]
     libs = project(":libs").subprojects
     resourceDir = project(":editor").file("assets")
+    releaseDir = project.file("release")
     os = OperatingSystem.current()
     switch (os) {
         case OperatingSystem.LINUX:
@@ -110,15 +101,25 @@ subprojects {
         withSourcesJar()
     }
 
-
-    if (!project.name.equals( "tests")) {
-        sourceSets.configure {
-            main.java.srcDirs += ['src']
-            main.kotlin.srcDirs += ['src']
-            main.resources.srcDirs += ["$resourceDir"]
-            test.java.srcDirs += ['test']
-            test.kotlin.srcDirs += ['test']
-            test.resources.srcDirs += ["$resourceDir"]
+    sourceSets {
+        main {
+            resources {
+                srcDirs = [resourceDir]
+            }
+            java {
+                srcDirs = ['src']
+            }
+            kotlin {
+                srcDirs = ['src']
+            }
+        }
+        test {
+            java {
+                srcDirs = ['test']
+            }
+            kotlin {
+                srcDirs = ['test']
+            }
         }
     }
     kotlin {
@@ -131,16 +132,13 @@ subprojects {
 
 
 jar {
-    subprojects.each { project ->
-        dependsOn project.jar
-    }
     doFirst {
-       releaseDir.mkdirs()
+       ext.releaseDir.mkdirs()
     }
     group "salient"
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
-        attributes 'Main-Class': "org.yunghegel.salient.launcher.DesktopLauncher"
+        attributes 'Main-Class': "org.yunghegel.salient.launcher.exe.DesktopLauncher"
     }
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
@@ -168,20 +166,51 @@ configure(testing) {
 
 
 task dist(type: Copy) {
+
+    def releaseDir = project.file("release")
     doFirst {
-        releaseDir.mkdirs()
+        if (releaseDir.exists()) {
+            releaseDir.eachFile { file ->
+                if (file.absolutePath.endsWith(".jar")) {
+                    file.delete()
+                }
+            }
+        }
+
     }
+    releaseDir.mkdirs()
     group "salient"
     from launcher.jar
     into project.file("release")
     from sourceSets.main.resources
     into project.file("release")
 
-    doLast {
+
+        switch (OperatingSystem.current()) {
+            case OperatingSystem.LINUX:
+                def executable = new File(project.file("release"), "salient")
+                executable.createNewFile()
+                executable.text = "#!/bin/bash\njava -jar salient-${version}.jar \$@"
+                executable.setExecutable(true)
+                break
+            case OperatingSystem.MAC_OS:
+                def executable = new File(project.file("release"), "salient")
+                executable.createNewFile()
+                executable.text = "#!/bin/bash\njava -jar salient-${version}.jar \$@"
+                executable.setExecutable(true)
+                break
+            case OperatingSystem.WINDOWS:
+                def executable = new File(project.file("release"), "salient.bat")
+                executable.createNewFile()
+                executable.text = "@echo off\njava -jar salient-${version}.jar %*"
+                break
+        }
         releaseDir.listFiles().each { file ->
             file.setExecutable(true)
         }
-    }
+
+
+
 
 }
 
@@ -209,7 +238,7 @@ configure(launcher) {
     }
 }
 
-task makeExecutable(type: Copy) {
+void makeExecutable() {
     switch (os) {
         case OperatingSystem.LINUX:
             def executable = new File(project.file("release"), "salient")
@@ -230,6 +259,15 @@ task makeExecutable(type: Copy) {
             break
     }
 }
+
+
+
+
+
+
+
+
+
 
 
 

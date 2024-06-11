@@ -6,11 +6,14 @@ import ktx.collections.GdxArray
 import net.mgsx.gltf.scene3d.utils.MaterialConverter
 import org.yunghegel.gdx.utils.ext.convertToPBR
 import org.yunghegel.gdx.utils.ext.each
+import org.yunghegel.salient.engine.api.ecs.BaseComponent
+import org.yunghegel.salient.engine.api.ecs.ComponentCloneable
 import org.yunghegel.salient.engine.ui.Icon
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.scene3d.GameObject
+import kotlin.reflect.KClass
 
-class MaterialsComponent(val materials: GdxArray<Material>,go: GameObject) : EntityComponent<GdxArray<Material>>(materials,go)
+class MaterialsComponent(val materials: GdxArray<Material>,go: GameObject) : EntityComponent<GdxArray<Material>>(materials,go), ComponentCloneable<MaterialsComponent>
     {
 
         init {
@@ -23,6 +26,27 @@ class MaterialsComponent(val materials: GdxArray<Material>,go: GameObject) : Ent
 
     override val iconName: String = "material_object"
 
-    constructor(material: Material,go: GameObject) : this(GdxArray.with(material),go)
+    override val type: KClass<out BaseComponent> = MaterialsComponent::class
+
+    override fun clone(target: GameObject): MaterialsComponent {
+        val mats = GdxArray.with<Material>()
+        materials.each { mat ->
+            val newMat = mat.copy()
+            mats.add(newMat)
+        }
+        return MaterialsComponent(mats,target)
+    }
+
+        override fun apply(comp: MaterialsComponent, target: GameObject) {
+            val model = target[ModelComponent::class] ?: throw Exception("Model must be present first")
+            model.value?.let { mdl ->
+                comp.materials.each { mat ->
+                    mdl.materials.add(mat)
+                }
+            }
+            target.add(comp)
+        }
+
+        constructor(material: Material,go: GameObject) : this(GdxArray.with(material),go)
 
 }

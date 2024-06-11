@@ -1,3 +1,5 @@
+package lwjgl3
+
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver
@@ -23,6 +25,7 @@ import org.yunghegel.gdx.utils.ext.instance
 import org.yunghegel.salient.engine.helpers.SampleModels
 import java.io.File
 
+@OptIn(kotlin.ExperimentalStdlibApi::class)
 class AsyncModelLoader : ApplicationAdapter() {
 
 

@@ -3,6 +3,7 @@ package org.yunghegel.salient.launcher.exe
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import kotlinx.coroutines.runBlocking
+import net.mgsx.gltf.scene3d.shaders.PBREmissiveShaderProvider.createConfig
 import org.yunghegel.salient.editor.app.Salient
 import org.yunghegel.salient.editor.app.configs.Settings
 import org.yunghegel.salient.engine.helpers.Serializer
@@ -42,7 +43,7 @@ object DesktopLauncher {
 
 
     @JvmStatic
-    fun main(args: Array<String>): Unit = runBlocking {
+    fun main(args: Array<String>): Unit {
         val config = createConfig()
         config.setWindowListener(nativeService)
         val opts = LaunchOptions(args)
@@ -56,6 +57,7 @@ object DesktopLauncher {
             addLifecycleListener(nativeService)
         }
     }
+
 
 
 

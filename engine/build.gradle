@@ -2,7 +2,7 @@ dependencies {
     packages.each { pkg->
         api project("$pkg.value")
     }
-    testImplementation project(':tests')
+//    testImplementation project(':tests')
 }
 
 configureGroup(libs) {

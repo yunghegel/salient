@@ -5,16 +5,18 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.backends.headless.HeadlessApplication
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration
 
-open class HeadlessTest : ApplicationAdapter() {
+open class HeadlessTest(name: String = "HeadlessTest") : BaseTest(name) {
 
-    val config = HeadlessApplicationConfiguration()
+    var config = HeadlessApplicationConfiguration()
 
-     var exec : ()->Unit = {}
+    override var execCreate : ()->Unit = {}
+
+    override var execRender: () -> Unit = {}
 
     var autoExit = true
 
     override fun create() {
-        exec()
+        execCreate()
         if(autoExit) {
             exit()
         }
@@ -38,7 +40,7 @@ fun headlessTest(autoexit: Boolean = true, run : ()->Unit) {
         }
 
         override fun create() {
-            exec()
+            execCreate()
             if (autoExit) {
                 exit()
             }

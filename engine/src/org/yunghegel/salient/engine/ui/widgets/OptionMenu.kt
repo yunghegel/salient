@@ -2,72 +2,76 @@ package org.yunghegel.salient.engine.ui.widgets
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Cell
+import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.kotcrab.vis.ui.widget.MenuItem
 import com.kotcrab.vis.ui.widget.PopupMenu
 import ktx.actors.onChange
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.scene2d.SCheckBox
 
-class OptionMenu : PopupMenu() {
+class OptionMenu(private var cellConf : ((Cell<*>)->Unit)? = null) : PopupMenu() {
 
-    val result = Result()
-
-    var submit : (Result)->Unit = {}
-
-    fun menu(name: String, action: () -> Unit) {
-        addItem(makeItem(name, action))
+    interface Option {
+        val name: String
+        val icon : String?
+        val action: () -> Unit
     }
 
-    fun toggle(name: String, default: Boolean = false, action: (Boolean) -> Unit) {
-        val item = MenuItem(name)
-        val label = item.label
-        result[name] = default
-        item.clearChildren()
-        item.add(SCheckBox(name,default).apply {
-            onChange {
-                action(this.isChecked)
-                result[name] = this.isChecked
+    val items = mutableListOf<Option>()
+
+    private fun createMenu(option: Option, imageConfigurator: ((Cell<*>)->Unit)?=null) : MenuItem {
+        if (option.icon != null) {
+            val item = MenuItem(option.name, UI.drawable(option.icon!!))
+            if (imageConfigurator != null) {
+                item.imageCell?.let { imageConfigurator(item.imageCell) }
             }
-        })
-        addItem(item)
+            item.onChange { option.action() }
+            return item
+        } else {
+            val item = MenuItem(option.name)
+            item.onChange { option.action() }
+            return item
+        }
     }
 
-    fun withResults(action: (Result) -> Unit) {
-        submit = action
+    fun addOption(option: Option) {
+        items.add(option)
+        addItem(createMenu(option, cellConf))
     }
 
-    fun separator() {
-        addSeparator()
+    fun addOption(name: String, icon: String?, action: () -> Unit) {
+        addOption(option(name, icon, action))
     }
 
-    private fun makeItem(name: String, action: () -> Unit) : MenuItem {
-       val item = MenuItem(name)
-         item.onChange {
-              action()
-         }
-        return item
-    }
 
-    fun show() : Result {
-        return show(UI, Gdx.input.x, Gdx.graphics.height- Gdx.input.y)
 
-    }
-
-    fun show(stage: Stage, x:Int, y:Int) : Result {
-        showMenu(stage, x.toFloat(), y.toFloat())
-        return result
-    }
-
-    override fun remove(): Boolean {
-        submit(result)
-        return super.remove()
+    class Builder {
+        private val menu = OptionMenu()
+        fun option(name: String, icon: String?, action: () -> Unit) {
+            menu.addOption(name, icon, action)
+        }
+        fun build() : OptionMenu {
+            return menu
+        }
     }
 
     companion object {
-        fun show(stage: Stage, x:Int, y:Int, conf: OptionMenu.() -> Unit) : Result {
-            val menu = OptionMenu()
-            menu.conf()
-            return menu.show(stage, x, y)
+        fun option(name: String, icon: String?, action: () -> Unit) : Option {
+            return object : Option {
+                override val name: String = name
+                override val icon: String? = icon
+                override val action: () -> Unit = action
+            }
+        }
+
+        fun build(init: Builder.() -> Unit) : OptionMenu {
+            val builder = Builder()
+            builder.init()
+            return builder.build()
         }
     }
+
+
 }

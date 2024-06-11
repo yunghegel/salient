@@ -41,7 +41,7 @@ class PreviewImage(val model : Model, val context : SceneContext) : SceneGraphic
         PixmapIO.writePNG(file, pixmap)
     }
 
-    fun generate(path:String?=null,width: Int = 100, height: Int = 100, bgcolor: Color = Color(0.1f, 0.1f, 0.1f,0f)) : Texture {
+    fun generate(path:String?=null,width: Int = 250, height: Int = 250, bgcolor: Color = Color(0.1f, 0.1f, 0.1f,0f)) : Texture {
             val cam = PerspectiveCamera(75f,width.toFloat(),height.toFloat())
             val bounds = BoundingBox()
             model.calculateBoundingBox(bounds)

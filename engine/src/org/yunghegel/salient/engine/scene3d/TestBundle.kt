@@ -61,18 +61,15 @@ class TestBundle() {
     lateinit var root: Window
     lateinit var spriteBatch: SpriteBatch
     lateinit var font : BitmapFont
-    lateinit var shapeRenderer : ShapeRenderer
-    lateinit var input: InputMultiplexer
+    val shapeRenderer : ShapeRenderer by lazy { ShapeRenderer().apply {
+        setAutoShapeType(true)
+    } }
+    val input: InputMultiplexer by lazy { InputMultiplexer() }
 
     var init2d = false
     var init3d = false
 
     init {
-        input = InputMultiplexer()
-        Gdx.input.inputProcessor = input
-        init3D()
-        init2D()
-
     }
 
 
@@ -134,16 +131,11 @@ class TestBundle() {
         cam.update()
 
 
-
-        val
-
-        shapeRenderer = ShapeRenderer()
-        shapeRenderer.setAutoShapeType(true)
-
         init3d = true
     }
 
     fun init2D() {
+        UI.init()
         stage = Stage()
         _root = STable()
         _root.setFillParent(true)

@@ -2,8 +2,11 @@ package org.yunghegel.salient.engine.scene3d.component
 
 import com.badlogic.gdx.graphics.g3d.Model
 import org.yunghegel.gdx.utils.data.ID
+import org.yunghegel.gdx.utils.ext.instance
 import org.yunghegel.salient.engine.api.asset.type.ModelAsset
 import org.yunghegel.salient.engine.api.dto.component.ModelComponentDTO
+import org.yunghegel.salient.engine.api.ecs.BaseComponent
+import org.yunghegel.salient.engine.api.ecs.ComponentCloneable
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.scene.EditorScene
@@ -11,18 +14,32 @@ import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.graphics.shapes.Primitive
 import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.system.warn
+import kotlin.reflect.KClass
 
 
-class ModelComponent(model: ID, go: GameObject, modelAsset: ModelAsset? = null) : EntityComponent<Model>(modelAsset?.value,go) {
+class ModelComponent(model: ID, go: GameObject,val modelAsset: ModelAsset? = null) : EntityComponent<Model>(modelAsset?.value,go), ComponentCloneable<ModelComponent> {
 
     constructor(model:ModelAsset,go: GameObject) : this(model.handle,go) {
         this.value = model.value
         model.useAsset(model.value!!,go)
     }
 
+
+    override fun apply(comp: ModelComponent, target: GameObject) {
+        target.add(comp)
+        val renderableComponent = RenderableComponent(value!!.instance, target)
+        target.add(renderableComponent)
+        val meshComponent = MeshComponent(value!!.meshes,target)
+        target.add(meshComponent)
+    }
+
+    override fun clone(target: GameObject): ModelComponent {
+        return ModelComponent(meta.id,target,modelAsset)
+    }
+
     override val iconName: String = "model_object"
 
-
+    override val type: KClass<out BaseComponent> = ModelComponent::class
 
     val meta = Meta(model)
 

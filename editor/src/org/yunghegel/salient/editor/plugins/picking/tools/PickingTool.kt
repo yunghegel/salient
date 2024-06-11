@@ -5,6 +5,9 @@ import org.yunghegel.salient.editor.plugins.picking.systems.PickingSystem
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.api.tool.InputTool
 import org.yunghegel.salient.engine.api.tool.Tool
+import org.yunghegel.salient.engine.input.Input
+import org.yunghegel.salient.engine.ui.UI
+import org.yunghegel.salient.engine.ui.widgets.menu.ContextMenu
 
 class PickingTool( val pickingSystem : PickingSystem) : InputTool("picking_tool") {
 
@@ -23,6 +26,11 @@ class PickingTool( val pickingSystem : PickingSystem) : InputTool("picking_tool"
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         pickingSystem.pick(screenX.toFloat(),screenY.toFloat(),button,key,isDoubleClick)
+        if (button == Input.Buttons.RIGHT) ContextMenu().apply {
+            addOption("Delete") { }
+            addOption("Duplicate") { }
+            attachListener(UI.root)
+         }
         return super.touchDown(screenX, screenY, pointer, button)
     }
 

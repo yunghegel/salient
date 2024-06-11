@@ -11,15 +11,17 @@ import ktx.collections.GdxArray
 import org.yunghegel.gdx.utils.ext.collectNodes
 import org.yunghegel.gdx.utils.ext.createBoundsRenderable
 import org.yunghegel.gdx.utils.ext.each
+import org.yunghegel.salient.engine.api.ecs.BaseComponent
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.api.flags.DRAW_BOUNDS
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.SceneContext
+import kotlin.reflect.KClass
 
 class BoundsComponent(bounds: GdxArray<BoundingBox>,go: GameObject) : EntityComponent<GdxArray<BoundingBox>>(bounds,go){
 
     val renderable: GdxArray<RenderableProvider> = GdxArray()
-
+    override val type: KClass<out BaseComponent> = BoundsComponent::class
     override val renderer: Boolean = true
 
     init {

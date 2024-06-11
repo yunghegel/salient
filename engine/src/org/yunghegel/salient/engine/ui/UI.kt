@@ -116,6 +116,7 @@ object UI : UIModule(), Resizable {
 
 
     fun drawable(name:String, color : Color? = null) : Drawable {
+
         val drawable = skin.getDrawable(name)
         if (drawable is NinePatchDrawable && color !=null) return drawable.tint(color)
         return drawable

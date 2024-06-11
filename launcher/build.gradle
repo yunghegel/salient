@@ -15,7 +15,7 @@ ext {
 dependencies {
 
     implementation project(":editor")
-    testImplementation project(":tests")
+//    testImplementation project(":tests")
 
 }
 
@@ -39,7 +39,7 @@ jar {
     archiveFileName = "salient-${version}.jar"
 
     manifest {
-        attributes 'Main-Class': "org.yunghegel.salient.launcher.DesktopLauncher"
+        attributes 'Main-Class': "org.yunghegel.salient.launcher.exe.DesktopLauncher"
     }
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -48,11 +48,10 @@ jar {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 
-    doLast {
-//        jar executable
-    }
 
-    finalizedBy project.release
+    finalizedBy(release)
+
+
 }
 
 //application {

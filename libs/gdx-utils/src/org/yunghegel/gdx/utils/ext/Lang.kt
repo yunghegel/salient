@@ -80,4 +80,37 @@ fun <T:Any,K:Any> T.ifInstance(type: KClass<K>, block: (K) -> Unit) {
     }
 }
 
+infix fun Boolean.el(block: ()->Unit) {
+    if (this) block()
+}
+
 fun keyvalue(key: String, value: String) : Pair<String,String> = key to value
+
+class ResultBuilder<T> {
+    private var result: Result<T>? = null
+    private var value: T? = null
+    private var error: Throwable? = null
+
+    fun value(init: () -> T) {
+        value = init()
+    }
+
+    fun error(init: () -> Throwable) {
+        error = init()
+    }
+
+    fun build(): Result<T> {
+        result = if (value != null) {
+            Result.success(value!!)
+        } else {
+            Result.failure(error!!)
+        }
+        return result!!
+    }
+}
+
+inline fun <reified T> result(builderFunction: ResultBuilder<T>.() -> Unit): Result<T> {
+    val builder = ResultBuilder<T>()
+    builder.builderFunction()
+    return builder.build()
+}

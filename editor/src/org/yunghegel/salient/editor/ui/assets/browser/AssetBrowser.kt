@@ -12,6 +12,7 @@ import org.yunghegel.salient.editor.asset.AssetManager
 import org.yunghegel.salient.editor.plugins.picking.tools.HoverTool
 import org.yunghegel.salient.editor.scene.SceneManager
 import org.yunghegel.salient.engine.api.asset.Asset
+import org.yunghegel.salient.engine.events.asset.onAssetIncluded
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.layout.EditorFrame
 import org.yunghegel.salient.engine.ui.scene2d.STable
@@ -50,8 +51,11 @@ class AssetBrowser : STable(), SearchManager<Asset<*>,AssetActor,AssetsContainer
     init {
         add(container).grow()
         container.head.add(searchBar).growX().maxWidth(300f).right().padHorizontal(25f)
-
         setAllItems()
+
+        onAssetIncluded { event ->
+            setAllItems()
+        }
     }
 
     fun hookDropTarget(target: Actor, shouldaccept: (Payload)->Boolean, onAccept: (Payload?)->Unit) {

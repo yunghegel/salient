@@ -4,17 +4,22 @@ import com.badlogic.ashley.core.Component
 import com.badlogic.gdx.utils.Predicate
 import org.yunghegel.gdx.utils.data.EnumBitmask
 import org.yunghegel.gdx.utils.ext.each
+import org.yunghegel.salient.engine.api.properties.Type
+import org.yunghegel.salient.engine.api.properties.Typed
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.system.debug
+import kotlin.reflect.KClass
 
-abstract class BaseComponent() : Component {
+abstract class BaseComponent() : Component, Cloneable {
 
     enum class Routine {
         DEBUG,
         DEPTH,
         COLOR
     }
+
+    abstract val type : KClass<out BaseComponent>
 
     internal val debug = Routine.DEBUG
     internal val depth = Routine.DEPTH

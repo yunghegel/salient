@@ -19,7 +19,6 @@ abstract class TreeNode<T,A : TreeActor<T>>(val id: String? = null, var obj :T, 
         }
 
     val label = SLabel(nodeName)
-    val icon = SLabel("")
 
     override fun setExpanded(expanded: Boolean) {
         super.setExpanded(expanded)

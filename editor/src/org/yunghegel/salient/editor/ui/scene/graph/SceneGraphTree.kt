@@ -56,10 +56,10 @@ class SceneGraphTree(private var graph: SceneGraph) : TreeWidget<TreeNode<GameOb
         go.getChildren().toList()
     }
 
-    override var root: TreeNode<GameObject, GameObjectTable> = GameObjectNode("root",graph.root,GameObjectTable(graph.root))z
+    override var root: TreeNode<GameObject, GameObjectTable> = GameObjectNode("root",graph.root,GameObjectTable(graph.root))
 
 
-    private var tmp : Selection<GameObject> = Selection()
+    var tmp : Selection<GameObject> = Selection()
 
     val widthSupplier : ()->Float  = { width - plusMinusWidth()-(indentSpacing)}
 
@@ -103,7 +103,7 @@ class SceneGraphTree(private var graph: SceneGraph) : TreeWidget<TreeNode<GameOb
         val table = GameObjectTable(obj)
         table.buildActor(obj)
         val node = GameObjectNode(obj.id.toString(),obj,table)
-        map[obj] = node
+        map.getOrPut(root.obj, { root })
         obj.components.filterIsInstance<EntityComponent<*>>().forEach { component ->
             val componentTable = SceneGraphTree.ComponentTable(component,obj)
             componentTable.buildActor(obj)
@@ -153,7 +153,6 @@ class SceneGraphTree(private var graph: SceneGraph) : TreeWidget<TreeNode<GameOb
                         selection.add(node)
                     }
                 }
-
                 if (node is GameObjectNode) {
                     handleGameObjectSelect(node,rightClick)
                 } else if (node is ComponentObjectNode) {
@@ -188,7 +187,6 @@ class SceneGraphTree(private var graph: SceneGraph) : TreeWidget<TreeNode<GameOb
         override var title: SLabel = SLabel(gameObject.name)
         override var icon: Drawable? = UI.drawable(gameObject.iconName)
 
-        open val overflow = SImageButton("overflow-menu")
         open val visibleToggle = SImageButton("eye")
         open val lockToggle = SImageButton("lock")
 
@@ -203,7 +201,7 @@ class SceneGraphTree(private var graph: SceneGraph) : TreeWidget<TreeNode<GameOb
             left.add(title)
             add(left).pad(1f)
             add(right).growX().padHorizontal(3f)
-            add(overflow).padHorizontal(2f)
+            createOverflowMenu()
             right.add(lockToggle).padHorizontal(2f)
             right.add(visibleToggle).padHorizontal(2f)
             lockToggle.onChange { if (lockToggle.isChecked) {
@@ -218,6 +216,8 @@ class SceneGraphTree(private var graph: SceneGraph) : TreeWidget<TreeNode<GameOb
             } }
         }
 
+
+
     }
     open class ComponentTable(val component: EntityComponent<*>, obj : GameObject) :GameObjectTable(obj) {
 
@@ -225,7 +225,6 @@ class SceneGraphTree(private var graph: SceneGraph) : TreeWidget<TreeNode<GameOb
         override var icon: Drawable? = UI.drawable(component.iconName)
         override var iconImage: SImage = SImage(icon!!, 18)
 
-        override val overflow = SImageButton("overflow-menu")
         override val visibleToggle = SImageButton("eye")
         override val lockToggle = SImageButton("lock")
 

@@ -1,0 +1,21 @@
+void core(@DelegatesTo(Project.class) Closure closure)  {
+    ext.core.each { project ->
+        configure(project, closure)
+    }
+}
+
+void libs(@DelegatesTo(Project.class) Closure closure) {
+    ext.libs.each { project ->
+        configure(project, closure)
+    }
+}
+
+void when(boolean condition, @DelegatesTo(Project.class) Closure closure) {
+    if (condition) {
+        configure(closure)
+    }
+}
+
+void testing(@DelegatesTo(Project.class) Closure closure) {
+    configure(ext.testing, closure)
+}

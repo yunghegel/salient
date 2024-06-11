@@ -21,6 +21,7 @@ import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.scene2d.STree
 import org.yunghegel.salient.engine.ui.tree.TreeActor
+import org.yunghegel.salient.engine.ui.tree.TreeWidget
 import kotlin.math.min
 
 open class ObjectTable(obj: GameObject) : TreeActor<GameObject>(obj) {
@@ -31,14 +32,25 @@ open class ObjectTable(obj: GameObject) : TreeActor<GameObject>(obj) {
 
     val buttonLabelContainer = STable()
     val otherActorsTable = STable()
-    val overflow = SImageButton("overflow-menu")
     val visibleToggle = SImageButton("eye")
     val lockToggle = SImageButton("lock")
 
-    override val pixel: TextureRegion? = createColorPixel(Color(0.18f, 0.18f, 0.18f, 1f))
+    override val pixel: TextureRegion = createColorPixel(Color(0.18f, 0.18f, 0.18f, 1f))
 
     init {
         otherActorsTable.align(Align.right)
+
+    }
+
+    fun initOverflowOptions() {
+        addOverflowOption("Delete", "Cleanup") {
+            obj.scene.graph.removeGameObject(obj)
+            node.remove()
+        }
+        addOverflowOption("Duplicate", "Copy") {
+            val clone = obj.clone()
+            obj.scene.graph.addGameObject(clone, obj.getParent())
+        }
 
     }
 
@@ -52,7 +64,10 @@ open class ObjectTable(obj: GameObject) : TreeActor<GameObject>(obj) {
         buttonLabelContainer.add(label)
         add(buttonLabelContainer).pad(1f)
         add(otherActorsTable).growX().padHorizontal(3f)
-        add(overflow).padHorizontal(2f)
+        createOverflowMenu() {
+            cell ->
+            cell.size(16f)
+        }
         if (this is ComponentTable) return
         otherActorsTable.add(lockToggle).padHorizontal(2f)
         otherActorsTable.add(visibleToggle).padHorizontal(2f)
@@ -70,8 +85,7 @@ open class ObjectTable(obj: GameObject) : TreeActor<GameObject>(obj) {
             obj.clear(GameObjectFlag.RENDER)
         }
         }
-
-
+        initOverflowOptions()
     }
 
     override fun getPrefWidth(): Float {
@@ -84,17 +98,17 @@ open class ObjectTable(obj: GameObject) : TreeActor<GameObject>(obj) {
     }
 
     override fun drawBackground(batch: Batch, parentAlpha: Float, x: Float, y: Float) {
-
+        super.drawBackground(batch, parentAlpha, x, y)
+//
+        batch.draw(pixel, node.tree.x, y-1, node.tree.width, 1f)
 
         if (visualIndex % 2 == 0) {
-
-            batch.draw(pixel, node.tree.x, y-1, node.tree.width, node.height+2)
         }
-        batch.color.set(0.7f, 0.7f, 0.7f, 1f)
-        batch.draw(pixel, node.tree.x, y-1, node.tree.width, 1f)
-        batch.color.alpha(1f)
+//        batch.color.set(0.7f, 0.7f, 0.7f, 1f)
+//        batch.draw(pixel, node.tree.x, y-1, node.tree.width, 1f)
+//        batch.color.alpha(1f)
 
-        super.drawBackground(batch, parentAlpha, x, y)
+
     }
 
 

@@ -131,7 +131,7 @@ class FileTree(val rootObj: FileHandle) : TreeWidget<TreeNode<FileHandle, FileTr
                     state.hovered = target
                 }
 
-                if (target != null && target != node) {
+                if (target != node) {
                     selection.set(target)
                     node.actor.setOrigin(node.actor.x,node.actor.y)
                     val targetIndex = targetParent.children.indexOf(target)
@@ -151,11 +151,8 @@ class FileTree(val rootObj: FileHandle) : TreeWidget<TreeNode<FileHandle, FileTr
                         dynamicRemoveReinsert(node, target)
                     }
                 }
-//              there are a set of conditions which allow a file to be dropped
-//              we cannot drop a file on itself, or on a parent of itself
-//              we cannot drop a file on a child of itself, or a folder onto a file
-//              we cannot drop a file on a file with the same name
-                if (target != null && verifyDropIntegrity(node, target, root)) {
+
+                if (verifyDropIntegrity(node, target, root)) {
                     restore()
                     return true
                 } else
@@ -256,14 +253,12 @@ class FileTree(val rootObj: FileHandle) : TreeWidget<TreeNode<FileHandle, FileTr
             actor = FileTable(file,parentRef ?: this@FileTree).apply {
                 node = this@FileNode
             }
-            if (file.isDirectory && file.name.startsWith(".")) isExpanded = false
-            else isExpanded = true
+            isExpanded = false
         }
 
         override fun setExpanded(expanded: Boolean) {
             super.setExpanded(expanded)
         }
-
     }
 
     inner class FileTable(val file: FileHandle, sizingactor: Actor) : TreeActor<FileHandle>(file) {
@@ -288,9 +283,8 @@ class FileTree(val rootObj: FileHandle) : TreeWidget<TreeNode<FileHandle, FileTr
             label.touchable = Touchable.disabled
             label.wrap = true
 
-            val button = SImageButton("overflow-menu")
 
-            button.pop {
+            overflow.pop {
                 val label = SLabel("Open")
                 add(label).row()
                 label.onClick {
@@ -304,7 +298,7 @@ class FileTree(val rootObj: FileHandle) : TreeWidget<TreeNode<FileHandle, FileTr
                 tableactors = table
             }.growX()
 
-            add(button).size(18f).padLeft(4f)
+            add(overflow).size(18f).padLeft(4f)
 
 
 

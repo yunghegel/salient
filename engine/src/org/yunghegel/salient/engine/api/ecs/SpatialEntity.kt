@@ -2,6 +2,7 @@ package org.yunghegel.salient.engine.api.ecs
 
 import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Entity
+import kotlin.reflect.KClass
 
 const val VISIBLE = 1
 const val SELECTED = 2
@@ -18,6 +19,10 @@ open class SpatialEntity : Entity() {
 
     init {
         flags = VISIBLE
+    }
+
+    operator fun <T:BaseComponent> get(type: KClass<T>): T? {
+        return entityComponents[type.java] as T?
     }
 
     fun checkFlag(flag: Int): Boolean {

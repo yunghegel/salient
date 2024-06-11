@@ -51,6 +51,7 @@ class AssetsView: STable() {
             }
 
         }
+
     }
 
 

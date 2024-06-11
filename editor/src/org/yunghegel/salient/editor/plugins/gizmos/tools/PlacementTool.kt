@@ -63,9 +63,6 @@ class PlacementTool : InputTool("placement_tool") {
         updateRoutine = pipeline.createRoutine(State.COLOR_PASS,"placement_tool", { !active }) { delta ->
             val fbo = pipeline.buffers["placement_tool"]!!
             with(context) {
-
-
-
                     update(delta)
                     updatePosition()
                     (UI.root as Gui).updateviewport()
@@ -79,9 +76,6 @@ class PlacementTool : InputTool("placement_tool") {
                         batch.render(it,context)
                     }
                     batch.end()
-
-
-
             }
 
         }
