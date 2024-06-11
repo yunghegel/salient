@@ -47,7 +47,7 @@ class ToolSystem : BaseSystem("ToolSystem", State.OVERLAY_PASS, Family.one(ToolC
                    tool.render(spriteBatch)
                 }
                 Tool.RenderUsage.MODEL_BATCH -> {
-                    tool.render(modelBatch)
+                    tool.render(modelBatch,environment)
                 }
             }
         }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.MathUtils
@@ -149,7 +150,7 @@ abstract class Tool(override val name:String) : InputMultiplexer(), Named {
 
     }
 
-    open fun render(modelBatch: ModelBatch) {
+    open fun render(modelBatch: ModelBatch, environment: Environment?) {
 
     }
 

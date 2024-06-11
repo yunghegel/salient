@@ -3,6 +3,7 @@ package org.yunghegel.salient.engine.scene3d
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.PerspectiveCamera
+import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.utils.DefaultTextureBinder
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext
@@ -19,6 +20,7 @@ import org.yunghegel.salient.engine.api.scene.SceneEnvironment
 import org.yunghegel.salient.engine.graphics.BasicRenderer
 import org.yunghegel.salient.engine.graphics.GFX
 import org.yunghegel.salient.engine.graphics.SharedGraphicsResources
+import org.yunghegel.salient.engine.helpers.BlinnPhongBatch
 import org.yunghegel.salient.engine.helpers.DepthBatch
 import org.yunghegel.salient.engine.helpers.WireBatch
 import org.yunghegel.salient.engine.system.inject
@@ -36,12 +38,19 @@ class SceneContext(private var scene:EditorScene) : SceneEnvironment(), Disposab
     override val viewport: ScreenViewport
     override val debugContext : DebugContext
     override val shapeCache : ShapeCache
+    override val blinnPhongBatch: BlinnPhongBatch
+    override val environment : Environment
+    override val pbrBatch: ModelBatch
+
     val renderer : BasicRenderer
 
     init {
 
         modelBatch = ModelBatch(PBRShaderProvider(PBRShaderProvider.createDefaultConfig()), SceneRenderableSorter())
         depthBatch = DepthBatch(PBRDepthShaderProvider(PBRDepthShaderProvider.createDefaultConfig()))
+        pbrBatch = ModelBatch(PBRShaderProvider(PBRShaderProvider.createDefaultConfig()), SceneRenderableSorter())
+        blinnPhongBatch = BlinnPhongBatch()
+        environment = Environment()
         wireBatch = WireBatch()
         orthographicCamera = OrthographicCamera(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
         perspectiveCamera = PerspectiveCamera(  67f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
