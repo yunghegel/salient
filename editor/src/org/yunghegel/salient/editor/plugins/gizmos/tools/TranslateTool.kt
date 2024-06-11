@@ -9,16 +9,12 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import net.mgsx.gltf.scene3d.attributes.PBRColorAttribute
 import org.yunghegel.gdx.utils.selection.Picker
 import org.yunghegel.salient.editor.plugins.gizmos.systems.GizmoSystem
-import org.yunghegel.salient.editor.plugins.picking.systems.PickingSystem
-
 import org.yunghegel.salient.engine.graphics.TransformState
 import org.yunghegel.salient.engine.system.info
-import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.tool.InputTool
 import org.yunghegel.salient.engine.tool.PickableTool
 import org.yunghegel.salient.engine.tool.ToolHandle
 
-class TranslateTool(val system : GizmoSystem) : PickableTool("translate_tool", PickingSystem.picker) {
+class TranslateTool(val system : GizmoSystem) : PickableTool("translate_tool",Picker()) {
 
     val xHandle : ToolHandle
     val yHandle : ToolHandle
@@ -108,6 +104,15 @@ class TranslateTool(val system : GizmoSystem) : PickableTool("translate_tool", P
     override fun handleEndPick(handle: ToolHandle) {
         transformState = TransformState.None
         handle.restoreColor()
+    }
+
+    companion object {
+
+        const val ARROW_THICKNESS: Float = 0.25f
+
+        const val ARROW_CAP_SIZE: Float = 0.1f
+
+        const val ARROW_DIVISIONS: Int = 12
     }
 
 

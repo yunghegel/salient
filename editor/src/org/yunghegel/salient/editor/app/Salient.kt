@@ -55,6 +55,7 @@ import kotlin.reflect.KClass
  * Application entry point. Responsible for building all resource and rendering pipelines and bootstrapping the editor context
  */
 
+@Suppress("UNCHECKED_CAST")
 class Salient : ApplicationAdapter() {
 
 
@@ -73,11 +74,18 @@ class Salient : ApplicationAdapter() {
 
     val index = Index<Named>()
 
+    data class PluginSet(val tools:MutableList<Tool>?,val systems:MutableList<System<Project,Scene>>?,val plugins:MutableList<Plugin>?)
+
+    val registry : PluginSet
 
     init {
         index.types[Tool::class.java] = mutableListOf()
         index.types[System::class.java] = mutableListOf()
         index.types[Plugin::class.java] = mutableListOf()
+
+        registry = PluginSet(index.list(Tool::class.java)!! as MutableList<Tool>,index.list(System::class.java)!! as MutableList<System<Project,Scene>>,index.list(Plugin::class.java)!! as MutableList<Plugin>)
+
+
     }
 
     override fun create() {
@@ -232,7 +240,16 @@ class Salient : ApplicationAdapter() {
             colorTex?.drawf(spriteBatch)
         }
         val outliner : OutlineDepth = inject()
-
+        once(AFTER_COLOR_PASS) { _ ->
+            registry.tools?.let { toolset ->
+                for (i in 0 until toolset.size) {
+                    val tool = toolset[i]
+                    if (tool.active) {
+                        tool.render(modelBatch,environment)
+                    }
+                }
+            }
+        }
         once(OVERLAY_PASS) {_ ->
             val buf = buffers["outline"]
             with(Outliner.settings) {
