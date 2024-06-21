@@ -31,6 +31,7 @@ object GFX : GraphicsModule(), SharedGraphicsResources {
         shapeDrawer = ShapeDrawer(spriteBatch)
         grid = Grid()
         shapeRenderer = ShapeRenderer()
+        shapeRenderer.setAutoShapeType(true)
 
         bindSingleton(spriteBatch)
         bindSingleton(shapeDrawer)
@@ -38,7 +39,7 @@ object GFX : GraphicsModule(), SharedGraphicsResources {
         bindSingleton(grid)
         bindSingleton(shapeRenderer)
         bindSingleton(whitePixel)
-
+        bind(GridConfig::class) { grid.config }
         bind(SharedGraphicsResources::class) { this }
 
         info("Shared graphics context built for injection ;")

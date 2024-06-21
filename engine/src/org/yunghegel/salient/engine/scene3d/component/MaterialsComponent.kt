@@ -1,6 +1,7 @@
 package org.yunghegel.salient.engine.scene3d.component
 
 import com.badlogic.gdx.graphics.g3d.Material
+import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 import ktx.collections.GdxArray
 import net.mgsx.gltf.scene3d.utils.MaterialConverter
@@ -19,10 +20,26 @@ class MaterialsComponent(val materials: GdxArray<Material>,go: GameObject) : Ent
         init {
             materials.each { mat ->
                 mat.forEach { println(it::class) }
-                convertToPBR(mat)
+//                convertToPBR(mat)
 
             }
         }
+
+        override var value: GdxArray<Material>?
+            get() = go[RenderableComponent::class]?.let { comp ->
+                if (comp.value is ModelInstance?) {
+                   (comp.value as ModelInstance?)?.materials
+                } else null
+            }
+            set(value) {
+                go[RenderableComponent::class]?.let { comp ->
+                    val renderable = comp.value
+                    if (renderable is ModelInstance?) {
+                        renderable?.materials!!.clear()
+                        renderable?.materials!!.addAll(value)
+                    }
+                }
+            }
 
     override val iconName: String = "material_object"
 

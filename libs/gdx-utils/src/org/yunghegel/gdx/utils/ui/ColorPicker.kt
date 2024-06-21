@@ -17,7 +17,7 @@ class ColorPicker @JvmOverloads constructor(
     colorModel: Color,
     alpha: Boolean,
     skin: Skin,
-    private val callback: Runnable? = null
+    var callback: ((Color)->Unit)? = null
 ) : Table(skin) {
     private val colorModel: Color
     private val hsvModel = FloatArray(3)
@@ -125,14 +125,17 @@ class ColorPicker @JvmOverloads constructor(
 
     private fun rgbChanged() {
         colorModel.toHsv(hsvModel)
+        updateColorVectors()
     }
 
     private fun hsvChanged() {
         colorModel.fromHsv(hsvModel)
+        updateColorVectors()
     }
 
     private fun alphaChanged() {
         alphaPreview!!.setColor(colorModel.a, colorModel.a, colorModel.a, 1f)
+        updateColorVectors()
     }
 
     private fun addColorVector(
@@ -167,6 +170,6 @@ class ColorPicker @JvmOverloads constructor(
             cv.slider.setProgrammaticChangeEvents(true)
         }
         colorPreview.setColor(colorModel.r, colorModel.g, colorModel.b, 1f)
-        callback?.run()
+        callback?.invoke(colorModel)
     }
 }

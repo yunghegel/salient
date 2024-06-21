@@ -6,11 +6,31 @@ import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
 import com.ray3k.stripe.PopTableClickListener
 import ktx.actors.onClick
+import org.yunghegel.gdx.utils.ext.dimensions
 import org.yunghegel.salient.engine.ui.UI
 open class STable : Table(UI.skin) {
 
     private val popups: MutableMap<()->Boolean, PopTable> = mutableMapOf()
     private val triggerAllHidden = false
+
+    var widthFunction : (() -> Float)? = null
+    var heightFunction : (() -> Float)? = null
+
+    override fun getPrefWidth(): Float {
+        if (widthFunction!=null) return widthFunction!!.invoke()
+        return super.getPrefWidth()
+    }
+
+    override fun getPrefHeight(): Float {
+        if (heightFunction!=null) return heightFunction!!.invoke()
+        return super.getPrefHeight()
+    }
+
+    fun constrainAsPercentOfActor(actor:Actor,percentW: Float, percentH: Float, minimum: Float, maximum:Float) {
+        val (w,h) = actor.dimensions
+        widthFunction = { Math.min(Math.max(w*percentW,minimum),maximum) }
+        heightFunction = { Math.min(Math.max(h*percentH,minimum),maximum) }
+    }
 
     fun wrap(): STable {
         val table = STable()
@@ -53,6 +73,8 @@ open class STable : Table(UI.skin) {
             }
         }
     }
+
+
 
 
 

@@ -22,6 +22,9 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import ktx.actors.setPosition
+import net.mgsx.gltf.scene3d.shaders.PBRShaderConfig
+import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider
+
 import org.yunghegel.gdx.utils.ext.appheight
 import org.yunghegel.gdx.utils.ext.appwidth
 import org.yunghegel.gdx.utils.ext.each
@@ -118,7 +121,7 @@ class TestBundle() {
         camController = CameraInputController(cam)
         input.addProcessor(camController)
 
-        batch = ModelBatch()
+        batch = ModelBatch(PBRShaderProvider(PBRShaderConfig()))
 
         depth = ModelBatch(DepthShaderProvider())
 

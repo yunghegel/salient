@@ -168,8 +168,8 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•⌘"
 	}
 	bold: {
-		font: bfont.ttf
-		size: 10
+		font: DejaVuSans-Bold.ttf
+		size: 12
 		mono: false
 		color: white
 		gamma: 1.8
@@ -612,13 +612,15 @@ com.kotcrab.vis.ui.widget.spinner.Spinner$SpinnerStyle: {
 com.ray3k.stripe.DraggableList$DraggableListStyle: {
 	default-horizontal: {
 		background: list-background-dark
-		dividerUp: splitpane-horizontal-pressed
-		dividerOver: splitpane-horizontal-pressed
+		dividerUp: dark-gray
+		dividerOver: gray
+		transparencyOnDrag: 0.5
 	}
 	default-vertical: {
 		background: list-background-dark
-		dividerUp: splitpane-vertical-pressed
-		dividerOver: splitpane-vertical-pressed
+		dividerUp: dark-gray
+		dividerOver: gray
+		transparencyOnDrag: 0.5
 	}
 }
 com.ray3k.stripe.PopTable$PopTableStyle: {
@@ -986,7 +988,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 		imageChecked: point-light-off
 	}
 	color: {
-		parent: compact
+
 		imageUp: color
 	}
 	link: {
@@ -1329,6 +1331,12 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 		font: default-small
 		disabledFontColor: gray
 	}
+	large: {
+		parent: default
+		font: default-large
+		fontColor: white
+		disabledFontColor: gray
+	}
 	menu: {
 		parent: menuitem
 		font: default
@@ -1474,5 +1482,6 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 			titleBackground: panel_title_background
 		}
 	}
+
 
 }

@@ -3,11 +3,18 @@ package org.yunghegel.salient.engine.api.scene
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.DirectionalLightsAttribute
+import com.badlogic.gdx.graphics.g3d.attributes.PointLightsAttribute
+import com.badlogic.gdx.graphics.g3d.attributes.SpotLightsAttribute
 import net.mgsx.gltf.scene3d.attributes.FogAttribute
 import net.mgsx.gltf.scene3d.lights.DirectionalLightEx
 import org.yunghegel.salient.engine.api.dto.SceneEnvironmentDTO
 
 abstract class SceneEnvironment : Environment() {
+
+    val pointLightsAttribute = PointLightsAttribute()
+    val directionalLightsAttribute = DirectionalLightsAttribute()
+    val spotLightsAttribute = SpotLightsAttribute()
+
     companion object {
 
         fun applyDTO(env: SceneEnvironment, data: SceneEnvironmentDTO) {

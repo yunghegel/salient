@@ -11,6 +11,17 @@ interface EditorSceneGraph : UpdateRoutine {
 
     fun removeGameObject(gameObject: GameObject)
 
+    fun find(name: String): GameObject? {
+        var go : GameObject? = null
+        root.recurse { if (it.name == name) { go = it; return@recurse } }
+        return go
+    }
+
+    fun find(id:Int) : GameObject? {
+        var go : GameObject? = null
+        root.recurse { if (it.id == id) { go = it; return@recurse } }
+        return go
+    }
 
 
 

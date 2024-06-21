@@ -10,10 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup
 import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.utils.ObjectSet
 import com.kotcrab.vis.ui.util.ToastManager
 import com.kotcrab.vis.ui.widget.VisImageButton
 import com.kotcrab.vis.ui.widget.VisTable
 import com.kotcrab.vis.ui.widget.toast.Toast
+import com.kotcrab.vis.ui.widget.toast.ToastTable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import ktx.actors.onChange
@@ -37,6 +39,7 @@ import org.yunghegel.salient.engine.ui.widgets.viewport.button
 import java.io.PrintStream
 import java.util.*
 import javax.swing.text.StyleConstants.setAlignment
+import kotlin.collections.HashSet
 import kotlin.concurrent.timer
 import kotlin.concurrent.timerTask
 import kotlin.math.max
@@ -45,20 +48,15 @@ import kotlin.math.max
 class Notifications(val stage: Stage,group: Group) : ToastManager(group) {
 
     private val pending : Stack<SToast> = Stack()
-    val shown : Stack<SToast> = Stack()
+
+
     var current : SToast? = null
+    val set = ObjectSet<SToast>()
+    var active = 0
+        get() = set.size
 
     val gui : EditorFrame by lazy { UI.root }
 
-    override fun show(toast: Toast?,timeSec:Float) {
-        if (current != null) (current as SToast?)!!.closeToast()
-        current = toast as SToast
-        current?.onClose = {
-            current = null
-        }
-
-        super.show(toast, timeSec)
-    }
 
 
 
@@ -79,13 +77,20 @@ class Notifications(val stage: Stage,group: Group) : ToastManager(group) {
         setAlignment(BOTTOM_LEFT)
     }
 
-
+    override fun remove(toast: Toast?): Boolean {
+        if (toast is SToast) {
+            toast.onClose()
+        }
+        return super.remove(toast)
+    }
 
     fun push(notification: SToast) {
-        pending.push(notification)
-        if (notification.configItem) { current?.closeToast(); show(notification) }
-        else show(notification, 5f)
+        if(toasts.size >= 3) {
+            val last = toasts.first()
+            remove(last)
+        }
 
+        show(notification, 5f)
     }
 
     fun post(notification: SToast, next: SToast? = if (pending.isNotEmpty()) pending.pop() else null) {
@@ -126,7 +131,7 @@ class Notifications(val stage: Stage,group: Group) : ToastManager(group) {
 }
 
 fun notify(message: String, severity: Severity = Severity.INFO, strategy: AlertStrategy = AlertStrategy.INDICATED) {
-    val toast = toast(false, title = severity.name) {
+    val toast = toast(false, title = severity.name, severity = severity) {
         add(SLabel(message).apply {
             wrap = true
         }).minWidth(150f).growX().row()
@@ -146,7 +151,7 @@ fun alert(message:String) {
 fun toast(submitButton:Boolean = true, strategy:AlertStrategy= AlertStrategy.IMMEDIATE, severity: Severity = Severity.INFO,title : String = "Notification", build: InputTable.()->Unit) : SToast {
     val content = InputTable(title)
     content.config(build)
-    val toast = SToast(content,title)
+    val toast = SToast(strategy,severity,content,title)
     if (submitButton) {
 
         content.add(content.submitButton).pad(4f)
@@ -156,12 +161,12 @@ fun toast(submitButton:Boolean = true, strategy:AlertStrategy= AlertStrategy.IMM
     return toast
 }
 
-class SToast(val strategy:AlertStrategy, val severity: Severity,val content: Table) : Toast(content) {
+class SToast(val strategy:AlertStrategy, val severity: Severity,val content: Table, title:String?=null) : Toast(content) {
     constructor(content: Table) : this(AlertStrategy.IMMEDIATE, Severity.INFO, content)
     constructor(content:Table, title:String) : this(AlertStrategy.IMMEDIATE, Severity.INFO, content) {
         titleText = title
     }
-    var titleText = severity.name
+    var titleText = title ?: severity.name
         set(value) {
             field = value
             title.setText(value)
@@ -171,16 +176,20 @@ class SToast(val strategy:AlertStrategy, val severity: Severity,val content: Tab
     var configItem = true
 
     val title = SLabel(titleText).apply {
-        when(severity) {
-            Severity.INFO -> color = Color.WHITE
-            Severity.WARNING -> color = Color.YELLOW
-            Severity.ERROR -> color = Color.ORANGE
-            Severity.CRITICAL -> color = Color.RED
+        color = when(severity) {
+            Severity.INFO -> Color.WHITE
+            Severity.WARNING -> Color.YELLOW
+            Severity.ERROR -> Color.ORANGE
+            Severity.CRITICAL -> Color.RED
         }
     }
 
     val result : Result?
         get() = if (content is InputTable) content.result else null
+
+    var closed = false
+
+    var closedCb : ()->Unit = {}
 
     init {
         build()
@@ -189,7 +198,7 @@ class SToast(val strategy:AlertStrategy, val severity: Severity,val content: Tab
     fun build() {
         mainTable.clearChildren()
         val exit = VisImageButton("toast")
-        exit.onChange { close() }
+        exit.onChange { fadeOut() }
         mainTable.add(table {
             child {
                 add(title).growX().left()
@@ -203,7 +212,7 @@ class SToast(val strategy:AlertStrategy, val severity: Severity,val content: Tab
         }).grow()
         if (content is InputTable) {
             useResult = content.submit
-            content.submitButton.onChange { closeToast() }
+            content.submitButton.onChange { fadeOut() }
         }
     }
 
@@ -211,9 +220,13 @@ class SToast(val strategy:AlertStrategy, val severity: Severity,val content: Tab
         close()
     }
 
+
+
     override fun close() {
-        onClose()
         result?.let { useResult(it) }
         super.close()
     }
+
+
+
 }

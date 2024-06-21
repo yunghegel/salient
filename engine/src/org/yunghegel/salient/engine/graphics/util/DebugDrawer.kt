@@ -28,27 +28,32 @@ class DebugDrawer {
     var batch: SpriteBatch = SpriteBatch()
 
     fun drawWireDisc(position: Vector3, axis: Vector3, radius: Float) {
-        begin()
+//        begin()
         drawWireDiscInternal(position, axis, radius)
-        end()
+//        end()
+    }
+
+    fun drawLine(start: Vector3, end: Vector3) {
+        renderer.line(start, end)
     }
 
     fun drawWireSphere(position: Vector3, radius: Float) {
-        begin()
+//        begin()
+        if(camera == null) return
         drawWireSphereInternal(position, radius)
-        end()
+//        end()
     }
 
     fun drawWireCube(position: Vector3, size: Vector3) {
-        begin()
+//        begin()
         drawWireCubeInternal(position, size)
-        end()
+//        end()
     }
 
     fun drawWireFrustum(frustum: Frustum) {
-        begin()
+//        begin()
         drawWireFrustumInternal(frustum)
-        end()
+//        end()
     }
 
     fun drawWireCone(position: Vector3, axis: Vector3, radius: Float, height: Float) {
@@ -62,7 +67,7 @@ class DebugDrawer {
         Gdx.gl.glDisable(GL20.GL_DEPTH_TEST)
         Gdx.gl.glLineWidth(1f)
 
-        camera = inject()
+
 
         renderer.projectionMatrix = (camera as PerspectiveCamera).combined
         renderer.begin(ShapeRenderer.ShapeType.Line)
@@ -118,9 +123,9 @@ class DebugDrawer {
 
     private fun drawWireSphereInternal(position: Vector3, radius: Float) {
         // Draw axially aligned discs
-        //drawWireDisc(origin, Vector3.X, radius);
-        //drawWireDisc(origin, Vector3.Y, radius);
-        //drawWireDisc(origin, Vector3.Z, radius);
+        drawWireDisc(position, Vector3.X, radius);
+        drawWireDisc(position, Vector3.Y, radius);
+        drawWireDisc(position, Vector3.Z, radius);
 
         // Draw disc that encompasses sphere according to camera perspective.
 
@@ -272,7 +277,7 @@ class DebugDrawer {
     }
 
     companion object {
-        private var camera: PerspectiveCamera? = null
+        private val camera: PerspectiveCamera? by lazy { inject() }
         private var color: Color = Color.WHITE
 
         fun setColor(color: Color) {

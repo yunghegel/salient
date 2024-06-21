@@ -1,7 +1,10 @@
 package org.yunghegel.salient.engine.ui.layout
 
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import kotlinx.serialization.json.JsonNull.content
 import ktx.actors.onChange
 import org.yunghegel.gdx.utils.ext.alpha
 import org.yunghegel.gdx.utils.ui.ToggleContainer
@@ -23,14 +26,14 @@ open class CollapsePanel(val title: String, val icon: String?=null, val contentA
     init {
         content = contentActor ?: STable().apply { add("Empty")}
         contentContainer.actor = content
-        pad(4f)
+
         contentContainer.fill()
         if(icon!=null) {
             createIcon(icon)
         }
         createTitle(title,"")
         val expandCollapse = SImageButton("expand_collapse")
-        addButton(expandCollapse)
+//        addButton(expandCollapse)
 
         add(contentContainer).expand().fill().row()
         expandCollapse.onChange {
@@ -41,6 +44,15 @@ open class CollapsePanel(val title: String, val icon: String?=null, val contentA
         titleTable.background = UI.drawable("tab_down",Color(0.5f,0.5f,0.5f,0.25f))
         content.skin= UI.skin
         contentContainer.background = UI.drawable("tab_panel", Color(0.8f,0.8f,0.8f,1f).alpha(0.2f))
+
+        titleTable.addListener(object: ClickListener() {
+            override fun clicked(event: InputEvent?, x: Float, y: Float) {
+                if (tapCount == 2) {
+                    toggle()
+                }
+            }
+        })
+
 
     }
 

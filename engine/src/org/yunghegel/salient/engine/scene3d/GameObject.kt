@@ -28,6 +28,7 @@ import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.gdx.utils.ui.Hoverable
 import org.yunghegel.salient.engine.api.asset.type.ModelAsset
+import org.yunghegel.salient.engine.api.dto.component.MaterialComponentDTO
 import org.yunghegel.salient.engine.api.ecs.ComponentCloneable
 import org.yunghegel.salient.engine.scene3d.component.*
 import org.yunghegel.salient.engine.system.debug
@@ -108,6 +109,11 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
         if (component is LightComponent) tag("light")
         super.add(component)
         return this
+    }
+
+    fun recurse(fn: (GameObject) -> Unit) {
+        fn(this)
+        children.forEach { it.recurse(fn) }
     }
 
     override fun <T : Component> remove(componentClass: Class<T>?): T? {
@@ -206,6 +212,14 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
                         go.add(it1)
                         info("ModelComponent added to GameObject")
                     }
+                    "MaterialsComponent" -> {
+                        val matdto = it as MaterialComponentDTO
+                        go.get(MaterialsComponent::class)?.let { comp ->
+                            matdto.usages.forEach { id ->
+
+                            }
+                        }
+                    }
                 }
             }
             return go
@@ -222,6 +236,15 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
                     is ModelComponent -> {
                         dto.components.add(ModelComponent.toDTO(it, model))
                         info("ModelComponent added to DTO")
+                    }
+                    is MaterialsComponent -> {
+                        val matdto = MaterialComponentDTO()
+                        it.materials.forEach {
+                            info("serializing material ${it.id}")
+                            matdto.usages.add(it.id)
+                        }
+                        matdto.type = "MaterialsComponent"
+                        dto.components.add(matdto)
                     }
                 }
             }

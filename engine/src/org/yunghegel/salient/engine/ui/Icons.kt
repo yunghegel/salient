@@ -39,24 +39,24 @@ enum class Icons(val path: String) {
 
     val loc : String by lazy { basepath + path + ext }
 
-    val texture : Texture = Texture(loc)
-    val drawable : TextureRegionDrawable = TextureRegionDrawable(texture)
-    val img : SImage = SImage(drawable)
+    val texture : Texture by lazy { Texture(loc) }
+    val drawable : TextureRegionDrawable by lazy {  TextureRegionDrawable(texture) }
+    val img : SImage by lazy {  SImage(drawable) }
 
 
 
 
     companion object {
 
-        val folderIcon = TextureRegionDrawable(Texture("skin/icons/default-folder.png"))
-        val openFolderIcon = TextureRegionDrawable(Texture("skin/icons/default-fileopen.png"))
-        val moveFolderIcon = TextureRegionDrawable(Texture("skin/icons/default-folder-move.png"))
-        val fileIcon = TextureRegionDrawable(Texture("skin/icons/file_16x16.png"))
-        val projectFile = TextureRegionDrawable(Texture("skin/icons/project_file.png"))
-        val sceneFile = TextureRegionDrawable(Texture("skin/icons/scene_file.png"))
-        val materialFile = TextureRegionDrawable(Texture("skin/icons/material_file.png"))
-        val textureFile = TextureRegionDrawable(Texture("skin/icons/texture_file.png"))
-        val modelFile = TextureRegionDrawable(Texture("skin/icons/model_file.png"))
+        val folderIcon by lazy { TextureRegionDrawable(Texture("skin/icons/default-folder.png")) }
+        val openFolderIcon by lazy { TextureRegionDrawable(Texture("skin/icons/default-fileopen.png")) }
+        val moveFolderIcon by lazy { TextureRegionDrawable(Texture("skin/icons/default-folder-move.png")) }
+        val fileIcon by lazy { TextureRegionDrawable(Texture("skin/icons/file_16x16.png")) }
+        val projectFile by lazy { TextureRegionDrawable(Texture("skin/icons/project_file.png")) }
+        val sceneFile by lazy { TextureRegionDrawable(Texture("skin/icons/scene_file.png")) }
+        val materialFile by lazy { TextureRegionDrawable(Texture("skin/icons/material_file.png")) }
+        val textureFile by lazy { TextureRegionDrawable(Texture("skin/icons/texture_file.png")) }
+        val modelFile by lazy { TextureRegionDrawable(Texture("skin/icons/model_file.png")) }
 
         private const val basepath = "skin/icons/"
         private const val ext = ".png"

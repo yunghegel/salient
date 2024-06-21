@@ -27,14 +27,17 @@ class BeforeDepthPassSystem : StateSystem(State.BEFORE_DEPTH_PASS)
 class DepthPassSystem : StateSystem(State.DEPTH_PASS)
 class BeforeColorPassSystem : StateSystem(State.BEFORE_COLOR_PASS)
 class ColorPassSystem : StateSystem(State.COLOR_PASS)
+class AfterColorPassSystem : StateSystem(State.AFTER_COLOR_PASS)
+class BeforeUIPassSystem : StateSystem(State.BEFORE_UI_PASS)
 class UIPassSystem : StateSystem(State.UI_PASS)
 class OverlayPassSystem : StateSystem(State.OVERLAY_PASS)
+
 
 /**
  * Enumeration of necessary render states that must occur in a specific order; at particular moments we have to access the OpenGL context
  * and modify it to support the rendering of things in a certain order
  */
-enum class State {
+enum class State :Component {
     INIT(),
     UI_LOGIC,
     PREPARE_SCENE,
@@ -43,6 +46,7 @@ enum class State {
     BEFORE_COLOR_PASS,
     COLOR_PASS,
     AFTER_COLOR_PASS,
+    BEFORE_UI_PASS,
     UI_PASS,
     OVERLAY_PASS;
 }
@@ -55,24 +59,36 @@ enum class State {
  * The function is executed in the same order every time since we map the enum ordinal to the int priority of the system.
  *  i.e, the enum ordinal is an index into the array of systems
  */
-sealed class StateSystem(val state: State) : IteratingSystem(Family.all(FunctionComponent::class.java, StateComponent::class.java).get(), state.ordinal) {
+sealed class StateSystem(val state: State) : IteratingSystem(Family.all(FunctionComponent::class.java, State::class.java).get(), state.ordinal) {
 
+    val doFirsts : MutableList<()->Unit> = mutableListOf()
+    val finalizedBy : MutableList<()->Unit> = mutableListOf()
+    fun first(func: () -> Unit) {
+        doFirsts.add(func)
+    }
+
+    fun finalize(func: () -> Unit) {
+        finalizedBy.add(func)
+    }
     override fun processEntity(entity: Entity?, deltaTime: Float) {
-        entity?.let {
-            val stateCmp = it.getComponent(StateComponent::class.java)
+        entity?.let { e ->
+            val stateCmp = e.getComponent(State::class.java)
 
-            if(stateCmp.state != state) return
+            if(stateCmp != state) return
 
-            val func = it.getComponent(FunctionComponent::class.java).func
+            val func = e.getComponent(FunctionComponent::class.java).func
 
             func(deltaTime)
-            stateCmp.transition?.let { transition -> transition() }
 
-            val autoremoveCondition = it.getComponent(AutoremoveConditionComponent::class.java)
+            e.getComponent(TransitionComponent::class.java)?.let { trans ->
+                trans.transition()
+            }
+
+            val autoremoveCondition = e.getComponent(AutoremoveConditionComponent::class.java)
             if (autoremoveCondition != null && autoremoveCondition.condition()) {
                 notify("Automatically removed render routine according to condition")
-                engine.removeEntity(it)
-                Pools.entityPool.free(it)
+                engine.removeEntity(e)
+                Pools.entityPool.free(e)
             }
 
         }
@@ -81,6 +97,13 @@ sealed class StateSystem(val state: State) : IteratingSystem(Family.all(Function
             engine.removeEntity(entity)
             Pools.autotoremoveEntityPool.free(entity)
         }
+
+    }
+
+    override fun update(deltaTime: Float) {
+        doFirsts.forEach { it() }
+        super.update(deltaTime)
+        finalizedBy.forEach { it() }
 
     }
 }
@@ -111,6 +134,9 @@ fun interface SceneRenderEvent : Component {
  * logging
  */
 class StateComponent(val state: State, val transition: (() -> Unit)? = null) : Component
+
+@JvmInline
+value class TransitionComponent(val transition: () -> Unit) : Component
 
 /**
  * A component that holds a condition that is checked every frame. If the condition is true, the entity is removed from the engine
@@ -150,6 +176,8 @@ open class Pipeline() : Engine() {
         DepthPassSystem(),
         BeforeColorPassSystem(),
         ColorPassSystem(),
+        AfterColorPassSystem(),
+        BeforeUIPassSystem(),
         UIPassSystem(),
         OverlayPassSystem()
     )
@@ -179,14 +207,18 @@ open class Pipeline() : Engine() {
      */
     fun push(state: State, transition: (() -> Unit)? = null,autoadd: Boolean = true, func: (Float) -> Unit) : Entity {
         val entity = Entity()
+        if (transition != null) {
+            val transitionComponent = TransitionComponent(transition)
+            entity.add(transitionComponent)
+        }
         entity.add(FunctionComponent(func))
-        entity.add(StateComponent(state, transition))
+        entity.add(state)
         if (autoadd) addEntity(entity)
         return entity
     }
 
     fun push (entity:Entity) {
-        require (entity.getComponent(FunctionComponent::class.java) != null && entity.getComponent(StateComponent::class.java) !=null) { "Entity must have FunctionComponent and StateComponent" }
+        require (entity.getComponent(FunctionComponent::class.java) != null && entity.getComponent(State::class.java) !=null) { "Entity must have FunctionComponent and StateComponent" }
         addEntity(entity)
     }
 
@@ -197,7 +229,11 @@ open class Pipeline() : Engine() {
     fun once(state: State, transition: (() -> Unit)? = null,func: (Float) -> Unit, ) {
         val entity = Pools.autotoremoveEntityPool.obtain()
         entity.add(FunctionComponent(func))
-        entity.add(StateComponent(state, transition))
+        if (transition != null) {
+            val transitionComponent = TransitionComponent(transition)
+            entity.add(transitionComponent)
+        }
+        entity.add(state)
         addEntity(entity)
     }
 
@@ -210,7 +246,7 @@ open class Pipeline() : Engine() {
             entity.add(AutoremoveConditionComponent(condition))
         }
         entity.add(FunctionComponent(func))
-        entity.add(StateComponent(state))
+        entity.add(state)
         return entity
     }
 

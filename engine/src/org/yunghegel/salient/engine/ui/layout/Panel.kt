@@ -24,7 +24,7 @@ open class Panel(styleName: String="default") : STable() {
     var style : PanelStyle
 
     var titleTable: TitleTable = TitleTable()
-    internal var bodyTable: STable = STable()
+    var bodyTable: STable = STable()
 
     var titleText: String? = null
 

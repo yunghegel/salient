@@ -30,10 +30,13 @@ class Tools : VerticalGroup() {
 //    val selectButton = button("select", "Select")
     val toolGroup = ButtonGroup<ToolButton>()
 
-    fun createTool(icon:String,tool: Tool) {
+    fun createTool(icon:String,tool: Tool, enabled: Boolean = false) {
         val button = toolButton(icon,tool)
         addActor(button)
         toolGroup.add(button)
+        if (enabled) {
+            button.isChecked = true
+        }
     }
 
     init {

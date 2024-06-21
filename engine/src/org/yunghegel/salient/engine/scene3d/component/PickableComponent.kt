@@ -39,7 +39,7 @@ class PickableComponent(val pickable: Pickable,go: GameObject) : EntityComponent
     override fun clone(target: GameObject): PickableComponent {
        val model = target[ModelComponent::class] ?: throw Exception("Model must be present first")
 
-        val mat = model.value?.materials?.each { mat ->
+        val mat = model.value?.materials?.forEach { mat ->
             val attr = PickerColorEncoder.encodeRaypickColorId(target.id)
             mat.set(attr)
         }

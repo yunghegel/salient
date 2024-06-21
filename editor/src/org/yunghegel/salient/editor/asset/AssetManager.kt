@@ -1,6 +1,24 @@
 package org.yunghegel.salient.editor.asset
 
 import com.badlogic.gdx.files.FileHandle
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g3d.Material
+import com.badlogic.gdx.graphics.g3d.Model
+import com.badlogic.gdx.graphics.g3d.Shader
+import com.badlogic.gdx.graphics.glutils.ShaderProgram
+import com.badlogic.gdx.utils.SharedLibraryLoader.setLoaded
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
+import ktx.assets.async.AssetStorage
+import ktx.async.KtxAsync
+import ktx.async.newSingleThreadAsyncContext
+import net.mgsx.gltf.loaders.glb.GLBAssetLoader
+import net.mgsx.gltf.loaders.gltf.GLTFAssetLoader
+import net.mgsx.gltf.loaders.gltf.GLTFLoader
+import net.mgsx.gltf.scene3d.scene.SceneAsset
+import net.mgsx.gltf.scene3d.scene.SceneModel
 import org.yunghegel.gdx.utils.data.serialize
 import org.yunghegel.gdx.utils.ext.addIfNotPresent
 import org.yunghegel.gdx.utils.ext.each
@@ -23,9 +41,80 @@ import org.yunghegel.salient.engine.system.file.FileType
 import org.yunghegel.salient.engine.system.file.Paths
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.system.profile
+import org.yunghegel.salient.engine.system.singleton
 import org.yunghegel.salient.engine.system.warn
+import java.util.*
 
+private typealias GdxAssetManager = com.badlogic.gdx.assets.AssetManager
+
+@Suppress("MoveLambdaOutsideParentheses")
 class AssetManager() : EditorAssetManager<Project, Scene> {
+
+    val storage = AssetStorage()
+
+        init {
+        setLoaders()
+        singleton(storage)
+    }
+
+    val assetRegistry : EnumMap<AssetType,Asset<*>> by lazy { EnumMap<AssetType,Asset<*>>(AssetType::class.java) }
+
+    fun setLoaders() {
+        storage.apply {
+            setLoader(SceneAsset::class.java,"gltf",{ GLTFAssetLoader()})
+            setLoader(SceneAsset::class.java,"glb", { GLBAssetLoader() })
+            setLoader(Material::class.java,"material", { MaterialLoader() })
+        }
+
+    }
+
+    val queue : Stack<Deferred<Any>> = Stack()
+
+    override fun queueAssetLoad(asset: AssetHandle) : Deferred<Any> {
+        val ext = asset.path.extension
+        val filetype = FileType.parse(ext)
+        val type = AssetType.fromFiletype(filetype)
+        return run { KtxAsync.async(storage.asyncContext) {
+            with(storage) {
+                when (type) {
+                    AssetType.Model -> {
+                        if (ext == "gltf" || ext == "glb")
+                            load<SceneAsset>(asset.path.toString())
+                        else load<Model>(asset.path.toString())
+                    }
+                    AssetType.Texture -> load<Texture>(asset.path.toString())
+                    AssetType.Shader -> load<ShaderProgram>(asset.path.toString())
+                    AssetType.Material -> load<Material>(asset.path.toString())
+                    AssetType.Other -> load<FileHandle>(asset.path.toString())
+                }
+            }
+        } }
+    }
+
+    fun initializeProject(proj: Project) {
+        val projIndex = loadProjectIndex(proj)
+        projIndex.forEach { handle -> proj.assetIndex.add(handle) }
+    }
+
+    fun initializeScene(scene: Scene,project: Project) {
+        info("Initializing scene assets for ${scene.ref.name}")
+//        first, file discovery; this reads the filesystem and includes them in the scene object's asset usage
+        val indexed = loadSceneIndex(scene,project)
+//        then, we load the assets into memory
+
+
+
+        info("ensuring that an asset folder exists for this scene")
+
+        if (!scene.ref.path.exists) {
+            scene.folder.mkdir()
+        }
+
+        indexed.forEach { handle ->
+            require(project.assetIndex.contains(handle)) { "Asset not found in project index" }
+            includeAsset(handle,scene)
+        }
+    }
 
 
     override fun loadProjectIndex(project: Project) : List<AssetHandle> {
@@ -62,8 +151,24 @@ class AssetManager() : EditorAssetManager<Project, Scene> {
 
             }
         }
-        indices.each { handle ->
-            scene.indexAsset(handle)
+        profile("sync load") {
+
+            indices.each { handle ->
+                scene.indexAsset(handle)
+            }
+        }
+
+        profile("aysnc load") {
+            val deferred = indices.map { handle ->
+                val awaited = queueAssetLoad(handle)
+                awaited.invokeOnCompletion { println("Finished loading $handle") }
+                awaited
+            }
+            KtxAsync.launch {
+                deferred.awaitAll()
+                println("All assets loaded")
+            }
+
         }
 
         return indices
@@ -141,39 +246,44 @@ class AssetManager() : EditorAssetManager<Project, Scene> {
 
     override fun loadAsset(asset: AssetHandle): Asset<*> {
         info("Attempting to load asset: ${asset.name}")
-        val filetype = FileType.parse(asset.path.extension)
+        val ext = asset.path.extension
+        val filetype = FileType.parse(ext)
         val type = AssetType.fromFiletype(filetype)
 
-            when (type) {
+        val asset = when (type) {
                 AssetType.Model -> {
                     val model = ModelAsset(asset.path,asset,asset)
-                    model.load()
-                    return model
+//                    if (ext == "gltf" || ext == "glb") storage.loadAsync<SceneModel>(asset.pth)
+                        model.load()
+                     model
                 }
                 AssetType.Texture -> {
                     val texture = TextureAsset(asset.path)
                     texture.load()
-                    return texture
+                     texture
                 }
                 AssetType.Shader -> {
                     val shader = ShaderAsset(asset.path,asset.name)
                     shader.load()
-                    return shader
+                     shader
                 }
                 AssetType.Material -> {
                     val material = MaterialAsset(asset.path)
                     material.load()
-                    return material
+                     material
                 }
                 else -> {
                     warn("Asset type not recognized: $type")
                     val file = FileAsset(asset.path)
                     file.load()
-                    return file
+                     file
                 }
             }
 
 
+
+        assetRegistry[type] = asset
+        return asset
     }
 
     override fun createHandle(file: FileHandle): AssetHandle {

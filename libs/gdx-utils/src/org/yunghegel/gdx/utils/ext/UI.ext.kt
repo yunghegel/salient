@@ -24,6 +24,7 @@ import com.ray3k.stripe.PopTable
 import com.ray3k.stripe.PopTableClickListener
 import ktx.actors.onChange
 import ktx.actors.onClick
+import ktx.async.interval
 import ktx.scene2d.Scene2DSkin
 import org.yunghegel.gdx.utils.ui.ColorBox
 import squidpony.StringKit.padLeft
@@ -178,7 +179,10 @@ fun label(text:String, style: String = "default",skin:Skin, supplier:(() -> Stri
     label = if (supplier != null) {
         object : Label(supplier(),skin) {
             override fun act(delta: Float) {
-                setText(supplier())
+                interval(1f) {
+                    setText(supplier())
+                }
+
                 super.act(delta)
             }
         }
@@ -334,12 +338,25 @@ fun toggle(table: Table, label: String, value: Boolean,row:Boolean = false, call
 }
 fun colorBox(table: Table, name: String, colorModel: Color, alpha: Boolean,skin:Skin=table.skin): Cell<*> {
     val t = Table()
+    t.skin = skin
     t.add(name)
     t.add(ColorBox(name, { colorModel }, alpha,skin))
     val cell: Cell<*> = table.add(t).left()
     table.row()
     return cell
 }
+
+fun colorBox(table: Table, colorModel: Color, alpha: Boolean,skin:Skin=table.skin): Cell<*> {
+    val t = Table()
+    t.skin = skin
+
+    t.add(ColorBox("", { colorModel }, alpha,skin))
+    val cell: Cell<*> = table.add(t).left()
+    table.row()
+    return cell
+}
+
+val Actor.dimensions : Pair<Float,Float> get() = Pair(width,height)
 
 fun colorBox(
     table: Table,

@@ -52,4 +52,6 @@ class GameObjectSelectionManager(selection : Selection<GameObject>) : BaseSelect
         return result
     }
 
+
+
 }

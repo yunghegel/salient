@@ -23,6 +23,7 @@ import org.yunghegel.salient.editor.app.Salient.Companion.push
 import org.yunghegel.salient.editor.app.salient
 import org.yunghegel.salient.editor.app.scene
 import org.yunghegel.salient.editor.input.delegateInput
+import org.yunghegel.salient.editor.input.undelegateInput
 import org.yunghegel.salient.editor.plugins.intersect.lib.IntersectionQuery
 import org.yunghegel.salient.editor.plugins.intersect.tools.IntersectorTool
 import org.yunghegel.salient.editor.scene.Scene
@@ -177,7 +178,7 @@ class PlacementTool : InputTool("placement_tool") {
     }
 
     override fun deactivate() {
-        delegateInput(listener = null)
+        undelegateInput(listener = this)
         super.deactivate()
     }
 

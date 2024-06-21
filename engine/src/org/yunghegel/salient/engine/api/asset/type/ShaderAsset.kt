@@ -7,8 +7,12 @@ import com.badlogic.gdx.graphics.glutils.ShaderStage
 import org.yunghegel.salient.engine.api.asset.Asset
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.system.file.Filepath
+import org.yunghegel.salient.engine.system.file.Paths
 
 class ShaderAsset(basedir: Filepath, val name:String) : Asset<ShaderProgram>(basedir, ShaderProgram::class.java) {
+
+    constructor(project:String, name: String) : this(Paths.PROJECT_ASSET_DIR_FOR(project), name)
+
 
     enum class ShaderType(val stage:ShaderStage,val extensions: Array<String>) {
         VERTEX(ShaderStage.vertex,arrayOf("vert", "vs")),

@@ -15,6 +15,7 @@ import org.yunghegel.salient.engine.api.ecs.System
 import org.yunghegel.salient.engine.api.plugin.Plugin
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.api.tool.Tool
+import org.yunghegel.salient.engine.scene3d.GameObject
 
 class PickingPlugin : Plugin {
 
@@ -32,9 +33,11 @@ class PickingPlugin : Plugin {
 
     override val registry: Context.() -> Unit = {
         bindSingleton(pickingSystem)
+        bindSingleton(pickingSystem.picker)
         bindSingleton(hoverSystem)
         bindSingleton(pickerTool)
         bindSingleton(hoverTool)
+        setProvider(GameObject::class.java) { pickingSystem.selectionManager.getSelected() ?: pickingSystem.scene.graph.root }
     }
 
     override fun init(engine: Engine) {
@@ -42,7 +45,7 @@ class PickingPlugin : Plugin {
             addSystem(pickingSystem)
             addSystem(hoverSystem)
             pipeline.buffers["picking"] = pickingSystem.picker.fbo
-            gui.viewportWidget.tools.createTool("select",pickerTool)
+            gui.viewportWidget.tools.createTool("select",pickerTool,true)
         }
 
     }

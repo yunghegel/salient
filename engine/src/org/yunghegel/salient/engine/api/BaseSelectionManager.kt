@@ -58,4 +58,8 @@ abstract class BaseSelectionManager<T:Selectable>(override val selection: Select
         listeners.add(listener)
     }
 
+    fun getSelected() : T? {
+        return selection.first()
+    }
+
 }

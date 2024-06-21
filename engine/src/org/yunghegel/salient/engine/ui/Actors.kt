@@ -57,6 +57,10 @@ fun label(text: String) : SLabel {
     return SLabel(text)
 }
 
+fun label (text: ()->String) : SLabel {
+    return SLabel(text()) { text() }
+}
+
 fun textbutton(text: String, action: ()->Unit) : SLabel {
     val label = SLabel(text)
     label.onClick {

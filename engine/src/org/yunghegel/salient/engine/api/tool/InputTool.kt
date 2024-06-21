@@ -68,13 +68,5 @@ abstract class InputTool(name:String) : Tool(name) {
         }
     }
 
-    class Click {
-        var x: Int = 0
-        var y: Int = 0
-        var button: Int = 0
-        var time: Long = 0
-        var tapcount = 1
-        var doubleClick = false
-    }
 
 }

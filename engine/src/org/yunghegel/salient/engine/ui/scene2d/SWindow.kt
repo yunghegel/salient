@@ -9,7 +9,11 @@ import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.VisWindow
 import org.yunghegel.salient.engine.ui.UI
 
-open class SWindow(title: String,closeButton: Boolean = true) :VisWindow(title) {
+open class SWindow(title: String,stylename: String = "default",closeButton: Boolean = true) :VisWindow(title,stylename) {
+
+    constructor(title: String,closeButton:Boolean) : this(title,"default",closeButton) {
+
+    }
 
     init {
         if(closeButton) {

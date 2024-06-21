@@ -136,6 +136,20 @@ fun camelCaseToReadableFormat(camelCase: String,capitalizeFirst:Boolean =true): 
     return result
 }
 
+fun formatFieldName(name: String): String {
+    var formatted = name
+    if (isCamelCase(name)) {
+        formatted = camelCaseToReadableFormat(name)
+    } else
+        if(isSnakeCase(name)) {
+            formatted = snakeCaseToHumanReadable(name)
+        }
+    formatted = formatted.replace("_", " ")
+    formatted = capitalizeFirst(formatted)
+
+    return "$formatted:"
+}
+
 fun isCamelCase(str: String): Boolean {
     var prevUpperCase = false
     for (i in 0 until str.length) {

@@ -6,7 +6,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader
 import com.badlogic.gdx.graphics.glutils.GLFormat
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import ktx.app.clearScreen
 import org.yunghegel.salient.engine.system.Index
 import org.yunghegel.gdx.utils.data.Named
@@ -14,7 +13,7 @@ import org.yunghegel.gdx.utils.ext.*
 import org.yunghegel.salient.core.graphics.util.OutlineDepth
 import org.yunghegel.salient.editor.app.configs.Settings
 import org.yunghegel.salient.editor.input.ViewportController
-import org.yunghegel.salient.editor.plugins.default.DefaultPlugin
+import org.yunghegel.salient.editor.plugins.base.DefaultPlugin
 import org.yunghegel.salient.editor.plugins.gizmos.GizmoPlugin
 import org.yunghegel.salient.editor.plugins.intersect.IntersectionPlugin
 import org.yunghegel.salient.editor.plugins.outline.OutlinerPlugin
@@ -26,6 +25,7 @@ import org.yunghegel.salient.editor.scene.SceneGraph
 import org.yunghegel.salient.engine.InterfaceInitializedEvent
 import org.yunghegel.salient.engine.Pipeline
 import org.yunghegel.salient.engine.State.*
+import org.yunghegel.salient.engine.UILogicSystem
 import org.yunghegel.salient.engine.api.ecs.DEBUG_ALL
 import org.yunghegel.salient.engine.api.ecs.System
 import org.yunghegel.salient.engine.api.model.AssetHandle
@@ -44,9 +44,11 @@ import org.yunghegel.salient.engine.scene3d.component.ModelComponent
 import org.yunghegel.salient.engine.scene3d.component.RenderableComponent
 import org.yunghegel.salient.engine.system.*
 import org.yunghegel.salient.engine.api.tool.Tool
+import org.yunghegel.salient.engine.api.tool.ToolEntity
 import org.yunghegel.salient.engine.events.lifecycle.onWindowResized
 import org.yunghegel.salient.engine.graphics.FBO
 import org.yunghegel.salient.engine.graphics.GFX.spriteBatch
+import org.yunghegel.salient.engine.tool.PickableTool
 import org.yunghegel.salient.engine.ui.UI
 import kotlin.reflect.KClass
 
@@ -87,7 +89,7 @@ class Salient : ApplicationAdapter() {
 
 
     }
-
+    val outliner : OutlineDepth by lazy { inject() }
     override fun create() {
 
     /* allow asyncronous actions when we need it */
@@ -135,10 +137,19 @@ class Salient : ApplicationAdapter() {
     private fun createPlugin(plugin: Plugin) {
         profile("load plugin ${plugin.name}") {
             plugin.init(engine as Engine)
-            plugin.systems.forEach { index.list(System::class.java)?.add(it) }
-            plugin.tools.forEach { index.list(Tool::class.java)?.add(it) }
+
+            plugin.systems.forEach { system ->
+                index.list(System::class.java)?.add(system)
+            }
+            plugin.tools.forEach { tool ->
+                index.list(Tool::class.java)?.add(tool)
+                val toolEntity = tool.entity
+            }
+
             plugin.registry(InjectionContext)
+
             index.list(Plugin::class.java)?.add(plugin)
+
         }
 
     }
@@ -160,8 +171,8 @@ class Salient : ApplicationAdapter() {
      */
     private fun buildPipeline() {
 
-        val color = buildBuffer("color")
-        val depth =  buildBuffer("depth",false)
+        val color = buildBuffer("color",true)
+        val depth =  buildBuffer("depth",true)
 
         buffers["depth"] = depth
         buffers["color"] = color
@@ -175,38 +186,64 @@ class Salient : ApplicationAdapter() {
 
         }
 
-            push(INIT) { delta ->
-                clearScreen(.1f,.1f,.1f,0f)
 
-            }
-            push(UI_LOGIC,transition = {  }) { delta ->
-                ui.act()
-                gui.viewportWidget.update()
-            }
-            push(PREPARE_SCENE) { delta ->
-                scene.update(delta)
-                scene.renderer.prepareContext(scene.context,true)
-            }
-            push(BEFORE_DEPTH_PASS) { delta ->
-                scene.renderer.renderContext(scene.context)
-            }
-            push(BEFORE_COLOR_PASS) { _ ->
-                scene.renderer.prepareContext(scene.context,false)
-            }
-            push(AFTER_COLOR_PASS) { _ ->
-                ui.viewport.apply()
-                colorTex?.drawf(spriteBatch)
-            }
-            push(UI_PASS) { delta ->
 
-                ui.draw()
+            scene.apply {
+                context.run {
+                    push(INIT) { delta ->
+                        clearScreen(.1f,.1f,.1f,0f)
 
-                UI.DialogStage.apply {
-                    act()
-                    draw()
+                    }
+                    push(UI_LOGIC,transition = {  }) { delta ->
+                        ui.act()
+                        gui.viewportWidget.update()
+
+                    }
+                    push(PREPARE_SCENE) { delta ->
+                        scene.update(delta)
+                        scene.renderer.prepareContext(scene.context,true)
+                    }
+                    push(BEFORE_DEPTH_PASS) { delta ->
+                        scene.renderer.renderContext(scene.context)
+                    }
+                    push(BEFORE_COLOR_PASS) { _ ->
+                        scene.renderer.prepareContext(scene.context, false)
+                    }
+                    push(COLOR_PASS) { _ ->
+//                        val colorTex = pass(buffers["color"]!!) {
+//                            clearScreen(.1f,.1f,.1f,0f)
+                            gui.updateviewport()
+                            modelBatch.begin(perspectiveCamera)
+                            graph.root.renderColor(delta, modelBatch, scene.context)
+                            graph.root.renderDebug(scene.context)
+                            modelBatch.end()
+//                        }
+//                        colorTex.drawf(spriteBatch)
+                    }
+
+
+                    push(BEFORE_UI_PASS) {_ ->
+                        with(Outliner.settings) {
+                            outliner.render(spriteBatch,depthTex,perspectiveCamera)
+                        }
+                    }
+
+                    push(UI_PASS) { delta ->
+                        ui.viewport.apply()
+                        ui.draw()
+
+                        UI.DialogStage.apply {
+                            act()
+                            draw()
+                        }
+                    }
                 }
-
             }
+
+
+
+
+
     }
 
 
@@ -228,34 +265,7 @@ class Salient : ApplicationAdapter() {
 
     context(SceneContext,Scene) fun render(delta:Float) {
 
-        once(COLOR_PASS) { _ ->
-            colorTex = pass(buffers["color"]!!) {
-                clearScreen(0f, 0f, 0f, 0f)
-                gui.updateviewport()
-                modelBatch.begin(perspectiveCamera)
-                graph.root.renderColor(delta, modelBatch, scene.context)
-                graph.root.renderDebug(scene.context)
-                modelBatch.end()
-            }
-            colorTex?.drawf(spriteBatch)
-        }
-        val outliner : OutlineDepth = inject()
-        once(AFTER_COLOR_PASS) { _ ->
-            registry.tools?.let { toolset ->
-                for (i in 0 until toolset.size) {
-                    val tool = toolset[i]
-                    if (tool.active) {
-                        tool.render(modelBatch,environment)
-                    }
-                }
-            }
-        }
-        once(OVERLAY_PASS) {_ ->
-            val buf = buffers["outline"]
-            with(Outliner.settings) {
-                outliner.render(spriteBatch,depthTex,perspectiveCamera)
-            }
-        }
+
     }
 
     override fun resize(width: Int, height: Int) {
@@ -300,6 +310,7 @@ fun salient(run: Salient.() -> Unit) {
     salient.run()
 }
 
+
 val index : Index<Named> by lazy { inject() }
 
 fun <T: Plugin> plugin(type: KClass<T>, use:T.()->Unit)  {
@@ -307,34 +318,12 @@ fun <T: Plugin> plugin(type: KClass<T>, use:T.()->Unit)  {
     plugin?.let { use(it) }
 }
 
-fun sampleSceneGraph(graph:SceneGraph) {
-
-    val model = ObjLoader().loadModel(Gdx.files.internal("models/obj/TorusKnot.obj"))
-    val mats = model.materials
-    val mesh = model.meshes
-    val bounds = BoundsComponent.getBounds(model)
-
-    val go =graph.newFromRoot("TorusKnot").apply {
-        val modelComponent = ModelComponent(AssetHandle(Gdx.files.internal("models/obj/TorusKnot.obj")),this)
-        val materialsCompenent = MaterialsComponent(mats,this)
-        val meshComponent = MeshComponent(mesh,this)
-        val boundsComponent = BoundsComponent(bounds,this)
-
-
-        add(modelComponent)
-        add(materialsCompenent)
-        add(meshComponent)
-        add(boundsComponent)
-
-        val renderable = RenderableComponent(ModelInstance(model),this)
-        add(renderable)
-    }
-
-    go.setFlag(DEBUG_ALL)
-    go.tag("model")
-    graph.addGameObject(go, graph.root)
-
+fun <T: Tool> tool(type: KClass<T>, use:T.()->Unit)  {
+    val tool =  index.list(Tool::class.java)?.find { it::class == type } as T?
+    tool?.let { use(it) }
 }
+
+
 
 
 

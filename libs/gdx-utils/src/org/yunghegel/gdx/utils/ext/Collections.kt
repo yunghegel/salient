@@ -23,6 +23,12 @@ inline fun <T> Iterable<T>.withEach(action: T.() -> Unit): Unit {
     for (element in this) element.action()
 }
 
+fun <T> Iterable<T>.eachApply(action: T.() -> Unit): Unit {
+    for (element in this) element.apply {
+        action()
+    }
+}
+
 /**
  * Adds all elements of the given iterable to the given array.
  */

@@ -2,6 +2,8 @@ package org.yunghegel.salient.editor.plugins.gizmos
 
 import com.badlogic.ashley.core.Engine
 import ktx.inject.Context
+import org.yunghegel.salient.editor.app.Salient.Companion.addSystem
+import org.yunghegel.salient.editor.app.Salient.Companion.buffers
 import org.yunghegel.salient.editor.app.salient
 import org.yunghegel.salient.editor.plugins.gizmos.systems.GizmoSystem
 import org.yunghegel.salient.editor.plugins.gizmos.tools.PlacementTool
@@ -41,6 +43,9 @@ class GizmoPlugin : Plugin {
             gui.viewportWidget.tools.createTool("rotate",rotateTool)
             gui.viewportWidget.tools.createTool("scale",scaleTool)
             gui.viewportWidget.tools.createTool("translate",translateTool)
+           addSystem(system)
+
+           buffers["translate"] = translateTool.picker.fbo
        }
     }
 

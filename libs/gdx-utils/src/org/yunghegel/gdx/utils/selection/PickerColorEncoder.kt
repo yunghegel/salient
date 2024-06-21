@@ -1,5 +1,7 @@
 package org.yunghegel.gdx.utils.selection
 
+import com.badlogic.gdx.graphics.Color
+
 
 object PickerColorEncoder {
     /**
@@ -41,4 +43,15 @@ object PickerColorEncoder {
         out.g = (id and 0x0000FF00) ushr 8
         out.b = (id and 0x00FF0000) ushr 16
     }
+
+    object Reserved {
+//        id decoded to pure red (1,0,0)
+        val RED = Color.toIntBits(255, 0, 0, 255)
+        val GREEN = Color.toIntBits(0, 255, 0, 255)
+        val BLUE = Color.toIntBits(0, 0, 255, 255)
+        val CYAN = Color.toIntBits(0, 255, 255, 255)
+
+
+    }
+
 }

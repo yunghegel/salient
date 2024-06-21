@@ -11,7 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Cell
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.PerformanceCounter
 import com.kotcrab.vis.ui.util.IntDigitsOnlyFilter
+import com.kotcrab.vis.ui.widget.spinner.IntSpinnerModel
+import com.kotcrab.vis.ui.widget.spinner.Spinner
+import com.kotcrab.vis.ui.widget.spinner.SpinnerModel
 import ktx.actors.onChange
+import ktx.actors.onExit
 import ktx.app.clearScreen
 import ktx.scene2d.textTooltip
 
@@ -165,10 +169,10 @@ open class Lwjgl3Test (name: String = "Lwjgl3Test") : BaseTest(name) {
                     block(value)
                 }
             }
-            table {
+            root.add(table {
                 add(label).padRight(4f)
                 add(field)
-            }
+            })
         }
     }
 
@@ -183,6 +187,22 @@ open class Lwjgl3Test (name: String = "Lwjgl3Test") : BaseTest(name) {
                 add(label).padRight(4f)
                 add(field)
             }
+        }
+    }
+
+    fun spinneri(text: String, value: Int, min: Int, max: Int, block: (Int)->Unit) {
+        use {
+
+            val spinner = Spinner(text,IntSpinnerModel(value,min,max))
+            spinner.onChange {
+                block(spinner.model.text.toInt())
+            }
+            spinner.onExit {
+                stage.scrollFocus = null
+            }
+            root.add(table {
+                add(spinner)
+            }).pad(padding)
         }
     }
 
@@ -211,9 +231,9 @@ open class Lwjgl3Test (name: String = "Lwjgl3Test") : BaseTest(name) {
 
     override fun render() {
             clearScreen(0.1f,0.1f,0.1f,0f)
-//        if(drawGrid) {
-//            bundle.grid.render(bundle.cam)
-//        }
+        if(drawGrid) {
+            bundle.grid.render(bundle.cam)
+        }
             renderProfile = profile(name,-1,true) {
                 execRender()
             }

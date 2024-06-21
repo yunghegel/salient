@@ -22,6 +22,8 @@ object Paths {
 
     val PROJECT_FILE_FOR : (name: String) -> Filepath = { name -> "${PROJECTS_DIR.path}/$name/$name.salient".pathOf() }
 
+    val PROJECT_ASSET_DIR_FOR : (name: String) -> Filepath = { name -> "${PROJECTS_DIR.path}/$name/assets".pathOf() }
+
     val PROJECT_SCOPE_ASSETS_DIR_FOR : (name: String) -> Filepath = { name -> "${PROJECTS_DIR.path}/$name/.asset-index".pathOf() }
 
     val SCENE_DIR_FOR : (name: String) -> Filepath = { name -> "${PROJECTS_DIR.path}/$name/scenes".pathOf() }

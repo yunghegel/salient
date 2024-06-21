@@ -13,7 +13,7 @@ import ktx.actors.onChange
 
 
 class ColorBox(
-    title: String,
+    title: String = "",
     private val colorModel: ()->Color,
     private val alpha: Boolean,
     skin:Skin,
@@ -22,6 +22,7 @@ class ColorBox(
     private val colorPreview: Image
     private var alphaPreview: Image? = null
 
+    var callback : (Color)->Unit = {}
 
 
     /** skin should contains "white pixel"  */
@@ -58,6 +59,7 @@ class ColorBox(
             onFinished  { colorHex ->
                 val c = Color.valueOf(colorHex)
                 colorModel().set(c)
+                callback(c)
                 updatePreview()
             }
         }

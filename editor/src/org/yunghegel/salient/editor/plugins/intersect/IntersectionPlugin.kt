@@ -22,9 +22,7 @@ class IntersectionPlugin : Plugin {
     }
 
     override fun init(engine: Engine) {
-        salient{
-            gui.viewportWidget.tools.createTool("select",intersectionTool)
-        }
+
     }
 
     override val name: String = "intersection_plugin"

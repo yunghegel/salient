@@ -15,18 +15,18 @@ import org.yunghegel.gdx.utils.selection.Picker
 import org.yunghegel.gdx.utils.selection.PickerShader
 import org.yunghegel.salient.editor.app.pipeline
 import org.yunghegel.salient.editor.plugins.BaseSystem
+import org.yunghegel.salient.editor.plugins.intersect.tools.IntersectorTool
+import org.yunghegel.salient.editor.plugins.picking.PickablesBag
 import org.yunghegel.salient.editor.scene.GameObjectSelectionManager
 import org.yunghegel.salient.engine.scene3d.component.PickableComponent
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.UI
 
-open class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComponent::class.java).get()) {
+open class PickingSystem : BaseSystem("picking_system",8,Family.one(PickableComponent::class.java, PickablesBag::class.java).get()) {
 
     val picker = Picker()
 
     val pickables : MutableList<Pickable> = mutableListOf()
-
-    val batch : ModelBatch = ModelBatch(PickerShader)
 
     val cam: PerspectiveCamera = inject()
 
@@ -50,6 +50,8 @@ open class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComp
 
     var exec : ((Pickable)->Unit)? = null
 
+
+
     init {
         listeners += (PickListener { pick , removed ->
             if (pick is PickableComponent)
@@ -61,6 +63,7 @@ open class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComp
                 }
             }
         })
+        engine.buffers["picking_buffer"] = picker.fbo
     }
 
     override fun update(deltaTime: Float) {
@@ -73,7 +76,7 @@ open class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComp
 //        pick the candidate
         val pick = picker.pick(viewport,batch,cam,tmp.x.toInt(),tmp.y.toInt(),pickables)
 
-        engine.buffers["picking_buffer"] = picker.fbo
+
 
         if (pick!=null){
             if(exec != null) exec?.invoke(pick)
@@ -86,6 +89,16 @@ open class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComp
     override fun processEntity(entity: Entity?, deltaTime: Float) {
         val candidates = entity?.components?.filterIsInstance<PickableComponent>() ?: emptyList()
         pickables.addAll(candidates)
+        val bag = entity?.getComponent(PickablesBag::class.java)
+        if (bag != null ) {
+            val (x,y) = UI.viewportToScreen(Gdx.input.x,Gdx.input.y)
+
+            val pick = picker.pick(viewport,batch,cam,x.toInt(),y.toInt(),bag.pickables)
+            if (pick!=null){
+                bag.picked(pick)
+                println("picked from system")
+            }
+        }
     }
 
     private fun handleSelection(pick: Pickable) {
@@ -119,6 +132,17 @@ open class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComp
         tmp.set(coords.first,coords.second)
     }
 
+    fun pick(x:Float,y:Float,pickables: List<Pickable>,cb: (Int)->Unit= {}) : Pickable? {
+        val coords = UI.viewportToScreen(x.toInt(),y.toInt())
+        val picked = picker.pick(viewport,batch,cam,coords.first.toInt(),coords.second.toInt(),pickables)
+        val id = picked?.id ?: -1
+        println("Picked $id")
+        cb(id)
+        return picked
+    }
+
+
+
     fun hover(x:Int,y:Int,refresh:Boolean) : Pickable? {
         if (hoverPM == null || refresh) {
             super.update(delta)
@@ -144,6 +168,10 @@ open class PickingSystem : BaseSystem("picking_system",8,Family.all(PickableComp
 
     fun interface PickListener {
         fun pickChanged(picked:Pickable, removed:Boolean)
+    }
+
+    companion object {
+        val batch : ModelBatch = ModelBatch(PickerShader)
     }
 
 }

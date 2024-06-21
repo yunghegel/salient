@@ -30,7 +30,7 @@ class Scene(val handle:SceneHandle, val project: Project, val manager: SceneMana
 
     override val renderer: SceneRenderer<Scene, SceneGraph>
 
-    val selection = GameObjectSelectionManager(graph.selection)
+    override val selection = GameObjectSelectionManager(graph.selection)
 
     init {
         singleton(selection)

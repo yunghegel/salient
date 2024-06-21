@@ -7,6 +7,7 @@ import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 class ToolButton(val icon: String,val tool : Tool) : SImageButton(icon) {
 
     init {
+        setProgrammaticChangeEvents(true)
         onChange {
             if (isChecked) {
                 tool.activate()

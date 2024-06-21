@@ -39,7 +39,7 @@ class OutlineSystem(val outliner: OutlineDepth) : BaseSystem("outline_system", S
     val batch : SpriteBatch = SpriteBatch()
     val gui : Gui = inject()
 
-    var outlinefbo = FBO.createMultisample(GLFormat.RGBA32, true, 4)
+    var outlinefbo = FBO.createMultisample(GLFormat.RGBA32, true, 8)
 
     fun ensureFBO(w:Int,h:Int) {
         outlinefbo = FBO.ensureSize(outlinefbo, GLFormat.RGBA32, w,h,true, 4)

@@ -6009,7 +6009,6 @@ button-compact-blue
   xy: 53, 739
   size: 18, 18
   split: 2, 2, 2, 2
-  pad: 3, 3, 3, 3
   orig: 18, 18
   offset: 0, 0
   index: -1
@@ -6095,7 +6094,7 @@ button-underline
   xy: 251, 904
   size: 14, 22
   split: 5, 5, 5, 4
-  pad: 5, 5, 2, 2
+  pad: 2, 2, 2, 2
   orig: 14, 22
   offset: 0, 0
   index: -1
@@ -6613,6 +6612,7 @@ log_view
 logo16
   rotate: false
   xy: 239, 778
+  size: 16, 16
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

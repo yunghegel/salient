@@ -59,6 +59,12 @@ inline infix fun <reified T:Any> KClass<T>.from(path: String) : T {
     return try { Serializer.yaml.decodeFromString<T>(File(path).readText()) } catch (e: Exception) { throw e }
 }
 
+inline infix fun <reified T:Any> KClass<T>.fromYaml(path: String) : T {
+    return try { Serializer.yaml.decodeFromString<T>(File(path).readText()) } catch (e: Exception) { throw e }
+}
+
+
+
 
 @OptIn(ExperimentalContracts::class, InternalSerializationApi::class)
 inline fun <reified T : Any> encodestring(value:  T): String {

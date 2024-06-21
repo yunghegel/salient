@@ -2,15 +2,13 @@ package org.yunghegel.salient.engine.api.scene
 
 import com.badlogic.gdx.utils.Disposable
 import org.yunghegel.gdx.utils.data.Mask
-import org.yunghegel.salient.engine.api.EditorSceneManager
-import org.yunghegel.salient.engine.api.RendererRoutine
-import org.yunghegel.salient.engine.api.ResizeRoutine
-import org.yunghegel.salient.engine.api.UpdateRoutine
+import org.yunghegel.salient.engine.api.*
 import org.yunghegel.salient.engine.api.asset.Asset
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.asset.AssetIndexedEvent
+import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.system.file.Filepath
 import org.yunghegel.salient.engine.system.file.Paths
@@ -30,6 +28,8 @@ abstract class EditorScene(val ref: SceneHandle, val sceneManager: EditorSceneMa
     abstract val graph: EditorSceneGraph
 
     abstract val context: SceneContext
+
+    abstract val selection : BaseSelectionManager<GameObject>
 
     fun indexAsset(asset: AssetHandle) {
         assetIndex.forEach { if (it.uuid == asset.uuid) return }

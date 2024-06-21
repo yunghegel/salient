@@ -10,7 +10,7 @@ import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.ui.Icon
 
-abstract class EntityComponent<T>(var value : T?,val go: GameObject) : BaseComponent(), Icon {
+abstract class EntityComponent<T>(open var value : T?,val go: GameObject) : BaseComponent(), Icon {
 
     val flags = ComponentFlags()
 

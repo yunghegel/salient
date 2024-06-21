@@ -3,6 +3,7 @@ package org.yunghegel.salient.editor.plugins.picking.tools
 import com.badlogic.gdx.Gdx
 import org.yunghegel.gdx.utils.selection.Pickable
 import org.yunghegel.salient.editor.input.delegateInput
+import org.yunghegel.salient.editor.input.undelegateInput
 import org.yunghegel.salient.editor.plugins.picking.systems.HoverSystem
 import org.yunghegel.salient.editor.plugins.picking.systems.PickingSystem
 import org.yunghegel.salient.engine.api.flags.GameObjectFlag
@@ -88,7 +89,7 @@ class HoverTool(val pickingSystem: HoverSystem) : InputTool("hover_tool"){
     }
 
     override fun deactivate() {
-        delegateInput(listener = null)
+        undelegateInput(listener = this)
         super.deactivate()
         action = null
     }

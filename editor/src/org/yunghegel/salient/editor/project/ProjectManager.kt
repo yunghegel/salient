@@ -83,11 +83,13 @@ class ProjectManager : EditorProjectManager<Project,Scene>, Default<Project> {
         val projectDir = Paths.PROJECT_DIR_FOR(name)
         val sceneDir = Paths.SCENE_DIR_FOR(name)
         val assetDir = Paths.PROJECT_SCOPE_ASSETS_DIR_FOR(name)
+        val projectAssets = Paths.PROJECT_ASSET_DIR_FOR(name)
         val sceneIndices = Paths.SCENE_INDEX_DIR_FOR(name)
         projectDir.mkdir()
         sceneDir.mkdir()
         assetDir.mkdir()
         sceneIndices.mkdir()
+        projectAssets.mkdir()
     }
 
 

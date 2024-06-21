@@ -56,6 +56,11 @@ class ViewportPanel(val viewport : ScreenViewport) : STable() {
         stack.add(viewportWidget)
         stack.add(ui)
         configUI()
+
+        Netgraph.add("Viewport Dimensions") {
+            "${viewport.screenX}  ${viewport.screenY} ${viewport.screenWidth}  ${viewport.screenHeight}"
+        }
+
     }
 
     fun configUI() {

@@ -1,6 +1,7 @@
 package org.yunghegel.salient.engine.api.asset
 
 import com.badlogic.gdx.files.FileHandle
+import kotlinx.coroutines.Deferred
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.project.EditorProject
 import org.yunghegel.salient.engine.api.scene.EditorScene
@@ -11,31 +12,9 @@ import kotlin.io.path.isDirectory
 
 interface EditorAssetManager<P,S> where P: EditorProject<P,S>, S: EditorScene {
 
-    fun initializeProject(proj: P) {
-        val projIndex = loadProjectIndex(proj)
-        projIndex.forEach { handle -> proj.assetIndex.add(handle) }
-    }
-
-    fun initializeScene(scene: S,project: P) {
-        info("Initializing scene assets for ${scene.ref.name}")
-//        first, file discovery; this reads the filesystem and includes them in the scene object's asset usage
-        val indexed = loadSceneIndex(scene,project)
-//        then, we load the assets into memory
-
-        info("ensuring that an asset folder exists for this scene")
-
-        if (!scene.ref.path.exists) {
-            scene.folder.mkdir()
-        }
-
-        indexed.forEach { handle ->
-            require(project.assetIndex.contains(handle)) { "Asset not found in project index" }
-            includeAsset(handle,scene)
-        }
-    }
 
 
-
+    fun queueAssetLoad(asset: AssetHandle): Deferred<Any>
 
     /**
      * Initialize a newly loaded project by recovering the asset index from the project directory.

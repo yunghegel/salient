@@ -15,7 +15,9 @@ import com.badlogic.gdx.math.collision.BoundingBox
 import com.badlogic.gdx.math.collision.Ray
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
+
 import ktx.collections.GdxArray
+import org.yunghegel.gdx.utils.every
 
 
 class Compass(val camera: PerspectiveCamera) :InputListener()  {
@@ -85,6 +87,10 @@ class Compass(val camera: PerspectiveCamera) :InputListener()  {
 
         localCam.near = 0.01f
         localCam.far = 1000f
+
+       every(1f) { dt ->
+            update(dt, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
+       }
     }
 
     fun setPos(x:Float,y:Float){

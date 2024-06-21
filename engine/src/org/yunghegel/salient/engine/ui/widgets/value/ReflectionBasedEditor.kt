@@ -7,17 +7,15 @@ import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.VisTextField
 import ktx.collections.GdxArray
 import org.yunghegel.gdx.utils.ext.padVertical
-import org.yunghegel.gdx.utils.reflection.Accessor
-import org.yunghegel.gdx.utils.reflection.Editable
-import org.yunghegel.gdx.utils.reflection.FieldAccessor
-import org.yunghegel.gdx.utils.reflection.Ignore
+import org.yunghegel.gdx.utils.reflection.*
 import org.yunghegel.gdx.utils.ui.LabelSupplier
 import org.yunghegel.salient.engine.system.set_property
 import org.yunghegel.salient.engine.system.storage.Registry
 import org.yunghegel.salient.engine.ui.scene2d.STable
 import java.lang.reflect.Field
+import java.lang.reflect.Modifier
 
-class ReflectionBasedEditor(val obj: Any,val category: String = "global") : Table() {
+class ReflectionBasedEditor(val obj: Any,val category: String = "global", var filter: (Field)->Boolean = {false},val fieldFilter: (String)->Boolean= {false}) : Table() {
 
     private val groups = GdxArray<FieldGroup>()
     private var lastType : Class<*>? = null
@@ -56,9 +54,12 @@ class ReflectionBasedEditor(val obj: Any,val category: String = "global") : Tabl
         for (field in fields) {
             if (!field.trySetAccessible()) continue
 
+            if (Modifier.isStatic(field.modifiers)) continue
+
 
             val identifier = FieldEditor.formatName(field.name)
             val accessor = FieldAccessor(obj, field, identifier)
+            if (filter(field)) continue
             if (field.type.toString().contains("Companion") || field.type.toString().contains("KSerializer")) continue
             val editor = EditorFactory.create(accessor)  ?: error("Unsupported type: ${field.type}")
 
@@ -85,7 +86,7 @@ class ReflectionBasedEditor(val obj: Any,val category: String = "global") : Tabl
 
     private fun checkIgnore(field: Field) : Boolean {
         val ignore = field.getAnnotation(Ignore::class.java)
-        return (ignore == null || (!EditorFactory.checkType(field.type)))
+        return (ignore == null || (!EditorFactory.checkType(field.type))|| filter(field) )
     }
 
     companion object AccessorRegistry : Registry<Accessor>()

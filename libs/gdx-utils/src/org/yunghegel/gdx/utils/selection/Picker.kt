@@ -90,10 +90,10 @@ class Picker {
         fbo!!.begin()
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
         viewport.apply()
-//        HdpiUtils.glViewport(
-//            viewport.screenX, viewport.screenY, viewport.screenWidth,
-//            viewport.screenHeight
-//        )
+        HdpiUtils.glViewport(
+            viewport.screenX, viewport.screenY, viewport.screenWidth,
+            viewport.screenHeight
+        )
     }
 
     protected fun end() {

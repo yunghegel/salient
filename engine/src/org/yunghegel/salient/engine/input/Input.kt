@@ -7,6 +7,7 @@ import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.utils.SnapshotArray
 import ktx.inject.Context
 import org.yunghegel.salient.engine.InputModule
+import org.yunghegel.salient.engine.system.Netgraph
 
 typealias GdxInput = Input
 
@@ -14,7 +15,19 @@ object Input : InputModule() {
 
     init {
         inputProcessor = this
+        Netgraph.add("Multiplexer: ") {
+            val sb = StringBuilder()
+            sb.append("Multiplexer: ")
+            for (i in 0 until processors.size) {
+                sb.append(processors[i].javaClass.simpleName)
+                if (i < processors.size - 1) {
+                    sb.append(", ")
+                }
+            }
+            sb.toString()
+        }
     }
+
 
     override val registry: Context.() -> Unit = {
         bindSingleton(InputMultiplexer::class, InputAdapter::class) { this }
