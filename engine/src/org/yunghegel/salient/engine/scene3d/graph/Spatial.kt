@@ -3,9 +3,9 @@ package org.yunghegel.salient.engine.scene3d.graph
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector3
-import org.yunghegel.salient.engine.api.properties.ObjectPayload
+import org.yunghegel.salient.engine.graphics.Transformable
 
-open class Spatial<T: Spatial<T>>(name:String,) : Node<T,Matrix4>(name) {
+open class Spatial<T: Spatial<T>>(name:String,) : Node<T,Matrix4>(name) , Transformable {
 
 
 
@@ -70,15 +70,15 @@ open class Spatial<T: Spatial<T>>(name:String,) : Node<T,Matrix4>(name) {
         localScale.set(scale)
     }
 
-    fun getPosition(out: Vector3): Vector3 {
+    override fun getPosition(out: Vector3): Vector3 {
         return out.set(getTransform().getTranslation(out))
     }
 
-    fun getRotation(out: Quaternion): Quaternion {
+    override fun getRotation(out: Quaternion): Quaternion {
         return out.set(getTransform().getRotation(out))
     }
 
-    fun getScale(out: Vector3): Vector3 {
+    override fun getScale(out: Vector3): Vector3 {
         return out.set(getTransform().getScale(out))
     }
 
@@ -92,39 +92,67 @@ open class Spatial<T: Spatial<T>>(name:String,) : Node<T,Matrix4>(name) {
         }
     }
 
-    fun setRotation(rotation: Quaternion) {
+    override fun setRotation(quat: Quaternion) {
         markDirty()
         if (parent == null) {
-            localRotation.set(rotation)
+            localRotation.set(quat)
         } else {
             tempQuat.set(parent!!.getRotation(tempQuat)).conjugate()
-            localRotation.set(rotation).mul(tempQuat)
+            localRotation.set(quat).mul(tempQuat)
         }
     }
 
-    fun setScale(scale: Vector3) {
+    override fun setScale(x: Float, y: Float, z: Float) {
+        TODO("Not yet implemented")
+    }
+
+    override fun setScale(v: Vector3) {
         markDirty()
         if (parent == null) {
-            localScale.set(scale)
+            localScale.set(v)
         } else {
             tempMat.set(parent!!.getTransform()).inv()
-            localScale.set(scale).mul(tempMat)
+            localScale.set(v).mul(tempMat)
         }
     }
 
-    fun translate(vector: Vector3) {
-        markDirty()
-        localPosition.add(vector)
+    override fun applyTransform() {
+        getTransform(localPosition, localRotation, localScale)
     }
 
-    fun rotate(quaternion: Quaternion) {
+    override fun translate(x: Float, y: Float, z: Float) {
         markDirty()
-        localRotation.mulLeft(quaternion)
+        localPosition.add(x, y, z)
     }
 
-    fun scale(vector: Vector3) {
+    override fun translate(v: Vector3) {
         markDirty()
-        localScale.scl(vector)
+        localPosition.add(v)
+    }
+
+    override fun rotate(quat: Quaternion) {
+        markDirty()
+        localRotation.mulLeft(quat)
+    }
+
+    override fun scale(x: Float, y: Float, z: Float) {
+        markDirty()
+        localScale.scl(x, y, z)
+    }
+
+    override fun scale(v: Vector3) {
+        markDirty()
+        localScale.scl(v)
+    }
+
+    override fun setTranslation(x: Float, y: Float, z: Float) {
+        markDirty()
+        localPosition.set(x, y, z)
+    }
+
+    override fun setTranslation(v: Vector3) {
+        markDirty()
+        localPosition.set(v)
     }
 
 }

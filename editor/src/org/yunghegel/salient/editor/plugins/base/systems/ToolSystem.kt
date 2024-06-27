@@ -40,6 +40,7 @@ class ToolSystem : BaseSystem("ToolSystem", State.AFTER_COLOR_PASS, Family.one(T
         tools.clear()
         super.update(deltaTime)
         if (tools.isEmpty()) return
+        tools.filter { it.active }.forEach { it.update(deltaTime) }
         with(sceneContext) {
 
             salient {

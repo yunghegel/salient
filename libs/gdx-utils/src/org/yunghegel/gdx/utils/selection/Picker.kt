@@ -48,7 +48,35 @@ class Picker {
         cam: Camera,
         screenX: Int,
         screenY: Int,
-        pickables: List<Pickable>
+        pickables: List<Pickable>,
+        cb: ((Pickable) -> Unit)? = null
+    ): Pickable? {
+//        viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        begin(viewport)
+        renderPickables(batch, cam, pickables)
+        end()
+        pm = getFrameBufferPixmap(viewport)
+
+        val x = screenX - viewport.screenX
+        val y = screenY - (Gdx.graphics.height - (viewport.screenY + viewport.screenHeight))
+        val id = PickerColorEncoder.decode(pm!!.getPixel(x, y))
+        for (pickable in pickables) {
+            if (pickable.id.equals(id)) {
+                cb?.invoke(pickable)
+                return pickable
+            }
+        }
+
+        return null
+    }
+
+    fun <T:Pickable> pickGeneric(
+        viewport: Viewport,
+        batch: ModelBatch,
+        cam: Camera,
+        screenX: Int,
+        screenY: Int,
+        pickables: List<T>
     ): Pickable? {
 //        viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         begin(viewport)

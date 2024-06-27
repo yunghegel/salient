@@ -162,7 +162,6 @@ class TranslateTool(val system : GizmoSystem) : PickableTool("translate_tool", i
     override fun activate() {
         super.activate()
         delegateInput(listener = this)
-        system.activeGizmo = this
     }
 
     override fun deactivate() {

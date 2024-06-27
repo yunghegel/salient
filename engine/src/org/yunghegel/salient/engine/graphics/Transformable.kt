@@ -24,4 +24,12 @@ interface Transformable {
     fun setScale(x: Float, y: Float, z: Float)
 
     fun setScale(v: Vector3)
+
+    fun getPosition(out: Vector3) : Vector3
+
+    fun getRotation(out: Quaternion) : Quaternion
+
+    fun getScale(out: Vector3) : Vector3
+
+    fun applyTransform()
 }
