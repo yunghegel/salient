@@ -7,17 +7,21 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.math.Vector3
 import org.yunghegel.salient.editor.app.configs.Settings.Companion.i
 import org.yunghegel.salient.editor.input.delegateInput
+import org.yunghegel.salient.editor.input.pauseViewportControls
+import org.yunghegel.salient.editor.input.resumeViewportControls
 import org.yunghegel.salient.editor.input.undelegateInput
 import org.yunghegel.salient.editor.plugins.gizmos.lib.Gizmo
 import org.yunghegel.salient.editor.plugins.gizmos.lib.GizmoHandle
 import org.yunghegel.salient.editor.plugins.gizmos.systems.GizmoSystem
+import org.yunghegel.salient.editor.plugins.picking.systems.PickingSystem
 import org.yunghegel.salient.engine.events.scene.onSingleGameObjectSelected
 import org.yunghegel.salient.engine.graphics.Transformable
 import org.yunghegel.salient.engine.helpers.Pools
 import org.yunghegel.salient.engine.scene3d.GameObject
+import org.yunghegel.salient.engine.system.debug
 import org.yunghegel.salient.engine.system.inject
 
-abstract class TransformGizmo<T:Transformable, H:GizmoHandle<T>>(val system: GizmoSystem, name: String) : Gizmo<T,H>(name) {
+abstract class TransformGizmo<T:Transformable, H:GizmoHandle<T>>(system: GizmoSystem, name: String,key:Int) : Gizmo<T,H>(name,system,key) {
 
     
 
@@ -25,6 +29,8 @@ abstract class TransformGizmo<T:Transformable, H:GizmoHandle<T>>(val system: Giz
     protected enum class TransformAxis(val id :Int) {
         X(1), Y(2), Z(3), XY(4), XZ(5), YZ(6), XYZ(7), NONE(-1)
     }
+
+
 
     init {
         onSingleGameObjectSelected {  go ->
@@ -34,11 +40,18 @@ abstract class TransformGizmo<T:Transformable, H:GizmoHandle<T>>(val system: Giz
         }
     }
 
+
+
     var initTransform = false
 
     val cam : PerspectiveCamera = inject()
 
     protected var state : TransformAxis = TransformAxis.NONE
+
+    override val blocking: Boolean
+        get() {
+            return state != TransformAxis.NONE
+        }
 
     fun renderHandles(batch: ModelBatch) {
         for (handle in handles) {
@@ -48,19 +61,22 @@ abstract class TransformGizmo<T:Transformable, H:GizmoHandle<T>>(val system: Giz
 
     override fun activate() {
         system.activeGizmo = this as Gizmo<GameObject, *>
-        delegateInput(listener = this)
+        delegateInput(listener = this,)
         super.activate()
     }
 
     override fun deactivate() {
         system.activeGizmo = null
         undelegateInput(listener = this)
+
         super.deactivate()
     }
 
     override fun handleStateChange(state: GizmoState) {
+        debug("state changed: $state")
         when (state) {
             GizmoState.Active -> {
+                pauseViewportControls()
                 activeHandle?.let { handle ->
                     when (handle.id) {
                         TransformAxis.X.id -> {
@@ -76,6 +92,7 @@ abstract class TransformGizmo<T:Transformable, H:GizmoHandle<T>>(val system: Giz
                             handle.setColor(COLOR_XYZ_SELECTED)
                         }
                     }
+
                 }
             }
 
@@ -95,6 +112,7 @@ abstract class TransformGizmo<T:Transformable, H:GizmoHandle<T>>(val system: Giz
                             handle.setColor(COLOR_XYZ_SELECTED)
                         }
                     }
+
                 }
 
             }
@@ -103,6 +121,7 @@ abstract class TransformGizmo<T:Transformable, H:GizmoHandle<T>>(val system: Giz
                 for (handle in handles) {
                     handle.restoreColor()
                 }
+                resumeViewportControls()
             }
 
 
@@ -111,44 +130,24 @@ abstract class TransformGizmo<T:Transformable, H:GizmoHandle<T>>(val system: Giz
 
     override fun handleSelected(handle: GizmoHandle<T>) {
         state = TransformAxis.entries.find { it.id == handle.id } ?: TransformAxis.NONE
+        handle.setColor(handle.getColor()?.cpy()?.mul(1.5f,1.5f,1.5f,1f))
         initTransform = true
-        if (handle.id in 1..4) {
-            when (handle.id) {
-                TransformAxis.X.id -> {
-                    handle.setColor(COLOR_X_SELECTED)
-                }
-                TransformAxis.Y.id -> {
-                    handle.setColor(COLOR_Y_SELECTED)
-                }
-                TransformAxis.Z.id -> {
-                    handle.setColor(COLOR_Z_SELECTED)
-                }
-                TransformAxis.XYZ.id -> {
-                    handle.setColor(COLOR_XYZ_SELECTED)
-                }
-            }
-        }
+
+    }
+
+    override fun handleHovered(handle: GizmoHandle<T>) {
+        handle.setColor(handle.getColor()?.cpy()?.mul(1.5f,1.5f,1.5f,1f))
     }
 
     override fun handleDeselected(handle: GizmoHandle<T>) {
         state = TransformAxis.NONE
-        initTransform = false
-        if (handle.id in 1..4) {
-            when (handle.id) {
-                TransformAxis.X.id -> {
-                    handle.setColor(COLOR_X)
-                }
-                TransformAxis.Y.id -> {
-                    handle.setColor(COLOR_Y)
-                }
-                TransformAxis.Z.id -> {
-                    handle.setColor(COLOR_Z)
-                }
-                TransformAxis.XYZ.id -> {
-                    handle.setColor(COLOR_XYZ)
-                }
-            }
-        }
+        handle.restoreColor()
+    }
+
+    override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+        state = TransformAxis.NONE
+
+        return super.touchUp(screenX, screenY, pointer, button)
     }
 
     open inner class TransformGizmoHandle<T: Transformable>(model: Model, id :Int) : GizmoHandle<T>(model,id) {

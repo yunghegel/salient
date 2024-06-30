@@ -3,7 +3,7 @@ package org.yunghegel.salient.engine.api.tool
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.InputProcessor
 
-abstract class InputTool(name:String) : Tool(name) {
+abstract class InputTool(name:String,key:Int=-1) : Tool(name,key) {
 
     var button = -1
     var key = -1

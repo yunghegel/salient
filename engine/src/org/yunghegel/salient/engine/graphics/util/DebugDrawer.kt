@@ -63,7 +63,7 @@ class DebugDrawer {
     }
 
 
-    private fun begin() {
+    fun begin() {
         Gdx.gl.glDisable(GL20.GL_DEPTH_TEST)
         Gdx.gl.glLineWidth(1f)
 
@@ -74,7 +74,7 @@ class DebugDrawer {
         renderer.color = color
     }
 
-    private fun end() {
+    fun end() {
         renderer.end()
 
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST)

@@ -17,20 +17,27 @@ abstract class GizmoHandle<T>(val model: Model, uid : Int) : Pickable {
     var scale:Vector3 = Vector3(1f, 1f, 1f)
     var rotation: Quaternion = Quaternion()
     var tmpScale = Vector3(0f,0f,0f)
-    var scaleFactor: Float = 0.5f
+    var scaleFactor: Float = 0.3f
     var startColor : Color? =  null
 
     override val id: Int = uid
-    override val material: Material = Material()
-    val instance = ModelInstance(model). apply{
-        materials.forEach { it.set(material) }
-    }
+
+    val instance = ModelInstance(model)
+    override val material: Material = instance.materials.get(0)
 
 
 
 
     init {
         encode()
+    }
+
+    override fun whenPicked(previousPick: Pickable?) {
+
+    }
+
+    override fun renderPick(batch: ModelBatch) {
+        batch.render(instance)
     }
 
     abstract fun render(batch: ModelBatch)

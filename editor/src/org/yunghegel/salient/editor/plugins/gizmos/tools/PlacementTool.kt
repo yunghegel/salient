@@ -68,8 +68,9 @@ class PlacementTool : InputTool("placement_tool") {
                     updatePosition()
                     (UI.root as Gui).updateviewport()
                     debugDrawer.renderer.color = Color.WHITE.cpy().alpha(0.7f)
+                    debugDrawer.begin()
                     debugDrawer.drawWireDisc(intersection?.intersection ?: Vector3.Zero, Vector3.Y, state.radius)
-
+                    debugDrawer.end()
                     batch.begin(camera)
                     glEnable(GL30.GL_BLEND)
                     glBlendMode(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA)
@@ -179,6 +180,7 @@ class PlacementTool : InputTool("placement_tool") {
 
     override fun deactivate() {
         undelegateInput(listener = this)
+
         super.deactivate()
     }
 

@@ -2,76 +2,43 @@ package org.yunghegel.salient.editor.plugins.gizmos.tools
 
 
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.VertexAttributes
+import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.Material
+import com.badlogic.gdx.graphics.g3d.Model
+import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
-import net.mgsx.gltf.scene3d.attributes.PBRColorAttribute
-import org.yunghegel.gdx.utils.selection.Picker
-import org.yunghegel.salient.editor.app.scene
-import org.yunghegel.salient.editor.input.delegateInput
-import org.yunghegel.salient.editor.input.undelegateInput
+import com.badlogic.gdx.math.Matrix4
+import com.badlogic.gdx.math.Vector3
+import org.yunghegel.salient.editor.plugins.gizmos.lib.transform.TransformGizmo
 import org.yunghegel.salient.editor.plugins.gizmos.systems.GizmoSystem
-import org.yunghegel.salient.editor.plugins.picking.PickablesBag
-import org.yunghegel.salient.editor.plugins.picking.systems.PickingSystem
-import org.yunghegel.salient.editor.plugins.picking.tools.PickingTool
-import org.yunghegel.salient.editor.scene.Scene
-import org.yunghegel.salient.engine.api.tool.Click.x
 import org.yunghegel.salient.engine.graphics.TransformState
-import org.yunghegel.salient.engine.system.Netgraph
-import org.yunghegel.salient.engine.system.info
-import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.tool.PickableTool
-import org.yunghegel.salient.engine.tool.ToolHandle
-import org.yunghegel.salient.engine.ui.UI
-
-class TranslateTool(val system : GizmoSystem) : PickableTool("translate_tool", inject()) {
-
-    var transformState = TransformState.None
-        set(value) {
-            field = value
-            info("Transform state: $value")
-        }
-
-    override var hoveredHandle: ToolHandle? = null
-        get() = super.hoveredHandle
-        set(value) {
-            if (value == null) {
-                field?.restoreColor()
-            } else {
-                value.setColor(value.getColor().cpy().mul(1.5f))
-            }
-            field = value
-        }
-
-    val scene : Scene = inject()
+import org.yunghegel.salient.engine.helpers.TextRenderer.camera
+import org.yunghegel.salient.engine.input.Input
+import org.yunghegel.salient.engine.scene3d.GameObject
 
 
-    val xHandle : ToolHandle
-    val yHandle : ToolHandle
-    val zHandle : ToolHandle
-    val xyzHandle : ToolHandle
+class TranslateTool(system : GizmoSystem) : TransformGizmo<GameObject, TranslateTool.TranslateHandle>(system,"scale_tool",
+    Input.Keys.T) {
 
 
-    override fun update(deltaTime: Float) {
-        val selection = scene.graph.selection.lastSelected
-        if (selection == null) return
-        for (handle in handles) {
-            handle.update(selection.combined, scene.context.perspectiveCamera)
-        }
-    }
 
+
+
+
+
+    private val lastPos = Vector3()
+    private val temp0 = Vector3()
+    private val temp1 = Vector3()
+    private val tempMat0 = Matrix4()
 
 
 
 
     init {
-
-        Netgraph.add("Mode:") {
-            if (transformState != TransformState.None) transformState.name else "None"
-        }
-
         val modelBuilder = ModelBuilder()
 
         val xHandleModel = modelBuilder.createArrow(
@@ -126,12 +93,12 @@ class TranslateTool(val system : GizmoSystem) : PickableTool("translate_tool", i
             (VertexAttributes.Usage.Position or VertexAttributes.Usage.ColorUnpacked).toLong()
         )
 
-        xHandle = ToolHandle(TransformState.X.id, xHandleModel)
-        yHandle = ToolHandle(TransformState.Y.id, yHandleModel)
-        zHandle = ToolHandle(TransformState.Z.id, zHandleModel)
-        xyzHandle = ToolHandle(TransformState.XYZ.id, xyzHandleModel)
+        val xHandle = TranslateHandle(TransformState.X.id, xHandleModel)
+        val yHandle = TranslateHandle(TransformState.Y.id, yHandleModel)
+        val zHandle = TranslateHandle(TransformState.Z.id, zHandleModel)
+        val xyzHandle = TranslateHandle(TransformState.XYZ.id, xyzHandleModel)
 
-        handles.addAll(xHandle, yHandle, zHandle, xyzHandle)
+        handles.addAll(listOf(xHandle, yHandle, zHandle, xyzHandle))
 
         handles.forEach { handle ->
             handle.setColor(TransformState.fromId(handle.id).color)
@@ -139,64 +106,28 @@ class TranslateTool(val system : GizmoSystem) : PickableTool("translate_tool", i
 
         renderMask.set(RenderUsage.MODEL_BATCH,true)
 
-        val bag = PickablesBag(handles.toList())
-        bag.picked = { pickable ->
-            if (pickable is ToolHandle) {
-                handlePick(pickable)
+
+    }
+
+    class TranslateHandle(id:Int,model:Model) : TransfomGizmoHandle<GameObject,TranslateHandle>(model,id) {
+
+        override fun update(delta: Float, target: GameObject?) {
+            target?.let { go ->
+                target.getPosition(position)
+                val dst: Float = camera.position.dst(position)
+                val scl = dst * scaleFactor
+                val sclamnt: Vector3 = Vector3(scl, scl, scl).add(tmpScale)
+                scale.set(sclamnt)
+                instance.transform.setToTranslationAndScaling(position, scale)
+
             }
         }
 
-        entity.add(bag)
-    }
-
-    override fun handlePick(handle: ToolHandle) {
-        transformState = TransformState.fromId(handle.id)
-        handle.setColor(transformState.color)
-    }
-
-    override fun handleEndPick(handle: ToolHandle) {
-        transformState = TransformState.None
-        handle.restoreColor()
-    }
-
-    override fun activate() {
-        super.activate()
-        delegateInput(listener = this)
-    }
-
-    override fun deactivate() {
-        undelegateInput(listener = this)
-        super.deactivate()
-        system.activeGizmo = null
-    }
-
-    override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        val wasNull = currentHandle == null
-        currentHandle = if (hoveredHandle != null) hoveredHandle else picker.pick(sceneContext.viewport, PickingSystem.batch, camera, screenX, screenY, handles.toList()) as ToolHandle?
-        if (currentHandle != null && wasNull) {
-            handlePick(currentHandle!!)
+        override fun renderPick(batch: ModelBatch) {
+            batch.render(instance)
         }
-        return currentHandle != null
     }
 
-    override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        if (currentHandle != null) {
-            handleEndPick(currentHandle!!)
-            currentHandle = null
-        }
-        return super.touchUp(screenX, screenY, pointer, button)
-    }
-
-    override fun mouseMoved(screenX: Int, screenY: Int): Boolean {
-        val (x,y) = UI.viewportToScreen(screenX,screenY)
-        val pick = picker.pick(sceneContext.viewport,PickingSystem.batch,camera, x.toInt(), y.toInt(), handles.toList()) as ToolHandle?
-        if (pick != null) {
-            hoveredHandle = pick
-        } else {
-            hoveredHandle = null
-        }
-        return super.mouseMoved(screenX, screenY)
-    }
 
     companion object {
 
@@ -205,6 +136,60 @@ class TranslateTool(val system : GizmoSystem) : PickableTool("translate_tool", i
         const val ARROW_CAP_SIZE: Float = 0.1f
 
         const val ARROW_DIVISIONS: Int = 12
+    }
+
+    override fun update(delta: Float, target: GameObject) {
+        if (target != null) {
+            for (handle in handles) {
+                handle.update(delta, target)
+            }
+        }
+        if (state == TransformAxis.NONE) {
+            return
+        }
+
+
+            val ray = camera.getPickRay(Gdx.input.x.toFloat(), Gdx.input.y.toFloat())
+            var rayEnd = Vector3()
+            target.getLocalPosition(rayEnd)
+            val dst = camera.position.dst(rayEnd)
+            rayEnd = ray.getEndPoint(rayEnd, dst)
+
+            if (initTransform) {
+                initTransform = false
+                lastPos.set(rayEnd)
+            }
+
+            var modified = false
+            val vec = Vector3()
+            if (state == TransformAxis.X) {
+                vec[rayEnd.x - lastPos.x, 0f] = 0f
+                modified = true
+            } else if (state == TransformAxis.Y) {
+                vec[0f, rayEnd.y - lastPos.y] = 0f
+                modified = true
+            } else if (state == TransformAxis.Z) {
+                vec[0f, 0f] = rayEnd.z - lastPos.z
+                modified = true
+            }
+
+            if (!modified) {
+                return
+            }
+
+
+            target.translate(vec)
+            target.getTransform()
+            lastPos.set(rayEnd)
+
+    }
+
+    override fun render(delta: Float, batch: ModelBatch) {
+        renderHandles(batch)
+    }
+
+    override fun render(modelBatch: ModelBatch, environment: Environment?) {
+        renderHandles(modelBatch)
     }
 
 

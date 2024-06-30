@@ -1,9 +1,12 @@
 package org.yunghegel.salient.editor.plugins.picking.tools
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector3
+import org.yunghegel.gdx.utils.ext.popupMenu
 import org.yunghegel.gdx.utils.selection.Pickable
+import org.yunghegel.salient.editor.input.ViewportController
 import org.yunghegel.salient.editor.input.delegateInput
 import org.yunghegel.salient.editor.input.undelegateInput
 import org.yunghegel.salient.editor.plugins.intersect.tools.IntersectorTool
@@ -14,9 +17,10 @@ import org.yunghegel.salient.engine.api.tool.Tool
 import org.yunghegel.salient.engine.graphics.util.DebugDrawer
 import org.yunghegel.salient.engine.input.Input
 import org.yunghegel.salient.engine.ui.UI
+import org.yunghegel.salient.engine.ui.widgets.OptionMenu
 import org.yunghegel.salient.engine.ui.widgets.menu.ContextMenu
 
-class PickingTool( val pickingSystem : PickingSystem) : InputTool("picking_tool") {
+class PickingTool( val pickingSystem : PickingSystem) : InputTool("picking_tool", Input.Keys.S){
 
 
 
@@ -32,6 +36,13 @@ class PickingTool( val pickingSystem : PickingSystem) : InputTool("picking_tool"
 
     val drawer : DebugDrawer by lazy { inject() }
 
+    val menu =  OptionMenu.build {
+        option("Move to") {
+            val controller: ViewportController = inject()
+            controller.moveTo(intersection!!.intersection,2f)
+        }
+    }
+
     override fun activate() {
         delegateInput(listener = this )
         super.activate()
@@ -44,16 +55,12 @@ class PickingTool( val pickingSystem : PickingSystem) : InputTool("picking_tool"
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         pickingSystem.pick(screenX.toFloat(),screenY.toFloat(),button,key,isDoubleClick)
-        if (button == Input.Buttons.RIGHT) ContextMenu().apply {
-            addOption("Delete") { }
-            addOption("Duplicate") { }
-            attachListener(UI.root)
-         }
+        if (button == Input.Buttons.RIGHT) menu.showMenu(UI,screenX.toFloat(),screenY.toFloat())
         return super.touchDown(screenX, screenY, pointer, button)
     }
 
-    fun queryFor(x: Float, y: Float,pickables : List<Pickable>, cb : (Int)->Unit) : Pickable? {
-        return pickingSystem.pick(x,y,pickables,cb)
+    fun queryFor(x: Float, y: Float,pickables : List<Pickable>,  buffersize: Int = 0,cb : (Int)->Unit,) : Pickable? {
+        return pickingSystem.pick(x,y,pickables,cb,buffersize)
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {

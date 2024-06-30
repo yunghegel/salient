@@ -5,12 +5,14 @@ import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.Widget
+import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import org.yunghegel.gdx.utils.ext.MathUtils
+import org.yunghegel.salient.engine.system.Netgraph
 import org.yunghegel.salient.engine.system.singleton
 
 
-class ViewportWidget(var viewport: Viewport) : Widget() {
+class ViewportWidget(var viewport: ScreenViewport) : Widget() {
 
 
     var viewportOriginalY = 0
@@ -25,6 +27,8 @@ class ViewportWidget(var viewport: Viewport) : Widget() {
 
         singleton(bounds)
 
+        Netgraph.add("ViewportWidget") { "bounds: $bounds" }
+
     }
 
     fun updateViewport(centerCamera: Boolean) {
@@ -34,10 +38,17 @@ class ViewportWidget(var viewport: Viewport) : Widget() {
         val viewportOriginalX = viewport.screenX
         val viewportOriginalY = viewport.screenY
         temp[0f] = 0f
-        localToScreenCoordinates(temp)
+        localToStageCoordinates(temp)
         viewport.setScreenPosition(
             (viewportOriginalX + MathUtils.round(temp.x)).toInt(),
             (viewportOriginalY + MathUtils.round(Gdx.graphics.height - temp.y)).toInt()
+        )
+        viewport.setWorldSize(width * viewport.unitsPerPixel, height * viewport.unitsPerPixel)
+        viewport.setScreenBounds(
+            temp.x.toInt(),
+            temp.y.toInt(),
+            width.toInt(),
+            height.toInt()
         )
         bounds.set(temp.x, Gdx.graphics.height - temp.y, width, height)
         viewport.apply(centerCamera)

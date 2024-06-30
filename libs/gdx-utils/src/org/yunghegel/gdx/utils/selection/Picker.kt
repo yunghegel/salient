@@ -49,7 +49,8 @@ class Picker {
         screenX: Int,
         screenY: Int,
         pickables: List<Pickable>,
-        cb: ((Pickable) -> Unit)? = null
+        cb: ((Pickable) -> Unit)? = null,
+        buffersize: Int = 0
     ): Pickable? {
 //        viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         begin(viewport)
@@ -59,11 +60,24 @@ class Picker {
 
         val x = screenX - viewport.screenX
         val y = screenY - (Gdx.graphics.height - (viewport.screenY + viewport.screenHeight))
-        val id = PickerColorEncoder.decode(pm!!.getPixel(x, y))
-        for (pickable in pickables) {
-            if (pickable.id.equals(id)) {
-                cb?.invoke(pickable)
-                return pickable
+        val bufferedInputs = mutableListOf<Pair<Int, Int>>()
+        if (buffersize > 0) {
+            for (i in -buffersize..buffersize) {
+                for (j in -buffersize..buffersize) {
+                    bufferedInputs.add(Pair(x + i, y + j))
+                }
+            }
+        } else {
+            bufferedInputs.add(Pair(x, y))
+        }
+
+        for (input in bufferedInputs) {
+            val id = PickerColorEncoder.decode(pm!!.getPixel(input.first, input.second))
+            for (pickable in pickables) {
+                if (pickable.id.equals(id)) {
+                    cb?.invoke(pickable)
+                    return pickable
+                }
             }
         }
 

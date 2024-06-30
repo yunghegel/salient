@@ -7,6 +7,7 @@ import org.yunghegel.salient.editor.scene.SceneManager
 import org.yunghegel.salient.engine.api.Default
 import org.yunghegel.salient.engine.api.EditorProjectManager
 import org.yunghegel.salient.engine.api.dto.ProjectDTO
+import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.model.ProjectHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
 import org.yunghegel.salient.engine.events.Bus.post
@@ -99,7 +100,9 @@ class ProjectManager : EditorProjectManager<Project,Scene>, Default<Project> {
     }
 
     override fun createDefault(): Project {
-        return createNew("default")
+        val proj =  createNew("default")
+//        assetManager.queueAssetLoad(AssetHandle("models/gltf/logo.gltf"))
+        return proj
     }
 
 }

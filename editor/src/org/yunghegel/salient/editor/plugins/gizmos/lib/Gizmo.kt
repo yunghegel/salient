@@ -1,15 +1,22 @@
 package org.yunghegel.salient.editor.plugins.gizmos.lib
 
+import com.badlogic.ashley.core.Component
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g3d.ModelBatch
+import com.badlogic.gdx.math.Matrix4
+import com.badlogic.gdx.math.Vector3
+import org.checkerframework.checker.units.qual.s
 import org.yunghegel.gdx.utils.selection.Picker
 import org.yunghegel.salient.editor.app.salient
+import org.yunghegel.salient.editor.plugins.gizmos.systems.GizmoSystem
 import org.yunghegel.salient.editor.plugins.picking.PickablesBag
 import org.yunghegel.salient.editor.plugins.picking.systems.PickingSystem
 import org.yunghegel.salient.engine.State
 import org.yunghegel.salient.engine.api.tool.InputTool
+import org.yunghegel.salient.engine.input.Input
+import org.yunghegel.salient.engine.system.debug
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.tool.ToolHandle
 import org.yunghegel.salient.engine.ui.UI
@@ -21,7 +28,7 @@ import org.yunghegel.salient.engine.ui.UI
  * visual representations of the gizmo's functionality and enable interaction.
  */
 
-abstract class Gizmo<T, H: GizmoHandle<T>>(name: String) : InputTool(name) {
+abstract class Gizmo<T, H: GizmoHandle<T>>(name: String,val system: GizmoSystem,key:Int) : InputTool(name,key), Component {
 
     private var tmp : InputProcessor? = null
 
@@ -29,9 +36,7 @@ abstract class Gizmo<T, H: GizmoHandle<T>>(name: String) : InputTool(name) {
         Active, Hovered, Idle
     }
 
-    constructor(name:String, key: Int) : this(name) {
-        toggleKey = key
-    }
+
 
     val handles: MutableList<H> = mutableListOf()
     private val bag = PickablesBag(handles.toList())
@@ -47,7 +52,7 @@ abstract class Gizmo<T, H: GizmoHandle<T>>(name: String) : InputTool(name) {
             if (field != null) {
                 handleSelected(field!! as GizmoHandle<T>)
             }
-            println("active handle: $field")
+            debug("active handle: $field")
         }
 
     var gizmoState = GizmoState.Idle
@@ -65,12 +70,12 @@ abstract class Gizmo<T, H: GizmoHandle<T>>(name: String) : InputTool(name) {
     override fun activate() {
 
 
-//        bag.picked = { pickable ->
-//            if (pickable is ToolHandle) {
-//                println("picked handle: ${pickable.id}")
-//            }
-//        }
-//        entity.add(bag)
+        bag.picked = { pickable ->
+            if (pickable is ToolHandle) {
+                debug("picked handle: ${pickable.id}")
+            }
+        }
+        entity.add(bag)
 
 
         super.activate()
@@ -101,13 +106,13 @@ abstract class Gizmo<T, H: GizmoHandle<T>>(name: String) : InputTool(name) {
 
     abstract fun handleStateChange(state: GizmoState)
 
-    open fun handleHovered(handle: GizmoHandle<T>) {println("hovered handle: ${handle.id}")}
+    open fun handleHovered(handle: GizmoHandle<T>) {debug("hovered handle: ${handle.id}")}
 
     abstract fun handleSelected(handle: GizmoHandle<T>)
 
     abstract fun handleDeselected(handle: GizmoHandle<T>)
 
-    abstract fun update(delta: Float, target: T?)
+    abstract fun update(delta: Float, target: T)
 
     abstract fun render(delta: Float, batch: ModelBatch)
 
@@ -115,16 +120,27 @@ abstract class Gizmo<T, H: GizmoHandle<T>>(name: String) : InputTool(name) {
         var handle : GizmoHandle<T>? = null
         with (sceneContext) {
             salient {
-                pipeline.once(State.COLOR_PASS) {
-                    val picked = picker.pick(viewport, PickingSystem.batch, camera, screenX, screenY, handles)
+                system.picker.queryFor(screenX.toFloat(), screenY.toFloat(), handles, buffersize = 5) { picked ->
+                    val picked = handles.find { it.id == picked }
                     if (picked != null) {
                         handle = handles.find { it.id == picked.id }
                         if (handle != null) {
                             gizmoState = if (hover) GizmoState.Hovered else GizmoState.Active
-
+                            debug("picked handle: ${handle!!.id}")
                         }
-                    }
                 }
+                    }
+//                pipeline.once(State.COLOR_PASS) {
+//                    val picked = picker.pick(viewport, PickingSystem.batch, camera, screenX, screenY, handles)
+//                    if (picked != null) {
+//                        handle = handles.find { it.id == picked.id }
+//                        if (handle != null) {
+//                            gizmoState = if (hover) GizmoState.Hovered else GizmoState.Active
+//                            println("picked handle: ${handle!!.id}")
+////                        }
+//                    }
+//                }
+
             }
 
         }
@@ -133,6 +149,7 @@ abstract class Gizmo<T, H: GizmoHandle<T>>(name: String) : InputTool(name) {
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (!active) return false
+//        else Input.pauseExcept(this)
         if (target != null && button == 0) {
             activeHandle = pickHandles(screenX, screenY)
         }
@@ -152,7 +169,9 @@ abstract class Gizmo<T, H: GizmoHandle<T>>(name: String) : InputTool(name) {
     override fun mouseMoved(screenX: Int, screenY: Int): Boolean {
         if (!active) return false
         val handle = pickHandles(screenX, screenY, true)
-        println("hovered handle: $handle")
+        if (gizmoState == GizmoState.Idle && handle == null) {
+            activeHandle = null
+        }
         if (handle != null) {
             handleHovered(handle)
         }

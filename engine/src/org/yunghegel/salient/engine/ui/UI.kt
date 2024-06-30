@@ -140,6 +140,14 @@ object UI : UIModule(), Resizable {
         getViewport().update(width, height, true)
     }
 
+    fun addKeyListener(listener: (Int) -> Boolean) {
+        Gdx.input.inputProcessor = object : com.badlogic.gdx.InputAdapter() {
+            override fun keyDown(keycode: Int): Boolean {
+                return listener(keycode)
+            }
+        }
+    }
+
 
 
     object DialogStage : Stage()  {

@@ -45,6 +45,10 @@ class OptionMenu(private var cellConf : ((Cell<*>)->Unit)? = null) : PopupMenu()
         addOption(option(name, icon, action))
     }
 
+    fun show(stage: Stage = UI) {
+        showMenu(stage, Gdx.input.x.toFloat(), Gdx.graphics.height - Gdx.input.y.toFloat())
+    }
+
 
 
     class Builder {
@@ -52,13 +56,18 @@ class OptionMenu(private var cellConf : ((Cell<*>)->Unit)? = null) : PopupMenu()
         fun option(name: String, icon: String?, action: () -> Unit) {
             menu.addOption(name, icon, action)
         }
+
+        fun option(name : String, action: () -> Unit) {
+            menu.addOption(name, null, action)
+        }
+
         fun build() : OptionMenu {
             return menu
         }
     }
 
     companion object {
-        fun option(name: String, icon: String?, action: () -> Unit) : Option {
+        fun option(name: String, icon: String? = null, action: () -> Unit) : Option {
             return object : Option {
                 override val name: String = name
                 override val icon: String? = icon

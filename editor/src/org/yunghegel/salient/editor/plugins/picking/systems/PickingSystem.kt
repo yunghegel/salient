@@ -132,11 +132,10 @@ open class PickingSystem : BaseSystem("picking_system",8,Family.one(PickableComp
         tmp.set(coords.first,coords.second)
     }
 
-    fun pick(x:Float,y:Float,pickables: List<Pickable>,cb: (Int)->Unit= {}) : Pickable? {
+    fun pick(x:Float,y:Float,pickables: List<Pickable>,cb: (Int)->Unit= {}, buffersize: Int = 0) : Pickable? {
         val coords = UI.viewportToScreen(x.toInt(),y.toInt())
-        val picked = picker.pick(viewport,batch,cam,coords.first.toInt(),coords.second.toInt(),pickables)
+        val picked = picker.pick(viewport,batch,cam,coords.first.toInt(),coords.second.toInt(),pickables, buffersize = buffersize)
         val id = picked?.id ?: -1
-        println("Picked $id")
         cb(id)
         return picked
     }

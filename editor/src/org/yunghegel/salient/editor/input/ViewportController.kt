@@ -13,12 +13,14 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener
 import com.badlogic.gdx.utils.viewport.ScreenViewport
+import org.yunghegel.gdx.utils.data.EnumBitmask
 import org.yunghegel.gdx.utils.ext.distanceFalloff
-import org.yunghegel.gdx.utils.ext.each
 import org.yunghegel.gdx.utils.ext.eachApply
 import org.yunghegel.salient.editor.app.stage
 import org.yunghegel.salient.editor.app.ui
 import org.yunghegel.salient.editor.plugins.picking.systems.HoverSystem
+import org.yunghegel.salient.engine.input.Control
+import org.yunghegel.salient.engine.input.Control.*
 import org.yunghegel.salient.engine.system.inject
 
 class ViewportController : DragListener() {
@@ -67,7 +69,69 @@ class ViewportController : DragListener() {
     var maxDist = 50f
     var minDist = 2f
 
+    var moveDuration = 0f
+
     var delegates : MutableList<InputProcessor> = mutableListOf()
+
+    var controls = EnumBitmask(Control::class.java).apply {
+        set(ROTATE,PAN,ZOOM,HOME,RESET,value = true)
+    }
+
+    fun disableControls(vararg control: Control) {
+        control.forEach {
+            controls.set(it,false)
+            when(it) {
+                PAN -> {
+                    button = -1
+                }
+                ROTATE -> {
+                    button = -1
+                }
+                ZOOM -> {
+                    button = -1
+                }
+
+                HOME -> {
+                    home = -1
+                }
+                RESET -> {
+                    reset = -1
+                }
+            }
+        }
+    }
+
+    fun enableControls(vararg control: Control) {
+        control.forEach {
+            controls.set(it,true)
+            when(it) {
+                PAN -> {
+                    button = Input.Buttons.LEFT + Input.Keys.SHIFT_LEFT
+                }
+                ROTATE -> {
+                    button = Input.Buttons.LEFT
+                }
+                ZOOM -> {
+                    button = Input.Buttons.MIDDLE
+                }
+
+                HOME -> {
+                    home = Input.Keys.CONTROL_LEFT
+                }
+                RESET -> {
+                    reset = Input.Keys.PERIOD
+                }
+            }
+        }
+    }
+
+    fun pause(vararg control: Control) {
+        (actor as Actor).removeListener(this)
+    }
+
+    fun resume() {
+        (actor as Actor).addListener(this)
+    }
 
     val hover : HoverSystem by lazy {inject()}
 
@@ -105,6 +169,8 @@ class ViewportController : DragListener() {
         camera.lookAt(target)
     }
 
+
+
     override fun handle(e: Event?): Boolean {
         return super.handle(e)
     }
@@ -125,12 +191,12 @@ class ViewportController : DragListener() {
 
     override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
         this.button = -1
-        delegates.eachApply { touchUp(x.toInt(), y.toInt(), pointer, button) }
+        delegates.eachApply {touchUp(x.toInt(), y.toInt(), pointer, button) }
         super.touchUp(event, x, y, pointer, button)
     }
 
     override fun mouseMoved(event: InputEvent?, x: Float, y: Float): Boolean {
-        delegates.eachApply { mouseMoved (x.toInt(), y.toInt()) }
+        delegates?.eachApply { mouseMoved(x.toInt(), y.toInt()) }
         return super.mouseMoved(event, x, y)
     }
 
@@ -155,6 +221,11 @@ class ViewportController : DragListener() {
         moveTarget = Vector3(x, y, z)
         movePosition.set(x, y, z)
         timeElapsed = 0f
+        moveDuration = duration
+    }
+
+    fun moveTo(target: Vector3, duration: Float) {
+        moveTo(target.x, target.y, target.z, duration)
     }
 
 
@@ -163,7 +234,7 @@ class ViewportController : DragListener() {
         this.key = keycode
         stage.keyboardFocus = actor
         processKey(keycode)
-        delegates.eachApply { keyDown(keycode)  }
+        delegates.eachApply { keyDown(keycode) }
         return super.keyDown(event, keycode)
     }
 
@@ -242,20 +313,21 @@ class ViewportController : DragListener() {
     fun update() {
 
 
-        while (moveTarget != null) {
-
-            timeElapsed += Gdx.graphics.deltaTime * 2f
-            target.set(prevTarget).lerp(moveTarget, timeElapsed)
-            camera.position.set(prevPosition).lerp(movePosition, timeElapsed)
-            if (timeElapsed >= 1f) {
+        while(moveTarget != null) {
+            timeElapsed += Gdx.graphics.deltaTime
+            val t = timeElapsed / moveDuration
+            if (t >= 1f) {
+                camera.position.set(movePosition)
                 moveTarget = null
-//                    keybinds.pan = tmp.pan
-//                    keybinds.rotate = tmp.rotate
-//                    keybinds.zoom = tmp.zoom
-//                    keybinds.home = tmp.home
+            } else {
+                smoothed.set(prevPosition).lerp(movePosition, t)
+                camera.position.set(smoothed)
+                camera.lookAt(prevTarget)
+
+                timeElapsed = 0f
             }
-            camera.up.set(Vector3.Y)
-            camera.lookAt(target)
+
+
 
         }
 
@@ -267,10 +339,24 @@ class ViewportController : DragListener() {
     }
 }
 
-fun delegateInput(controller: ViewportController = inject(), listener: InputProcessor) {
-   controller.delegates.add(listener)
+fun delegateInput(controller: ViewportController = inject(), onlyThis:Boolean = false,listener: InputProcessor?) {
+   controller.delegates.add(listener!!)
+    if (onlyThis) {
+        controller.pause()
+    }
 }
 
-fun undelegateInput(controller: ViewportController = inject(), listener: InputProcessor) {
+fun undelegateInput(controller: ViewportController = inject(), onlyThis:Boolean = false, listener: InputProcessor) {
     controller.delegates.remove(listener)
+    if (onlyThis) {
+        controller.resume()
+    }
+}
+
+fun pauseViewportControls(controller: ViewportController = inject(),vararg allowed: Control = arrayOf(PAN,ZOOM,HOME,RESET))   {
+    controller.disableControls(*allowed)
+}
+
+fun resumeViewportControls(controller: ViewportController = inject()) {
+    controller.enableControls(ROTATE,PAN,ZOOM,HOME,RESET)
 }

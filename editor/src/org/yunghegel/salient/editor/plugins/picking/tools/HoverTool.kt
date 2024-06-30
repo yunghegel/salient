@@ -90,6 +90,7 @@ class HoverTool(val pickingSystem: HoverSystem) : InputTool("hover_tool"){
 
     override fun deactivate() {
         undelegateInput(listener = this)
+
         super.deactivate()
         action = null
     }

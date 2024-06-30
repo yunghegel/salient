@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport
 import org.yunghegel.gdx.utils.Pools
 import org.yunghegel.gdx.utils.ext.int
 import org.yunghegel.salient.editor.app.Gui
+import org.yunghegel.salient.editor.input.ViewportController
 import org.yunghegel.salient.editor.input.delegateInput
 import org.yunghegel.salient.editor.input.undelegateInput
 import org.yunghegel.salient.editor.plugins.intersect.lib.IntersectionQuery
@@ -18,6 +19,7 @@ import org.yunghegel.salient.engine.helpers.TextRenderer.camera
 import org.yunghegel.salient.engine.system.Netgraph
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.api.tool.ClickTool
+import org.yunghegel.salient.engine.input.Input
 import org.yunghegel.salient.engine.ui.UI
 
 class IntersectorTool : ClickTool("intersector_tool") {
@@ -29,13 +31,15 @@ class IntersectorTool : ClickTool("intersector_tool") {
 
     val gui : Gui by lazy {inject()}
 
+    val viewportcontroller : ViewportController by lazy {inject()}
+
     override fun create(position: Vector2?) {
 
 
     }
 
     init {
-        Netgraph.add("Intersection") { (lastResult?.intersection ?: Vector3()).toString() }
+        Netgraph.add("Intersection") { (lastResult?.intersection ?: Vector3.Zero).toString() }
         activate()
     }
 
@@ -46,7 +50,15 @@ class IntersectorTool : ClickTool("intersector_tool") {
 
     override fun deactivate() {
         undelegateInput(listener = this)
+
         super.deactivate()
+    }
+
+    override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+        if(key == Input.Keys.CONTROL_LEFT) {
+            viewportcontroller.moveTo(lastResult?.intersection ?: Vector3.Zero ,1f)
+        }
+        return super.touchDown(screenX, screenY, pointer, button)
     }
 
     override fun mouseMoved(screenX: Int, screenY: Int): Boolean {

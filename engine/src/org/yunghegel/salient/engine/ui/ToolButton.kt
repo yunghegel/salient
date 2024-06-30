@@ -15,5 +15,6 @@ class ToolButton(val icon: String,val tool : Tool) : SImageButton(icon) {
                 tool.deactivate()
             }
         }
+        tool.actor = this
     }
 }

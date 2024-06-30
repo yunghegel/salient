@@ -57,6 +57,12 @@ class EnumBitmask<T : Enum<T>>(val enumClass: Class<T>) : BitmaskPredicate<T> , 
 
     }
 
+    fun set(vararg enums: T, value: Boolean = true) {
+        for (enum in enums) {
+            set(enum, value)
+        }
+    }
+
     fun get(enum: Enum<T>): Boolean {
         return mask and (1 shl enum.ordinal) != 0
     }

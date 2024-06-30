@@ -34,6 +34,7 @@ interface Mask {
         return mask
     }
 
+
     fun clear(name:String): Int {
         val flag = set.registry[name] ?: return 0
         return clear(flag)

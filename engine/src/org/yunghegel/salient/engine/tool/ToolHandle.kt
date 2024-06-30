@@ -21,7 +21,7 @@ class ToolHandle(override val id : Int, model : Model) : ModelInstance(model), P
     data class State(
         var selected: Boolean = false,
         var hovered: Boolean = false,
-        var scaleFactor: Float = 0.4f,
+        var scaleFactor: Float = 0.3f,
         var scl : Float = 0f,
         internal var rotation: Quaternion = Quaternion(),
         internal var position: Vector3 = Vector3(),

@@ -10,14 +10,16 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
+import org.yunghegel.gdx.utils.selection.PickerColorEncoder
 import org.yunghegel.salient.editor.plugins.gizmos.lib.GizmoHandle
 import org.yunghegel.salient.editor.plugins.gizmos.lib.GizmoModels
 import org.yunghegel.salient.editor.plugins.gizmos.lib.transform.TransformGizmo
 import org.yunghegel.salient.editor.plugins.gizmos.systems.GizmoSystem
+import org.yunghegel.salient.engine.input.Input
 import org.yunghegel.salient.engine.scene3d.GameObject
 
 
-class ScaleTool(system : GizmoSystem) : TransformGizmo<GameObject, ScaleTool.ScaleHandle>(system,"scale_tool") {
+class ScaleTool(system : GizmoSystem) : TransformGizmo<GameObject, ScaleTool.ScaleHandle>(system,"scale_tool", Input.Keys.H) {
 
 
     private val lastPos = Vector3()
@@ -47,19 +49,23 @@ class ScaleTool(system : GizmoSystem) : TransformGizmo<GameObject, ScaleTool.Sca
         handles.add(ScaleHandle(z, TransformAxis.Z.id))
         handles.add(ScaleHandle(xyzPlaneHandleModel, TransformAxis.XYZ.id))
 
+        handles.forEach { h ->
+            h.instance.materials.get(0).set(PickerColorEncoder.encodeRaypickColorId(h.id))
+        }
+
         renderMask.set(RenderUsage.MODEL_BATCH,true)
     }
 
-    override fun update(delta: Float, target: GameObject?) {
-        if (target != null) {
+    override fun update(delta: Float, target: GameObject) {
+
             for (handle in handles) {
                 handle.update(delta, target)
-            }
+
         }
         if (state == TransformAxis.NONE) {
             return
         }
-        target?.let { go ->
+
             val ray = camera.getPickRay(Gdx.input.x.toFloat(), Gdx.input.y.toFloat())
             var rayEnd: Vector3? = Vector3()
             target.getLocalPosition(rayEnd!!)
@@ -99,7 +105,7 @@ class ScaleTool(system : GizmoSystem) : TransformGizmo<GameObject, ScaleTool.Sca
             target.scale(vec)
             target.applyTransform()
             lastPos.set(rayEnd)
-        }
+
 
 
     }
@@ -114,17 +120,15 @@ class ScaleTool(system : GizmoSystem) : TransformGizmo<GameObject, ScaleTool.Sca
 
     inner class ScaleHandle(model: Model, id: Int) : TransfomGizmoHandle<GameObject,ScaleHandle>(model, id) {
 
+
         override fun update(delta: Float, target: GameObject?) {
             target?.let { go ->
                 target.getPosition(position)
                 val dst: Float = camera.position.dst(position)
                 val scl = dst * scaleFactor
                 val sclamnt: Vector3 = Vector3(scl, scl, scl).add(tmpScale)
-
-
                 scale.set(sclamnt)
-                instance.transform.setTranslation(position)
-instance.transform.scale(sclamnt.x, sclamnt.y, sclamnt.z)
+                instance.transform.setToTranslationAndScaling(position, scale)
 
             }
         }

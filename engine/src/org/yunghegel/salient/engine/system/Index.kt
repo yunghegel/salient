@@ -1,5 +1,6 @@
 package org.yunghegel.salient.engine.system
 
+import ktx.collections.GdxArray
 import org.yunghegel.gdx.utils.data.Named
 import org.yunghegel.salient.engine.api.ecs.System
 import org.yunghegel.salient.engine.api.plugin.Plugin
@@ -9,6 +10,11 @@ import org.yunghegel.salient.engine.api.tool.Tool
 class Index<T> where T: Named {
 
     val types = mutableMapOf<Class<out T>,MutableList<T>>()
+
+    val toolKeys = GdxArray<Int>()
+
+
+
 
     val names = mapOf(
         "tools" to Tool::class.java,

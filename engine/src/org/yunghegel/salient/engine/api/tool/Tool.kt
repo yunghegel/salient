@@ -26,15 +26,19 @@ import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.system.debug
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.UI
+import org.yunghegel.salient.engine.ui.scene2d.SImage
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
+import org.yunghegel.salient.engine.ui.scene2d.SImageTextButton
 import kotlin.math.abs
 
 
-abstract class Tool(override val name:String) : InputMultiplexer(), Named {
+abstract class Tool(override val name:String,key:Int=-1) : InputMultiplexer(), Named {
 
     enum class RenderUsage {
         SHAPE_RENDERER, BATCH, MODEL_BATCH
     }
+
+    var activationKey  = key
 
     val renderMask = EnumBitmask(RenderUsage::class.java)
 
@@ -46,6 +50,7 @@ abstract class Tool(override val name:String) : InputMultiplexer(), Named {
 
     init {
         post(ToolLoadedEvent(this))
+
 
     }
 
@@ -63,7 +68,11 @@ abstract class Tool(override val name:String) : InputMultiplexer(), Named {
 
     open val blocking = false
 
+    var exclusiveInputSource = false
+
     var active = false
+
+    var actor : SImageButton? = null
 
     fun createActor(icon:com.badlogic.gdx.scenes.scene2d.utils.Drawable) : SImageButton {
         val button = SImageButton(icon)
@@ -71,6 +80,7 @@ abstract class Tool(override val name:String) : InputMultiplexer(), Named {
             if(active)deactivate()
             else activate()
         }
+        actor = button
         return button
     }
 
@@ -80,6 +90,7 @@ abstract class Tool(override val name:String) : InputMultiplexer(), Named {
             if(active)deactivate()
             else activate()
         }
+        actor = button
         return button
     }
 
@@ -87,22 +98,25 @@ abstract class Tool(override val name:String) : InputMultiplexer(), Named {
         group?.end(this)
     }
 
+    fun toggle() {
+        if (active) deactivate()
+        else activate()
+    }
+
     open fun activate() {
         debug("Activating tool $name")
         addProcessor(UI)
         engine.addEntity(entity)
-        if(blocking) Input.pauseExcept(this)
-        else Input.addProcessor(this)
         active = true
+        if (actor != null) actor!!.isChecked = true
     }
 
     open fun deactivate() {
         debug("Deactivating tool $name")
         removeProcessor(UI)
         engine.removeEntity(entity)
-        if(blocking) Input.resumeExcept(this)
-        else Input.removeProcessor(this)
         active = false
+        if (actor != null) actor!!.isChecked = false
     }
 
     protected fun screenToWorldSnap(screenX: Float, screenY: Float, out: Vector2 = Vector2()): Vector2 {

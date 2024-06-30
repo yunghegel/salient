@@ -14,6 +14,7 @@ import org.yunghegel.salient.core.graphics.util.OutlineDepth
 import org.yunghegel.salient.editor.app.configs.Settings
 import org.yunghegel.salient.editor.input.ViewportController
 import org.yunghegel.salient.editor.plugins.base.DefaultPlugin
+import org.yunghegel.salient.editor.plugins.base.systems.registerHotkey
 import org.yunghegel.salient.editor.plugins.gizmos.GizmoPlugin
 import org.yunghegel.salient.editor.plugins.intersect.IntersectionPlugin
 import org.yunghegel.salient.editor.plugins.outline.OutlinerPlugin
@@ -79,6 +80,7 @@ class Salient : ApplicationAdapter() {
     data class PluginSet(val tools:MutableList<Tool>?,val systems:MutableList<System<Project,Scene>>?,val plugins:MutableList<Plugin>?)
 
     val registry : PluginSet
+    lateinit var viewportController: ViewportController
 
     init {
         index.types[Tool::class.java] = mutableListOf()
@@ -143,6 +145,11 @@ class Salient : ApplicationAdapter() {
             }
             plugin.tools.forEach { tool ->
                 index.list(Tool::class.java)?.add(tool)
+                if (tool.activationKey != -1) {
+                    registerHotkey(tool.activationKey) {
+                        tool.toggle()
+                    }
+                }
                 val toolEntity = tool.entity
             }
 
@@ -201,6 +208,7 @@ class Salient : ApplicationAdapter() {
                     }
                     push(PREPARE_SCENE) { delta ->
                         scene.update(delta)
+                        viewportController.update()
                         scene.renderer.prepareContext(scene.context,true)
                     }
                     push(BEFORE_DEPTH_PASS) { delta ->
@@ -257,6 +265,7 @@ class Salient : ApplicationAdapter() {
         val delta = Gdx.graphics.deltaTime
         clearColor()
         clearDepth()
+
         scene.apply {context.run {
             this@Salient.render(delta)
         } }
@@ -291,7 +300,7 @@ class Salient : ApplicationAdapter() {
     }
 
     private fun configureInput() {
-        val viewportController = ViewportController()
+        viewportController = ViewportController()
         singleton(viewportController)
         viewportController.actor = gui.viewportWidget
         gui.viewportWidget.addListener(viewportController)
