@@ -137,7 +137,7 @@ fun notify(message: String, severity: Severity = Severity.INFO, strategy: AlertS
         }).minWidth(150f).growX().row()
     }
     toast.configItem = false
-    UI.notifications.push(toast)
+    UI.notifications?.push(toast)
 }
 
 fun notify(message: String) {
@@ -157,7 +157,7 @@ fun toast(submitButton:Boolean = true, strategy:AlertStrategy= AlertStrategy.IMM
         content.add(content.submitButton).pad(4f)
     }
 
-    UI.notifications.push(toast)
+    UI.notifications?.push(toast)
     return toast
 }
 

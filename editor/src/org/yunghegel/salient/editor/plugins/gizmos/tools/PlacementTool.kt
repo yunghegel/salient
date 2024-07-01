@@ -108,29 +108,29 @@ class PlacementTool : InputTool("placement_tool") {
                     mdl.materials.add(ghostMat)
                     ghostInstance = ModelInstance(mdl)
                     mdl.calculateBoundingBox(boundingBox)
-                    mdl.meshes.forEach { mesh->
-
-                        mesh.calculateBoundingBox().apply {
-                            getCenter(center)
-                            objectHeight = max(height, max.x - min.x)
-                        }
-                        var rad = mesh.calculateRadius(center)
-                        if (rad > radius) {
-                            radius = rad
-                        }
-                    }
-                    cylinder = Cylinder(radius, objectHeight, 0.1f, 16).createModel()!!
-                    cylinder.materials.forEach { mat ->
-                        mat.set(PBRColorAttribute.createBaseColorFactor(Color.WHITE.cpy().alpha(0.5f)))
-                        mat.set(BlendingAttribute(true,0.5f))
-                        mat.set(IntAttribute.createCullFace(GL30.GL_FRONT_FACE))
-                        MaterialConverter.makeCompatible(mat)
-                    }
+//                    mdl.meshes.forEach { mesh->
+//
+//                        mesh.calculateBoundingBox().apply {
+//                            getCenter(center)
+//                            objectHeight = max(height, max.x - min.x)
+//                        }
+//                        var rad = mesh.calculateRadius(center)
+//                        if (rad > radius) {
+//                            radius = rad
+//                        }
+//                    }
+//                    cylinder = Cylinder(radius, objectHeight, 0.1f, 16).createModel()!!
+//                    cylinder.materials.forEach { mat ->
+//                        mat.set(PBRColorAttribute.createBaseColorFactor(Color.WHITE.cpy().alpha(0.5f)))
+//                        mat.set(BlendingAttribute(true,0.5f))
+//                        mat.set(IntAttribute.createCullFace(GL30.GL_FRONT_FACE))
+//                        MaterialConverter.makeCompatible(mat)
+//                    }
                     highlighter = ModelInstance(cylinder)
 
-                    mdl.materials.each { mat ->
-                        MaterialConverter.makeCompatible(mat)
-                    }
+//                    mdl.materials.each { mat ->
+//                        MaterialConverter.makeCompatible(mat)
+//                    }
                 }
 
             }

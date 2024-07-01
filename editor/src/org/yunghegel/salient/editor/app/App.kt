@@ -76,8 +76,7 @@ class App : AppModule() {
                 projectManager.currentProject ?: projectManager.createDefault().also { projectManager.initialize(it) }
             }
             provide { if (projectManager.currentProject != null && projectManager.currentProject?.currentScene != null) projectManager.currentProject?.currentScene!! else sceneManager.createDefault() }
-            provide<SceneContext> { scene.context }
-            provide<SceneRenderer<Scene, SceneGraph>> { scene.renderer }
+
 
             ensureDirectoryStructure()
 

@@ -38,7 +38,7 @@ object UI : UIModule(), Resizable {
 
     lateinit var font : BitmapFont
     lateinit var mono : BitmapFont
-    lateinit var notifications : Notifications
+    var notifications : Notifications? = null
 
 
     var loaded = false
@@ -110,7 +110,7 @@ object UI : UIModule(), Resizable {
 
     fun attachNotifications(notifications: Notifications) {
         this.notifications = notifications
-        singleton(UI.notifications)
+        singleton(UI.notifications!!)
     }
 
 

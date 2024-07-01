@@ -1,9 +1,23 @@
+import org.gradle.internal.os.OperatingSystem
+
+
+ext {
+    OS = OperatingSystem.current()
+    natives = OS == OperatingSystem.WINDOWS ? "natives-windows" : OS == OperatingSystem.MAC_OS ? "natives-macos" : "natives-linux"
+}
+
 dependencies {
+    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+
     testImplementation "org.jetbrains.kotlin:kotlin-test"
 
     implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    implementation("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop") {
+//        exclude redundant natives
+
+    }
     implementation "org.apache.commons:commons-lang3:$apacheCommonsVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
@@ -49,15 +63,19 @@ dependencies {
     implementation "io.github.libktx:ktx-assets-async:$ktxVersion"
     implementation "com.github.RomanPozdeev:MobX:0.1"
     implementation 'org.json:json:20240303'
-    implementation "org.lwjgl:lwjgl-tinyfd:3.3.3"
-    implementation "org.lwjgl:lwjgl-tinyfd:3.3.3:natives-windows"
-    implementation "org.lwjgl:lwjgl-tinyfd:3.3.3:natives-linux"
-    implementation "org.lwjgl:lwjgl-tinyfd:3.3.3:natives-macos"
-    implementation "org.lwjgl:lwjgl-tinyfd:3.3.3:natives-macos-arm64"
+
     implementation("org.greenrobot:eventbus-java:3.3.1")
     implementation "com.github.tommyettinger:textratypist:0.10.0"
     implementation 'com.github.raeleus.TenPatch:tenpatch:5.2.3'
 
-    implement(libs.imgui)
+    implementation "io.github.spair:imgui-java-binding:$imguiVersion"
+    implementation "io.github.spair:imgui-java-lwjgl3:$imguiVersion"
+    implementation "io.github.spair:imgui-java-$natives:$imguiVersion"
+
+    api "org.lwjgl:lwjgl-nanovg:$lwjglVersion"
+    api "org.lwjgl:lwjgl-nanovg::$natives"
+    api "org.lwjgl:lwjgl-tinyfd:$lwjglVersion"
+    api "org.lwjgl:lwjgl-tinyfd::$natives"
+    api "org.joml:joml:1.10.6"
 
 }

@@ -17,6 +17,7 @@ import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.scene3d.SceneRenderer
 import org.yunghegel.salient.engine.scene3d.component.RenderableComponent
 import org.yunghegel.salient.engine.system.inject
+import org.yunghegel.salient.engine.system.provide
 import org.yunghegel.salient.engine.system.singleton
 
 typealias SceneFile = FileHandle
@@ -40,6 +41,8 @@ class Scene(val handle:SceneHandle, val project: Project, val manager: SceneMana
         onShutdown {
             manager.saveScene(this)
         }
+        provide<SceneContext> { context }
+        provide<SceneRenderer<Scene, SceneGraph>> { renderer }
     }
 
     override fun update(delta: Float) {

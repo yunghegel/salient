@@ -101,7 +101,7 @@ internal object GizmoModels {
             (VertexAttributes.Usage.Position or VertexAttributes.Usage.TextureCoordinates or VertexAttributes.Usage.ColorUnpacked).toLong(),
             mat
         )
-        BoxShapeBuilder.build(meshBuilder, 0.08f / 8 + to.x, 0.08f / 8 + to.y, 0.08f / 8 + to.z)
+        BoxShapeBuilder.build(meshBuilder, 0.08f / 7 + to.x, 0.08f / 7 + to.y, 0.08f / 7 + to.z)
 
 
         // stub

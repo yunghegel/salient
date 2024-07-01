@@ -158,18 +158,18 @@ class AssetManager() : EditorAssetManager<Project, Scene> {
             }
         }
 
-        profile("aysnc load") {
-            val deferred = indices.map { handle ->
-                val awaited = queueAssetLoad(handle)
-                awaited.invokeOnCompletion { println("Finished loading $handle") }
-                awaited
-            }
-            KtxAsync.launch {
-                deferred.awaitAll()
-                println("All assets loaded")
-            }
-
-        }
+//        profile("aysnc load") {
+//            val deferred = indices.map { handle ->
+//                val awaited = queueAssetLoad(handle)
+//                awaited.invokeOnCompletion { println("Finished loading $handle") }
+//                awaited
+//            }
+//            KtxAsync.launch {
+//                deferred.awaitAll()
+//                println("All assets loaded")
+//            }
+//
+//        }
 
         return indices
     }

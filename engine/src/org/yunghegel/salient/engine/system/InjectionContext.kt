@@ -22,7 +22,11 @@ inline fun <reified T:Any> injectUnsafe(clazz:Class<T> = T::class.java) : T{
 }
 
 @OptIn(Reflection::class)
-inline fun <reified T:Any> singleton(singleton: T) = InjectionContext.bindSingleton<T>(singleton)
+inline fun <reified T:Any> singleton(singleton: T) {
+    InjectionContext.contains(T::class.java).let { if (it) InjectionContext.remove<T>() }.also {
+        InjectionContext.bindSingleton<T>(singleton)
+    }
+}
 
 @OptIn(Reflection::class)
 inline fun <reified T:Any> provide(noinline provider: ()->T) = InjectionContext.setProvider(T::class.java, provider)

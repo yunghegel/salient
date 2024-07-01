@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import org.checkerframework.checker.units.qual.s
+import org.yunghegel.gdx.utils.ext.each
 import org.yunghegel.gdx.utils.selection.Picker
 import org.yunghegel.salient.editor.app.salient
 import org.yunghegel.salient.editor.plugins.gizmos.systems.GizmoSystem
@@ -35,6 +36,8 @@ abstract class Gizmo<T, H: GizmoHandle<T>>(name: String,val system: GizmoSystem,
     enum class GizmoState {
         Active, Hovered, Idle
     }
+
+    private val tmpv = Vector3()
 
 
 
@@ -119,7 +122,8 @@ abstract class Gizmo<T, H: GizmoHandle<T>>(name: String,val system: GizmoSystem,
     fun pickHandles(screenX: Int, screenY: Int, hover : Boolean = false) : GizmoHandle<T>? {
         var handle : GizmoHandle<T>? = null
         with (sceneContext) {
-            salient {
+
+
                 system.picker.queryFor(screenX.toFloat(), screenY.toFloat(), handles, buffersize = 5) { picked ->
                     val picked = handles.find { it.id == picked }
                     if (picked != null) {
@@ -130,6 +134,8 @@ abstract class Gizmo<T, H: GizmoHandle<T>>(name: String,val system: GizmoSystem,
                         }
                 }
                     }
+
+
 //                pipeline.once(State.COLOR_PASS) {
 //                    val picked = picker.pick(viewport, PickingSystem.batch, camera, screenX, screenY, handles)
 //                    if (picked != null) {
@@ -141,7 +147,7 @@ abstract class Gizmo<T, H: GizmoHandle<T>>(name: String,val system: GizmoSystem,
 //                    }
 //                }
 
-            }
+
 
         }
         return handle

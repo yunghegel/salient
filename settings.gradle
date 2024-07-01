@@ -2,7 +2,7 @@ rootProject.name = 'salient'
 
 include 'launcher', 'editor', 'libs', 'engine','tests'
 
-def libs = ['gdx-utils', 'gdx-debug','gdx-renderer','gdx-cli', 'gdx-lwjgl','gdx-effect','gdx-mesh-gen']
+def libs = ['gdx-utils', 'gdx-debug','gdx-renderer','gdx-cli','gdx-effect','gdx-mesh-gen']
 
 libs.each { lib ->
     include "libs:$lib"

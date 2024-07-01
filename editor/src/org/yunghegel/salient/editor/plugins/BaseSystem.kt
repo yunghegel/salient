@@ -31,14 +31,14 @@ open class BaseSystem (override val name: String,prio : Int=0, family:Family = F
 
     val index : Index<Named> = inject()
 
-    fun <T: Tool> tool(name: String) : T {
+    fun <T: Tool> tool(name: String) : T? {
         var tool : T? = null
         index.list(Tool::class.java)?.forEach {
             if (it.name == name) {
                 tool = it as T
             }
         }
-        return tool!!
+        return tool
     }
 
 

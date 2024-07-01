@@ -25,6 +25,7 @@ class ModelAsset(path: Filepath, val id: ID, handle:AssetHandle) : Asset<Model>(
 
 
     override fun useAsset(asset: Model, go: GameObject) {
+        value = asset
         info("Applying model asset to game object ${go.name}")
         removeAsset(asset, go)
         val pickable = ModelRenderable(ModelInstance(asset), go)

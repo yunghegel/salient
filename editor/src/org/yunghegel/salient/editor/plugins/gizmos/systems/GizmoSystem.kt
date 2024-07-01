@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx
 import org.yunghegel.salient.editor.plugins.BaseSystem
 import org.yunghegel.salient.editor.plugins.gizmos.lib.Gizmo
 import org.yunghegel.salient.editor.plugins.picking.PickablesBag
+import org.yunghegel.salient.editor.plugins.picking.systems.PickingSystem
 import org.yunghegel.salient.editor.plugins.picking.tools.PickingTool
 import org.yunghegel.salient.editor.scene.GameObjectSelectionManager
 import org.yunghegel.salient.engine.scene3d.GameObject
@@ -16,7 +17,7 @@ import org.yunghegel.salient.engine.system.inject
 class GizmoSystem : BaseSystem("gizmo_system",0, Family.one(TransformComponent::class.java, SelectedComponent::class.java,PickablesBag::class.java).get()) {
 
     var activeGizmo : Gizmo<GameObject,*>? = null
-    val picker by lazy {  tool<PickingTool>("picking_tool") }
+    val picker by lazy {  tool<PickingTool>("picking_tool") ?: PickingTool(pickingSystem = PickingSystem()) }
     val selectionManager : GameObjectSelectionManager = inject()
 
     init {

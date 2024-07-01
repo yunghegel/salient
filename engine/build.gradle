@@ -2,6 +2,8 @@ dependencies {
     packages.each { pkg->
         api project("$pkg.value")
     }
+    api fileTree(dir: INCLUDE_DIR , include: ['*.jar'])
+
 //    testImplementation project(':tests')
 }
 
