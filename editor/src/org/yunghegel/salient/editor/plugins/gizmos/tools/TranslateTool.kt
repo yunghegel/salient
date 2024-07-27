@@ -21,7 +21,7 @@ import org.yunghegel.salient.engine.input.Input
 import org.yunghegel.salient.engine.scene3d.GameObject
 
 
-class TranslateTool(system : GizmoSystem) : TransformGizmo<GameObject, TranslateTool.TranslateHandle>(system,"scale_tool",
+class TranslateTool(system : GizmoSystem) : TransformGizmo<GameObject, TranslateTool.TranslateHandle>(system,"translate_tool",
     Input.Keys.T) {
 
 
