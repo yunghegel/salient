@@ -1,13 +1,14 @@
 package org.yunghegel.gdx.utils.data
 
-import squidpony.StringConvert.registry
-
 interface Mask {
 
     open val set : Bitset
         get() = Bitset()
 
     var mask : Int
+
+    open val default : Int
+        get() = 0
 
     fun set(value: Int): Int {
         mask =  value or mask

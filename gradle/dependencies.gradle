@@ -4,6 +4,8 @@ import org.gradle.internal.os.OperatingSystem
 ext {
     OS = OperatingSystem.current()
     natives = OS == OperatingSystem.WINDOWS ? "natives-windows" : OS == OperatingSystem.MAC_OS ? "natives-macos" : "natives-linux"
+    gradleHome = System.getenv("GRADLE_USER_HOME")
+
 }
 
 dependencies {
@@ -46,7 +48,7 @@ dependencies {
     implementation "com.github.crykn.guacamole:gdx:$guacamoleVersion"
     implementation "com.github.crykn.guacamole:gdx-desktop:$guacamoleVersion"
 
-    implementation "io.github.libktx:ktx-inject:$ktxVersion"
+//    implementation "io.github.libktx:ktx-inject:$ktxVersion"
     implementation "io.github.libktx:ktx-collections:$ktxVersion"
     implementation "io.github.libktx:ktx-graphics:$ktxVersion"
     implementation "io.github.libktx:ktx-scene2d:$ktxVersion"
@@ -61,6 +63,8 @@ dependencies {
     implementation "io.github.libktx:ktx-vis:$ktxVersion"
     implementation "io.github.libktx:ktx-ashley:$ktxVersion"
     implementation "io.github.libktx:ktx-assets-async:$ktxVersion"
+    implementation "io.github.libktx:ktx-reflect:$ktxVersion"
+
     implementation "com.github.RomanPozdeev:MobX:0.1"
     implementation 'org.json:json:20240303'
 
@@ -72,10 +76,10 @@ dependencies {
     implementation "io.github.spair:imgui-java-lwjgl3:$imguiVersion"
     implementation "io.github.spair:imgui-java-$natives:$imguiVersion"
 
-    api "org.lwjgl:lwjgl-nanovg:$lwjglVersion"
-    api "org.lwjgl:lwjgl-nanovg::$natives"
+
     api "org.lwjgl:lwjgl-tinyfd:$lwjglVersion"
     api "org.lwjgl:lwjgl-tinyfd::$natives"
-    api "org.joml:joml:1.10.6"
+
+
 
 }

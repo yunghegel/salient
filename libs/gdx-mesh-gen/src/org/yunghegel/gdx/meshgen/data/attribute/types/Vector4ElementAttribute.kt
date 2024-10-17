@@ -7,6 +7,14 @@ import org.yunghegel.gdx.meshgen.data.base.Element
 
 class Vector4ElementAttribute<E: Element>(elementAttributeReference: ElementAttributeReference<E>): BaseAttribute<E, Vector4>(elementAttributeReference){
 
+
+    init {
+        setter = {element, value ->
+            val vec4 = get(element)
+            vec4.set(value)
+        }
+    }
+
     override fun alloc(size: Int): Array<Vector4> {
         return Array(size) { Vector4() }
     }

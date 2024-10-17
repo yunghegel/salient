@@ -1,6 +1,6 @@
 package org.yunghegel.salient.engine.api.plugin
 
-import ktx.inject.Context
+import org.yunghegel.salient.engine.system.InjectionContext
 import org.yunghegel.salient.engine.api.properties.Initializable
 import org.yunghegel.gdx.utils.data.Named
 import org.yunghegel.salient.engine.api.ecs.System
@@ -12,6 +12,6 @@ interface Plugin : Initializable, Named {
 
     val tools: MutableList<Tool>
 
-    val registry : Context.()->Unit
+    val registry : InjectionContext.()->Unit
 
 }

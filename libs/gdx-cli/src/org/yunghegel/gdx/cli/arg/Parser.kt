@@ -2,17 +2,18 @@ package org.yunghegel.gdx.cli.arg
 
 import org.yunghegel.gdx.cli.*
 import org.yunghegel.gdx.cli.cmd.CLICommand
-import org.yunghegel.gdx.cli.cyan
-
+import org.yunghegel.gdx.cli.input.ParsedCommandInput
+import org.yunghegel.gdx.cli.input.ParsedInput
+import org.yunghegel.gdx.cli.input.ParsedValueInput
+import org.yunghegel.gdx.cli.util.ValueAction
+import org.yunghegel.gdx.cli.value.CLIValue
 import kotlin.reflect.KClass
-import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 
-class Parser {
+class Parser(val context : CLIContext) {
 
-    private val commands = mutableMapOf<String, MutableMap<String, CLICommand>>()
-    private val env = mutableMapOf<String, String>()
+
 
 
 
@@ -43,7 +44,7 @@ class Parser {
     fun replaceEnvVars(args: Array<String>): Array<String> {
         return args.map { arg ->
             if (arg.startsWith("$")) {
-                env[arg.substring(1)] ?: arg
+                context.env[arg.substring(1)] ?: arg
             } else {
                 arg
             }
@@ -53,6 +54,24 @@ class Parser {
 
 
 
+
+    fun findValue(name: String): CLIValue {
+        val parts = name.split(".")
+        if (parts.size == 1) {
+            return context.values["global"]?.get(name) ?: throw IllegalArgumentException("Unknown value: $name")
+        } else {
+            val ns = parts[0]
+            val name = parts[1]
+            return context.values[ns]?.get(name) ?: throw IllegalArgumentException("Unknown value: $ns $name")
+        }
+    }
+
+    fun isValueCommand(args : Array<String>) : Boolean {
+        if (ValueAction.all.contains(args[0])) {
+            return true
+        }
+        return false
+    }
 
     fun parse(context:CLIContext, args: Array<String>) : ParsedInput? {
         val arguments = mutableMapOf<String, String>()
@@ -80,6 +99,47 @@ class Parser {
                 return null
             }
 
+            if (isValueCommand(args)) {
+
+                val action : ValueAction = ValueAction.fromString(args[0]) ?: throw IllegalArgumentException("Unknown action: ${args[0]}")
+
+                val ns : String
+                val name : String
+
+                if (args[1].contains(".")) {
+                    ns = args[1].substringBefore(".")
+                    name = args[1].substringAfter(".")
+                } else {
+                    ns = "global"
+                    name = args[1]
+                }
+
+                val target = "$ns.$name"
+
+                val cliValue = this@Parser.findValue(target)
+
+                when(action) {
+                    ValueAction.SET -> {
+                        println(args.joinToString())
+
+                        val inputValue = args[2]
+                        val input = if (inputValue.startsWith("$")) {
+                            env[inputValue.substring(1)] ?: inputValue
+                        } else {
+                            inputValue
+                        }
+                        return ParsedValueInput(cliValue, ValueAction.SET, mutableMapOf(args[0] to input))
+
+                    }
+                    ValueAction.PRINT -> {
+                        return ParsedValueInput(cliValue, ValueAction.PRINT, mutableMapOf(args[0]to ""))
+                    }
+                    ValueAction.HELP -> {
+                        return ParsedValueInput(cliValue, ValueAction.HELP, mutableMapOf("help" to ""))
+                    }
+                }
+            }
+
 
 //        if not namespaced, insert global namespace
             if (args[0] !in commands.keys) {
@@ -87,13 +147,16 @@ class Parser {
             }
 
             val namespace: String = args[0]
+
+
+
             val commandName: String = args[1]
 
             if (args.contains("--help") || args.contains("-h")) {
                 if (args.size == 2) {
-                    namespaceHelp(namespace)
+                    context.commands.namespace(namespace)
                 } else {
-                    commandHelp(commandName)
+                    context.commands.help(commandName)
                 }
                 return null
             }
@@ -132,7 +195,7 @@ class Parser {
             }
             command
         }
-        return ParsedInput(cmd, arguments, options, flags)
+        return ParsedCommandInput(cmd, arguments, options, flags)
     }
 
     private fun invokeCommand(
@@ -209,7 +272,7 @@ class Parser {
 
     @Command(name = "help", description = "print help")
     fun help() {
-        for ((namespace, commands) in commands) {
+        for ((namespace, commands) in context.commands) {
             println("Namespace: $namespace")
             val info = HashMap<String, Pair<String, String>>()
             for ((name, command) in commands) {
@@ -255,33 +318,5 @@ class Parser {
         println(message)
     }
 
-    @Cmd("set","set environment variable")
-    fun set(@Arg("key") key: String, @Arg("value") value: String, @Flag("save") save: Boolean = false) {
-        env[key] = value
-        if (save) {
-            saveEnv("env.txt")
-        }
-    }
-
-    @Cmd("env","print environment variables")
-    fun printenv() {
-        for ((key, value) in env) {
-            println("$key=$value")
-        }
-    }
-
-    @Cmd("loadenv","load environment from file")
-    fun loadEnv(@Arg("file") file: String) {
-        val lines = java.io.File(file).readLines()
-        for (line in lines) {
-            val (key, value) = line.split("=", limit = 2)
-            env[key] = value
-        }
-    }
-
-    @Cmd("saveenv","save environment to file")
-    fun saveEnv(@Arg("file", "filepath to save to") file: String) {
-        java.io.File(file).writeText(env.map { (key, value) -> "$key=$value" }.joinToString("\n"))
-    }
 
 }

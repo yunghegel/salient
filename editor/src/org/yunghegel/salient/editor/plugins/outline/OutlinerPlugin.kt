@@ -1,7 +1,7 @@
 package org.yunghegel.salient.editor.plugins.outline
 
 import com.badlogic.ashley.core.Engine
-import ktx.inject.Context
+import org.yunghegel.salient.engine.system.InjectionContext
 import org.yunghegel.salient.core.graphics.util.OutlineDepth
 import org.yunghegel.salient.editor.app.Salient.Companion.addSystem
 import org.yunghegel.salient.editor.app.salient
@@ -26,7 +26,7 @@ class OutlinerPlugin : Plugin {
 
     override val tools: MutableList<Tool> = mutableListOf()
 
-    override val registry: Context.() -> Unit = {
+    override val registry: InjectionContext.() -> Unit = {
         bindSingleton(outliner)
         bindSingleton(outlineSystem)
         bindSingleton(outlineDepth)

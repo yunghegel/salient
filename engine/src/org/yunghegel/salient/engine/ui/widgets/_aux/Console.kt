@@ -1,13 +1,18 @@
 package org.yunghegel.salient.engine.ui.widgets.aux
 
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
+import ktx.collections.GdxArray
+import ktx.collections.toGdxArray
 import org.yunghegel.gdx.cli.CommandLine
-import org.yunghegel.gdx.cli.StdOut
+import org.yunghegel.gdx.cli.util.StdOut
+import org.yunghegel.salient.engine.events.lifecycle.onEditorInitialized
 import org.yunghegel.salient.engine.system.warn
 import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.widgets._aux.ConsoleEntries
 import org.yunghegel.salient.engine.ui.widgets._aux.ConsoleEntry
 import org.yunghegel.salient.engine.ui.widgets._aux.InputLine
+
+val CLI = Console.Companion
 
 class Console : STable() {
 
@@ -19,6 +24,9 @@ class Console : STable() {
         submitInput(input)
     }
 
+    var namespaces = GdxArray<String>().apply { addAll(context.namespaces.toGdxArray()) }
+
+
 
 
     init {
@@ -26,10 +34,25 @@ class Console : STable() {
         scroll.setOverscroll(false, true)
         scroll.setSmoothScrolling(true)
         scroll.setScrollbarsVisible(true)
-        add(scroll).grow().row()
+        add(scroll).grow().colspan(2).row()
         add(inputLine).growX()
 
         StdOut.writeLn = { writeLn(it) }
+
+        onEditorInitialized {
+            with(context) {
+                values.forEach { (namespace, command) ->
+                    command.forEach { (name, cmd) ->
+                    }
+                }
+                commands.forEach { (namespace, command) ->
+                    println("[$namespace]\n")
+                    command.forEach { (name, cmd) ->
+                        println("  $name: ${cmd.function}\n")
+                    }
+                }
+            }
+        }
 
     }
 
@@ -53,7 +76,7 @@ class Console : STable() {
     }
 
     fun writeLn(string: String) {
-        entries.addEntry(ConsoleEntry(string))
+        entries.addEntry(ConsoleEntry("> $string"))
         refresh()
     }
 

@@ -1,6 +1,5 @@
 import com.badlogic.gdx.math.Vector3
 import org.yunghegel.gdx.utils.ext.*
-import org.yunghegel.salient.engine.ui.widgets.value.ReflectionBasedEditor.AccessorRegistry.name
 import kotlin.test.Test
 
 class ReactivityTests {

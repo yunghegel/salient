@@ -2,25 +2,16 @@ package org.yunghegel.salient.editor.plugins.base.systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.Family
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import org.yunghegel.gdx.utils.ext.clearDepth
-import org.yunghegel.gdx.utils.ext.clearScreen
-import org.yunghegel.gdx.utils.ext.draw
-import org.yunghegel.gdx.utils.ext.pass
-import org.yunghegel.salient.editor.app.Salient.Companion.buffers
 import org.yunghegel.salient.editor.app.Salient.Companion.once
 import org.yunghegel.salient.editor.app.salient
 import org.yunghegel.salient.editor.plugins.BaseSystem
-import org.yunghegel.salient.editor.plugins.picking.systems.PickingSystem
 import org.yunghegel.salient.engine.State
 import org.yunghegel.salient.engine.api.tool.Tool
 import org.yunghegel.salient.engine.api.tool.ToolComponent
-import org.yunghegel.salient.engine.helpers.BlinnPhongBatch
 import org.yunghegel.salient.engine.system.Netgraph
-import org.yunghegel.salient.engine.ui.widgets.viewport.Tools
 
 class ToolSystem : BaseSystem("ToolSystem", State.AFTER_COLOR_PASS, Family.one(ToolComponent::class.java).get()) {
 
@@ -39,22 +30,7 @@ class ToolSystem : BaseSystem("ToolSystem", State.AFTER_COLOR_PASS, Family.one(T
     }
 
     override fun update(deltaTime: Float) {
-        salient {
-            index.toolKeys.forEach { key ->
-                if (key == -1) return@forEach
-                if (Gdx.input.isKeyPressed(key)) {
-                    index.list(Tool::class.java)?.forEach { it as Tool
-                        if (it.activationKey == key) {
-                            if (it.active) {
-                                it.deactivate()
-                            } else {
-                                it.activate()
-                            }
-                        }
-                    }
-                }
-            }
-        }
+
 
         tools.clear()
         super.update(deltaTime)

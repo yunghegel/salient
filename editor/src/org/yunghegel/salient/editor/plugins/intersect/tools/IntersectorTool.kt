@@ -39,7 +39,6 @@ class IntersectorTool : ClickTool("intersector_tool") {
     }
 
     init {
-        Netgraph.add("Intersection") { (lastResult?.intersection ?: Vector3.Zero).toString() }
         activate()
     }
 

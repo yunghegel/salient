@@ -3,17 +3,18 @@ package org.yunghegel.salient.engine.scene3d
 import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.math.Matrix4
 import org.yunghegel.gdx.utils.data.EnumBitmask
 import org.yunghegel.gdx.utils.data.EnumMask
 import org.yunghegel.gdx.utils.ext.*
+import org.yunghegel.gdx.utils.ui.Hoverable
 import org.yunghegel.salient.engine.Pipeline
 import org.yunghegel.salient.engine.api.Store
 import org.yunghegel.salient.engine.api.Tagged
 import org.yunghegel.salient.engine.api.UpdateRoutine
 import org.yunghegel.salient.engine.api.dto.GameObjectDTO
+import org.yunghegel.salient.engine.api.dto.component.MaterialComponentDTO
 import org.yunghegel.salient.engine.api.dto.component.ModelComponentDTO
 import org.yunghegel.salient.engine.api.dto.datatypes.Matrix4Data
 import org.yunghegel.salient.engine.api.ecs.BaseComponent
@@ -23,16 +24,11 @@ import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.scene.GameObjectChildAddedEvent
 import org.yunghegel.salient.engine.events.scene.GameObjectComponentAddedEvent
 import org.yunghegel.salient.engine.events.scene.GameObjectComponentRemovedEvent
+import org.yunghegel.salient.engine.scene3d.component.*
 import org.yunghegel.salient.engine.scene3d.graph.Spatial
+import org.yunghegel.salient.engine.system.debug
 import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.gdx.utils.ui.Hoverable
-import org.yunghegel.salient.engine.api.asset.type.ModelAsset
-import org.yunghegel.salient.engine.api.dto.component.MaterialComponentDTO
-import org.yunghegel.salient.engine.api.ecs.ComponentCloneable
-import org.yunghegel.salient.engine.scene3d.component.*
-import org.yunghegel.salient.engine.system.debug
-import org.yunghegel.salient.engine.system.ifSuccess
 import org.yunghegel.salient.engine.ui.Icon
 import java.util.*
 import kotlin.reflect.KClass
@@ -77,7 +73,7 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
     }
 
 
-    override val bitmask = EnumBitmask(GameObjectFlag::class.java)
+    override val bitmask = EnumBitmask(GameObjectFlag::class.java, EnumBitmask.fromValues(DRAW_BOUNDS, DRAW_ORIGIN, RENDER, ALLOW_SELECTION))
 
     override val tags: MutableSet<String> = mutableSetOf()
 
@@ -97,7 +93,7 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
         add(TransformComponent(this))
         engine.addEntity(this)
         tag(name)
-        setAll(DRAW_BOUNDS, DRAW_ORIGIN, RENDER, ALLOW_SELECTION)
+
 
     }
 
@@ -204,7 +200,9 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
             go.id = dto.id.toInt()
             go.combined.set(Matrix4Data.toMat4(dto.transform))
             dto.tags.forEach { go.tag(it) }
+            go.bitmask.fromMask(dto.flags)
             dto.children.forEach { go.addChild(fromDTO(it, scene)) }
+
             dto.components.each {
                 info("Component type: ${it.type}")
                 when (it.type) {
@@ -230,6 +228,7 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
             dto.name = model.name
             dto.id = model.id.toString()
             dto.transform = Matrix4Data.fromMat4(model.combined)
+            dto.flags = EnumBitmask.toMask(model.bitmask.getTrue())
             model.tags.forEach { dto.tags.add(it) }
             model.components.forEach {
                 when (it) {
@@ -240,7 +239,6 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
                     is MaterialsComponent -> {
                         val matdto = MaterialComponentDTO()
                         it.materials.forEach {
-                            info("serializing material ${it.id}")
                             matdto.usages.add(it.id)
                         }
                         matdto.type = "MaterialsComponent"

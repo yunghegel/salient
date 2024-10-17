@@ -1,33 +1,25 @@
 package org.yunghegel.salient.editor.ui.scene.graph
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
 import com.badlogic.gdx.utils.Align
-import dev.lyze.gdxtinyvg.utils.WhitePixelUtils
 import ktx.actors.onChange
-import org.yunghegel.gdx.utils.ext.alpha
 import org.yunghegel.gdx.utils.ext.createColorPixel
 import org.yunghegel.gdx.utils.ext.padHorizontal
-import org.yunghegel.gdx.utils.ext.textureDrawable
 import org.yunghegel.salient.engine.api.flags.GameObjectFlag
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
-import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
-import org.yunghegel.salient.engine.ui.scene2d.STree
 import org.yunghegel.salient.engine.ui.tree.TreeActor
-import org.yunghegel.salient.engine.ui.tree.TreeWidget
+import org.yunghegel.salient.engine.ui.widgets.EditableTextField
 import kotlin.math.min
 
 open class ObjectTable(obj: GameObject) : TreeActor<GameObject>(obj) {
 
     open val button : SImageButton = SImageButton(obj.iconName)
-    open val label : SLabel = SLabel(obj.name)
+    open val label : EditableTextField = EditableTextField(obj.name, { obj.name = it })
 
 
     val buttonLabelContainer = STable()

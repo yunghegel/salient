@@ -3,7 +3,7 @@ package org.yunghegel.salient.engine
 import com.badlogic.gdx.*
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import ktx.inject.Context
+import org.yunghegel.salient.engine.system.InjectionContext
 import org.yunghegel.salient.engine.system.injectUnsafe
 import org.yunghegel.salient.engine.system.register
 
@@ -13,7 +13,7 @@ interface Module  {
 
     val beforeEval : MutableList<()->Unit>
 
-    val registry : Context.() -> Unit
+    val registry : InjectionContext.() -> Unit
 
     fun initialize() {
         beforeEval.forEach { it() }

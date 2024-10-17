@@ -1,7 +1,7 @@
 package org.yunghegel.salient.editor.plugins.gizmos
 
 import com.badlogic.ashley.core.Engine
-import ktx.inject.Context
+import org.yunghegel.salient.engine.system.InjectionContext
 import org.yunghegel.salient.editor.app.Salient.Companion.addSystem
 import org.yunghegel.salient.editor.app.Salient.Companion.buffers
 import org.yunghegel.salient.editor.app.salient
@@ -30,7 +30,7 @@ class GizmoPlugin : Plugin {
 
     override val tools: MutableList<Tool> = mutableListOf(rotateTool,scaleTool,translateTool,placementTool)
 
-    override val registry: Context.() -> Unit = {
+    override val registry: InjectionContext.() -> Unit = {
         bindSingleton(system)
         bindSingleton(rotateTool)
         bindSingleton(scaleTool)

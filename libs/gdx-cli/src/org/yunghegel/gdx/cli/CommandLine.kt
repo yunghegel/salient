@@ -1,10 +1,16 @@
 package org.yunghegel.gdx.cli
 
-import org.yunghegel.gdx.cli.arg.*
-import org.yunghegel.gdx.cli.cmd.CLICommand
+import org.yunghegel.gdx.cli.arg.Argument
+import org.yunghegel.gdx.cli.arg.Flag
+import org.yunghegel.gdx.cli.arg.Option
+import org.yunghegel.gdx.cli.arg.Parser
 import org.yunghegel.gdx.cli.cmd.CommandExecutor
 import org.yunghegel.gdx.cli.input.CommandHistory
 import org.yunghegel.gdx.cli.input.CommandLineInput
+import org.yunghegel.gdx.cli.input.ParsedCommandInput
+import org.yunghegel.gdx.cli.input.ParsedValueInput
+import org.yunghegel.gdx.cli.util.StdOut
+import org.yunghegel.gdx.cli.util.ValueAction
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
@@ -15,15 +21,17 @@ open class CommandLine() : CommandExecutor,CommandLineInput {
 
     val context : CLIContext = CLIContext()
 
-    val parser : Parser = Parser()
+    val parser : Parser = Parser(context)
 
     open var writeLine : (String) -> Unit = { println(it) }
 
     init {
-        context.registerCommands(GlobalCommands(context))
+        context.register(GlobalCommands(context))
+
+
     }
 
-    context(ParsedInput)
+    context(ParsedCommandInput)
     override fun executeCommand() : Any? {
         val (obj, func) = command
         val params = func.parameters.drop(1).map { param ->
@@ -55,19 +63,56 @@ open class CommandLine() : CommandExecutor,CommandLineInput {
         return func.call(obj, *params.toTypedArray())
     }
 
-    override fun acceptInput(string: String) {
-        history.addCommand(string)
-        val args = string.split(" ").toTypedArray()
-        val parsedInput = parser.parse(context,args)
-        parsedInput?.let { input ->
-            with(input) {
-                executeCommand()
+    context(ParsedValueInput)
+    fun executeValue() {
+
+        arguments.forEach { (key, value) ->
+            when(action) {
+                ValueAction.SET -> {
+                    val cliVal = cliVal
+                    val accessor = cliVal.accessor
+                    val castedValue = parser.convertValue(value, accessor.type)
+                    accessor.set(castedValue)
+                }
+                ValueAction.PRINT -> {
+                    val cliVal = cliVal
+                    val accessor = cliVal.accessor
+                    StdOut.writeLn("${accessor.name}: ${accessor.get()}")
+                }
+                ValueAction.HELP -> {
+                    val cliVal = cliVal
+                    StdOut.writeLn("${cliVal.accessor.name}: ${cliVal.value.type}\n \r - ${cliVal.value.description}")
+                }
             }
         }
     }
 
-    fun register(any : Any) {
-        context.registerCommands(any)
+    override fun acceptInput(string: String) {
+        history.addCommand(string)
+        val args = string.split(" ").toTypedArray()
+        val parsedInput = parser.parse(context,args)
+
+        parsedInput?.let { input ->
+            when(input) {
+                is ParsedCommandInput -> {
+                    with(input) {
+                        val result = executeCommand()
+                        result?.let { writeLine(result.toString()) }
+                    }
+                }
+                is ParsedValueInput -> {
+                    with(input) {
+                        executeValue()
+                    }
+                }
+            }
+        }
+    }
+
+    fun register(vararg objects : Any) {
+        for (obj in objects) {
+            context.register(obj)
+        }
     }
 
 }

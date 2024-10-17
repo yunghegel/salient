@@ -50,6 +50,10 @@ interface EnumMask<T:Enum<T>> {
         values.forEach { bitmask.set(it,false) }
     }
 
+    fun initialize(from: Int) {
+        bitmask.fromMask(from)
+    }
+
     fun reportEach() {
         entries.filter { this has it }.run {
             println("HAS: [${joinToString(",")}]")

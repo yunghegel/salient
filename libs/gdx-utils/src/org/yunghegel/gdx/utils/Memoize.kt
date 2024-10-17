@@ -1,4 +1,8 @@
 package org.yunghegel.gdx.utils
+
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
+
 /**
  * Minimum memoization implementation
  * no eviction strategy / no fixed size
@@ -133,3 +137,20 @@ fun <A,B,C,R> ((A,B,C)->R).memoize(): (A,B,C)->R {
         }
     }
 }
+
+class MemoizedValue<T>(val value : T) : ReadWriteProperty<Any, T> {
+    val map = HashMap<Any, T>(100)
+    override fun getValue(thisRef: Any, property: KProperty<*>): T {
+        return map.getOrPut(thisRef) {
+            value
+        }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+        if (value != this.value) {
+            map[thisRef] = value
+        }
+    }
+}
+
+fun <T> memoize(value: T) = MemoizedValue(value)

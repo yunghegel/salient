@@ -2,40 +2,32 @@ package org.yunghegel.salient.editor.ui.scene.graph
 
 import com.badlogic.ashley.core.Component
 import com.badlogic.gdx.scenes.scene2d.InputEvent
-import com.badlogic.gdx.scenes.scene2d.ui.Tree
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.badlogic.gdx.scenes.scene2d.utils.Selection
-import com.badlogic.gdx.utils.Align.right
 import com.badlogic.gdx.utils.OrderedSet
 import com.ray3k.stripe.PopTable
 import ktx.actors.onChange
 import org.yunghegel.gdx.utils.ext.padHorizontal
 import org.yunghegel.salient.editor.scene.GameObjectSelectionManager
 import org.yunghegel.salient.editor.scene.SceneGraph
-import org.yunghegel.salient.engine.api.ecs.BaseComponent
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.api.flags.GameObjectFlag
-import org.yunghegel.salient.engine.events.scene.*
-import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.input.Input
+import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.component.LightComponent
 import org.yunghegel.salient.engine.scene3d.component.MaterialsComponent
 import org.yunghegel.salient.engine.scene3d.component.MeshComponent
 import org.yunghegel.salient.engine.scene3d.component.ModelComponent
-import org.yunghegel.salient.engine.scene3d.events.GameObjectAdded
-import org.yunghegel.salient.engine.scene3d.events.onGameObjectAdded
-import org.yunghegel.salient.engine.scene3d.events.onGameObjectRemoved
-import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.system.singleton
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.scene2d.SImage
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
-import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.table
 import org.yunghegel.salient.engine.ui.tree.TreeActor
 import org.yunghegel.salient.engine.ui.tree.TreeNode
 import org.yunghegel.salient.engine.ui.tree.TreeWidget
+import org.yunghegel.salient.engine.ui.widgets.EditableTextField
 import org.yunghegel.salient.engine.ui.widgets.menu.ContextMenu
 import kotlin.math.max
 import kotlin.reflect.KClass
@@ -72,8 +64,6 @@ class SceneGraphTree(private var graph: SceneGraph) : TreeWidget<TreeNode<GameOb
         addListeners()
         selection.multiple = true
         graph.sceneTree = this
-
-
     }
 
 
@@ -184,7 +174,7 @@ class SceneGraphTree(private var graph: SceneGraph) : TreeWidget<TreeNode<GameOb
 
     open class GameObjectTable(val gameObject: GameObject) : TreeActor<GameObject>(gameObject) {
 
-        override var title: SLabel = SLabel(gameObject.name)
+        override var title: EditableTextField = EditableTextField(gameObject.name, { gameObject.name = it })
         override var icon: Drawable? = UI.drawable(gameObject.iconName)
 
         open val visibleToggle = SImageButton("eye")
@@ -221,7 +211,7 @@ class SceneGraphTree(private var graph: SceneGraph) : TreeWidget<TreeNode<GameOb
     }
     open class ComponentTable(val component: EntityComponent<*>, obj : GameObject) :GameObjectTable(obj) {
 
-        override var title: SLabel = SLabel("${component::class.simpleName}".substringBeforeLast("Component"))
+        override var title: EditableTextField = EditableTextField((component::class.simpleName)!!.substringBeforeLast("Component")).apply { removeListener(this.listener)}
         override var icon: Drawable? = UI.drawable(component.iconName)
         override var iconImage: SImage = SImage(icon!!, 18)
 

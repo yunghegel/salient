@@ -7,12 +7,3 @@ dependencies {
 //    testImplementation project(':tests')
 }
 
-configureGroup(libs) {
-
-    sourceSets {
-
-        test.java.srcDirs += ['test']
-        test.kotlin.srcDirs += ['test']
-
-    }
-}

@@ -1,8 +1,53 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+        maven { url "https://s01.oss.sonatype.org" }
+        google()
+        gradlePluginPortal()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url  "https://jitpack.io" }
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://repo.yunghegel.org/snapshots"}
+        maven { url "https://repo.yunghegel.org/plugins" }
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == 'org.jetbrains.kotlin.jvm') {
+                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
+            }
+            if (requested.id.id == 'org.jetbrains.kotlin.plugin.serialization') {
+                useModule("org.jetbrains.kotlin:kotlin-serialization:${requested.version}")
+            }
+        }
+    }
+    plugins {
+        id 'org.jetbrains.kotlin.jvm'
+        id 'org.jetbrains.kotlin.plugin.serialization'
+    }
+}
+
+
+dependencyResolutionManagement {
+        repositories {
+            mavenCentral()
+            maven { url "https://s01.oss.sonatype.org" }
+            google()
+            gradlePluginPortal()
+            maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+            maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots/" }
+            maven { url  "https://jitpack.io" }
+            maven { url "https://plugins.gradle.org/m2/" }
+            maven { url "https://repo.yunghegel.org/snapshots"}
+            maven { url "https://repo.yunghegel.org/plugins" }
+        }
+    }
+
 rootProject.name = 'salient'
 
 include 'launcher', 'editor', 'libs', 'engine','tests'
 
-def libs = ['gdx-utils', 'gdx-debug','gdx-renderer','gdx-cli','gdx-effect','gdx-mesh-gen']
+def libs = ['gdx-utils','gdx-renderer','gdx-cli','gdx-mesh-gen']
 
 libs.each { lib ->
     include "libs:$lib"

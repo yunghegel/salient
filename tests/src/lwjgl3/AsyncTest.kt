@@ -6,6 +6,7 @@ import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import com.badlogic.gdx.graphics.PerspectiveCamera
+import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader
@@ -20,10 +21,12 @@ import ktx.async.newAsyncContext
 import net.mgsx.gltf.loaders.gltf.GLTFAssetLoader
 import net.mgsx.gltf.loaders.gltf.GLTFLoader
 import net.mgsx.gltf.scene3d.scene.SceneAsset
+import net.mgsx.gltf.scene3d.scene.SceneManager
 import org.yunghegel.gdx.renderer.util.toInternalFile
 import org.yunghegel.gdx.utils.ext.instance
 import org.yunghegel.salient.engine.helpers.SampleModels
 import java.io.File
+import kotlin.math.sqrt
 
 @OptIn(kotlin.ExperimentalStdlibApi::class)
 class AsyncModelLoader : ApplicationAdapter() {
@@ -32,6 +35,7 @@ class AsyncModelLoader : ApplicationAdapter() {
     lateinit var instances : Array<ModelInstance>
     lateinit var cam : PerspectiveCamera
     lateinit var batch : ModelBatch
+    lateinit var sceneManager : SceneManager
 
     val assets : AssetStorage by lazy { AssetStorage(asyncContext = newAsyncContext(threads = 2)) }
     val loaded = mutableListOf<String>()
@@ -54,12 +58,28 @@ class AsyncModelLoader : ApplicationAdapter() {
 
         batch = ModelBatch()
 
+        sceneManager = SceneManager()
+        sceneManager.camera = cam
+
         assets.setLoader<SceneAsset>("gltf"){ GLTFAssetLoader() }
-        assets.setLoader("obj") { ObjLoader(InternalFileHandleResolver()) }
+        assets.setLoader<Model>("obj") { ObjLoader(InternalFileHandleResolver()) }
 
         KtxAsync.launch {
+            val total = SampleModels.entries.size
+            val square = sqrt(total.toDouble()).toInt()  * 2 + 1
+
+
             SampleModels.entries.forEachIndexed { i, modelRef ->
-                loadAsync(modelRef.path("models", "gltf"))
+                val loaded = async { loadAsync(modelRef.path("models", "obj")) }
+//                sceneManager.addScene(Scene(loaded.await().scene))
+//                addModel(loaded.await(),i)
+                instances.add(loaded.await().instance.apply {
+//              load in a grid format with modulo
+                    transform.setToTranslation((i % square).toFloat(), 0f, (i / square).toFloat())
+
+
+                })
+
             }
         }
 
@@ -73,7 +93,7 @@ class AsyncModelLoader : ApplicationAdapter() {
         files.forEachIndexed { i, file ->
             val location = "$path/${file.name()}"
             val asset = async { loadAsync(location, this) }
-            addModel(asset.await(),i)
+//            addModel(asset.await(),i)
         }
     }
 
@@ -85,9 +105,9 @@ class AsyncModelLoader : ApplicationAdapter() {
         }
     }
 
-    suspend fun loadAsync(path: String, scope: CoroutineScope=KtxAsync) : SceneAsset {
+    suspend fun loadAsync(path: String, scope: CoroutineScope=KtxAsync) : Model {
         val job = scope.launch { println("Loading: ${assets.progress}") }
-        val model = assets.load<SceneAsset>(path)
+        val model = assets.load<Model>(path)
         loaded.add(path)
 
         return model
@@ -114,7 +134,8 @@ class AsyncModelLoader : ApplicationAdapter() {
             batch.begin(cam)
             batch.render(instances)
             batch.end()
-
+//        sceneManager.update(Gdx.graphics.deltaTime)
+//        sceneManager.render()
 
 
     }

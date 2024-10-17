@@ -14,7 +14,10 @@ import org.yunghegel.salient.engine.ui.scene2d.STextField
 import org.yunghegel.salient.engine.ui.widgets.aux.Console
 
 class InputLine(val console: Console, val submit: (String)->Unit) : STable() {
+
+
     val inputField = STextField("", "console")
+    var namespace : String = "global"
     val sendButton = STextButton("Submit")
 
     init {
@@ -58,7 +61,7 @@ class InputLine(val console: Console, val submit: (String)->Unit) : STable() {
             override fun exit(event: InputEvent?, x: Float, y: Float, pointer: Int, toActor: Actor?) {
                 if (stage.scrollFocus != null)
                 {
-                    if (toActor !=null && toActor.isDescendantOf(console))
+                    if (toActor !=null && (toActor.isDescendantOf(console) || toActor == console) || console.children.any { it.isDescendantOf(toActor) })
                     {
                         stage.setScrollFocus(console.scroll)
                         stage.keyboardFocus = inputField

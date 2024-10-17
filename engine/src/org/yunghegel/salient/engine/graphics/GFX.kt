@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import dev.lyze.gdxtinyvg.utils.WhitePixelUtils
-import ktx.inject.Context
+import org.yunghegel.salient.engine.system.InjectionContext
 import org.yunghegel.gdx.utils.ext.notnull
 import org.yunghegel.salient.engine.GraphicsModule
 import org.yunghegel.salient.engine.graphics.shapes.utility.Grid
@@ -24,7 +24,7 @@ object GFX : GraphicsModule(), SharedGraphicsResources {
     override var shapeRenderer: ShapeRenderer  by notnull()
     override var whitePixel : TextureRegion by notnull()
 
-    override val registry: Context.() -> Unit = {
+    override val registry: InjectionContext.() -> Unit = {
         whitePixel = WhitePixelUtils.createWhitePixelTexture()
         spriteBatch = SpriteBatch()
         debugDrawer = DebugDrawer()

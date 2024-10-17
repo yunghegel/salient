@@ -8,8 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.ray3k.stripe.PopTable
-import ktx.actors.onClick
-import org.yunghegel.gdx.utils.data.Range
 import org.yunghegel.gdx.utils.ext.label
 import org.yunghegel.gdx.utils.ext.toOpenGLCoords
 import org.yunghegel.gdx.utils.ext.topRight
@@ -17,9 +15,8 @@ import org.yunghegel.salient.engine.Pipeline
 import org.yunghegel.salient.engine.State
 import org.yunghegel.salient.engine.system.Netgraph
 import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
-import org.yunghegel.salient.engine.ui.scene2d.SLabel
+import org.yunghegel.salient.engine.ui.scene2d.STable
 
 class ViewportPanel(val viewport : ScreenViewport) : STable() {
 
@@ -30,10 +27,17 @@ class ViewportPanel(val viewport : ScreenViewport) : STable() {
     val ui : STable = STable()
 
     val rowOne : STable = STable()
+    val rowOneLeft : STable = STable()
+    val rowOneRight : STable = STable()
 
     val rowTwo : STable = STable()
+    val rowTwoLeft : STable = STable()
+    val rowTwoRight : STable = STable()
 
     val rowThree : STable = STable()
+    val rowThreeLeft : STable = STable()
+    val rowThreeRight : STable = STable()
+
 
     val popup : PopTable = PopTable()
 
@@ -61,31 +65,52 @@ class ViewportPanel(val viewport : ScreenViewport) : STable() {
             "${viewport.screenX}  ${viewport.screenY} ${viewport.screenWidth}  ${viewport.screenHeight}"
         }
 
+
+
     }
 
     fun configUI() {
-        ui.add(rowOne).growX().row()
-        ui.add(rowTwo).growX().row()
+        rowOneLeft.align(Align.topLeft)
+        rowOneRight.align(Align.topRight)
+
+        rowTwoLeft.align(Align.left)
+        rowTwoRight.align(Align.right)
+
+        rowThreeLeft.align(Align.bottomLeft)
+        rowThreeRight.align(Align.bottomRight)
+        rowOne.add(rowOneLeft).grow()
+        rowOne.add(rowOneRight).grow()
+
+        rowTwo.add(rowTwoLeft).grow()
+        rowTwo.add(rowTwoRight).grow()
+
+        rowThree.add(rowThreeLeft).grow()
+        rowThree.add(rowThreeRight).grow()
+
+        ui.add(rowOne).grow().row()
+        ui.add(rowTwo).grow().row()
         ui.add(rowThree).grow().row()
 
-        rowOne.align(Align.topLeft)
-        rowTwo.align(Align.topLeft)
-
+//        rowOne.align(Align.topLeft)
+//        rowTwo.align(Align.left)
+//
         rowThree.align(Align.bottomRight)
-        rowThree.apply {
+        rowThreeRight.apply {
             Netgraph.listen { key, value ->
                 val label = label("$key : ${value()}",skin = skin, style = "default-small") {
                     "$key : ${value()}"
+                }.apply {
+                    align(Align.right)
                 }
                 add(label).row()
             }
         }
-
-        rowOne.add(config).align(Align.topRight).pad(10f).size(20f)
-        popup.attachToActor(config, Align.bottomLeft, Align.bottomRight, -10f, -10f)
-        config.onClick { if (isChecked) popup.show(stage) else popup.hide() }
-        rowOne.add(viewportMenu.table).growX()
-        rowTwo.add(tools).growY().left().pad(10f).width(20f)
+//
+        rowOneLeft.add(config).align(Align.topLeft).pad(10f).size(20f)
+//        popup.attachToActor(config, Align.bottomLeft, Align.bottomRight, -10f, -10f)
+//        config.onClick { if (isChecked) popup.show(stage) else popup.hide() }
+        rowOneLeft.add(viewportMenu.table).growX()
+        rowTwoLeft.add(tools).growY().left().pad(10f).width(20f)
     }
 
     fun update() {

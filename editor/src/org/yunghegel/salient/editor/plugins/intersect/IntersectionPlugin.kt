@@ -1,7 +1,7 @@
 package org.yunghegel.salient.editor.plugins.intersect
 
 import com.badlogic.ashley.core.Engine
-import ktx.inject.Context
+import org.yunghegel.salient.engine.system.InjectionContext
 import org.yunghegel.salient.editor.app.salient
 import org.yunghegel.salient.editor.plugins.intersect.tools.IntersectorTool
 import org.yunghegel.salient.engine.api.ecs.System
@@ -17,7 +17,7 @@ class IntersectionPlugin : Plugin {
 
 
     override val tools: MutableList<Tool> = mutableListOf(intersectionTool)
-    override val registry: Context.() -> Unit = {
+    override val registry: InjectionContext.() -> Unit = {
         bindSingleton(intersectionTool)
     }
 

@@ -12,26 +12,10 @@ dependencies {
 
 def test_types = ['lwjgl3', 'headless']
 
-sourceSets {
-    main {
-        resources {
-            srcDirs = [rootProject.file('/editor/assets')]
-        }
-        java {
-            srcDirs = ['src']
-        }
-        kotlin {
-            srcDirs = ['src']
-        }
-    }
-    test {
-        java {
-            srcDirs = ['test']
-        }
-        kotlin {
-            srcDirs = ['test']
-        }
-    }
+
+
+test {
+    useJUnitPlatform()
 }
 
 task createTestTasks {

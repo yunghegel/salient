@@ -1,7 +1,7 @@
 package org.yunghegel.salient.editor.app
 
 import com.charleskorn.kaml.Yaml
-import ktx.inject.Context
+import org.yunghegel.salient.engine.system.InjectionContext
 import org.yunghegel.gdx.utils.ext.notnull
 import org.yunghegel.gdx.utils.ext.nullOrNotNull
 import org.yunghegel.salient.editor.asset.AssetManager
@@ -48,7 +48,7 @@ class App : AppModule() {
     private val actionHistory = ActionHistory(100)
     private lateinit var meta: Meta
 
-    override val registry: Context.() -> Unit = {
+    override val registry: InjectionContext.() -> Unit = {
         bindSingleton(actionHistory)
         bindSingleton(projectManager)
         bindSingleton(sceneManager)

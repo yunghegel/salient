@@ -6,6 +6,13 @@ import org.yunghegel.gdx.meshgen.data.attribute.BaseAttribute
 
 open class ObjectElementAttribute<T,E: Element>(elementAttributeReference: ElementAttributeReference<E>, val factory:ArrayFactory<T>)  : BaseAttribute<E,T>(elementAttributeReference){
 
+    init {
+        setter = {element, value ->
+            var obj = get(element)
+            obj = value as T
+        }
+    }
+
     override fun alloc(size: Int): Array<T> {
         return factory.alloc(size)
     }

@@ -1,27 +1,20 @@
 package org.yunghegel.salient.engine.ui.tree
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
-import com.badlogic.gdx.scenes.scene2d.ui.Tree
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.badlogic.gdx.scenes.scene2d.utils.Layout
 import com.badlogic.gdx.utils.OrderedSet
-import dev.lyze.gdxtinyvg.utils.WhitePixelUtils
 import ktx.actors.onChange
 import ktx.collections.GdxArray
-import org.yunghegel.gdx.utils.ext.alpha
 import org.yunghegel.gdx.utils.ext.createColorPixel
 import org.yunghegel.gdx.utils.ext.drawable
 import org.yunghegel.gdx.utils.ui.TreeEx
-import org.yunghegel.salient.engine.api.properties.Selectable
 import org.yunghegel.salient.engine.ui.UI
-import org.yunghegel.salient.engine.ui.child
 import kotlin.math.max
-import kotlin.math.min
 
 @Suppress("UNCHECKED_CAST")
 abstract class TreeWidget<Node, Object, A >(rootobject: Object) : TreeEx<Node, Object>(UI.skin) where Node : TreeNode<Object,A>, A: TreeActor<Object> {
@@ -61,11 +54,6 @@ abstract class TreeWidget<Node, Object, A >(rootobject: Object) : TreeEx<Node, O
                 }
             })
         }
-
-
-
-
-
     }
 
     init {
@@ -75,7 +63,6 @@ abstract class TreeWidget<Node, Object, A >(rootobject: Object) : TreeEx<Node, O
 
         selection.setActor(changeActor)
 
-        add(root)
         map[rootobject] = root
 
     }
@@ -126,11 +113,15 @@ abstract class TreeWidget<Node, Object, A >(rootobject: Object) : TreeEx<Node, O
         }
     }
 
-    fun buildTree(node: Node, obj: Object, conf: (Node) -> Unit = {}) {
+    fun buildTree(node: Node?, obj: Object, conf: (Node) -> Unit = {}) {
         resolveChildren(obj)?.forEach {
             val child = constructNode(it)
             conf(child)
-            node.add(child)
+            if (node != null) {
+                node.add(child)
+            } else {
+                add(child)
+            }
             map[it] = child
             buildTree(child, it)
         }

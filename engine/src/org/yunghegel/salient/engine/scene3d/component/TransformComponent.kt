@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector3
+import org.yunghegel.gdx.utils.memoize
 import org.yunghegel.salient.engine.api.Dirty
 import org.yunghegel.salient.engine.api.DirtyListener
 import org.yunghegel.salient.engine.api.ecs.BaseComponent
@@ -24,10 +25,13 @@ class TransformComponent(go: GameObject) : EntityComponent<Matrix4>(go.combined,
 
     override val type: KClass<out BaseComponent> = TransformComponent::class
 
+    override var value: Matrix4? by memoize(Matrix4())
+
     init {
         dirtySubscribers.add {
             go.combined.set(value)
         }
+        value!!.set(go.combined)
     }
 
     fun configure(renderableComponent: RenderableComponent) {

@@ -1,4 +1,4 @@
-package org.yunghegel.gdx.cli
+package org.yunghegel.gdx.cli.util
 
 
 const val ANSI_RESET: String = "\u001B[0m"

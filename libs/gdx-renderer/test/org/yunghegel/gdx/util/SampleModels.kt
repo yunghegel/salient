@@ -28,6 +28,7 @@ enum class SampleModels(val model: String) {
 
     fun load(basePath:String = "models/", ext: String = "obj") : Model {
         val path = "${basePath}/${ext}/${model}.${ext}"
+        println("Loading model: $path")
         if (ext == "obj") return ObjLoader(InternalFileHandleResolver()).loadModel(Gdx.files.internal(path))
         else if (ext == "gltf") return GLTFLoader().load(Gdx.files.internal(path)).scene.model
         else throw IllegalArgumentException("Unsupported file type")

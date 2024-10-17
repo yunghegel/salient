@@ -1,7 +1,7 @@
 package org.yunghegel.salient.editor.plugins.base
 
 import com.badlogic.ashley.core.Engine
-import ktx.inject.Context
+import org.yunghegel.salient.engine.system.InjectionContext
 import org.yunghegel.salient.editor.plugins.base.systems.HotkeySystem
 import org.yunghegel.salient.editor.plugins.base.systems.ToolSystem
 import org.yunghegel.salient.engine.api.ecs.System
@@ -15,7 +15,7 @@ class DefaultPlugin() : Plugin {
     val toolSystem = ToolSystem()
     val hotkeySystem = HotkeySystem()
 
-    override val registry: Context.() -> Unit = {
+    override val registry: InjectionContext.() -> Unit = {
         bindSingleton(toolSystem)
         bindSingleton(hotkeySystem)
     }

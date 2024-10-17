@@ -3,13 +3,13 @@ package org.yunghegel.salient.editor.app
 import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.g3d.ModelInstance
-import com.badlogic.gdx.graphics.g3d.loader.ObjLoader
 import com.badlogic.gdx.graphics.glutils.GLFormat
 import ktx.app.clearScreen
-import org.yunghegel.salient.engine.system.Index
 import org.yunghegel.gdx.utils.data.Named
-import org.yunghegel.gdx.utils.ext.*
+import org.yunghegel.gdx.utils.ext.clearColor
+import org.yunghegel.gdx.utils.ext.clearDepth
+import org.yunghegel.gdx.utils.ext.delta
+import org.yunghegel.gdx.utils.ext.notnull
 import org.yunghegel.salient.core.graphics.util.OutlineDepth
 import org.yunghegel.salient.editor.app.configs.Settings
 import org.yunghegel.salient.editor.input.ViewportController
@@ -22,35 +22,23 @@ import org.yunghegel.salient.editor.plugins.outline.lib.Outliner
 import org.yunghegel.salient.editor.plugins.picking.PickingPlugin
 import org.yunghegel.salient.editor.project.Project
 import org.yunghegel.salient.editor.scene.Scene
-import org.yunghegel.salient.editor.scene.SceneGraph
 import org.yunghegel.salient.engine.InterfaceInitializedEvent
 import org.yunghegel.salient.engine.Pipeline
 import org.yunghegel.salient.engine.State.*
-import org.yunghegel.salient.engine.UILogicSystem
-import org.yunghegel.salient.engine.api.ecs.DEBUG_ALL
 import org.yunghegel.salient.engine.api.ecs.System
-import org.yunghegel.salient.engine.api.model.AssetHandle
+import org.yunghegel.salient.engine.api.plugin.Plugin
+import org.yunghegel.salient.engine.api.tool.Tool
 import org.yunghegel.salient.engine.api.undo.ActionHistoryKeyListener
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.lifecycle.EditorInitializedEvent
 import org.yunghegel.salient.engine.events.lifecycle.WindowResizedEvent
-import org.yunghegel.salient.engine.graphics.GFX
-import org.yunghegel.salient.engine.scene3d.SceneContext
-import org.yunghegel.salient.engine.input.Input
-import org.yunghegel.salient.engine.api.plugin.Plugin
-import org.yunghegel.salient.engine.scene3d.component.BoundsComponent
-import org.yunghegel.salient.engine.scene3d.component.MaterialsComponent
-import org.yunghegel.salient.engine.scene3d.component.MeshComponent
-import org.yunghegel.salient.engine.scene3d.component.ModelComponent
-import org.yunghegel.salient.engine.scene3d.component.RenderableComponent
-import org.yunghegel.salient.engine.system.*
-import org.yunghegel.salient.engine.api.tool.Tool
-import org.yunghegel.salient.engine.api.tool.ToolEntity
-import org.yunghegel.salient.engine.events.lifecycle.onWindowResized
 import org.yunghegel.salient.engine.graphics.FBO
-import org.yunghegel.salient.engine.graphics.GFX.spriteBatch
-import org.yunghegel.salient.engine.tool.PickableTool
+import org.yunghegel.salient.engine.graphics.GFX
+import org.yunghegel.salient.engine.input.Input
+import org.yunghegel.salient.engine.scene3d.SceneContext
+import org.yunghegel.salient.engine.system.*
 import org.yunghegel.salient.engine.ui.UI
+import kotlin.collections.set
 import kotlin.reflect.KClass
 
 
@@ -86,10 +74,7 @@ class Salient : ApplicationAdapter() {
         index.types[Tool::class.java] = mutableListOf()
         index.types[System::class.java] = mutableListOf()
         index.types[Plugin::class.java] = mutableListOf()
-
         registry = PluginSet(index.list(Tool::class.java)!! as MutableList<Tool>,index.list(System::class.java)!! as MutableList<System<Project,Scene>>,index.list(Plugin::class.java)!! as MutableList<Plugin>)
-
-
     }
     val outliner : OutlineDepth by lazy { inject() }
     override fun create() {
@@ -150,7 +135,6 @@ class Salient : ApplicationAdapter() {
                         tool.toggle()
                     }
                 }
-                val toolEntity = tool.entity
             }
 
             plugin.registry(InjectionContext)
@@ -184,16 +168,14 @@ class Salient : ApplicationAdapter() {
         buffers["depth"] = depth
         buffers["color"] = color
 
-        onWindowResized { event ->
+//        onWindowResized { event ->
             once(INIT) {
                 buffers["depth"] = FBO.ensureScreenSize(buffers["depth"]!!, GLFormat.RGBA32, true)
                 buffers["color"] = FBO.ensureScreenSize(buffers["color"]!!, GLFormat.RGBA32, true)
             }
 
 
-        }
-
-
+//        }
 
             scene.apply {
                 context.run {
@@ -218,17 +200,13 @@ class Salient : ApplicationAdapter() {
                         scene.renderer.prepareContext(scene.context, false)
                     }
                     push(COLOR_PASS) { _ ->
-//                        val colorTex = pass(buffers["color"]!!) {
-//                            clearScreen(.1f,.1f,.1f,0f)
                             gui.updateviewport()
                             modelBatch.begin(perspectiveCamera)
                             graph.root.renderColor(delta, modelBatch, scene.context)
                             graph.root.renderDebug(scene.context)
                             modelBatch.end()
-//                        }
-//                        colorTex.drawf(spriteBatch)
-                    }
 
+                    }
 
                     push(BEFORE_UI_PASS) {_ ->
                         with(Outliner.settings) {
@@ -247,16 +225,7 @@ class Salient : ApplicationAdapter() {
                     }
                 }
             }
-
-
-
-
-
     }
-
-
-
-
 
     /**
      * Render pipeline first, then process everything else. Everything after the pipeline is auxillary
@@ -281,8 +250,6 @@ class Salient : ApplicationAdapter() {
         UI.resize(width, height)
         post(WindowResizedEvent(width, height),false)
         super.resize(width, height)
-
-
     }
 
     override fun dispose() {

@@ -5,8 +5,7 @@ import com.badlogic.gdx.graphics.GL20
 import org.yunghegel.gdx.utils.ext.*
 import org.yunghegel.salient.engine.helpers.SampleModels
 import types.lwjgl3test
-object DepthBufferTest {
-    val test = lwjgl3test("DepthBufferTest") {
+val DepthBufferTest = lwjgl3test("DepthBufferTest") {
 
 
 
@@ -35,10 +34,8 @@ object DepthBufferTest {
         }
 
     }
-    @JvmStatic
-    fun main(args: Array<String>) {
-        test()
-    }
 
-}
+
+
+
 

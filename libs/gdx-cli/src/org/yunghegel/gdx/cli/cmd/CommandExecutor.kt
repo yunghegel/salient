@@ -1,10 +1,10 @@
 package org.yunghegel.gdx.cli.cmd
 
-import org.yunghegel.gdx.cli.arg.ParsedInput
+import org.yunghegel.gdx.cli.input.ParsedCommandInput
 
 interface CommandExecutor {
 
-    context(ParsedInput)
+    context(ParsedCommandInput)
     fun executeCommand() : Any?
 
 }

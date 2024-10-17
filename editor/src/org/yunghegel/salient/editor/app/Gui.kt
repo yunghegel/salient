@@ -7,21 +7,24 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop
 import com.badlogic.gdx.utils.Align
 import ktx.actors.onChange
+import ktx.actors.onEnter
+import ktx.actors.onExit
 import ktx.scene2d.textTooltip
 import net.mgsx.gltf.scene3d.attributes.PBRTextureAttribute
 import org.yunghegel.gdx.utils.TypedPayload
-import org.yunghegel.salient.engine.ui.widgets.SimpleTextEditor
 import org.yunghegel.gdx.utils.ext.*
 import org.yunghegel.salient.editor.app.configs.ui.LayoutConfig
 import org.yunghegel.salient.editor.app.configs.ui.UIConfig
+import org.yunghegel.salient.editor.plugins.base.systems.pauseHotkeys
+import org.yunghegel.salient.editor.plugins.base.systems.resumeHotkeys
 import org.yunghegel.salient.editor.plugins.gizmos.tools.PlacementTool
 import org.yunghegel.salient.editor.plugins.picking.tools.HoverTool
 import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.editor.ui.AppBar
 import org.yunghegel.salient.editor.ui.ViewportContextMenu
 import org.yunghegel.salient.editor.ui.ViewportSplit
-import org.yunghegel.salient.editor.ui.assets.browser.AssetBrowser
 import org.yunghegel.salient.editor.ui.assets.AssetsView
+import org.yunghegel.salient.editor.ui.assets.browser.AssetBrowser
 import org.yunghegel.salient.editor.ui.project.ProjectControls
 import org.yunghegel.salient.editor.ui.project.ProjectView
 import org.yunghegel.salient.editor.ui.scene.SceneManagementView
@@ -34,20 +37,20 @@ import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.component.PickableComponent
 import org.yunghegel.salient.engine.scene3d.component.RenderableComponent
 import org.yunghegel.salient.engine.system.info
-import org.yunghegel.salient.engine.system.perf.Memory
 import org.yunghegel.salient.engine.system.inject
+import org.yunghegel.salient.engine.system.perf.Memory
 import org.yunghegel.salient.engine.ui.DndTarget
 import org.yunghegel.salient.engine.ui.UI
-
 import org.yunghegel.salient.engine.ui.layout.EditorFrame
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
+import org.yunghegel.salient.engine.ui.scene2d.STextButton
 import org.yunghegel.salient.engine.ui.widgets.PercentageIndicator
+import org.yunghegel.salient.engine.ui.widgets.SimpleTextEditor
 import org.yunghegel.salient.engine.ui.widgets.aux.Console
 import org.yunghegel.salient.engine.ui.widgets.aux.LogView
-import org.yunghegel.salient.engine.ui.widgets.viewport.ViewportPanel
-import org.yunghegel.salient.engine.ui.scene2d.STextButton
 import org.yunghegel.salient.engine.ui.widgets.notif.Notifications
 import org.yunghegel.salient.engine.ui.widgets.notif.toast
+import org.yunghegel.salient.engine.ui.widgets.viewport.ViewportPanel
 
 
 class Gui : EditorFrame() {
@@ -78,6 +81,15 @@ class Gui : EditorFrame() {
         setFillParent(true)
 
         viewportWidget = ViewportPanel(inject())
+        viewportWidget.onExit {
+            pauseHotkeys()
+        }
+        viewportWidget.onEnter {
+            resumeHotkeys()
+            stage.keyboardFocus=viewportWidget
+            stage.scrollFocus=viewportWidget
+            
+        }
         viewportSplit = ViewportSplit(viewportWidget, centerContent)
 
         notifications = Notifications(UI, viewportWidget)
@@ -100,6 +112,7 @@ class Gui : EditorFrame() {
         projectView = ProjectView()
         logView = LogView()
         console = Console()
+
         assetsView = AssetsView()
         sceneTree = SceneView()
         sceneManagementView = SceneManagementView()

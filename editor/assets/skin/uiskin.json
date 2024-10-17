@@ -339,6 +339,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 		name: white
 		color: dark
 	}
+	empty: {
+		name: white
+		color: clear
+	}
 	empty-button: {
 		name: button
 		color: clear
@@ -1420,6 +1424,15 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 		background: text_editor_background
 		selection: text_editor_selection
 		cursor: cursor
+	}
+	editable: {
+		font: default
+		fontColor: offwhite
+		background: empty
+		disabledFontColor: white
+		cursor: cursor
+		selection: selection
+		focusedBackground: selection-dark
 
 	}
 }

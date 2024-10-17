@@ -1,6 +1,6 @@
 import com.badlogic.gdx.math.Matrix4
-import org.junit.Test
 import org.yunghegel.gdx.utils.ext.Printer
+import kotlin.test.Test
 
 class PrinterTest {
 

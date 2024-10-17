@@ -210,7 +210,7 @@ class ViewportController : DragListener() {
     }
 
     override fun scrolled(event: InputEvent?, x: Float, y: Float, amountX: Float, amountY: Float): Boolean {
-        zoom(amountY * scrollUnits * Gdx.graphics.deltaTime * (1/camera.distanceFalloff(target,maxDist,minDist)))
+        zoom(amountY * scrollUnits)
         delegates.eachApply { scrolled(amountX, amountY) }
         return super.scrolled(event, x, y, amountX, amountY)
     }
@@ -245,7 +245,7 @@ class ViewportController : DragListener() {
     }
 
     fun zoom(amount: Float): Boolean {
-        camera.translate(tmpV1.set(camera.direction).scl(amount))
+        camera.translate(tmpV1.set(camera.direction).scl(amount  * Gdx.graphics.deltaTime))
         update()
         return false
     }

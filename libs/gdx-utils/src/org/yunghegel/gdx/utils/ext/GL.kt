@@ -6,12 +6,9 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.BufferUtils
-import ktx.app.clearScreen
-import java.awt.Frame
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -90,6 +87,11 @@ fun getMaxSamplesPoT(): Int {
 fun clearScreen(color: Color) {
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
     Gdx.gl.glClearColor(color.r, color.g, color.b, 1f)
+}
+
+fun clearScreen(r: Float, g: Float, b: Float, a: Float) {
+    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
+    Gdx.gl.glClearColor(r, g, b, a)
 }
 
 //clear depth

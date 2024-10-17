@@ -2,7 +2,7 @@ package org.yunghegel.salient.editor.plugins.picking
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.EntitySystem
-import ktx.inject.Context
+import org.yunghegel.salient.engine.system.InjectionContext
 import org.yunghegel.salient.editor.app.Salient
 import org.yunghegel.salient.editor.app.Salient.Companion.addSystem
 import org.yunghegel.salient.editor.app.salient
@@ -31,7 +31,7 @@ class PickingPlugin : Plugin {
 
     override val tools: MutableList<Tool> = mutableListOf(pickerTool)
 
-    override val registry: Context.() -> Unit = {
+    override val registry: InjectionContext.() -> Unit = {
         bindSingleton(pickingSystem)
         bindSingleton(pickingSystem.picker)
         bindSingleton(hoverSystem)

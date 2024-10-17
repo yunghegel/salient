@@ -3,7 +3,6 @@ package org.yunghegel.gdx.utils.data
 import mobx.core.action
 import mobx.core.observable
 import squidpony.squidmath.EnumOrderedSet
-import java.util.EnumSet
 
 fun interface BitmaskPredicate<T : Enum<T>> {
 
@@ -20,7 +19,10 @@ fun interface PredicatedBitmaskAction<T : Enum<T>> {
     fun action(enum: T, value: Boolean)
 }
 
-class EnumBitmask<T : Enum<T>>(val enumClass: Class<T>) : BitmaskPredicate<T> , Mask {
+
+class EnumBitmask<T : Enum<T>>(val enumClass: Class<T>, default : Int = 0) : BitmaskPredicate<T> , Mask {
+
+    override var mask by observable(default)
 
     fun getTrue(): EnumOrderedSet<T> {
         val set = EnumOrderedSet<T>(enumClass)
@@ -38,14 +40,18 @@ class EnumBitmask<T : Enum<T>>(val enumClass: Class<T>) : BitmaskPredicate<T> , 
         return set
     }
 
+
+
     fun eachTrue(action: (T) -> Unit) {
         for (enum in enumClass.enumConstants) {
             if (get(enum)) action(enum)
         }
     }
 
-    override var mask by observable(0)
 
+    init {
+        fromMask(mask)
+    }
     fun set(enum: T, value: Boolean) {
         action {
             if (value) {
@@ -86,6 +92,8 @@ class EnumBitmask<T : Enum<T>>(val enumClass: Class<T>) : BitmaskPredicate<T> , 
     fun mask(): Int {
         return mask
     }
+
+
 
     fun fromMask(mask: Int) {
         for (enum in enumClass.enumConstants) {
@@ -140,6 +148,30 @@ class EnumBitmask<T : Enum<T>>(val enumClass: Class<T>) : BitmaskPredicate<T> , 
 
         fun <T : Enum<T>> getValue(enum: T, bitmask: Int): Boolean {
             return bitmask and (1 shl enum.ordinal) != 0
+        }
+
+        fun <T: Enum<T>> toMask(enums: Array<T>): Int {
+            var mask = 0
+            for (enum in enums) {
+                mask = mask or (1 shl enum.ordinal)
+            }
+            return mask
+        }
+
+        fun <T: Enum<T>> toMask(enums: EnumOrderedSet<T>): Int {
+            var mask = 0
+            for (enum in enums) {
+                mask = mask or (1 shl enum.ordinal)
+            }
+            return mask
+        }
+
+        fun <T: Enum<T>> fromValues(vararg enums : T): Int {
+            var mask = 0
+            for (enum in enums) {
+                mask = mask or (1 shl enum.ordinal)
+            }
+            return mask
         }
 
     }

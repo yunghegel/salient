@@ -17,7 +17,7 @@ import com.github.tommyettinger.textra.Font
 import com.github.tommyettinger.textra.KnownFonts
 import com.kotcrab.vis.ui.VisUI
 import com.ray3k.stripe.FreeTypeSkin
-import ktx.inject.Context
+import org.yunghegel.salient.engine.system.InjectionContext
 import ktx.scene2d.Scene2DSkin
 import org.yunghegel.gdx.utils.ext.lazyMutable
 import org.yunghegel.salient.engine.UIModule
@@ -55,7 +55,7 @@ object UI : UIModule(), Resizable {
     var touchFocusActor : Actor? = null
     var scrollFocusActor : Actor? = null
 
-    override val registry: Context.() -> Unit = {
+    override val registry: InjectionContext.() -> Unit = {
         if(!loaded) init()
 
         bindSingleton(skin)

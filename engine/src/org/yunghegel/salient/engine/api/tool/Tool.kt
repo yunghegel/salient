@@ -21,14 +21,11 @@ import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.ToolLoadedEvent
 import org.yunghegel.salient.engine.graphics.GridConfig
 import org.yunghegel.salient.engine.graphics.util.DebugDrawer
-import org.yunghegel.salient.engine.input.Input
 import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.system.debug
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.UI
-import org.yunghegel.salient.engine.ui.scene2d.SImage
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
-import org.yunghegel.salient.engine.ui.scene2d.SImageTextButton
 import kotlin.math.abs
 
 
@@ -42,19 +39,22 @@ abstract class Tool(override val name:String,key:Int=-1) : InputMultiplexer(), N
 
     val renderMask = EnumBitmask(RenderUsage::class.java)
 
-    val entity = ToolEntity(this)
+    protected val entity = ToolEntity(this)
 
     fun setRenderUsage(vararg usage : RenderUsage) {
         usage.forEach { renderMask.set(it,true) }
     }
 
+    val engine: Pipeline by lazy { inject() }
+
     init {
         post(ToolLoadedEvent(this))
+        engine.addEntity(entity)
 
 
     }
 
-    val engine: Pipeline by lazy { inject() }
+
 
     var group: ToolGroup? = null
 
@@ -106,7 +106,7 @@ abstract class Tool(override val name:String,key:Int=-1) : InputMultiplexer(), N
     open fun activate() {
         debug("Activating tool $name")
         addProcessor(UI)
-        engine.addEntity(entity)
+//        engine.addEntity(entity)
         active = true
         if (actor != null) actor!!.isChecked = true
     }
@@ -114,7 +114,7 @@ abstract class Tool(override val name:String,key:Int=-1) : InputMultiplexer(), N
     open fun deactivate() {
         debug("Deactivating tool $name")
         removeProcessor(UI)
-        engine.removeEntity(entity)
+//        engine.removeEntity(entity)
         active = false
         if (actor != null) actor!!.isChecked = false
     }

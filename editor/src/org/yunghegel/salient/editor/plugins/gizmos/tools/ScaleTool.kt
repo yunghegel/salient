@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
+import org.yunghegel.gdx.utils.ext.delta
 import org.yunghegel.gdx.utils.selection.PickerColorEncoder
 import org.yunghegel.salient.editor.plugins.gizmos.lib.GizmoHandle
 import org.yunghegel.salient.editor.plugins.gizmos.lib.GizmoModels
@@ -129,11 +130,11 @@ class ScaleTool(system : GizmoSystem) : TransformGizmo<GameObject, ScaleTool.Sca
                 val sclamnt: Vector3 = Vector3(scl, scl, scl).add(tmpScale)
                 scale.set(sclamnt)
                 instance.transform.setToTranslationAndScaling(position, scale)
-
             }
         }
 
         override fun renderPick(batch: ModelBatch) {
+            applyTransforms()
            batch.render(instance)
         }
 
@@ -148,5 +149,10 @@ abstract class TransfomGizmoHandle<T, U>(model: Model, id: Int) : GizmoHandle<T>
     override fun render(batch: ModelBatch) {
         batch.render(instance)
     }
+
+    fun applyTransforms() {
+        instance.transform.set(position, rotation, scale)
+    }
+
 }
 

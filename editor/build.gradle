@@ -2,9 +2,3 @@ dependencies {
     api project(":engine")
 }
 
-kotlin {
-    def enginePath = project(":engine").projectDir
-    sourceSets.named("test") { test ->
-        test.kotlin.srcDirs += file("$enginePath/test")
-    }
-}

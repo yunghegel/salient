@@ -1,28 +1,144 @@
 package org.yunghegel.gdx.cli
 
-import org.yunghegel.gdx.cli.arg.*
+import org.yunghegel.gdx.cli.arg.Command
+import org.yunghegel.gdx.cli.arg.Namespace
+import org.yunghegel.gdx.cli.arg.Value
 import org.yunghegel.gdx.cli.cmd.CLICommand
+import org.yunghegel.gdx.cli.util.Type
+import org.yunghegel.gdx.cli.value.CLIValue
+import org.yunghegel.gdx.utils.reflection.KAccessor
+import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.jvm.javaField
 
 class CLIContext {
 
-    internal val commands = mutableMapOf<String, MutableMap<String, CLICommand>>()
+    val commands: Commands = Commands()
 
-    internal val env = mutableMapOf<String, String>()
+    val env: CLIEnvironment = CLIEnvironment()
 
-    fun registerCommands(obj: Any) {
+    val values: Values = Values()
+
+    val namespaces : List<String>
+        get() = (commands.keys.toList() + values.keys.toList()).distinct()
+
+    init {
+
+        register(commands, values, env)
+
+    }
+
+    fun findCommand(name :String) : Pair<String,CLICommand>? {
+        for ((namespace, commands) in commands) {
+            for ((commandName, command) in commands) {
+                if (commandName == name) {
+                    return Pair(namespace,command)
+                }
+            }
+        }
+        return null
+    }
+
+    fun findValue(name :String) : Pair<String,CLIValue>? {
+        for ((namespace, values) in values) {
+            for ((valueName, value) in values) {
+                if (valueName == name) {
+                    return Pair(namespace,value)
+                }
+            }
+        }
+        return null
+    }
+
+    private fun scan(obj: Any) {
 
         val kClass = obj::class
         val classNamespace = kClass.findAnnotation<Namespace>()?.name
 
+        scanFields(obj, classNamespace ?: "global")
+        scanCommands(obj, classNamespace ?: "global")
+
+    }
+
+    fun scanFields(obj: Any, namespace: String = "global") {
+        val values : MutableList<CLIValue> = mutableListOf()
+        val props = obj::class.members
+        for (prop in props) {
+            if (prop is KMutableProperty1<*,*>) {
+                val valueAnnotation = prop.annotations.find { it is Value } as Value?
+                if (valueAnnotation != null) {
+                    val annotation = valueAnnotation
+                    val value = prop.getter.call(obj)
+                    val accessor: KAccessor = object : KAccessor {
+                        override fun get(): Any {
+                            return prop.getter.call(obj) as Any
+                        }
+
+                        override fun set(value: Any) {
+                            try {
+                                val castedValue = annotation.type.parse(value.toString())
+                                if (annotation.type.matches(castedValue)) {
+                                    prop.setter.call(obj, castedValue)
+                                    println("Set ${prop.name} to $value")
+                                } else {
+                                    println("Value $value does not match type ${annotation.type}")
+                                }
+                            } catch (e: Exception) {
+                                println("Failed to set value $value to ${prop.name}")
+                                e.printStackTrace()
+                            }
+                        }
+
+                        override val name: String
+                            get() = prop.name
+
+                        override val type: KClass<*>
+                            get() = prop.returnType.classifier as KClass<*>
+                    }
+                    val cliVal = CLIValue(accessor, annotation)
+                    this.values.computeIfAbsent(namespace) { HashMap() }[cliVal.accessor.name] = cliVal
+
+                } else {
+                    if (prop.javaField?.type?.isPrimitive == true) {
+                        if (prop.javaField!!.canAccess(obj)) {
+                            Type.fromClass(prop.javaField!!.type)?.let {
+                                val accessor: KAccessor = object : KAccessor {
+                                    override fun get(): Any {
+                                        return prop.getter.call(obj) as Any
+                                    }
+
+                                    override fun set(value: Any) {
+                                        prop.setter.call(obj, value)
+                                    }
+
+                                    override val name: String
+                                        get() = prop.name
+
+                                    override val type: KClass<*>
+                                        get() = prop.returnType.classifier as KClass<*>
+                                }
+                                val cliVal = CLIValue(accessor, Value(it, ""))
+                                this.values.computeIfAbsent(obj::class.simpleName!!.lowercase()) { HashMap() }[cliVal.accessor.name] = cliVal
+                            }
+
+                        }
+                    }
+
+
+                }
+
+
+            }
+        }
+
+    }
+
+    private fun scanCommands(obj: Any, namespace: String = "global") {
+        val kClass = obj::class
         for (func in kClass.declaredFunctions) {
             val commandAnnotation = func.findAnnotation<Command>()
-
-            val functionNamespace = func.findAnnotation<Namespace>()?.name
-            val namespace = functionNamespace ?: classNamespace ?: "global"
-
             if (commandAnnotation != null) {
                 commands.computeIfAbsent(namespace) { mutableMapOf() }[commandAnnotation.name] =
                     CLICommand(obj, func, commandAnnotation.description)
@@ -30,61 +146,10 @@ class CLIContext {
         }
     }
 
-    fun commandHelp(commandName: String) {
-        for ((namespace, commands) in commands) {
-            for ((name, command) in commands) {
-                if (name == commandName) {
-                    val map = HashMap<String, String>()
-                    val func = command.function
-                    val args = func.parameters.drop(1).map { param ->
-                        when {
-                            param.hasAnnotation<Argument>() -> {
-                                val parameterAnnotation = param.findAnnotation<Argument>()!!
-                                val name = parameterAnnotation.name
-                                val type = param.type.classifier.toString().substringAfterLast(".").toLowerCase()
-                                map[name] = parameterAnnotation.description
-                                "$name: ${type.blue()}"
-                            }
-
-                            param.hasAnnotation<Option>() -> {
-                                val optionAnnotation = param.findAnnotation<Option>()!!
-                                val name = optionAnnotation.name
-                                val type = param.type.classifier.toString().substringAfterLast(".").toLowerCase()
-                                map[name] = optionAnnotation.description
-                                "$name: ${type.blue()}"
-                            }
-
-                            param.hasAnnotation<Flag>() -> {
-                                val flagAnnotation = param.findAnnotation<Flag>()!!
-                                val name = flagAnnotation.name
-                                map[name] = flagAnnotation.description
-                                "[${name.cyan()}]"
-                            }
-
-                            else -> throw IllegalArgumentException("Unknown parameter type: ${param.name}")
-                        }
-                    }
-                    println("${name.green()} (${args.joinToString(", ")}) - ${command.description}")
-                    map.forEach { (key, value) ->
-                        if (value.isNotEmpty()) {
-                            println("\t${key.cyan()} - ${value}")
-                        }
-                    }
-                    return
-                }
-            }
+    fun register(vararg objects: Any) {
+        for (obj in objects) {
+            scan(obj)
         }
     }
-
-    fun namespaceHelp(namespace: String) {
-        for ((ns, commands) in commands) {
-            if (ns == namespace) {
-                for ((name, command) in commands) {
-                    commandHelp(name)
-                }
-            }
-        }
-    }
-
 
 }

@@ -22,11 +22,7 @@ subprojects {
         withSourcesJar()
     }
 
-    sourceSets {
-        test.java.srcDirs += ["$testSrcDir"]
-        test.kotlin.srcDirs += ["$testSrcDir"]
-        test.resources.srcDirs += ["$testSrcDir"]
-    }
+
 
     publishing {
         repositories {
@@ -47,21 +43,7 @@ subprojects {
         }
     }
 
-    sourceSets {
-        test.kotlin.srcDirs += ["${rootDir}/engine/src/test/kotlin"]
-        test.java.srcDirs += ["${rootDir}/engine/src/test/kotlin"]
 
-    }
 
-}
-
-sourceSets {
-    main.java.srcDirs = []
-    main.kotlin.srcDirs = []
-    main.resources.srcDirs = []
-
-    test.java.srcDirs = []
-    test.kotlin.srcDirs = []
-    test.resources.srcDirs = []
 }
 

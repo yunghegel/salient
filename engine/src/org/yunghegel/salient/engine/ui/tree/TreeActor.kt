@@ -1,29 +1,26 @@
 package org.yunghegel.salient.engine.ui.tree
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.actions.Actions.delay
+import com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction
 import com.badlogic.gdx.scenes.scene2d.ui.Cell
-import org.yunghegel.salient.engine.ui.scene2d.STable
-import com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Tree
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
-import com.kotcrab.vis.ui.widget.PopupMenu
 import dev.lyze.gdxtinyvg.utils.WhitePixelUtils
 import ktx.actors.onClick
 import org.yunghegel.gdx.utils.data.Named
-import org.yunghegel.gdx.utils.ext.drawable
 import org.yunghegel.gdx.utils.ext.notnull
 import org.yunghegel.gdx.utils.ext.padHorizontal
-import org.yunghegel.salient.engine.ui.Icon
 import org.yunghegel.salient.engine.ui.scene2d.SImage
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
-import org.yunghegel.salient.engine.ui.scene2d.SLabel
+import org.yunghegel.salient.engine.ui.scene2d.STable
+import org.yunghegel.salient.engine.ui.widgets.EditableTextField
 import org.yunghegel.salient.engine.ui.widgets.OptionMenu
 
 abstract class TreeActor<Object>(val obj: Object) : STable()  {
@@ -41,13 +38,13 @@ abstract class TreeActor<Object>(val obj: Object) : STable()  {
     var nodename: String?=null
         set(value) {
             field = value
-            title.setText(value)
+            title.setText(value ?: "")
         }
 
 
     var node: TreeNode<*,*> by notnull()
 
-    open var title : SLabel = SLabel(if (obj is Named) obj.name else obj.toString())
+    open var title : EditableTextField = EditableTextField(if (obj is Named) obj.name else obj.toString())
     open var icon : Drawable? = null
     open var iconImage : SImage by notnull()
     val actors = mutableListOf<Actor>()

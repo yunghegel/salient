@@ -1,19 +1,10 @@
 package org.yunghegel.salient.editor.ui.scene.graph
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Touchable
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop
 import com.badlogic.gdx.utils.OrderedSet
 import ktx.actors.onChange
 import ktx.collections.isNotEmpty
-import ktx.math.div
-import ktx.math.minus
-import ktx.math.plus
-import org.yunghegel.gdx.utils.ext.getBounds
 import org.yunghegel.salient.editor.app.Gui
 import org.yunghegel.salient.editor.scene.SceneGraph
 import org.yunghegel.salient.engine.api.flags.GameObjectFlag
@@ -23,11 +14,10 @@ import org.yunghegel.salient.engine.scene3d.events.onGameObjectRemoved
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.tree.TreeWidget
-import java.security.GuardedObject
 
 class ObjectTree(val graph : SceneGraph = inject()) : TreeWidget<ObjectNode,GameObject,ObjectTable> (graph.root) {
 
-    override val resolveParent: (GameObject) -> GameObject? = { it.getParent() }
+    override val resolveParent: (GameObject) -> GameObject? = { if (it.getParent() == graph.root) null else it.getParent() }
 
     override val resolveChildren: (GameObject) -> List<GameObject>? = { it.getChildren().toList() }
 
@@ -53,14 +43,14 @@ class ObjectTree(val graph : SceneGraph = inject()) : TreeWidget<ObjectNode,Game
 
         onGameObjectAdded { event ->
             if (event.go == graph.root) return@onGameObjectAdded
-            val parent = event.parent
+            val parent = resolveParent(event.go)
             val go = event.go
             val node = constructNode(go)
             val parentNode = map[parent]
             if (parentNode != null) {
                 parentNode.add(node)
             } else {
-                root.add(node)
+                add(node)
             }
             map[go] = node
         }
@@ -73,7 +63,15 @@ class ObjectTree(val graph : SceneGraph = inject()) : TreeWidget<ObjectNode,Game
                 map.remove(go)
             }
         }
-        buildTree(root,graph.root)
+        buildTree(null,graph.root)
+
+        root.apply {
+            isExpanded = true
+            isSelectable = false
+            actor.touchable = Touchable.childrenOnly
+
+        }
+
         root.isExpanded = true
 
         root.isSelectable = false
@@ -98,6 +96,10 @@ class ObjectTree(val graph : SceneGraph = inject()) : TreeWidget<ObjectNode,Game
         visualCount = count
         count =0
 //        iterateVisible(root) { it.actor.title.text.append("$count") }
+    }
+
+    fun createDragAndDrop() {
+
     }
 
     override fun getPrefHeight(): Float {

@@ -18,11 +18,4 @@ processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-sourceSets {
-    main {
-        resources {
-            srcDirs += ['assets', "${rootDir.path}" + "/editor/assets"]
-        }
-    }
 
-}

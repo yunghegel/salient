@@ -1,9 +1,10 @@
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
+import org.yunghegel.salient.editor.app.Salient
 import kotlin.test.Test
 
 class TestLauncher {
-    @Test fun main() {
+    fun main() {
         val cfg = Lwjgl3ApplicationConfiguration()
         cfg.run {
             setWindowedMode(1280,720)
@@ -11,6 +12,6 @@ class TestLauncher {
             setBackBufferConfig(8,8,8,8,24,8,8)
 
         }
-        Lwjgl3Application(TestApplication(),cfg)
+        Lwjgl3Application(Salient(),cfg)
     }
 }

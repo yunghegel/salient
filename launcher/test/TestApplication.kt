@@ -16,6 +16,7 @@ import org.yunghegel.salient.engine.ui.widgets.viewport.ViewportWidget
 import registry.KnownTests
 import types.Lwjgl3Test
 import types.Test
+import lwjgl3.*
 
 class TestApplication : Game() {
 
@@ -58,12 +59,12 @@ class TestApplication : Game() {
         table.add(appBarActors).growX().height(20f).align(Align.center).row()
 
         viewport = ScreenViewport()
-        viewportWidget = ViewportWidget(viewport)
+        viewportWidget = ViewportWidget(viewport as ScreenViewport)
 
         initUI()
         scanTests()
 
-        tests = listOf(ArcBallTest, DepthBufferTest, MeshEngineTest,OutlineTest,AsyncModelLoadTest)
+        tests = listOf(_ArcBallTest, DepthBufferTest, MeshEngineTest,AsyncModelLoadTest)
 
         testSelection = TestSelection(this, tests)
         setScreen(testSelection)
@@ -76,7 +77,6 @@ class TestApplication : Game() {
         KnownTests.forEach { name, test ->
             createMenuItem(tests, name) {
                 titleLabel.setText(name)
-                KnownTests.hookCurrent(this,test)
 
             }
         }
@@ -91,7 +91,6 @@ class TestApplication : Game() {
     fun setTest(test: Test) {
         test.ifInstance(Lwjgl3Test::class) { t ->
             t.execCreate()
-            setScreen(t)
 
 
             titleLabel.setText(t.name)

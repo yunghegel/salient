@@ -53,7 +53,10 @@ class SceneContext(private var scene:EditorScene) : SceneEnvironment(), Disposab
         environment = Environment()
         wireBatch = WireBatch()
         orthographicCamera = OrthographicCamera(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
-        perspectiveCamera = PerspectiveCamera(  67f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
+        perspectiveCamera = PerspectiveCamera(  67f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat()).apply {
+            near = 0.1f
+            far = 150f
+        }
         viewport = ScreenViewport(perspectiveCamera)
         shapeCache = ShapeCache()
         debugContext = DebugContext(inject(), perspectiveCamera, inject(), inject(), modelBatch,shapeCache)

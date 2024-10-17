@@ -6,7 +6,7 @@ import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.utils.SnapshotArray
 import ktx.collections.removeAll
-import ktx.inject.Context
+import org.yunghegel.salient.engine.system.InjectionContext
 import org.yunghegel.gdx.utils.ext.toGdxArray
 import org.yunghegel.salient.engine.InputModule
 import org.yunghegel.salient.engine.system.Netgraph
@@ -31,7 +31,7 @@ object Input : InputModule() {
     }
 
 
-    override val registry: Context.() -> Unit = {
+    override val registry: InjectionContext.() -> Unit = {
         bindSingleton(InputMultiplexer::class, InputAdapter::class) { this }
     }
 

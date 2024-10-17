@@ -23,6 +23,7 @@ class BoundsComponent(bounds: GdxArray<BoundingBox>,go: GameObject) : EntityComp
     val renderable: GdxArray<RenderableProvider> = GdxArray()
     override val type: KClass<out BaseComponent> = BoundsComponent::class
     override val renderer: Boolean = true
+    val transform = go.getComponent(TransformComponent::class.java)
 
     init {
         value?.each { box->
@@ -31,7 +32,6 @@ class BoundsComponent(bounds: GdxArray<BoundingBox>,go: GameObject) : EntityComp
 
         implements(debug)
         debugCondition { go.has(DRAW_BOUNDS) }
-        val transform = go.getComponent(TransformComponent::class.java)
         renderable.each { renderable ->
             if (renderable is ModelInstance) {
                 renderable.transform = transform?.value
@@ -42,6 +42,10 @@ class BoundsComponent(bounds: GdxArray<BoundingBox>,go: GameObject) : EntityComp
 
     context(SceneContext) override fun renderDebug(delta: Float) {
         renderable.each { renderable ->
+            if (renderable is ModelInstance) {
+                renderable.transform =go.getTransform()
+            }
+
             modelBatch.render(renderable)
         }
     }

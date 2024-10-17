@@ -9,20 +9,14 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut
-import com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo
-import com.badlogic.gdx.scenes.scene2d.ui.Cell
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.OrderedSet
 import ktx.actors.onClick
 import org.yunghegel.gdx.utils.ext.alpha
-import org.yunghegel.gdx.utils.ext.name
-import org.yunghegel.gdx.utils.ext.notnull
 import org.yunghegel.gdx.utils.ext.padHorizontal
-import org.yunghegel.salient.editor.app.Gui
 import org.yunghegel.salient.engine.onInterfaceInitialized
-import org.yunghegel.salient.engine.system.debug
 import org.yunghegel.salient.engine.system.file.FileOpener
 import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.ui.UI
@@ -36,6 +30,7 @@ import org.yunghegel.salient.engine.ui.table
 import org.yunghegel.salient.engine.ui.tree.TreeActor
 import org.yunghegel.salient.engine.ui.tree.TreeNode
 import org.yunghegel.salient.engine.ui.tree.TreeWidget
+import org.yunghegel.salient.engine.ui.widgets.EditableTextField
 import kotlin.math.max
 import kotlin.math.min
 
@@ -56,7 +51,6 @@ class FileTree(val rootObj: FileHandle) : TreeWidget<TreeNode<FileHandle, FileTr
         var draggedInitial : Pair<FNode,Int>? = null
         var hovered : FNode? = null
         var hoveredInitial : Pair<FNode,Int>? = null
-
     }
 
     var dragging = false
@@ -263,7 +257,7 @@ class FileTree(val rootObj: FileHandle) : TreeWidget<TreeNode<FileHandle, FileTr
 
     inner class FileTable(val file: FileHandle, sizingactor: Actor) : TreeActor<FileHandle>(file) {
 
-        override var title: SLabel = SLabel(file.name())
+        override var title: EditableTextField = EditableTextField(file.name())
 
         var tableactors : STable = STable()
 
@@ -276,12 +270,12 @@ class FileTree(val rootObj: FileHandle) : TreeWidget<TreeNode<FileHandle, FileTr
             val imageIcon = resolveIcon(obj)
             icon = imageIcon
             val image = SImage(icon!!)
-            val label : SLabel = SLabel(obj.name())
+            val label = EditableTextField(obj.name())
             title = label
             iconImage = image
-            label.setEllipsis(true)
+//            label.textField.el.setEllipsis(true)
             label.touchable = Touchable.disabled
-            label.wrap = true
+//            label.wrap = true
 
 
             overflow.pop {

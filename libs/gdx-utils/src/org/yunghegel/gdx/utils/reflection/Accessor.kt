@@ -10,7 +10,9 @@ interface Accessor {
 
     fun getType(): Class<*>?
 
-    fun <T> get(type: Class<T>?): T?
+    fun <T> get(type: Class<T>?): T? {
+        return get() as T?
+    }
 
     fun <T : Annotation> config(annotation: Class<T>?): T?
 
