@@ -1,5 +1,6 @@
 package lwjgl3
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Align
@@ -79,6 +80,9 @@ val AsyncModelLoadTest = lwjgl3test("AsyncModelLoadTest") {
             }
             label(0) {
                 "Instances: ${bundle.instances.size} Time: $len"
+            }
+            label(1) {
+                "${Gdx.graphics.framesPerSecond} fps"
             }
         }
 

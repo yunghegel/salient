@@ -28,7 +28,6 @@ plugins {
 }
 
 apply from: "$gradleHome/dist.gradle"
-apply from: "$gradleHome/tests.gradle"
 apply from: "gradle/project.gradle"
 apply from: "gradle/utils.gradle"
 
@@ -43,6 +42,14 @@ repositories {
     maven { url "https://plugins.gradle.org/m2/" }
     maven { url "https://repo.yunghegel.org/snapshots"}
     maven { url "https://repo.yunghegel.org/plugins" }
+}
+
+salient {
+
+    configSalient {
+        print(names.toString())
+    }
+
 }
 
 
@@ -222,6 +229,8 @@ configure(testing) {
             implementation project("$pkg.value")
         }
     }
+
+
 
 
 

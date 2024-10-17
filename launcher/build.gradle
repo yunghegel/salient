@@ -17,6 +17,9 @@ dependencies {
     implementation project(":editor")
     implementation project(":tests")
 //    testImplementation project(":tests")
+    packages.each { pkg->
+        api project("$pkg.value")
+    }
 
 }
 

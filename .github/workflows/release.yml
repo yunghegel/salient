@@ -1,0 +1,28 @@
+on: [push]
+name: 'release'
+run-name: 'Distributing release'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Create release jar
+        run: ./gradlew release
+      - name: Distribute release jar
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release/salient-launcher.jar
+          asset_name: salient-launcher.jar
+          asset_content_type: application/java-archive

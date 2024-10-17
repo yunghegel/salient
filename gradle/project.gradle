@@ -20,8 +20,6 @@ static OS resolveOS()  {
 
 ext {
     releaseDir = project.file("release")
-//    testSrcDir = project.file("tests/src")
-//    testing = project(":tests")
     editor = project(":editor")
     launcher = project(":launcher")
     os = resolveOS()
@@ -40,18 +38,19 @@ class SalientPlugin implements Plugin<Project> {
 class SalientExt {
 
     Project project
-    SalientProjects projects = new SalientProjects()
+    SalientProjects projects
 
     SalientExt(Project project) {
         this.project = project
+        this.projects = new SalientProjects(project)
     }
 
-    void salient(@DelegatesTo(SalientProjects) Closure closure) {
+    void configSalient(@DelegatesTo(SalientProjects) Closure closure) {
         closure.delegate = projects
         closure()
     }
 
-    void launcher(@DelegatesTo(Project) Closure closure) {
+    void configLauncher(@DelegatesTo(Project) Closure closure) {
         project.ext.launcher.configure(project, closure)
     }
 
@@ -65,7 +64,7 @@ class SalientProjects {
         this.project = project
     }
 
-        static final List<String> projects = [
+        public final List<String> names = [
             "core",
             "editor",
             "launcher",
@@ -73,7 +72,7 @@ class SalientProjects {
         ]
 
     void launcher(@DelegatesTo(Project) Closure closure) {
-        ext.launcher.configure(project, closure)
+        project.ext.launcher.configure(project, closure)
     }
 }
 
