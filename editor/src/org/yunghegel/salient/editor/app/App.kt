@@ -8,17 +8,15 @@ import org.yunghegel.salient.editor.asset.AssetManager
 import org.yunghegel.salient.editor.project.Project
 import org.yunghegel.salient.editor.project.ProjectManager
 import org.yunghegel.salient.editor.scene.Scene
-import org.yunghegel.salient.editor.scene.SceneGraph
 import org.yunghegel.salient.editor.scene.SceneManager
 import org.yunghegel.salient.engine.AppModule
+import org.yunghegel.salient.engine.api.Meta
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
 import org.yunghegel.salient.engine.api.undo.ActionHistory
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.lifecycle.onEditorInitialized
 import org.yunghegel.salient.engine.events.scene.SceneDiscoveryEvent
-import org.yunghegel.salient.engine.scene3d.SceneContext
-import org.yunghegel.salient.engine.scene3d.SceneRenderer
 import org.yunghegel.salient.engine.system.*
 import org.yunghegel.salient.engine.system.file.Filepath.Companion.pathOf
 import org.yunghegel.salient.engine.system.file.Paths
@@ -199,7 +197,7 @@ class App : AppModule() {
             refs.forEach {
                 debug(it.toString())
                 Yaml.default.decodeFromString(AssetHandle.serializer(), it.path.readString).let { asset ->
-                    project.assetIndex.add(asset)
+                    assetManager.indexHandle(asset,project)
                 }
             }
 

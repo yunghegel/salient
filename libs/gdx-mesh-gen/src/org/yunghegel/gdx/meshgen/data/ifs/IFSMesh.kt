@@ -3,6 +3,7 @@ package org.yunghegel.gdx.meshgen.data.ifs
 import com.badlogic.gdx.graphics.*
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.*
 import org.yunghegel.gdx.meshgen.data.*
+import org.yunghegel.gdx.meshgen.data.VertexInfo
 import org.yunghegel.gdx.meshgen.data.attribute.*
 import org.yunghegel.gdx.meshgen.data.attribute.types.*
 import org.yunghegel.gdx.meshgen.data.base.*
@@ -125,7 +126,7 @@ open class IFSMesh(vertAttributes: VertexAttributes = VertexAttributes(VertexAtt
         populateAttributes()
 
         observeVerts{ change ->
-//            println("Vertex[${change.element.index}] EVENT: ${change.type}")
+            println("Vertex[${change.element.index}] EVENT: ${change.type}")
         }
         observeFaces { change ->
 //            println("Face[${change.element.index}] EVENT: ${change.type}")
@@ -206,7 +207,7 @@ open class IFSMesh(vertAttributes: VertexAttributes = VertexAttributes(VertexAtt
         return faces
     }
 
-    override fun createVertex(index:Int, vertexInfo:VertexInfo) : IVertex{
+    override fun createVertex(index:Int, vertexInfo: VertexInfo) : IVertex{
         val vertex = vertices.create(index)
         position.set(vertex,vertex.position)
         normal.set(vertex,vertex.normal)
@@ -229,7 +230,7 @@ open class IFSMesh(vertAttributes: VertexAttributes = VertexAttributes(VertexAtt
     override fun createFace(vararg vertices: Int): IFace {
         val face = faces.create()
         face.set(*vertices)
-        face.resolveVertices()
+//        face.resolveVertices()
 
         val changeEvent = ElementChangeEvent(ChangeType.INSERTION,face,faces,face.index)
 

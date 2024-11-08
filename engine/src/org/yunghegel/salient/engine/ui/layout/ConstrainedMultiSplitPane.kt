@@ -61,7 +61,6 @@ open class ConstrainedMultiSplitPane(val vertical:Boolean) : MultiSplitPane(vert
         } else {
             super.setSplit(handleBarIndex, cache[actor] ?: prefs[actor] ?: 0f)
         }
-        println(cache[actor])
     }
 
     fun setSplitInternal(handleBarIndex: Int, split: Float) {
@@ -70,7 +69,6 @@ open class ConstrainedMultiSplitPane(val vertical:Boolean) : MultiSplitPane(vert
 
     fun constrainedOrValid(actor: Actor, proposed: Float,adjustment: Adjustment) : Float {
         val constraint = prefs[actor] ?: -1f
-        println("constraint: $constraint")
         if (constraint == -1f) return proposed
         val range = ranges[actor] ?: return proposed
         val min = range.start

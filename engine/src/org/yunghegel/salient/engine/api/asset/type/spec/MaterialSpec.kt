@@ -17,6 +17,7 @@ import kotlin.reflect.KClass
 class MaterialSpec {
 
     var id: String = "<uninitialized>"
+    var index: Int = -1
     var usage: Array<String> = arrayOf()
     var attributes: Array<AttributeSpec> = arrayOf()
 

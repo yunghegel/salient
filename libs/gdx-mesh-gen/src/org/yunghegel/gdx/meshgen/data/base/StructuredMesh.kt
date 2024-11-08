@@ -1,8 +1,10 @@
 package org.yunghegel.gdx.meshgen.data.base
 
 import com.badlogic.gdx.graphics.*
+import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.*
 import org.yunghegel.gdx.meshgen.data.*
+import org.yunghegel.gdx.meshgen.data.VertexInfo
 import org.yunghegel.gdx.meshgen.data.attribute.*
 import org.yunghegel.gdx.meshgen.math.*
 

@@ -15,7 +15,7 @@ abstract class Face(index:Int,mesh: IFSMesh) : Element(index,mesh) {
     fun set(vararg indices: Int) {
         this.indices = IntArray(indices.size)
         for (i in indices.indices) this.indices[i] = indices[i]
-        resolveVertices()
+//        resolveVertices()
     }
 
     override fun hashCode(): Int {

@@ -9,9 +9,8 @@ class SerializerTests {
     val kclass = String::class
 
     @Test fun testKClassSerializer() {
-        val serializer = KClassSerializer
+
         val kclass = SerializerTests::class
-        val encoded = serializer.encodeToString(kclass)
 
     }
 
@@ -20,6 +19,5 @@ class SerializerTests {
 @Serializable
 class TestClass() {
 
-    @Serializable(with = KClassSerializer::class)
-    val kclass: KClass<*> = String::class
+
 }

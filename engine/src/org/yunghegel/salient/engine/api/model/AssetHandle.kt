@@ -35,8 +35,19 @@ class AssetHandle(val pth: String="") : Resource, ID, Named {
         return "unknown"
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is AssetHandle) return false
+
+        if (path != other.path) return false
+
+        if (uuid != other.uuid) return false
+
+        return true
+    }
+
     override fun toString(): String {
-        return "Asset handle: [$name, $path, $uuid, $type]"
+        return "AssetHandle[$name, $path, $uuid, $type]"
     }
 
 }

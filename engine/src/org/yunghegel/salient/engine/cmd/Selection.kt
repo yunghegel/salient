@@ -2,6 +2,7 @@ package org.yunghegel.salient.engine.cmd
 
 import ktx.collections.GdxArray
 import org.checkerframework.checker.units.qual.s
+import org.yunghegel.gdx.cli.CommandSet
 import org.yunghegel.gdx.cli.arg.Arg
 import org.yunghegel.gdx.cli.arg.Cmd
 import org.yunghegel.gdx.cli.arg.Namespace
@@ -9,10 +10,20 @@ import org.yunghegel.gdx.cli.arg.Opt
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.component.MaterialsComponent
 import org.yunghegel.salient.engine.system.inject
+import org.yunghegel.salient.engine.system.warn
 import org.yunghegel.salient.engine.ui.widgets.value.ReflectionBasedEditor.AccessorRegistry.name
 
 @Namespace("selection")
-class Selection {
+class Selection : CommandSet<GameObject>{
+
+    override fun injectDependency(): GameObject? {
+        val go : GameObject = inject()
+        if ( go == go.scene.graph.root) {
+            warn("Root object cannot be selected")
+            return null
+        }
+        return go
+    }
 
     val get : GameObject? get() {
         val go = inject<GameObject>()

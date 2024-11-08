@@ -18,8 +18,6 @@ abstract class EntityComponent<T>(open var value : T?,val go: GameObject) : Base
 
     internal val assetUsage : MutableList<AssetHandle> = mutableListOf()
 
-
-
     open fun update(scene:EditorScene, go: GameObject, context: SceneContext) {}
 
     open fun render(batch: ModelBatch, camera: Camera, context: SceneContext) {}

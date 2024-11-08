@@ -65,10 +65,6 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
             val components : List<BaseComponent> = listOf(copy,renderable,meshes,pickable,materials,bounds)
             components.forEach { comp -> go.add(comp); debug("Added ${comp::class.simpleName} to cloned gameObject with id ${go.id}") }
         }
-
-
-
-
         return go
     }
 
@@ -179,30 +175,13 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
 
     companion object {
 
-        private val trackedIDs = mutableSetOf<Int>()
-
-        fun checkID(id: Int) = trackedIDs.contains(id)
-
-        fun getUniqueID(): Int {
-            return gameObjectCount
-        }
-
-        private var gameObjectCount = 0
-            get() {
-                val id = field++
-                println("GameObject count: $id")
-                return id
-            }
 
         fun fromDTO(dto: GameObjectDTO, scene: EditorScene): GameObject {
-
             val go = GameObject(dto.name, Matrix4(), scene)
             go.id = dto.id.toInt()
             go.combined.set(Matrix4Data.toMat4(dto.transform))
             dto.tags.forEach { go.tag(it) }
             go.bitmask.fromMask(dto.flags)
-            dto.children.forEach { go.addChild(fromDTO(it, scene)) }
-
             dto.components.each {
                 info("Component type: ${it.type}")
                 when (it.type) {
@@ -214,12 +193,12 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
                         val matdto = it as MaterialComponentDTO
                         go.get(MaterialsComponent::class)?.let { comp ->
                             matdto.usages.forEach { id ->
-
                             }
                         }
                     }
                 }
             }
+            dto.children.forEach { go.addChild(fromDTO(it, scene)) }
             return go
         }
 

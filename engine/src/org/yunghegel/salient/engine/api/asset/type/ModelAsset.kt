@@ -13,6 +13,7 @@ import org.checkerframework.checker.units.qual.m
 import org.yunghegel.gdx.utils.data.ID
 import org.yunghegel.salient.engine.api.asset.Asset
 import org.yunghegel.salient.engine.api.asset.AssetUsage
+import org.yunghegel.salient.engine.api.asset.type.loader.GLTFAssetLoader
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.ModelRenderable
@@ -23,6 +24,7 @@ import org.yunghegel.salient.engine.system.info
 class ModelAsset(path: Filepath, val id: ID, handle:AssetHandle) : Asset<Model>(path, Model::class.java,handle), AssetUsage<Model> {
 
 
+//    var data : GLTFAssetLoader.GLTFAsset? = null
 
     override fun useAsset(asset: Model, go: GameObject) {
         value = asset
@@ -55,35 +57,30 @@ class ModelAsset(path: Filepath, val id: ID, handle:AssetHandle) : Asset<Model>(
         }
 
         override fun load(assetHandle: AssetHandle): Model {
-            val file = resolveHandle(assetHandle)
-            if(assetHandle.path.extension == "gltf" || assetHandle.path.extension == "glb")
-                return GLTFLoader().load(assetHandle.path.handle).scene.model
-            else if (assetHandle.path.extension == "obj")
-                return ObjLoader().loadModel(file)
-            else
-                throw IllegalArgumentException("Unsupported model format")
+            val filehandle = resolveHandle(assetHandle)
+            when (filehandle.extension()) {
+                "gltf" -> return loadGltf(filehandle)
+                "obj" -> return loadObj(filehandle)
+                else -> throw IllegalArgumentException("Unsupported model format")
+            }
         }
 
-        fun asyncLoad(assetHandle: AssetHandle)  {
-            val ext = assetHandle.path.extension
-            val def = when (ext) {
-                "gltf", "glb" -> storage.loadAsync<SceneAsset>(assetHandle.path.toString())
-                "obj" -> storage.loadAsync<Model>(assetHandle.path.toString())
-                else -> null
-            }
-            KtxAsync.launch {
-                val model = def?.await()
-                value = when (model) {
-                    is SceneAsset -> model.scene.model
-                    is Model -> model
-                    else -> null
-                }
-            }
-
+        private fun loadGltf(filehandle: FileHandle): Model {
+            val loader = GLTFAssetLoader(filehandle)
+            val (gltf, sceneAsset) = loader.load()
+            return sceneAsset.scene.model
         }
+
+        private fun loadObj(filehandle: FileHandle): Model {
+            val objLoader = ObjLoader()
+            val model = objLoader.loadModel(filehandle)
+            val data = objLoader.loadModelData(filehandle)
+            return model
+        }
+
+
+
+
 
     }
-
-
-
 }

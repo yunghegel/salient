@@ -2,7 +2,6 @@ package org.yunghegel.gdx.meshgen.io
 
 import com.badlogic.gdx.graphics.*
 import com.badlogic.gdx.graphics.g3d.utils.*
-import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.*
 import org.yunghegel.gdx.meshgen.data.*
 import org.yunghegel.gdx.meshgen.data.base.*
 import org.yunghegel.gdx.meshgen.data.ifs.*

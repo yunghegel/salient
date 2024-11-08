@@ -1,6 +1,7 @@
 import org.yunghegel.salient.engine.system.perf.IInvocationBehavior
 import org.yunghegel.salient.engine.system.perf.InvocationBehavior
-import org.yunghegel.salient.engine.system.perf.ProxyProfiler
+import org.yunghegel.salient.engine.system.perf.ProfilerInvocationHandler
+
 import java.lang.reflect.Method
 import kotlin.test.Test
 
@@ -23,22 +24,5 @@ class ProxyProfilerTest {
 
 
 
-    @Test
-    fun testProxyProfiler() {
-        val proxyProfiler = ProxyProfiler()
-        val proxy = ProxyProfiler.createProfiledType(InvokedObject::class.java, InvocationBehavior())
-        proxy.method1()
-        proxy.method2()
-        proxyProfiler.resetMethods()
-        proxy.method1()
-        proxy.method2()
-        val methods = com.badlogic.gdx.utils.Array<Method?>()
-        val remaining = proxyProfiler.getTopMethodCalls(methods, 1)
-        println("Remaining: $remaining")
-        for (method in methods) {
-            println(method)
-        }
 
-
-    }
 }

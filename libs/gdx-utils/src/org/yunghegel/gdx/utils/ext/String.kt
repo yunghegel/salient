@@ -71,3 +71,5 @@ enum class Ansi(val ansi: String) {
 fun colorize(string: String, color: Ansi): String {
     return color.ansi + string + Ansi.RESET.ansi
 }
+
+

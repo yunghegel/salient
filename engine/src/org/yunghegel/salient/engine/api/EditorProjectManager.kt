@@ -1,20 +1,40 @@
 package org.yunghegel.salient.engine.api
 
+import com.badlogic.gdx.files.FileHandle
+import kotlinx.serialization.Serializable
+import org.yunghegel.gdx.utils.ext.withExtension
+import org.yunghegel.salient.engine.api.model.ProjectHandle
 import org.yunghegel.salient.engine.api.project.EditorProject
 import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.system.file.Filepath
+import org.yunghegel.salient.engine.system.file.Filepath.Companion.pathOf
+import org.yunghegel.salient.engine.system.file.Paths
 
-interface EditorProjectManager<P:EditorProject<P,S>,S:EditorScene> {
 
-    var currentProject : P?
+abstract class EditorProjectManager<P:EditorProject<P,S>,S:EditorScene> : Default<P> {
 
-    fun loadProject(file : Filepath) : P
+    private val index : MutableList<ProjectHandle> = mutableListOf()
 
-    fun saveProject(project: P)
+    abstract var projectDir : FileHandle
 
-    fun createNew(name: String) : P
+    abstract var currentProject : P?
 
-    fun initialize(project: P)
+    abstract fun loadProject(file : Filepath) : P
+
+    abstract fun saveProject(project: P)
+
+    abstract fun createNew(name: String) : P
+
+    abstract fun initialize(project: P)
+
+    fun createHandle(name: String) : ProjectHandle {
+        val handle =  ProjectHandle(name, Paths.PROJECTS_DIR.child(name.withExtension("salient")))
+        index.add(handle)
+        return handle
+    }
+
+
+
 
 
 

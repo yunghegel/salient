@@ -1,35 +1,44 @@
 package org.yunghegel.salient.engine.api.asset
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetLoaderParameters
 import com.badlogic.gdx.files.FileHandle
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import ktx.assets.async.AssetStorage
 import org.yunghegel.gdx.utils.data.Searchable
 import org.yunghegel.salient.engine.api.asset.type.AssetType
 import org.yunghegel.salient.engine.api.model.AssetHandle
+import org.yunghegel.salient.engine.helpers.Ignore
+import org.yunghegel.salient.engine.helpers.SClass
 import org.yunghegel.salient.engine.helpers.save
 import org.yunghegel.salient.engine.system.file.FileType
 import org.yunghegel.salient.engine.system.file.Filepath
 import org.yunghegel.salient.engine.system.inject
 
-abstract class Asset<T:Any>(val path : Filepath, type: Class<T>, var handle:AssetHandle=AssetHandle(path.toString()),params: AssetLoaderParameters<T>?=null)
-    : AssetDescriptor<T>(path.handle,type,params), Searchable {
+abstract class Asset<T:Any>(val path : Filepath, val type: SClass<T>, var handle:AssetHandle=AssetHandle(path.toString()),@Ignore val params: AssetLoaderParameters<T>?=null)
+    :  Searchable {
 
     override val searchTerms: List<String> = listOf(type.name, handle.name,handle.type, handle.pth)
 
-    val storage : AssetStorage by lazy { inject() }
+    @Transient
+    val storage : AssetStorage = inject()
 
     var loaded = false
         private set
 
+    @Ignore
     var value : T? = null
 
     val meta = Meta(handle.uuid,path.lastModified,path.size)
 
     val usages = Usages()
 
+    @Serializable
     data class Meta(val uuid: String, val lastModified: String, val size: Long)
 
+    @Serializable
     data class Usages(val uuids: MutableList<String> = mutableListOf())
 
     val filetype: FileType = FileType.parse(path.extension)
@@ -47,6 +56,8 @@ abstract class Asset<T:Any>(val path : Filepath, type: Class<T>, var handle:Asse
     fun export(path: String = Filepath.toString(),content: String) {
         save(path) {content}
     }
+
+
 
 
 

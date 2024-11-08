@@ -1,26 +1,32 @@
 package org.yunghegel.salient.editor.scene
 
+import com.badlogic.gdx.Gdx
 import com.charleskorn.kaml.Yaml
+import kotlinx.serialization.Serializable
+import org.yunghegel.gdx.utils.ext.addIfNotPresent
 import org.yunghegel.salient.editor.asset.AssetManager
 import org.yunghegel.salient.editor.project.Project
 import org.yunghegel.salient.editor.project.ProjectManager
 import org.yunghegel.salient.engine.api.Default
 import org.yunghegel.salient.engine.api.EditorSceneManager
+import org.yunghegel.salient.engine.api.asset.type.ModelAsset
 import org.yunghegel.salient.engine.api.dto.SceneDTO
 import org.yunghegel.salient.engine.api.model.SceneHandle
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.scene.SceneLoadedEvent
 import org.yunghegel.salient.engine.events.scene.SceneSavedEvent
+import org.yunghegel.salient.engine.helpers.Ignore
 import org.yunghegel.salient.engine.helpers.save
 import org.yunghegel.salient.engine.system.*
 import org.yunghegel.salient.engine.system.file.Filepath
 import org.yunghegel.salient.engine.system.file.Paths
 
-
-class SceneManager : EditorSceneManager<Scene>, Default<Scene>{
+class SceneManager : EditorSceneManager<Scene>(), Default<Scene>{
 
     val projectManager : ProjectManager by lazy { inject() }
+
     val assetManager : AssetManager by lazy { inject() }
+
 
     val project: Project by lazy { projectManager.currentProject ?: inject() }
 
@@ -38,7 +44,7 @@ class SceneManager : EditorSceneManager<Scene>, Default<Scene>{
 
 
         val handle = SceneHandle(name,path)
-        val scene = Scene(handle,projectManager.currentProject!!,this)
+        val scene = Scene(handle,projectManager.currentProject!!)
         makeDirectories(projectManager.currentProject!!,scene)
         val handlepath = Paths.SCENE_INDEX_FILEPATH_FOR(projectManager.currentProject?.name!!,name)
         if (!handlepath.exists) {
@@ -65,10 +71,14 @@ class SceneManager : EditorSceneManager<Scene>, Default<Scene>{
                 initialize(scene, makeCurrent = true)
             }
 
+            project.sceneIndex.addIfNotPresent(handle) {
+                warn("Scene index already contains handle: ${handle.name}")
+            }
+
         return scene
     }
 
-    fun makeDirectories(project:Project,scene:Scene) {
+    private fun makeDirectories(project:Project, scene:Scene) {
         Paths.SCENE_DIR_FOR(project.name).mkdir()
         Paths.SCENE_SCOPE_ASSET_INDEX_DIR_FOR(project.name,scene.handle.name).mkdir()
 //        Paths.SCENE_SCOPE_ASSET_DIR_FOR(project.name,scene.handle.name).mkdir()
@@ -78,6 +88,9 @@ class SceneManager : EditorSceneManager<Scene>, Default<Scene>{
         projectManager.currentProject?.scenes?.add(scene)
 //        assetManager.initializeScene(scene,projectManager.currentProject!!)
         if(makeCurrent) projectManager.currentProject?.currentScene = scene
+//        scene.retrieveAssetIndex().forEach { assetHandle ->
+//            assetManager.includeAsset(assetHandle,scene)
+//        }
         debug("Scene Initialized: ${scene.handle.name}")
     }
 
@@ -97,18 +110,18 @@ class SceneManager : EditorSceneManager<Scene>, Default<Scene>{
         post(SceneSavedEvent(scene))
     }
 
-    fun returnOrCreateIndex(sceneName: String, projectName:String) : SceneHandle {
-        val scenePath = Paths.SCENE_FILE_FOR(projectName,sceneName)
-        val handlePath = Paths.SCENE_INDEX_FILEPATH_FOR(projectName,sceneName)
-        return if (handlePath.exists) {
-            SceneHandle.loadFromFile(handlePath,projectManager.currentProject ?: inject())
-        } else {
-            SceneHandle(sceneName,scenePath)
-        }
-    }
 
     override fun createDefault(): Scene {
-        return createNew("default")
+        val default =  createNew("default")
+        val defaultAssetHandle = assetManager.createHandle(Gdx.files.internal("models/gltf/logo.gltf"))
+        assetManager.indexHandle(defaultAssetHandle,project)
+        assetManager.includeAsset(defaultAssetHandle,default)
+        default.findAsset(defaultAssetHandle)?.let { asset ->
+            asset as ModelAsset
+
+        }
+
+        return default
     }
 
 }

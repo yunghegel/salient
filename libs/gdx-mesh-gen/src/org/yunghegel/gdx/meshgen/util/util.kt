@@ -1,5 +1,6 @@
 package org.yunghegel.gdx.meshgen.util
 
+import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.VertexInfo
 import com.badlogic.gdx.math.*
 import org.yunghegel.gdx.meshgen.util.Ansi.*
 
@@ -83,8 +84,6 @@ fun main () {
     val c = 3
     val d = 4
     val e = 5
-
-
-
-
 }
+
+

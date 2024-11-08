@@ -82,9 +82,18 @@ class AssetsContainer(skin : Skin = UI.skin, val browser: AssetBrowser) : Result
                 }
             }
         }
+    }
 
+    fun addAsset(asset : Asset<*>) {
+        addResult(AssetActor(asset))
+    }
 
-
+    fun removeAsset(asset : Asset<*>) {
+        grid.children.forEach {
+            if (it is AssetActor && it.asset == asset) {
+                grid.removeActor(it)
+            }
+        }
     }
 
     val selection : Selection<AssetActor> = Selection()

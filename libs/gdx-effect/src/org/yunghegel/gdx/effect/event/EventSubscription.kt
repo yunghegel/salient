@@ -13,13 +13,13 @@ class EventSubscription(val listener: EventListener? = null, val asyncExecutor: 
         EventPayload(args)
     }
 
-    fun onAsyncEvent(event: Event,scope: CoroutineScope,asyncFn: AsyncEventListener) = scope.launch {
+    private fun onAsyncEvent(event: Event,scope: CoroutineScope,asyncFn: AsyncEventListener) = scope.launch {
         val deffered = async { asyncFn(event) }
         consumer(deffered.await())
     }
 
-    fun onEvent(event: Event,syncFn: EventListener) {
-        consumer(syncFn(event))
+    private fun onEvent(event: Event,syncFn: EventListener) {
+//        consumer(syncFn(event))
     }
 
     fun onEvent(event: Event) {
@@ -32,6 +32,6 @@ class EventSubscription(val listener: EventListener? = null, val asyncExecutor: 
 
 }
 
-inline fun <reified T: Event> listen(noinline listener: (T)->EventPayload, noinline consumer:(EventPayload)->Unit) {
-    EventBus.subscribe(T::class, consumer, listener as EventListener)
+inline fun <reified T: Event> listen(noinline listener: (T)->Unit, noinline consumer:(EventPayload)->Unit) {
+    EventBus.subscribe(T::class, consumer,listener = listener as EventListener)
 }

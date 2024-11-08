@@ -79,7 +79,6 @@ fun convertToPBR(material: Material) {
     material.forEach { attr ->
         if (attr is TextureAttribute) {
             val pbr = toPBR(attr)
-            println("Converted $attr to $pbr")
             material.remove(attr.type)
             material.set(pbr)
         }

@@ -1,5 +1,6 @@
 package org.yunghegel.salient.editor.project
 
+import com.badlogic.gdx.files.FileHandle
 import com.charleskorn.kaml.Yaml
 import org.yunghegel.salient.editor.asset.AssetManager
 import org.yunghegel.salient.editor.scene.Scene
@@ -17,6 +18,7 @@ import org.yunghegel.salient.engine.events.project.ProjectCreatedEvent
 import org.yunghegel.salient.engine.events.project.ProjectLoadedEvent
 import org.yunghegel.salient.engine.events.project.ProjectSavedEvent
 import org.yunghegel.salient.engine.helpers.save
+import org.yunghegel.salient.engine.system.debug
 import org.yunghegel.salient.engine.system.file.Filepath
 import org.yunghegel.salient.engine.system.file.Filepath.Companion.pathOf
 import org.yunghegel.salient.engine.system.file.Paths
@@ -24,10 +26,12 @@ import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.system.inject
 
 
-class ProjectManager : EditorProjectManager<Project,Scene>, Default<Project> {
+class ProjectManager : EditorProjectManager<Project,Scene>() {
 
     private val sceneManager : SceneManager by lazy { inject() }
     private val assetManager : AssetManager by lazy { inject() }
+
+    override var projectDir: FileHandle = Paths.PROJECTS_DIR.handle
 
     override var currentProject: Project? = null
         set(value) {
@@ -48,9 +52,18 @@ class ProjectManager : EditorProjectManager<Project,Scene>, Default<Project> {
     }
 
     override fun loadProject(file: Filepath): Project {
-        val handle = ProjectHandle(file.name,file)
-        val project = Project(handle,this)
+        val handle = createHandle(file.handle.nameWithoutExtension())
+        val data = file.readString
+        val dto : ProjectDTO = Yaml.default.decodeFromString(ProjectDTO.serializer(),data)
+        val project = Project.Data.fromDTO(dto)
+        debug("Loading project\n${project.toString()}")
+
         post(ProjectLoadedEvent(project))
+
+        if (currentProject==null) {
+            currentProject = project
+        }
+
         return project
     }
 
@@ -73,10 +86,12 @@ class ProjectManager : EditorProjectManager<Project,Scene>, Default<Project> {
 
     override fun createNew(name: String): Project {
         createDirectories(name)
-        val handle = ProjectHandle(name, Paths.PROJECT_DIR_FOR(name))
-        val project = Project(handle,this)
+        val handle = ProjectHandle(name, Paths.PROJECT_FILE_FOR(name))
+        val project = Project(handle)
+        if (currentProject == null) {
+            currentProject = project
+        }
         post(ProjectCreatedEvent(project))
-        saveProject(project)
         return project
     }
 

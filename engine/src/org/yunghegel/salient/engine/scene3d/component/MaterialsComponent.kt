@@ -18,11 +18,7 @@ class MaterialsComponent(val materials: GdxArray<Material>,go: GameObject) : Ent
     {
 
         init {
-            materials.each { mat ->
-                mat.forEach { println(it::class) }
-//                convertToPBR(mat)
 
-            }
         }
 
         override var value: GdxArray<Material>?

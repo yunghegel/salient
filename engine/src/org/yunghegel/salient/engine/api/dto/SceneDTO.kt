@@ -8,9 +8,12 @@ import org.yunghegel.salient.engine.api.model.SceneHandle
 class SceneDTO {
     var handle: SceneHandle? = null
 
-    var assetIndex: MutableList<AssetHandle> = mutableListOf()
+    var asset_index: MutableList<AssetHandle> = mutableListOf()
+    var scene_materials  : SceneMaterialsDTO = SceneMaterialsDTO()
+    var scene_graph: SceneGraphDTO = SceneGraphDTO()
+    var scene_context: SceneContextDTO = SceneContextDTO()
 
-    var sceneGraph: SceneGraphDTO = SceneGraphDTO()
 
-    var sceneContext: SceneContextDTO = SceneContextDTO()
+
+
 }

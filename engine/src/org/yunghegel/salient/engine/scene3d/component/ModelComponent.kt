@@ -5,6 +5,7 @@ import org.yunghegel.gdx.utils.data.ID
 import org.yunghegel.gdx.utils.ext.instance
 import org.yunghegel.salient.engine.api.asset.type.ModelAsset
 import org.yunghegel.salient.engine.api.dto.component.ModelComponentDTO
+import org.yunghegel.salient.engine.api.ecs.AssetComponent
 import org.yunghegel.salient.engine.api.ecs.BaseComponent
 import org.yunghegel.salient.engine.api.ecs.ComponentCloneable
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
@@ -14,16 +15,16 @@ import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.graphics.shapes.Primitive
 import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.system.warn
+import sun.jvm.hotspot.oops.CellTypeState.value
 import kotlin.reflect.KClass
 
 
-class ModelComponent(model: ID, go: GameObject,val modelAsset: ModelAsset? = null) : EntityComponent<Model>(modelAsset?.value,go), ComponentCloneable<ModelComponent> {
+class ModelComponent(model: ID, go: GameObject,val modelAsset: ModelAsset? = null) : AssetComponent<ModelAsset,Model,ModelComponent.RetrievalStrategy>(go,modelAsset?.value), ComponentCloneable<ModelComponent> {
 
     constructor(model:ModelAsset,go: GameObject) : this(model.handle,go) {
         this.value = model.value
         model.useAsset(model.value!!,go)
     }
-
 
     override fun apply(comp: ModelComponent, target: GameObject) {
         target.add(comp)
@@ -32,13 +33,24 @@ class ModelComponent(model: ID, go: GameObject,val modelAsset: ModelAsset? = nul
         val meshComponent = MeshComponent(value!!.meshes,target)
         target.add(meshComponent)
     }
-
     override fun clone(target: GameObject): ModelComponent {
         return ModelComponent(meta.id,target,modelAsset)
     }
 
-    override val iconName: String = "model_object"
+    override fun useAsset(asset: ModelAsset, value: Model) {
 
+    }
+
+    override fun restoreFromUsage(identifier: ID): Result<ModelAsset> {
+        val scene = go.scene
+        val asset : ModelAsset? = scene.findAsset(identifier) as ModelAsset?
+        if (asset != null) {
+            return Result.success(asset)
+        }
+        return Result.failure(Exception("Could not restore asset from usage"))
+    }
+
+    override val iconName: String = "model_object"
     override val type: KClass<out BaseComponent> = ModelComponent::class
 
     val meta = Meta(model)

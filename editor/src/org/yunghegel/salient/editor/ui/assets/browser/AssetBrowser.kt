@@ -54,7 +54,8 @@ class AssetBrowser : STable(), SearchManager<Asset<*>,AssetActor,AssetsContainer
         setAllItems()
 
         onAssetIncluded { event ->
-            setAllItems()
+            val asset = assetmanager.locateAsset(event.asset)
+            asset?.let { container.addAsset(it) }
         }
     }
 

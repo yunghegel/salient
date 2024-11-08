@@ -9,6 +9,8 @@ import java.nio.file.Path
 @Serializable
 class Filepath(val path:String) : Path by Path.of(path) {
 
+    constructor(file: FileHandle) : this(file.path())
+
     val handle : FileHandle
         get() = FileHandle(path)
 

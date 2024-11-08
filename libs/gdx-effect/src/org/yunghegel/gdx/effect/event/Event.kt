@@ -6,7 +6,7 @@ typealias EventConsumer = (EventPayload) -> Unit
 
 
 typealias AsyncEventListener = suspend (event :Event) -> EventPayload
-typealias EventListener = (event: Event) -> EventPayload
+typealias EventListener = (event: Event) -> Unit
 
 abstract class Event(vararg val args: Any) {
 
@@ -20,17 +20,19 @@ abstract class Event(vararg val args: Any) {
     val constructorTypes : Array<Class<*>>
         get() = type.constructors[0].parameterTypes
 
-    operator fun invoke(vararg args :Any) : Event {
-        val ev = type.constructors[0].newInstance(*args) as Event
-        return ev
-    }
+//    operator fun invoke(vararg args :Any) : Event {
+//        val ev = type.constructors[0].newInstance(*args) as Event
+//        return ev
+//    }
 
     operator fun invoke(listener : EventListener) {
-
+        listener.invoke(this)
     }
 
-    operator fun invoke (listener : AsyncEventListener) {
+//    operator fun invoke(consumer : EventConsumer) {
+//        consumer.invoke(payload)
+//    }
 
-    }
+
 
 }

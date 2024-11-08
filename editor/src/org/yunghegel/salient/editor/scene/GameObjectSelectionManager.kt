@@ -15,6 +15,7 @@ import org.yunghegel.salient.engine.api.undo.SelectionListener
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.scene.SingleGameObjectDeselectedEvent
 import org.yunghegel.salient.engine.events.scene.SingleGameObjectSelectedEvent
+import org.yunghegel.salient.engine.helpers.Ignore
 import org.yunghegel.salient.engine.input.Input
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.system.info
@@ -22,6 +23,7 @@ import org.yunghegel.salient.engine.system.inject
 
 class GameObjectSelectionManager(selection : Selection<GameObject>) : BaseSelectionManager<GameObject>(selection) {
 
+    @Ignore
     val tree: SceneGraphTree by lazy { inject() }
     val inspector: SceneInspector by lazy { inject() }
 

@@ -114,3 +114,21 @@ fun <E> Collection<E>.singleOrNull(): E? {
     }
     return null
 }
+
+class MapBuilder<K,V> {
+    private val map = mutableMapOf<K,V>()
+
+    fun put(key: K, value: V) {
+        map[key] = value
+    }
+
+    fun build(): Map<K,V> {
+        return map
+    }
+}
+
+fun <K,V> buildMap(block: MapBuilder<K,V>.() -> Unit): Map<K,V> {
+    val builder = MapBuilder<K,V>()
+    builder.block()
+    return builder.build()
+}

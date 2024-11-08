@@ -10,9 +10,9 @@ import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder
-import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.VertexInfo
 import com.badlogic.gdx.math.Vector3
 import net.mgsx.gltf.scene3d.attributes.PBRColorAttribute
+import org.yunghegel.gdx.meshgen.data.VertexInfo
 import org.yunghegel.gdx.meshgen.data.ifs.IFSMesh
 import org.yunghegel.gdx.meshgen.math.Vector3f
 import org.yunghegel.gdx.meshgen.math.clear

@@ -35,7 +35,6 @@ class RenderableComponent (val renderableProvider: RenderableProvider?,go: GameO
         colorCondition { go.has(RENDER)}
         if (renderableProvider is ModelInstance) {
             renderableProvider.materials.forEach { mat ->
-                mat.forEach { println(it::class) }
                 convertToPBR(mat)
             }
         }

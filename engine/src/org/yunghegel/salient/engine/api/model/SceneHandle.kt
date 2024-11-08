@@ -36,6 +36,10 @@ open class SceneHandle(override val name: String, override val path: Filepath, @
         return true
     }
 
+    override fun toString(): String {
+        return "SceneHandle[name: $name, path: $path, id: $id, uuid: $uuid]"
+    }
+
     companion object {
 
         fun loadFromFile(path: Filepath, proj: EditorProject<*,*>) : SceneHandle {

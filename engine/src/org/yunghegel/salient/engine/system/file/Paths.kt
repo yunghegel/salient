@@ -8,7 +8,7 @@ object Paths {
 
 
 
-    val SALIENT_HOME : Filepath = "$USER_HOME/.salient".pathOf()
+    var SALIENT_HOME : Filepath = "$USER_HOME/.salient".pathOf()
 
     val CONFIG_FILEPATH : Filepath = "${SALIENT_HOME.path}/salient.config".pathOf()
 

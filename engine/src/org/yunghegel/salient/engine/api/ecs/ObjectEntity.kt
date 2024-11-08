@@ -13,7 +13,7 @@ const val LOCKED = 32
 
 
 @Suppress("UNCHECKED_CAST")
-open class SpatialEntity : Entity() {
+open class ObjectEntity : Entity() {
 
     val entityComponents : MutableMap<Class<out BaseComponent>,BaseComponent> = mutableMapOf()
 

@@ -248,7 +248,7 @@ class Salient : ApplicationAdapter() {
 
     override fun resize(width: Int, height: Int) {
         UI.resize(width, height)
-        post(WindowResizedEvent(width, height),false)
+//        post(WindowResizedEvent(width, height),false)
         super.resize(width, height)
     }
 

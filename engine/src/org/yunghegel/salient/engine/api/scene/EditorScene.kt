@@ -1,6 +1,8 @@
 package org.yunghegel.salient.engine.api.scene
 
 import com.badlogic.gdx.utils.Disposable
+import kotlinx.serialization.Serializable
+import org.yunghegel.gdx.utils.data.ID
 import org.yunghegel.gdx.utils.data.Mask
 import org.yunghegel.salient.engine.api.*
 import org.yunghegel.salient.engine.api.asset.Asset
@@ -8,12 +10,14 @@ import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.asset.AssetIndexedEvent
+import org.yunghegel.salient.engine.helpers.Ignore
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.system.file.Filepath
 import org.yunghegel.salient.engine.system.file.Paths
 
-abstract class EditorScene(val ref: SceneHandle, val sceneManager: EditorSceneManager<*>) : UpdateRoutine,
+abstract class EditorScene(val ref: SceneHandle) : UpdateRoutine,
+
     RendererRoutine, ResizeRoutine, Disposable, Mask {
 
 
@@ -21,14 +25,20 @@ abstract class EditorScene(val ref: SceneHandle, val sceneManager: EditorSceneMa
 
     private val assetIndex : MutableList<AssetHandle> = mutableListOf()
 
+    @Ignore
     val assets : MutableList<Asset<*>> = mutableListOf()
 
+    @Ignore
     abstract val renderer: EditorSceneRenderer<*,*>
 
+    @Ignore
     abstract val graph: EditorSceneGraph
 
+    @Ignore
     abstract val context: SceneContext
 
+
+    @Ignore
     abstract val selection : BaseSelectionManager<GameObject>
 
     fun indexAsset(asset: AssetHandle) {
@@ -38,6 +48,10 @@ abstract class EditorScene(val ref: SceneHandle, val sceneManager: EditorSceneMa
 
     fun retrieveAssetIndex() : List<AssetHandle> {
         return assetIndex
+    }
+
+    fun findAsset(handle : ID) : Asset<*>? {
+        return assets.find { it.handle == handle }
     }
 
     val initialized : Boolean

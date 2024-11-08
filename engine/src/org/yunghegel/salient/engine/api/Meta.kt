@@ -1,4 +1,4 @@
-package org.yunghegel.salient.editor.app
+package org.yunghegel.salient.engine.api
 
 import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.Serializable

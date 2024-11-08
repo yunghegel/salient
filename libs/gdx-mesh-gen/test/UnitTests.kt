@@ -2,11 +2,16 @@ package src
 
 import com.badlogic.gdx.graphics.VertexAttribute
 import com.badlogic.gdx.graphics.VertexAttributes
+import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder
+import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.VertexInfo
 import com.badlogic.gdx.math.*
 
 
 import org.yunghegel.gdx.meshgen.data.attribute.*
+import org.yunghegel.gdx.meshgen.data.base.ChangeType
+import org.yunghegel.gdx.meshgen.data.base.ElementChangeEvent
 import org.yunghegel.gdx.meshgen.data.ifs.*
+import types.headlessTest
 import kotlin.test.Test
 class VertexTests {
 
@@ -86,6 +91,25 @@ class VertexTests {
         assert(vert.color.y == 2f)
         assert(vert.color.z == 3f)
         assert(vert.color.w == 1f)
+    }
+
+    @Test
+    fun `change vertex emit event`() {
+        headlessTest {
+            ifs.observeVerts { v ->
+                println("Vertex[${v.element.index}] EVENT: ${v.type}")
+            }
+            ifs.createVertex(0, org.yunghegel.gdx.meshgen.data.VertexInfo(0f, 1f, 2f))
+            ifs.initialConstructionComplete = true
+
+
+            vert.position = Vector3(1f,2f,3f)
+            ifs.emitVertxChanged(ElementChangeEvent( ChangeType.MODIFICATION,vert,ifs.vertices,vert.index))
+            vert.normal = Vector3(1f,2f,3f)
+            vert.uv = Vector2(1f,2f)
+
+        }
+
     }
 }
 class UnitTests {

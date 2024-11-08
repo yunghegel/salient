@@ -41,6 +41,14 @@ repositories {
     // for Kotlin
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs = ["assets"]
+        }
+    }
+}
+
 dependencies {
 
     implementation 'io.github.kotlin-graphics:glm:0.9.9.1-12'
@@ -59,4 +67,3 @@ dependencies {
 
 
 
-apply from: "${GRADLE_USER_HOME}/publishing.gradle"

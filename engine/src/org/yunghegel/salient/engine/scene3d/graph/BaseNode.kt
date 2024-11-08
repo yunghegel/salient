@@ -3,10 +3,10 @@ package org.yunghegel.salient.engine.scene3d.graph
 import com.badlogic.gdx.utils.Array
 import org.yunghegel.gdx.utils.data.ID
 import org.yunghegel.gdx.utils.data.Named
-import org.yunghegel.salient.engine.api.ecs.SpatialEntity
+import org.yunghegel.salient.engine.api.ecs.ObjectEntity
 
 @Suppress("UNCHECKED_CAST")
-abstract class BaseNode<T: GraphNode<T>>(override var name:String, uuid:String?=null, id:Int?=null ) : SpatialEntity(),
+abstract class BaseNode<T: GraphNode<T>>(override var name:String, uuid:String?=null, id:Int?=null ) : ObjectEntity(),
 
      GraphNode<T>, ID, Named {
 

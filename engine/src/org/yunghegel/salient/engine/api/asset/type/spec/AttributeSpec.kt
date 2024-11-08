@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g3d.utils.TextureDescriptor
 import kotlinx.serialization.Serializable
 import net.mgsx.gltf.scene3d.attributes.PBRColorAttribute
 import net.mgsx.gltf.scene3d.attributes.PBRFloatAttribute
+import net.mgsx.gltf.scene3d.attributes.PBRHDRColorAttribute
 import net.mgsx.gltf.scene3d.attributes.PBRTextureAttribute
 import org.yunghegel.salient.engine.api.dto.datatypes.ColorData
 
@@ -36,6 +37,11 @@ sealed class AttributeSpec {
                     blended = attribute.blended
                     opacity = attribute.opacity
                 }
+                is PBRHDRColorAttribute -> PBRHDRColorAttributeSpec().apply {
+                    r = attribute.r
+                    g = attribute.g
+                    b = attribute.b
+                }
 
                 else -> {
                     throw IllegalArgumentException("Unsupported attribute type: ${attribute.javaClass}")
@@ -55,6 +61,8 @@ sealed class AttributeSpec {
                 is BlendAttributeSpec -> BlendAttributeSpec.toBlendAttribute(spec)
                 is PBRColorAttributeSpec -> PBRColorAttributeSpec.toPBRColorAttr(spec)
                 is PBRFloatAttributeSpec -> PBRFloatAttributeSpec.toPBRFloatAttr(spec)
+                is PBRHDRColorAttributeSpec -> PBRHDRColorAttributeSpec.toPBRHDRColorAttr(spec)
+                else -> throw IllegalArgumentException("Unsupported attribute spec type: ${spec.javaClass}")
             }
         }
 
@@ -171,6 +179,19 @@ class PBRFloatAttributeSpec : AttributeSpec() {
                 "IOR" -> PBRFloatAttribute.createIOR(spec.value)
                 else -> PBRFloatAttribute(spec.type, spec.value)
             } as PBRFloatAttribute
+        }
+    }
+}
+
+@Serializable
+class PBRHDRColorAttributeSpec : AttributeSpec() {
+    var r : Float = 0f
+    var g : Float = 0f
+    var b : Float = 0f
+
+    companion object {
+        fun toPBRHDRColorAttr(spec: PBRHDRColorAttributeSpec) : PBRHDRColorAttribute {
+            return PBRHDRColorAttribute(spec.type, spec.r, spec.g, spec.b)
         }
     }
 }

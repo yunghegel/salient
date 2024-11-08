@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
 import ktx.async.newSingleThreadAsyncContext
+import ktx.collections.GdxArray
 import net.mgsx.gltf.loaders.glb.GLBAssetLoader
 import net.mgsx.gltf.loaders.gltf.GLTFAssetLoader
 import net.mgsx.gltf.loaders.gltf.GLTFLoader
@@ -52,14 +53,19 @@ class AssetManager() : EditorAssetManager<Project, Scene> {
 
     val storage = AssetStorage()
 
-        init {
+    val assetRegistry : EnumMap<AssetType,GdxArray<Asset<*>>> by lazy { EnumMap<AssetType,GdxArray<Asset<*>>>(AssetType::class.java) }
+
+    init {
         setLoaders()
+
+        AssetType.entries.each { type ->
+            assetRegistry[type] = GdxArray()
+        }
+
         singleton(storage)
     }
 
-    val assetRegistry : EnumMap<AssetType,Asset<*>> by lazy { EnumMap<AssetType,Asset<*>>(AssetType::class.java) }
-
-    fun setLoaders() {
+    private fun setLoaders() {
         storage.apply {
             setLoader(SceneAsset::class.java,"gltf",{ GLTFAssetLoader()})
             setLoader(SceneAsset::class.java,"glb", { GLBAssetLoader() })
@@ -93,16 +99,13 @@ class AssetManager() : EditorAssetManager<Project, Scene> {
 
     fun initializeProject(proj: Project) {
         val projIndex = loadProjectIndex(proj)
-        projIndex.forEach { handle -> proj.assetIndex.add(handle) }
+        projIndex.forEach { handle -> proj.indexAsset(handle) }
     }
 
     fun initializeScene(scene: Scene,project: Project) {
         info("Initializing scene assets for ${scene.ref.name}")
 //        first, file discovery; this reads the filesystem and includes them in the scene object's asset usage
         val indexed = loadSceneIndex(scene,project)
-//        then, we load the assets into memory
-
-
 
         info("ensuring that an asset folder exists for this scene")
 
@@ -148,7 +151,6 @@ class AssetManager() : EditorAssetManager<Project, Scene> {
             val handle = project.assetIndex.find { it.uuid == file.nameWithoutExtension() }
             if (handle != null) {
                 indices.add(handle)
-
             }
         }
         profile("sync load") {
@@ -254,7 +256,7 @@ class AssetManager() : EditorAssetManager<Project, Scene> {
                 AssetType.Model -> {
                     val model = ModelAsset(asset.path,asset,asset)
 //                    if (ext == "gltf" || ext == "glb") storage.loadAsync<SceneModel>(asset.pth)
-                        model.load()
+                    model.load()
                      model
                 }
                 AssetType.Texture -> {
@@ -282,8 +284,13 @@ class AssetManager() : EditorAssetManager<Project, Scene> {
 
 
 
-        assetRegistry[type] = asset
+        assetRegistry[type]!!.add(asset)
         return asset
+    }
+
+    fun locateAsset(asset: AssetHandle) : Asset<*>? {
+        val type = AssetType.fromFiletype(FileType.parse(asset.path.extension))
+        return assetRegistry[type]!!.find { it.handle == asset }
     }
 
     override fun createHandle(file: FileHandle): AssetHandle {
