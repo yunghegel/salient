@@ -1,22 +1,30 @@
 package org.yunghegel.salient.editor.app
 
 import com.charleskorn.kaml.Yaml
+import ktx.reflect.Reflection
+import org.yunghegel.gdx.utils.ext.inc
 import org.yunghegel.salient.engine.system.InjectionContext
 import org.yunghegel.gdx.utils.ext.notnull
 import org.yunghegel.gdx.utils.ext.nullOrNotNull
 import org.yunghegel.salient.editor.asset.AssetManager
 import org.yunghegel.salient.editor.project.Project
 import org.yunghegel.salient.editor.project.ProjectManager
+import org.yunghegel.salient.editor.scene.ObjectFactory.assetManager
 import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.editor.scene.SceneManager
-import org.yunghegel.salient.engine.AppModule
+import org.yunghegel.salient.engine.*
+import org.yunghegel.salient.engine.api.EditorProjectManager
 import org.yunghegel.salient.engine.api.Meta
 import org.yunghegel.salient.engine.api.model.AssetHandle
+import org.yunghegel.salient.engine.api.model.ProjectHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
+import org.yunghegel.salient.engine.api.project.EditorProject
 import org.yunghegel.salient.engine.api.undo.ActionHistory
 import org.yunghegel.salient.engine.events.Bus.post
+import org.yunghegel.salient.engine.events.ProjectDiscoveryEvent
 import org.yunghegel.salient.engine.events.lifecycle.onEditorInitialized
 import org.yunghegel.salient.engine.events.scene.SceneDiscoveryEvent
+import org.yunghegel.salient.engine.helpers.encodestring
 import org.yunghegel.salient.engine.system.*
 import org.yunghegel.salient.engine.system.file.Filepath.Companion.pathOf
 import org.yunghegel.salient.engine.system.file.Paths
@@ -46,9 +54,10 @@ class App : AppModule() {
     private val actionHistory = ActionHistory(100)
     private lateinit var meta: Meta
 
+    @OptIn(Reflection::class)
     override val registry: InjectionContext.() -> Unit = {
         bindSingleton(actionHistory)
-        bindSingleton(projectManager)
+        this.bind<EditorProjectManager<*,*>>(EditorProjectManager::class, ProjectManager::class){ projectManager }
         bindSingleton(sceneManager)
         bindSingleton(assetManager)
 
@@ -70,28 +79,34 @@ class App : AppModule() {
 
     fun bootstrap() : State{
         profile("bootstrap app state") {
-            provide {
+            InjectionContext.bind(EditorProject::class, Project::class) {
                 projectManager.currentProject ?: projectManager.createDefault().also { projectManager.initialize(it) }
             }
             provide { if (projectManager.currentProject != null && projectManager.currentProject?.currentScene != null) projectManager.currentProject?.currentScene!! else sceneManager.createDefault() }
 
 
             ensureDirectoryStructure()
-
+            state++
 
             var project: Project by notnull()
             var scene: Scene by notnull()
 
-            meta = fetchMeta().conf {
+            val projects = projectIndices()
+
+
+            meta = fetchMeta().apply {
+                debug(this.toString())
+
+            }.conf {
                 lastLoadedProject.nullOrNotNull {
                     notNull { lastProject ->
                         profile("load project from file") {
-                            project = projectManager.loadProject(lastProject.path).also { projectManager.initialize(it) }
+                            project = projectManager.loadProject(lastProject.file).also { projectManager.initialize(it) }
                         }
                         rebuildIndexes(project, this@conf).nullOrNotNull {
                             notNull { last ->
                                 profile("load scene from file") {
-                                scene = sceneManager.loadScene(last.path, true).also { scene = it }
+                                scene = sceneManager.loadScene(last.file, true).also { sceneManager.initialize(it,true) }
                             }
                             }
                             isNull {
@@ -134,76 +149,99 @@ class App : AppModule() {
         return State(project, scene)
     }
 
-    fun ensureDirectoryStructure() {
+    private fun ensureDirectoryStructure() {
+        state = VALIDATE_DIRECTORIES action {
+            debug("Ensuring Directory Structure:")
+            debug("Salient Home: ${Paths.SALIENT_HOME}")
+            debug("Projects Directory: ${Paths.PROJECTS_DIR}")
 
-        debug("Ensuring Directory Structure:")
-        debug("Salient Home: ${Paths.SALIENT_HOME}")
-        debug("Projects Directory: ${Paths.PROJECTS_DIR}")
+
+            if (!Paths.SALIENT_HOME.exists) {
+                Paths.SALIENT_HOME.mkdir()
+                debug("Created Salient Home Directory at ${Paths.SALIENT_HOME.path}")
+            }
 
 
-        if (!Paths.SALIENT_HOME.exists) {
-            Paths.SALIENT_HOME.mkdir()
-            debug("Created Salient Home Directory at ${Paths.SALIENT_HOME.path}")
+
+            if (!Paths.PROJECTS_INDEX_DIR.exists) {
+                Paths.PROJECTS_INDEX_DIR.mkdir()
+                debug("Created Salient Projects Index Directory")
+            }
+
+            if (!Paths.PROJECTS_DIR.exists) {
+                Paths.PROJECTS_DIR.mkdir()
+                debug("Created Salient Projects Directory")
+            }
+            if (!Paths.PROJECT_ASSET_INDEX_FOR("default").exists) {
+                Paths.PROJECT_ASSET_INDEX_FOR("default").mkdir()
+                debug("Created Default Project Assets Directory")
+            }
+            true
         }
 
-        if (!Paths.SALIENT_METAFILE.exists) {
-            Paths.SALIENT_METAFILE.mkfile()
-            debug("Created Salient Metafile")
-        }
-
-        if (!Paths.PROJECTS_INDEX_DIR.exists) {
-            Paths.PROJECTS_INDEX_DIR.mkdir()
-            debug("Created Salient Projects Index Directory")
-        }
-
-        if (!Paths.PROJECTS_DIR.exists) {
-            Paths.PROJECTS_DIR.mkdir()
-            debug("Created Salient Projects Directory")
-        }
-        if (!Paths.PROJECT_SCOPE_ASSETS_DIR_FOR("default").exists) {
-            Paths.PROJECT_SCOPE_ASSETS_DIR_FOR("default").mkdir()
-            debug("Created Default Project Assets Directory")
-        }
 
     }
 
     fun fetchMeta(): Meta {
-        return if (Paths.SALIENT_METAFILE.exists && Paths.SALIENT_METAFILE.size != 0L) Yaml.default.decodeFromString(
+        return if (Paths.SALIENT_METAFILE.exists) Yaml.default.decodeFromString(
             Meta.serializer(),
             Paths.SALIENT_METAFILE.readString
-        ) else Meta()
+        ) else Meta().apply { org.yunghegel.salient.engine.helpers.save(Paths.SALIENT_METAFILE.path) { encodestring(this)} }
     }
+
+    fun projectIndices() : List<ProjectHandle> {
+        state = DISCOVER_PROJECTS
+        val projects = mutableListOf<ProjectHandle>()
+        profile("discover projects") {
+            Paths.PROJECTS_DIR.children.forEach { t, u ->
+                if (u.isDirectory) {
+                    val projHandle : ProjectHandle = ProjectHandle(t.name, t)
+                    projects.add(projHandle)
+                    post(ProjectDiscoveryEvent(projHandle))
+                }
+            }
+            }
+            return projects
+        }
+
+
 
     fun rebuildIndexes(project: Project, appMeta: Meta): SceneHandle? {
         profile("rebuild directory indices") {
 
-            project.path.child("scenes").children.filter { it.value.isDirectory }.forEach {
-                it.value.list().filter { it.extension() == "scene" }.forEach { file ->
-                    ({ SceneHandle(file.nameWithoutExtension(), file.pathOf()) }.let {
-                        project.sceneIndex.add(it().also { post(SceneDiscoveryEvent(it)) }
-                            .also { debug("Scene discovery: $it ") })
-                    })
-                }
-            }
-
-
-            val refs = mutableListOf<AssetHandle>().apply {
-                project.path.child("assets").children
-                    .filter { file -> !file.value.isDirectory && (file.value.extension().equals("asset")) }
-                    .forEach { (file, _) ->
-                        ({ AssetHandle(file.path) }.run { add(this()) })
+            state = PROJECT_SCENE_INDEX_DISCOVERY doing {
+                project.file.child("scenes").children.filter { it.value.isDirectory }.forEach {
+                    it.value.list().filter { it.extension() == "scene" }.forEach { file ->
+                        ({ SceneHandle(file.nameWithoutExtension(), file.pathOf()) }.let {
+                            project.sceneIndex.add(it().also { post(SceneDiscoveryEvent(it)) }
+                                .also { debug("Scene discovery: $it ") })
+                        })
                     }
-            }
-            refs.forEach {
-                debug(it.toString())
-                Yaml.default.decodeFromString(AssetHandle.serializer(), it.path.readString).let { asset ->
-                    assetManager.indexHandle(asset,project)
                 }
             }
+
+            val refs = mutableListOf<AssetHandle>()
+
+            refs.addAll(assetManager.loadProjectIndex(project))
+
+//                refs.apply {
+//                    project.file.child("assets").children
+//                        .filter { file -> !file.value.isDirectory && (file.value.extension().equals("asset")) }
+//                        .forEach { (file, _) ->
+//                            ({ AssetHandle(file.path) }.run { add(this()) })
+//                        }
+//                }
+//                refs.forEach {
+//                    debug("Asset Discovery: ${it.name}")
+//                    Yaml.default.decodeFromString(AssetHandle.serializer(), it.file.readString).let { asset ->
+//                        assetManager.indexHandle(asset,project)
+//                    }
+//                }
+
 
 
         }
-        var mostRecentScene = project.sceneIndex.maxByOrNull { it.path.lastModified }
+        var mostRecentScene = project.sceneIndex.maxByOrNull { it.file.lastModified }
         mostRecentScene?.let { handle -> debug("Discovered most recent scene: ${handle.name}") }
         return mostRecentScene
     }

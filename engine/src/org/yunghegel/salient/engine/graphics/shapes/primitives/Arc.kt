@@ -15,7 +15,7 @@ class Arc @JvmOverloads constructor(
     private val vertices: Int,
     color: Color? = BuilderUtils.getRandomColor()
 ) : InstanceSupplier(color) {
-    override fun createModel(): Model? {
+    override fun createModel(): Model {
         modelBuilder.begin()
         b = modelBuilder.part("arc", primitiveType, attributes, mat)
         mat!!.set(IntAttribute(IntAttribute.CullFace, 0))

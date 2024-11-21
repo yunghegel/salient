@@ -11,7 +11,7 @@ import org.yunghegel.salient.engine.system.file.Paths
 
 
 @Serializable
-class ProjectHandle(override val name:String, override val path: Filepath) : NamedObjectResource, Default<ProjectHandle> {
+class ProjectHandle(override val name:String, override val file: Filepath) : NamedObjectResource, Default<ProjectHandle> {
 
 
 
@@ -24,7 +24,7 @@ class ProjectHandle(override val name:String, override val path: Filepath) : Nam
         if (other !is ProjectHandle) return false
 
         if (name != other.name) return false
-        if (path != other.path) return false
+        if (file != other.file) return false
         if (uuid != other.uuid) return false
         if (id != other.id) return false
 

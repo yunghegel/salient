@@ -1,7 +1,11 @@
 package org.yunghegel.gdx.cli
 
+import com.github.tommyettinger.textra.utils.Palette.blue
 import org.yunghegel.gdx.cli.arg.*
 import org.yunghegel.gdx.cli.util.StdOut
+import org.yunghegel.gdx.cli.util.blue
+import org.yunghegel.gdx.cli.util.green
+import org.yunghegel.gdx.cli.util.purple
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 
@@ -11,7 +15,7 @@ class GlobalCommands(val context : CLIContext) {
     fun help() {
         with(context) {
             for ((namespace, commands) in commands) {
-                StdOut.writeLn("Namespace: $namespace")
+                StdOut.writeLn("| ${(namespace.blue())}")
                 val info = HashMap<String, Pair<String, String>>()
                 for ((name, command) in commands) {
                     val func = command.function
@@ -23,7 +27,7 @@ class GlobalCommands(val context : CLIContext) {
                                 val name = parameterAnnotation.name
                                 val type = param.type.classifier.toString().substringAfterLast(".").toLowerCase()
 
-                                "$name: $type"
+                                "${name.purple()}: ${type.purple()}"
                             }
 
                             param.hasAnnotation<Option>() -> {
@@ -31,7 +35,7 @@ class GlobalCommands(val context : CLIContext) {
                                 info[name] = Pair(optionAnnotation.name, optionAnnotation.description)
                                 val name = optionAnnotation.name
                                 val type = param.type.classifier.toString().substringAfterLast(".").toLowerCase()
-                                "$name: $type"
+                                "${name.purple()}: ${type.purple()}"
                             }
 
                             param.hasAnnotation<Flag>() -> {
@@ -44,17 +48,17 @@ class GlobalCommands(val context : CLIContext) {
                             else -> throw IllegalArgumentException("Unknown parameter type: ${param.name}")
                         }
                     }
-                    StdOut.writeLn("$name (${args.joinToString(", ")})")
+                    StdOut.writeLn("${name.green()} (${args.joinToString(", ")})")
                     info[name]?.takeIf { it.second.isNotEmpty() }?.let { StdOut.writeLn("\t${it.first} - ${it.second}") }
                 }
-                StdOut.writeLn("--------------------")
+                StdOut.writeLn("\n")
             }
             for ((namespace, values) in values) {
-                StdOut.writeLn("Namespace: $namespace")
+                StdOut.writeLn("| ${(namespace.blue())}")
                 for ((name, value) in values) {
                     StdOut.writeLn("$name: ${value.value.type}\n \r - ${value.value.description}")
                 }
-                StdOut.writeLn("--------------------")
+                StdOut.writeLn("\n")
             }
         }
     }
@@ -147,6 +151,17 @@ class GlobalCommands(val context : CLIContext) {
             }
 
         }
+
+    @Cmd("use","clear console")
+    fun use(@Arg("namespace","namespace to use") namespace: String) {
+        if (namespace in context.namespaces) {
+            context.namespace = namespace
+            StdOut.writeLn("Using namespace: $namespace")
+        } else {
+            StdOut.writeErr("Unknown namespace: $namespace \n Available namespaces: ${context.namespaces.joinToString(", ")}")
+        }
+    }
+
 
 
 }

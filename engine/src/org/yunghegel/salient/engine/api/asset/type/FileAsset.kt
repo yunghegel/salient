@@ -9,7 +9,7 @@ class FileAsset(path: Filepath) : Asset<FileHandle>(path,FileHandle::class.java)
 
     override val loader = object : Loader<FileHandle>() {
         override fun resolveHandle(assetHandle: AssetHandle): FileHandle {
-            return FileHandle(assetHandle.path.path)
+            return FileHandle(assetHandle.file.path)
         }
 
         override fun load(assetHandle: AssetHandle): FileHandle {

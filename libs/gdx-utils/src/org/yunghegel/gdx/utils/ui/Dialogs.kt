@@ -3,6 +3,7 @@ package org.yunghegel.gdx.utils.ui
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.utils.UIUtils
 import com.kotcrab.vis.ui.util.dialog.InputDialogListener
 import ktx.collections.GdxArray
@@ -10,6 +11,7 @@ import org.lwjgl.PointerBuffer
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.util.tinyfd.TinyFileDialogs
 import org.yunghegel.gdx.utils.ext.colorToHex
+import org.yunghegel.gdx.utils.ext.dialog
 import org.yunghegel.gdx.utils.ext.stringToUnsignedCharByteBuffer
 
 
@@ -199,7 +201,7 @@ fun dialogInput(title: CharSequence, message: CharSequence, default: CharSequenc
     } ?: listener.canceled()
 }
 
-fun colorInput(title: CharSequence = "Color Picker", listenerBuilder: DialogInputListenerBuilder.() -> Unit) {
+fun nativeColorInput(title: CharSequence = "Color Picker", listenerBuilder: DialogInputListenerBuilder.() -> Unit) {
     val builder = DialogInputListenerBuilder().apply(listenerBuilder)
     val listener = object : InputDialogListener {
         override fun finished(input: String) {
@@ -217,6 +219,10 @@ fun colorInput(title: CharSequence = "Color Picker", listenerBuilder: DialogInpu
     TinyFileDialogs.tinyfd_colorChooser(title, colorToHex(Color.WHITE), stringToUnsignedCharByteBuffer(colorToHex(Color.WHITE)),resultbuffer)?.let {
         listener.finished(it)
     } ?: listener.canceled()
+}
+
+fun colorInput(title: String, default: Color = Color.WHITE, skin: Skin, handle: (Color?)->Unit) {
+    val dialog = dialog(ColorPicker(default,true, skin, handle), title,skin)
 }
 
 fun messageBox(title: CharSequence, message: CharSequence, type: MessageType, icon: IconType = IconType.INFO, default: Boolean, handle: (Boolean?)->Unit) {

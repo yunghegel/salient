@@ -11,7 +11,7 @@ class FlatTopPyramid @JvmOverloads constructor(
     var topScale: Float,
     color: Color? = BuilderUtils.getRandomColor()
 ) : InstanceSupplier(color) {
-    override fun createModel(): Model? {
+    override fun createModel(): Model {
         modelBuilder.begin()
 
         b = modelBuilder.part("disc", primitiveType, VertexAttributes.Usage.Position.toLong(), mat)

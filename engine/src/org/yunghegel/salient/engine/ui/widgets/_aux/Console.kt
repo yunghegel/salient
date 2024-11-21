@@ -4,8 +4,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import ktx.collections.GdxArray
 import ktx.collections.toGdxArray
 import org.yunghegel.gdx.cli.CommandLine
-import org.yunghegel.gdx.cli.util.StdOut
+import org.yunghegel.gdx.cli.util.*
+import org.yunghegel.gdx.cli.util.StdOut.writeLn
+import org.yunghegel.salient.engine.State
+import org.yunghegel.salient.engine.api.EditorProjectManager
 import org.yunghegel.salient.engine.events.lifecycle.onEditorInitialized
+import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.system.warn
 import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.widgets._aux.ConsoleEntries
@@ -16,13 +20,21 @@ val CLI = Console.Companion
 
 class Console : STable() {
 
+    val projMan: EditorProjectManager<*,*> = inject()
+
+    var prompt: String = "[SKY]${projMan.currentProject?.name}[] : [GOLDENROD]${projMan.currentProject?.currentScene?.name}[] @ [ROYAL]${CLI.context.namespace}"
+
     val scroll: ScrollPane
     val entries = ConsoleEntries()
     val commandHistory = CommandHistory()
 
     val inputLine = InputLine(this) { input ->
-        submitInput(input)
+        val _input = Ansi.replaceAnsi(input)
+        submitInput(input.replace(prompt, ""))
     }
+
+
+
 
     var namespaces = GdxArray<String>().apply { addAll(context.namespaces.toGdxArray()) }
 
@@ -37,7 +49,13 @@ class Console : STable() {
         add(scroll).grow().colspan(2).row()
         add(inputLine).growX()
 
-        StdOut.writeLn = { writeLn(it) }
+        StdOut.writeLn += { writeLn(it) }
+        StdOut.writeErr += { writeError(it) }
+
+        CLI.context.nsChanged = { old, new ->
+            prompt = "[SKY]${projMan.currentProject?.name}[] : [GOLDENROD]${projMan.currentProject?.currentScene?.name}[] @ [ROYAL][${new}]"
+            inputLine.label.setText(prompt)
+        }
 
         onEditorInitialized {
             with(context) {
@@ -46,9 +64,9 @@ class Console : STable() {
                     }
                 }
                 commands.forEach { (namespace, command) ->
-                    println("[$namespace]\n")
+                    StdOut.writeLn("| ${namespace.blue()} ->\n")
                     command.forEach { (name, cmd) ->
-                        println("  $name: ${cmd.function}\n")
+                        StdOut.writeLn("  ${name.cyan()}: ${cmd.function.parameters.map { it.name?.replace("kotlin.","")?.purple()}}\n")
                     }
                 }
             }
@@ -70,13 +88,18 @@ class Console : STable() {
         } catch (e: Exception) {
             warn("Error: ${e.message}")
         } finally {
-            inputLine.inputField.text = ""
+            inputLine.inputField.text = prompt
 
         }
     }
 
     fun writeLn(string: String) {
-        entries.addEntry(ConsoleEntry("> $string"))
+        entries.addEntry(ConsoleEntry("$string"))
+        refresh()
+    }
+
+    fun writeError(string: String) {
+        entries.addEntry(ConsoleEntry("[RED]$string[]"))
         refresh()
     }
 

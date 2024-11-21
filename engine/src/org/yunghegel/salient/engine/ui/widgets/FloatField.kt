@@ -10,13 +10,13 @@ import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.scene2d.STextField
 import org.yunghegel.salient.engine.ui.widgets.value.widgets.FloatOnlyFilter
 
-class FloatField(name:String,val negative: Boolean = true,val accessor: ()->Float, val setter: (Float)->Unit) : STable() {
+class FloatField(name:String = "",val negative: Boolean = true,val accessor: ()->Float, val setter: (Float)->Unit) : STable() {
 
     var lastVal = 0f
 
     val display = label(accessor.toString())
     init {
-        add(SLabel(name)).padHorizontal(4f)
+        if (name.isNotEmpty()) add(SLabel(name)).padHorizontal(4f)
         val editor = STextField(accessor().toString()).apply {
             textFieldFilter = FloatOnlyFilter(negative)
             onChange {

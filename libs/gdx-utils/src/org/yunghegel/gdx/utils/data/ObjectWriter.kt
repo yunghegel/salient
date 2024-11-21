@@ -12,7 +12,7 @@ class ObjectWriter<T:Any>(val value: T) {
         InternalSerializationApi::class, ExperimentalContracts::class, ExperimentalSerializationApi::class,
         Reflection::class
     )
-    fun serialize(): String {
+    fun serialize(json: Boolean = false): String {
         return yaml.encodeToString(value::class.serializer() as SerializationStrategy<T>, value)
     }
 
@@ -51,8 +51,8 @@ inline fun <reified T : Any> T.serializerFor(): SerializationStrategy<T> {
 }
 
 
-inline fun <reified T : Any> T.serialize(): String {
-    return ObjectWriter(this).serialize()
+inline fun <reified T : Any> T.serialize(json:Boolean = false): String {
+    return ObjectWriter(this).serialize(json)
 }
 
 @OptIn(InternalSerializationApi::class, ExperimentalContracts::class)

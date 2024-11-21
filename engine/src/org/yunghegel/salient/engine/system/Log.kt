@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import org.yunghegel.gdx.utils.ext.Ansi
 import org.yunghegel.gdx.utils.ext.colorize
+import org.yunghegel.salient.engine.events.Event
 
 import org.yunghegel.salient.engine.events.lifecycle.onShutdown
 import org.yunghegel.salient.engine.system.file.Paths
@@ -144,6 +145,10 @@ fun error(msg:String, triggerDialog: Boolean = false,createDialog: (()->Unit) = 
 
 fun event(type: Class<*>) {
     Log.log(type.simpleName, LogLevel.Event)
+}
+
+fun event(event: Event) {
+    Log.log(event.toString(), LogLevel.Event)
 }
 
 fun emitEvent(emission: String) {

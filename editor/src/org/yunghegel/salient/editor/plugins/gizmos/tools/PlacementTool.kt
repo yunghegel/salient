@@ -210,7 +210,7 @@ class PlacementTool : InputTool("placement_tool") {
         val scene : Scene = inject()
         val go = GameObject("New Game Object",scene = scene)
 
-        val modelC= ModelComponent(state.asset!!,go)
+        val modelC= ModelComponent(state.asset!!.handle,go)
         state.asset!!.useAsset(state.asset!!.value!!,go)
         go.add(modelC)
         notify("New GameObject created")

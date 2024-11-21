@@ -1,123 +1,51 @@
 package org.yunghegel.salient.engine.scene3d.component
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g3d.Model
-import org.yunghegel.gdx.utils.data.ID
-import org.yunghegel.gdx.utils.ext.instance
+import com.badlogic.gdx.graphics.g3d.ModelInstance
+import org.yunghegel.gdx.utils.data.serialize
+import org.yunghegel.salient.engine.api.asset.EditorAssetManager
+import org.yunghegel.salient.engine.api.asset.locateAsset
 import org.yunghegel.salient.engine.api.asset.type.ModelAsset
 import org.yunghegel.salient.engine.api.dto.component.ModelComponentDTO
-import org.yunghegel.salient.engine.api.ecs.AssetComponent
+import org.yunghegel.salient.engine.api.ecs.AssetUsage
 import org.yunghegel.salient.engine.api.ecs.BaseComponent
-import org.yunghegel.salient.engine.api.ecs.ComponentCloneable
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.scene.EditorScene
-import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.graphics.shapes.Primitive
+import org.yunghegel.salient.engine.graphics.shapes.PrimitiveModel
+import org.yunghegel.salient.engine.graphics.shapes.ShapeParameters
+import org.yunghegel.salient.engine.helpers.Serializer.yaml
+import org.yunghegel.salient.engine.scene3d.GameObject
+import org.yunghegel.salient.engine.scene3d.ModelRenderable
+import org.yunghegel.salient.engine.system.file.Filepath
 import org.yunghegel.salient.engine.system.info
-import org.yunghegel.salient.engine.system.warn
-import sun.jvm.hotspot.oops.CellTypeState.value
+import org.yunghegel.salient.engine.system.inject
+
 import kotlin.reflect.KClass
 
 
-class ModelComponent(model: ID, go: GameObject,val modelAsset: ModelAsset? = null) : AssetComponent<ModelAsset,Model,ModelComponent.RetrievalStrategy>(go,modelAsset?.value), ComponentCloneable<ModelComponent> {
-
-    constructor(model:ModelAsset,go: GameObject) : this(model.handle,go) {
-        this.value = model.value
-        model.useAsset(model.value!!,go)
-    }
-
-    override fun apply(comp: ModelComponent, target: GameObject) {
-        target.add(comp)
-        val renderableComponent = RenderableComponent(value!!.instance, target)
-        target.add(renderableComponent)
-        val meshComponent = MeshComponent(value!!.meshes,target)
-        target.add(meshComponent)
-    }
-    override fun clone(target: GameObject): ModelComponent {
-        return ModelComponent(meta.id,target,modelAsset)
-    }
-
-    override fun useAsset(asset: ModelAsset, value: Model) {
-
-    }
-
-    override fun restoreFromUsage(identifier: ID): Result<ModelAsset> {
-        val scene = go.scene
-        val asset : ModelAsset? = scene.findAsset(identifier) as ModelAsset?
-        if (asset != null) {
-            return Result.success(asset)
-        }
-        return Result.failure(Exception("Could not restore asset from usage"))
-    }
+class ModelComponent(val handle: AssetHandle, go: GameObject) : EntityComponent<Model>(null,go), AssetUsage<Model,ModelAsset> {
 
     override val iconName: String = "model_object"
     override val type: KClass<out BaseComponent> = ModelComponent::class
 
-    val meta = Meta(model)
+    var asset : ModelAsset? = null
 
-    var usedAsset : ModelAsset? = modelAsset
-        set(value) {
-            if (value!=null && field != value) {
-                field = value
-                this.value = value.value
-                value.useAsset(value.value!!,go)
-            }
-        }
+    val exportState : MutableMap<String,String> = mutableMapOf()
 
     init {
-        if(modelAsset==null) {
-            recoverState(model)
-                .onFailure { warn(it.message?: "Failure to recover model component state") }
-                .onSuccess { info("Restored state for component of ${go.id} from ${model.id}") }
-        } else {
-            applyAsset(modelAsset)
+        handle.locateAsset(go.scene)?.let { asset ->
+            require(asset is ModelAsset) { "Asset is not a ModelAsset" }
+            this.asset = asset
+            if (!asset.loaded) asset.load()
+            value = asset.value!!
+            applyAsset(value!!)
         }
-        if(go.getComponent(ModelComponent::class.java)==null) println("Model component added to ${go.name}")
-        go.add(this)
-
-
     }
 
-    private fun recoverState(accessor: ID) : Result<Boolean> {
-        if (meta.strategy== RetrievalStrategy.FILE) {
-            val scene : EditorScene = go.scene
-            scene.assets.forEach { asset ->
-                if(accessor.uuid == asset.handle.uuid) {
-                    if (asset is ModelAsset) {
-                        applyAsset(asset)
-                        return Result.success(true)
-                    }
-                }
-            }
-        }
-        return Result.failure(Exception("Could not recover state"))
-    }
-    fun applyAsset(asset: ModelAsset) {
-        usedAsset = asset
-        if(!asset.loaded) asset.load()
-        this.value = asset.value
-        asset.useAsset(asset.value!!,go)
-
-    }
-
-    class Meta(val identifier: ID) {
-
-        val id: ID = identifier
-
-        val strategy: RetrievalStrategy = when(identifier) {
-            is Primitive -> RetrievalStrategy.PRIMITIVE
-            else -> RetrievalStrategy.FILE
-        }
-
-        var retrieval : String = when(identifier) {
-            is AssetHandle -> identifier.path.path
-            is Primitive -> identifier.supplier.simpleName!!
-            else -> "<error>"
-        }
-
-    }
-
-    enum class RetrievalStrategy {
+    enum class Type {
         FILE,
         PRIMITIVE
     }
@@ -125,19 +53,98 @@ class ModelComponent(model: ID, go: GameObject,val modelAsset: ModelAsset? = nul
     companion object {
         fun toDTO(model: ModelComponent, go: GameObject) : ModelComponentDTO {
             return ModelComponentDTO().apply {
-                id = model.meta.id.id
-                uuid = model.meta.id.uuid
-                strategy = model.meta.strategy
-                retrieval = model.meta.retrieval
+                asset = model.handle.uuid
+                importParams = model.exportState(model.asset!!)
+                strategy = if (model.asset?.path == Filepath.GENERATIVE) Type.PRIMITIVE else Type.FILE
             }
         }
 
         fun fromDTO(dto: ModelComponentDTO,scene: EditorScene,gameObject: GameObject) : ModelComponent? {
-            if (dto.strategy== RetrievalStrategy.FILE) {
-                val handle = scene.retrieveAssetIndex().find { it.uuid == dto.uuid } as AssetHandle?
-                if (handle != null) return ModelComponent(handle,gameObject)
+            if (dto.strategy== Type.FILE) {
+                scene.index.find { it.uuid == dto.asset}?.let { handle ->
+                    info("Found asset handle ${handle.uuid}")
+                    return ModelComponent(handle,gameObject)
+                }
             }
             return null
+        }
+    }
+
+    override fun locateAsset(assetHandle: AssetHandle): ModelAsset? {
+        assetHandle.locateAsset(go.scene)?.let { asset ->
+            require(asset is ModelAsset) { "Asset is not a ModelAsset" }
+            return asset
+        } ?: return null
+    }
+
+    override fun importState(state: Map<String, String>): ModelAsset {
+        when(state["type"]) {
+            "file" -> {
+                val id = state["handle"] ?: throw IllegalArgumentException("No handle")
+                val asset = go.scene.retrieveAssetIndex().find { it.uuid == id }?.let { handle ->
+                    handle.locateAsset(go.scene)?.let { asset ->
+                        require(asset is ModelAsset) { "Asset is not a ModelAsset" }
+                        asset
+                    }
+                }
+                return asset ?: throw IllegalStateException("Asset not found")
+            }
+            "primitive" -> {
+                val kind : Primitive = Primitive.valueOf(state["kind"] ?: throw IllegalArgumentException("No kind"))
+                val params : ShapeParameters = yaml.decodeFromString(ShapeParameters.serializer(),state["params"] ?: throw IllegalArgumentException("No params"))
+                val primModel : PrimitiveModel = Primitive.fromParams(params)
+                val id = state["handle"] ?: throw IllegalArgumentException("No handle")
+                val asset = go.scene.retrieveAssetIndex().find { it.uuid == id }?.let { handle ->
+                    handle.locateAsset(go.scene)?.let { asset ->
+                        require(asset is ModelAsset) { "Asset is not a ModelAsset" }
+                        asset
+                    }
+                }
+                return asset ?: throw IllegalStateException("Asset not found")
+
+            }
+            else -> throw IllegalArgumentException("Invalid type")
+        }
+    }
+
+    override fun exportState(asset: ModelAsset): MutableMap<String, String> {
+        return mutableMapOf(
+            "handle" to asset.handle.uuid,
+            "params" to handle.extras.serialize()
+        )
+    }
+
+    override fun applyAsset(asset: Model) {
+        go.remove(RenderableComponent::class.java)
+        go.remove(PickableComponent::class.java)
+        go.remove(MaterialsComponent::class.java)
+        go.remove(MeshComponent::class.java)
+        go.remove(BoundsComponent::class.java)
+        val pickable = ModelRenderable(ModelInstance(asset), go)
+        go.add(RenderableComponent(pickable, go))
+        go.add(PickableComponent(pickable, go))
+        go.add(MaterialsComponent(asset.materials, go))
+        go.add(MeshComponent(asset.meshes, go))
+        go.add(BoundsComponent(BoundsComponent.getBounds(asset),go))
+    }
+
+    object Factory {
+        fun fromPrimitive(params: ShapeParameters, go: GameObject, manager: EditorAssetManager<*,*>) : ModelComponent {
+            val handle = manager.createHandle(Gdx.files.absolute(ShapeParameters.generatePath(inject(),params)))
+            val primModel : PrimitiveModel = Primitive.fromParams(params)
+            val asset = ModelAsset(params.kind,handle)
+            val cmp =  ModelComponent(handle,go).apply {
+                this.asset = asset
+                this.exportState["type"] = "primitive"
+                this.exportState["params"] = yaml.encodeToString(ShapeParameters.serializer(),params)
+            }
+            return cmp
+        }
+        fun fromFile(handle: AssetHandle, go: GameObject) : ModelComponent {
+            val cmp =  ModelComponent(handle,go).apply {
+                this.exportState["type"] = "file"
+            }
+            return cmp
         }
     }
 

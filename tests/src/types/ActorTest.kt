@@ -11,7 +11,7 @@ import org.yunghegel.gdx.utils.ext.clearScreen
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.scene2d.STable
 
-class ActorTest(val createActor: ()-> Actor,val configureActor : (Actor)->Unit = {}) : BaseTest("ActorTest") {
+class ActorTest(val first: ()->Unit = {}, val createActor: ()-> Actor,val configureActor : (Actor)->Unit = {}) : BaseTest("ActorTest") {
 
     lateinit var stage : Stage
     lateinit var table : STable
@@ -19,6 +19,7 @@ class ActorTest(val createActor: ()-> Actor,val configureActor : (Actor)->Unit =
 
     override var execCreate: () -> Unit = {
         UI.init()
+        first()
         stage = Stage(ScreenViewport())
         table = STable()
         table.setFillParent(true)
@@ -51,11 +52,11 @@ class ActorTest(val createActor: ()-> Actor,val configureActor : (Actor)->Unit =
     }
 }
 
-fun actorTest(actor: ()->Actor, configureActor : (Actor)->Unit = {}) {
+fun actorTest(first: ()->Unit = {}, actor: ()->Actor, configureActor : (Actor)->Unit = {}) {
     val config = Lwjgl3ApplicationConfiguration().apply {
         setTitle("ActorTest")
         setWindowedMode(400,400)
     }
     Lwjgl3Application(
-    ActorTest(actor,configureActor),config)
+    ActorTest(first, actor,configureActor),config)
 }

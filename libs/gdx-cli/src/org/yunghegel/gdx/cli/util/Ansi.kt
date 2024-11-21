@@ -11,19 +11,33 @@ const val ANSI_PURPLE: String = "\u001B[35m"
 const val ANSI_CYAN: String = "\u001B[36m"
 const val ANSI_WHITE: String = "\u001B[37m"
 
-enum class Ansi(val ansi: String) {
-    BLACK(ANSI_BLACK),
-    RED(ANSI_RED),
-    GREEN(ANSI_GREEN),
-    YELLOW(ANSI_YELLOW),
-    BLUE(ANSI_BLUE),
-    PURPLE(ANSI_PURPLE),
-    CYAN(ANSI_CYAN),
-    WHITE(ANSI_WHITE);
+enum class Ansi(val ansi: String, val markup: String) {
+    BLACK(ANSI_BLACK,"[BLACK]"),
+    RED(ANSI_RED,"[RED]"),
+    GREEN(ANSI_GREEN,"[FOREST]"),
+    YELLOW(ANSI_YELLOW,"[YELLOW]"),
+    BLUE(ANSI_BLUE,"[SKY]"),
+    PURPLE(ANSI_PURPLE,"[VIOLET]"),
+    CYAN(ANSI_CYAN,"[TEAL]"),
+    WHITE(ANSI_WHITE,"[WHITE]"),
+    RESET(ANSI_RESET,"[]");
 
     fun colorize(text: String): String {
         return "$ansi$text$ANSI_RESET"
     }
+
+    companion object {
+        fun replaceAnsi(text: String): String {
+            var result = text
+            for (ansi in Ansi.entries) {
+                result = result.replace(ansi.ansi, ansi.markup)
+            }
+            return result
+        }
+    }
+
+
+
 }
 
 fun String.green(): String {

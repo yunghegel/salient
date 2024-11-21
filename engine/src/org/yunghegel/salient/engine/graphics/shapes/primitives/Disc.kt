@@ -10,13 +10,13 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 class Disc @JvmOverloads constructor(
-    private val outerRadius: Float,
-    private val innerRadius: Float,
-    private val rotationSegments: Int,
-    private val discSegments: Int,
+     var outerRadius: Float,
+     var innerRadius: Float,
+     var rotationSegments: Int,
+     var discSegments: Int,
     color: Color? = BuilderUtils.getRandomColor()
 ) : InstanceSupplier(color) {
-    override fun createModel(): Model? {
+    override fun createModel(): Model {
         modelBuilder.begin()
         addMaterialAttribute(IntAttribute(IntAttribute.CullFace, 0))
         b = modelBuilder.part("disc", primitiveType, VertexAttributes.Usage.Position.toLong(), mat)

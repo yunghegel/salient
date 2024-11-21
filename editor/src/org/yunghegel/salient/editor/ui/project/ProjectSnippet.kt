@@ -16,7 +16,7 @@ class ProjectSnippet : STable() {
         set(value) {
             field = value
             name.setText("Name: ${value.name}")
-            path.setText("Path: ${value.path}")
+            path.setText("Path: ${value.file}")
             uuid.setText("UUID: ${value.uuid}")
         }
 
@@ -27,7 +27,7 @@ class ProjectSnippet : STable() {
             this.proj = e.project as Project
         }
         name = SLabel("Name: ${proj.name}")
-        path = SLabel("Path: ${proj.path}")
+        path = SLabel("Path: ${proj.file}")
         uuid = SLabel("UUID: ${proj.uuid}")
 
         val inline = STable()

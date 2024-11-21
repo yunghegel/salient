@@ -40,8 +40,6 @@ repositories {
     maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots/" }
     maven { url  "https://jitpack.io" }
     maven { url "https://plugins.gradle.org/m2/" }
-    maven { url "https://repo.yunghegel.org/snapshots"}
-    maven { url "https://repo.yunghegel.org/plugins" }
 }
 
 salient {
@@ -110,8 +108,6 @@ repositories {
     maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots/" }
     maven { url  "https://jitpack.io" }
     maven { url "https://plugins.gradle.org/m2/" }
-    maven { url "https://repo.yunghegel.org/snapshots"}
-    maven { url "https://repo.yunghegel.org/plugins" }
 }
 
 allprojects {
@@ -177,7 +173,7 @@ subprojects {
     kotlin {
         jvmToolchain(11)
         compilerOptions {
-            freeCompilerArgs = ['-Xcontext-receivers', '-java-parameters']
+            freeCompilerArgs = ['-Xcontext-receivers', '-java-parameters','-opt-in=kotlin.ExperimentalStdlibApi','-opt-in=kotlin.RequiresOptIn','-opt-in=kotlin.ExperimentalSerializationApi']
         }
     }
 }
@@ -258,33 +254,30 @@ task dist(type: Copy) {
     into project.file("release")
 
 
-        switch (OperatingSystem.current()) {
-            case OperatingSystem.LINUX:
-                def executable = new File(project.file("release"), "salient")
-                executable.createNewFile()
-                executable.text = "#!/bin/bash\njava -jar salient-${version}.jar \$@"
-                executable.setExecutable(true)
-                break
-            case OperatingSystem.MAC_OS:
-                def executable = new File(project.file("release"), "salient")
-                executable.createNewFile()
-                executable.text = "#!/bin/bash\njava -jar salient-${version}.jar \$@"
-                executable.setExecutable(true)
-                break
-            case OperatingSystem.WINDOWS:
-                def executable = new File(project.file("release"), "salient.bat")
-                executable.createNewFile()
-                executable.text = "@echo off\njava -jar salient-${version}.jar %*"
-                break
-        }
-        releaseDir.listFiles().each { file ->
-            file.setExecutable(true)
-        }
-
-
-
-
+    switch (OperatingSystem.current()) {
+        case OperatingSystem.LINUX:
+            def executable = new File(project.file("release"), "salient")
+            executable.createNewFile()
+            executable.text = "#!/bin/bash\njava -jar salient-${version}.jar \$@"
+            executable.setExecutable(true)
+            break
+        case OperatingSystem.MAC_OS:
+            def executable = new File(project.file("release"), "salient")
+            executable.createNewFile()
+            executable.text = "#!/bin/bash\njava -jar salient-${version}.jar \$@"
+            executable.setExecutable(true)
+            break
+        case OperatingSystem.WINDOWS:
+            def executable = new File(project.file("release"), "salient.bat")
+            executable.createNewFile()
+            executable.text = "@echo off\njava -jar salient-${version}.jar %*"
+            break
+    }
+    releaseDir.listFiles().each { file ->
+        file.setExecutable(true)
+    }
 }
+
 
 
 configure(launcher) {

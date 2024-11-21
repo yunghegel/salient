@@ -8,12 +8,12 @@ import org.yunghegel.salient.engine.graphics.shapes.InstanceSupplier
 import kotlin.math.cos
 import kotlin.math.sin
 
-class Wedge(color: Color, private val radius: Float, val angle:Float) : InstanceSupplier(color) {
+class Wedge(color: Color, var radius: Float, var angle:Float) : InstanceSupplier(color) {
 
 
     constructor(radius: Float,angle:Float) : this(BuilderUtils.getRandomColor(), radius,angle)
 
-    override fun createModel(): Model? {
+    override fun createModel(): Model {
         modelBuilder.begin()
         b = modelBuilder.part("wedge", primitiveType, attributes, mat)
         mat!!.set(IntAttribute(IntAttribute.CullFace, 0))

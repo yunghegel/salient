@@ -24,6 +24,8 @@ import org.yunghegel.salient.editor.project.Project
 import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.engine.InterfaceInitializedEvent
 import org.yunghegel.salient.engine.Pipeline
+import org.yunghegel.salient.engine.STARTUP
+import org.yunghegel.salient.engine.Startup
 import org.yunghegel.salient.engine.State.*
 import org.yunghegel.salient.engine.api.ecs.System
 import org.yunghegel.salient.engine.api.plugin.Plugin
@@ -81,6 +83,7 @@ class Salient : ApplicationAdapter() {
 
     /* allow asyncronous actions when we need it */
         async.init()
+        Startup.start()
         run {
             singleton(this)
             singleton(index)
@@ -96,7 +99,11 @@ class Salient : ApplicationAdapter() {
             }
         }
 
-        val (project, scene) = app.bootstrap()
+        val state = app.bootstrap()
+        val (project, scene) = state
+
+        provide<State> { Pair(inject(), inject()) }
+
         this.project = project
         this.scene = scene
 

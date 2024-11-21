@@ -87,9 +87,29 @@ open class CommandLine() : CommandExecutor,CommandLineInput {
         }
     }
 
+    fun sanitizeInput(string: String) : String {
+        return string.trim().replace("\\s+".toRegex(), " ")
+    }
+
     override fun acceptInput(string: String) {
+
+        val string = sanitizeInput(string)
+
         history.addCommand(string)
-        val args = string.split(" ").toTypedArray()
+        var args = string.split(" ").toTypedArray()
+
+        if (args.isEmpty()) { StdOut.writeErr("Empty input"); return }
+
+        if (args[0] !in context.namespaces) {
+            if (context.namespace != "global") {
+                args = arrayOf(context.namespace) + args
+            } else {
+                args = arrayOf("global") + args
+            }
+        }
+
+
+
         val parsedInput = parser.parse(context,args)
 
         parsedInput?.let { input ->

@@ -25,7 +25,7 @@ class UVSphere : InstanceSupplier {
     }
 
 
-    override fun createModel(): Model? {
+    override fun createModel(): Model {
         modelBuilder.begin()
         b = modelBuilder.part("uv_sphere", primitiveType, attributes, mat)
 

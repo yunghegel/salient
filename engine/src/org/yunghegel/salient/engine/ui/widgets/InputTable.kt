@@ -1,5 +1,6 @@
 package org.yunghegel.salient.engine.ui.widgets
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Cell
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
@@ -8,12 +9,17 @@ import com.kotcrab.vis.ui.widget.Separator
 import ktx.actors.onChange
 import ktx.actors.onClick
 import ktx.collections.toGdxArray
+
 import org.yunghegel.gdx.utils.ext.drawable
 import org.yunghegel.gdx.utils.ext.padHorizontal
 import org.yunghegel.gdx.utils.ext.padVertical
+import org.yunghegel.gdx.utils.ext.rand.float
+import org.yunghegel.gdx.utils.ui.ColorBox
+import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.scene2d.*
 import org.yunghegel.salient.engine.ui.table
 import org.yunghegel.salient.engine.ui.widgets.value.widgets.LabeledFloatField
+import org.yunghegel.salient.engine.ui.widgets.value.widgets.LabeledIntField
 import org.yunghegel.salient.engine.ui.widgets.value.widgets.LabeledTextField
 
 class InputTable(val title: String="") : STable() {
@@ -74,6 +80,19 @@ class InputTable(val title: String="") : STable() {
         return content.add(floatfield)
     }
 
+    fun intInput(name: String, default: Int = 0, change: (Int)->Unit = {}) : Cell<LabeledIntField> {
+        val intfield = LabeledIntField(name,75)
+        intfield.int = default
+        result[name] = default
+        intfield.changed {
+            change(intfield.int)
+            result[name] = intfield.int
+            submit(result)
+        }
+        add(intfield)
+        return content.add(intfield)
+    }
+
     fun button(name: String, action: () -> Unit) : Cell<STextButton> {
         val button = STextButton(name)
         button.onClick {
@@ -84,8 +103,8 @@ class InputTable(val title: String="") : STable() {
         return content.add(button)
     }
 
-    fun label(text:String) : Cell<SLabel> {
-        val label = SLabel(text)
+    fun label(text:String, style: String = "default") : Cell<SLabel> {
+        val label = SLabel(text,style)
         return content.add(label)
     }
 
@@ -118,6 +137,39 @@ class InputTable(val title: String="") : STable() {
             change(button.isChecked)
         }
         return content.add(button)
+    }
+
+    fun floatTupleInput(name: String, size: Int, default: Array<Float>, change: (Array<Float>)->Unit = {}) : Cell<STable> {
+        val table = table {
+            val result = default
+            for (i in 0 until size) {
+                float("$name$i", default[i], { res ->
+                    default[i] = res
+                    change(result)
+                }).padHorizontal(5f)
+            }
+        }
+        return content.add(table)
+    }
+
+    fun color(name: String, default: Color, change: (Color)->Unit = {}) : Cell<STable> {
+        val colorfield = ColorBox(name, { default },false, UI.skin)
+        colorfield.callback = {
+            change(it)
+            result[name] = it
+            submit(result)
+        }
+        return content.add(table {
+            add(colorfield).padHorizontal(5f)
+        })
+    }
+
+    fun float(id: String, default: Float, change: (Float)->Unit = {}) : Cell<STable> {
+        val floatfield = FloatField("", false, { default }, {
+            change(it)
+            result[id] = it
+        })
+        return content.add(floatfield)
     }
 
     fun choice(name:String, options: List<String>, default: String,change:(String)->Unit = {}) : Cell<STable> {

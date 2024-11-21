@@ -38,6 +38,7 @@ repositories {
     maven { url "https://raw.githubusercontent.com/kotlin-graphics/mary/master"}
     google()
     jcenter()
+    maven { url "https://raw.githubusercontent.com/kotlin-graphics/mary/master" }
     // for Kotlin
 }
 
@@ -52,6 +53,10 @@ sourceSets {
 dependencies {
 
     implementation 'io.github.kotlin-graphics:glm:0.9.9.1-12'
+
+    implementation("kotlin.graphics:imgui-core:1.79+05")
+    implementation("kotlin.graphics:imgui-gl:1.79+05")
+    implementation("kotlin.graphics:imgui-glfw:1.79+05")
     implementation fileTree(dir: "lib", include: ["*.jar"])
     implementation "io.github.oshai:kotlin-logging-jvm:5.1.0"
 //    configurations.runtimeClasspath.resolvedConfiguration.getResolvedArtifacts().forEach {

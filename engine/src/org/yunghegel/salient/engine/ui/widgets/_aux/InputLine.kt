@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import ktx.actors.onClick
 import ktx.actors.onKey
 import ktx.actors.setKeyboardFocus
+import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.scene2d.STextButton
 import org.yunghegel.salient.engine.ui.scene2d.STextField
@@ -16,23 +17,43 @@ import org.yunghegel.salient.engine.ui.widgets.aux.Console
 class InputLine(val console: Console, val submit: (String)->Unit) : STable() {
 
 
-    val inputField = STextField("", "console")
+    val inputField = object : STextField(">", "console") {
+        override fun getCursorPosition(): Int {
+            return if (text.length == 0) 1 else super.getCursorPosition()
+        }
+
+        override fun setCursorPosition(cursorPosition: Int) {
+            if (cursorPosition == 0) super.setCursorPosition(1) else super.setCursorPosition(cursorPosition)
+        }
+    }
     var namespace : String = "global"
     val sendButton = STextButton("Submit")
+    var font = console.skin.getFont("default")
+    val label : SLabel = SLabel(console.prompt)
+
+//    var pos : Int = console.prompt.length
 
     init {
         pad(4f)
+        label.style.font.data.markupEnabled = true
+//        setBackground("button-over")
+        add(label).padRight(5f)
         add(inputField).growX().padRight(10f)
         add(sendButton)
         createListeners()
+        inputField.style.font.data.markupEnabled = true
+        font.data.markupEnabled = true
+        inputField.style.font = font
+        inputField.cursorPosition = 1
     }
 
     fun submit() {
         inputField.text = inputField.text.trim()
         if (inputField.text.isNotEmpty()) {
-            submit(inputField.text)
-            inputField.text = ""
-            stage.keyboardFocus = null
+            submit(inputField.text.replace(console.prompt, "").replace(">", ""))
+            inputField.text = ">"
+            inputField.cursorPosition = 1
+
         }
     }
 
@@ -44,6 +65,7 @@ class InputLine(val console: Console, val submit: (String)->Unit) : STable() {
             if (key.code == Input.Keys.ENTER) submit()
             if (key.code == Input.Keys.TAB) console.acceptAutocomplete(inputField.text)
             console.commandHistory.keyListener(inputField.text, key.code)
+            if (inputField.cursorPosition == 0) inputField.cursorPosition = 1
         }
         val clickListener = object : ClickListener() {
 

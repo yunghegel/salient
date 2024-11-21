@@ -1407,8 +1407,6 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 		font: default
 		fontColor: white
 		disabledFontColor: gray
-		background: button
-		focusedBackground: button-over
 		cursor: cursor
 	}
 	toast: {

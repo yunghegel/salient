@@ -24,7 +24,7 @@ class ShaderAsset(basedir: Filepath, val name:String) : Asset<ShaderProgram>(bas
 
     override val loader = object : Loader<ShaderProgram>() {
         override fun resolveHandle(assetHandle: AssetHandle): FileHandle {
-            return FileHandle(assetHandle.path.path)
+            return FileHandle(assetHandle.file.path)
         }
 
         override fun load(assetHandle: AssetHandle): ShaderProgram {

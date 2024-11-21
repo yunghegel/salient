@@ -32,7 +32,7 @@ subprojects {
         repositories {
             maven {
                 name = "releases" //REPOSITORY NAME
-                url = uri("https://repo.yunghegel.org/releases") //REPOSITORY URL
+                url = uri("https://repo.yunghegel.dev/releases") //REPOSITORY URL
                 credentials(PasswordCredentials)
                 authentication {
                     basic(BasicAuthentication)

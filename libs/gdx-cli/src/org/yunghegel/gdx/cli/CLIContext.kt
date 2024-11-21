@@ -21,8 +21,17 @@ class CLIContext {
 
     val values: Values = Values()
 
+    var namespace: String = "global"
+        set(value) {
+            nsChanged(field,value)
+            field = value
+
+        }
+
     val namespaces : List<String>
         get() = (commands.keys.toList() + values.keys.toList()).distinct()
+
+    var nsChanged : (String,String) -> Unit = {_,_ ->}
 
     init {
 

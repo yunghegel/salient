@@ -1,6 +1,7 @@
 package org.yunghegel.salient.editor.app
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
@@ -19,6 +20,7 @@ import org.yunghegel.salient.editor.plugins.base.systems.pauseHotkeys
 import org.yunghegel.salient.editor.plugins.base.systems.resumeHotkeys
 import org.yunghegel.salient.editor.plugins.gizmos.tools.PlacementTool
 import org.yunghegel.salient.editor.plugins.picking.tools.HoverTool
+import org.yunghegel.salient.editor.scene.ObjectFactory
 import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.editor.ui.AppBar
 import org.yunghegel.salient.editor.ui.ViewportContextMenu
@@ -26,13 +28,16 @@ import org.yunghegel.salient.editor.ui.ViewportSplit
 import org.yunghegel.salient.editor.ui.assets.AssetsView
 import org.yunghegel.salient.editor.ui.assets.browser.AssetBrowser
 import org.yunghegel.salient.editor.ui.project.ProjectControls
-import org.yunghegel.salient.editor.ui.project.ProjectView
+import org.yunghegel.salient.editor.ui.project.panel.NotificationsView
+import org.yunghegel.salient.editor.ui.project.panel.ProjectView
 import org.yunghegel.salient.editor.ui.scene.SceneManagementView
 import org.yunghegel.salient.editor.ui.scene.SceneView
 import org.yunghegel.salient.engine.api.asset.Asset
 import org.yunghegel.salient.engine.api.asset.type.ModelAsset
 import org.yunghegel.salient.engine.api.asset.type.TextureAsset
 import org.yunghegel.salient.engine.api.undo.action
+import org.yunghegel.salient.engine.graphics.shapes.BuilderUtils
+import org.yunghegel.salient.engine.graphics.shapes.Primitive
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.component.PickableComponent
 import org.yunghegel.salient.engine.scene3d.component.RenderableComponent
@@ -53,6 +58,7 @@ import org.yunghegel.salient.engine.ui.widgets.notif.toast
 import org.yunghegel.salient.engine.ui.widgets.viewport.ViewportPanel
 
 
+@OptIn(ExperimentalStdlibApi::class)
 class Gui : EditorFrame() {
 
 
@@ -68,6 +74,7 @@ class Gui : EditorFrame() {
     val sceneManagementView: SceneManagementView
     val assetBrowser: AssetBrowser
     val notifications: Notifications
+    val notificationsView: NotificationsView
 
 
     val textEditor: SimpleTextEditor = SimpleTextEditor(skin, "Shader Editor")
@@ -81,6 +88,65 @@ class Gui : EditorFrame() {
         setFillParent(true)
 
         viewportWidget = ViewportPanel(inject())
+        viewportWidget.viewportMenu.apply {
+            Primitive.entries.forEach { prim ->
+                add.define(prim.name, prim.icon,
+                    toast(title = "Add Primitive", time = -1f) {
+                        row {
+                            prim.integerParams.forEach { (key,value) ->
+                                intInput(key,value) {
+                                    result[key] = it
+                                }
+                            }
+                        }
+                        row {
+                            prim.floatParmas.filter{ it.key !in (listOf("r","g","b","a"))}.forEach { (key,value) ->
+                                floatInput(key,value) {
+                                    result[key] = it
+                                }
+                                row()
+                            }
+                        }
+                        row {
+                            val color = Array(4) { 0.5f }
+                            color("Color", BuilderUtils.getRandomColor()) {
+                                result["color"] = it
+                            }
+                        }
+
+
+
+
+                        addSubmit { r->
+                            val params = prim.defaultParams
+                            r.forEach { key, value ->
+                                when (value) {
+                                    is Int -> params.integerParams[key] = value
+                                    is Float -> params.floatParmas[key] = value
+                                    is Color -> {
+                                        val c = value
+                                        params.floatParmas["r"] = c.r
+                                        params.floatParmas["g"] = c.g
+                                        params.floatParmas["b"] = c.b
+                                        params.floatParmas["a"] = c.a
+                                    }
+                                }
+
+                            }
+                            println(params)
+                            ObjectFactory.createPrimitive(prim,scene,params)
+                        }
+                    }
+                , { r ->
+                        r.forEach { key, value ->
+                            println("$key : $value")
+                        }
+
+                    })
+            }
+        }
+
+
         viewportWidget.onExit {
             pauseHotkeys()
         }
@@ -93,6 +159,7 @@ class Gui : EditorFrame() {
         viewportSplit = ViewportSplit(viewportWidget, centerContent)
 
         notifications = Notifications(UI, viewportWidget)
+        notificationsView = NotificationsView(notifications)
         UI.attachNotifications(notifications)
         val enableGlslEditor = STextButton("Shader Editor", "soft-blue").apply {
             onChange {
@@ -217,6 +284,7 @@ class Gui : EditorFrame() {
             table.add(projControls).right().growX().height(20f)
         }
         addLeft("project", "Project", projectView)
+//        addRight("notifications","",notificationsView)
         addRight("scene_icon", "Scene", sceneTree)
         addCenter("log_view", "Log", logView)
         addCenter("terminal", "Terminal", console)
@@ -246,7 +314,7 @@ class Gui : EditorFrame() {
         addFooterItem(fpsLabel).right().padRight(5f).width(30f)
 
 
-        addFooterItem(notifications.button).padHorizontal(4f)
+        addFooterItem(notifications.button).padHorizontal(4f).center().size(40f,18f)
 
     }
 

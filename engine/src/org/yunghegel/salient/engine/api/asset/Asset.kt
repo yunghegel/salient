@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetLoaderParameters
 import com.badlogic.gdx.files.FileHandle
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import ktx.assets.async.AssetStorage
@@ -12,11 +13,13 @@ import org.yunghegel.salient.engine.api.asset.type.AssetType
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.helpers.Ignore
 import org.yunghegel.salient.engine.helpers.SClass
+import org.yunghegel.salient.engine.helpers.Serializer.yaml
 import org.yunghegel.salient.engine.helpers.save
 import org.yunghegel.salient.engine.system.file.FileType
 import org.yunghegel.salient.engine.system.file.Filepath
 import org.yunghegel.salient.engine.system.inject
 
+@Serializable
 abstract class Asset<T:Any>(val path : Filepath, val type: SClass<T>, var handle:AssetHandle=AssetHandle(path.toString()),@Ignore val params: AssetLoaderParameters<T>?=null)
     :  Searchable {
 
@@ -28,8 +31,8 @@ abstract class Asset<T:Any>(val path : Filepath, val type: SClass<T>, var handle
     var loaded = false
         private set
 
-    @Ignore
-    var value : T? = null
+    @Transient
+    open var value : T? = null
 
     val meta = Meta(handle.uuid,path.lastModified,path.size)
 
@@ -39,7 +42,9 @@ abstract class Asset<T:Any>(val path : Filepath, val type: SClass<T>, var handle
     data class Meta(val uuid: String, val lastModified: String, val size: Long)
 
     @Serializable
-    data class Usages(val uuids: MutableList<String> = mutableListOf())
+    data class Usages(val uuids: MutableList<String> = mutableListOf()) {
+        @Transient val depenciesToLoad = mutableListOf<AssetHandle>()
+    }
 
     val filetype: FileType = FileType.parse(path.extension)
 
@@ -57,9 +62,10 @@ abstract class Asset<T:Any>(val path : Filepath, val type: SClass<T>, var handle
         save(path) {content}
     }
 
-
-
-
+    fun addDependency(assetHandle: AssetHandle) {
+        usages.uuids.add(assetHandle.uuid)
+        usages.depenciesToLoad.add(assetHandle)
+    }
 
     abstract inner class Loader<T> {
 
@@ -68,4 +74,6 @@ abstract class Asset<T:Any>(val path : Filepath, val type: SClass<T>, var handle
         abstract fun load(assetHandle: AssetHandle) : T
 
     }
+
+    abstract inner class AssetFile
 }

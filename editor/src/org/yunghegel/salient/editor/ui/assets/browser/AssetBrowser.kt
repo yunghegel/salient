@@ -1,8 +1,10 @@
 package org.yunghegel.salient.editor.ui.assets.browser
 
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Payload
+import ktx.actors.onChange
 import org.yunghegel.gdx.utils.ext.padHorizontal
 import org.yunghegel.gdx.utils.ext.ref
 import org.yunghegel.gdx.utils.ui.search.SearchBar
@@ -13,6 +15,8 @@ import org.yunghegel.salient.editor.plugins.picking.tools.HoverTool
 import org.yunghegel.salient.editor.scene.SceneManager
 import org.yunghegel.salient.engine.api.asset.Asset
 import org.yunghegel.salient.engine.events.asset.onAssetIncluded
+import org.yunghegel.salient.engine.system.debug
+import org.yunghegel.salient.engine.system.info
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.layout.EditorFrame
 import org.yunghegel.salient.engine.ui.scene2d.STable
@@ -32,7 +36,7 @@ class AssetBrowser : STable(), SearchManager<Asset<*>,AssetActor,AssetsContainer
 
     private val sources  = mutableMapOf<AssetActor,DragAndDrop.Source>()
 
-    val searchBar : SearchBar<Asset<*>,AssetActor,AssetsContainer> = SearchBar(skin,container,this)
+    override val searchBar : SearchBar<Asset<*>,AssetActor,AssetsContainer> = SearchBar(skin,container,this)
 
     val gui : Gui by lazy { inject() }
 
@@ -55,7 +59,19 @@ class AssetBrowser : STable(), SearchManager<Asset<*>,AssetActor,AssetsContainer
 
         onAssetIncluded { event ->
             val asset = assetmanager.locateAsset(event.asset)
-            asset?.let { container.addAsset(it) }
+            info("appending asset to browser view : ${asset?.handle}")
+            asset?.let {
+                val items = all.filter { filter(searchBar.textfield.input,it) }
+                resultsChanged(items)
+            }
+            if (filter(searchBar.input,asset!!)) {container.addAsset(asset)
+                debug("added asset to browser")
+            }
+            fire(ChangeEvent())
+        }
+
+        onChange {
+            container.updateFiltered(all)
         }
     }
 
@@ -100,6 +116,9 @@ class AssetBrowser : STable(), SearchManager<Asset<*>,AssetActor,AssetsContainer
         return all
     }
 
+
+
+
     override fun resultsChanged(results: List<Asset<*>>) {
         container.list.setItems(results.map { it.handle.name }.toTypedArray())
     }
@@ -112,12 +131,14 @@ class AssetBrowser : STable(), SearchManager<Asset<*>,AssetActor,AssetsContainer
     }
 
     override fun filter(query: String, item: Asset<*>): Boolean {
+        if ( container.category.selected == "All") return true
         val searchTerms = listOf(item.handle.name,item.assetType.name,item.handle.pth)
-        return (searchTerms.any { term -> term.contains(query)})
+        if (query.isBlank()) return true
+        return (searchTerms.any { term -> term.contains(query) && container.category.selected == item.assetType.name})
     }
 
     override fun keep(item : Asset<*>) : Boolean {
-        return (item.type.name == container.category.selected || container.category.selected == "All")
+        return (item.assetType.name == container.category.selected || container.category.selected == "All")
     }
 
 

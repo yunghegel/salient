@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g3d.Model
 import org.yunghegel.salient.engine.graphics.shapes.InstanceSupplier
 
 class Plane(var scale: Float, color: Color?) : InstanceSupplier(color) {
-    override fun createModel(): Model? {
+    override fun createModel(): Model {
         modelBuilder.begin()
         b = modelBuilder.part("plane", primitiveType, attributes, mat)
         b.rect(

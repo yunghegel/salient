@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup
 import ktx.actors.onChange
 import org.yunghegel.gdx.utils.ext.padHorizontal
 import org.yunghegel.salient.editor.scene.Scene
-import org.yunghegel.salient.editor.ui.scene.graph.ObjectComponentNode
 import org.yunghegel.salient.editor.ui.scene.graph.SceneGraphTree
 import org.yunghegel.salient.editor.ui.scene.inspector.AssetsAvailable
 import org.yunghegel.salient.editor.ui.scene.inspector.ComponentInspector
@@ -57,7 +56,7 @@ class ModelInspector : ComponentInspector<ModelComponent, Model>(ModelComponent:
             if (selectedGameObject!=null) {
                 locateAsset<ModelAsset,Model>(selectedGameObject!!.scene, asset)?.let { asset ->
                     asset.useAsset(asset.value!!,selectedGameObject!!)
-                    val component = ModelComponent(asset,selectedGameObject!!)
+                    val component = ModelComponent(asset.handle,selectedGameObject!!)
                     selectedGameObject!!.add(component)
                 }
             }
@@ -79,7 +78,7 @@ class ModelInspector : ComponentInspector<ModelComponent, Model>(ModelComponent:
                     }
                 }
                 go.get(ModelComponent::class)?.let {
-                    it.usedAsset?.let { asset ->
+                    it.asset?.let { asset ->
                         asset.removeAsset(asset.value!!,go)
                     }
                 }
@@ -111,7 +110,7 @@ class ModelInspector : ComponentInspector<ModelComponent, Model>(ModelComponent:
             gameObject.components.find { it is ModelComponent }?.let {
                 gameObject.remove(ModelComponent::class.java)
             }
-            val cmp = ModelComponent(asset.handle,gameObject,asset)
+            val cmp = ModelComponent(asset.handle,gameObject)
             gameObject.add(cmp)
             val sceneTree : SceneGraphTree = inject()
 //            sceneTree.nodeMap[gameObject]?.add(ObjectComponentNode(cmp,gameObject))

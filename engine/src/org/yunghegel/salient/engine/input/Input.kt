@@ -13,7 +13,7 @@ import org.yunghegel.salient.engine.system.Netgraph
 
 typealias GdxInput = Input
 
-object Input : InputModule() {
+object  Input : InputModule() {
 
     init {
         inputProcessor = this
@@ -463,16 +463,13 @@ object Input : InputModule() {
 
     fun pause() {
         paused = true
-
         tmp.clear()
         tmp.addAll(processors)
-
         processors.clear()
     }
 
     fun resume() {
         paused = false
-
         processors.clear()
         processors.addAll(tmp)
     }

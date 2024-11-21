@@ -13,7 +13,7 @@ class Cone @JvmOverloads constructor(
     var divisions: Int,
     color: Color? = BuilderUtils.getRandomColor()
 ) : InstanceSupplier(color) {
-    override fun createModel(): Model? {
+    override fun createModel(): Model {
         modelBuilder.begin()
         b = modelBuilder.part("cone", primitiveType, attributes, mat)
         ConeShapeBuilder.build(b, width, height, depth, divisions)

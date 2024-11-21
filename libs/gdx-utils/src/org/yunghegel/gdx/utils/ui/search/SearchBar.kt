@@ -16,6 +16,16 @@ class SearchBar<T, A: Actor,C:ResultsContainer<T,A>>(skin: Skin = Scene2DSkin.de
 
     val actorcache: MutableMap<T,A> = mutableMapOf()
 
+    var input : String = ""
+        get() {
+            return textfield.input ?: ""
+        }
+        set(value) {
+            if (value.isEmpty() || value.isBlank()) showAll()
+            searchResults = manager.search(value, manager.getCandidates())
+            field = value
+        }
+
     val textfield : IconTextfield = IconTextfield(IconTextfield.Option.LEFT, skin, "FindAll", "")
 
     var searchResults : List<T> = mutableListOf()
@@ -55,15 +65,20 @@ class SearchBar<T, A: Actor,C:ResultsContainer<T,A>>(skin: Skin = Scene2DSkin.de
         }
 
 
-    private fun showAll() {
+     fun showAll() {
         results.update(  manager.getCandidates().map { getActor(it) })
     }
+
+    fun show(list: List<T>) {
+        results.update(list.map { getActor(it)})
+    }
+
+
 
     private fun createListeners(){
         textfield.listen {
             onTextChange { text ->
-                if (text.isEmpty() || text.isBlank()) showAll()
-                searchResults = manager.search(textfield.input, manager.getCandidates())
+               input = text
             }
             onLeftIconClick {
                 if (popup.isHidden) popup.show(stage)

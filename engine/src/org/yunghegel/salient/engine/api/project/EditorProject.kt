@@ -3,12 +3,15 @@ package org.yunghegel.salient.engine.api.project
 import com.badlogic.gdx.files.FileHandle
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import ktx.assets.toAbsoluteFile
 import org.yunghegel.salient.engine.api.EditorProjectManager
 import org.yunghegel.salient.engine.api.properties.NamedObjectResource
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
 import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.system.debug
+import org.yunghegel.salient.engine.system.file.Paths
+import org.yunghegel.salient.engine.system.info
 
 @Serializable
 abstract class EditorProject<P:EditorProject<P,S>,S:EditorScene>(val handle: org.yunghegel.salient.engine.api.model.ProjectHandle) : NamedObjectResource  {
@@ -36,7 +39,13 @@ abstract class EditorProject<P:EditorProject<P,S>,S:EditorScene>(val handle: org
     }
 
     fun indexAsset(handle: AssetHandle) {
-        if (!assetIndex.contains(handle)) assetIndex.add(handle).also { debug("Indexed asset ${handle.name}") }
+        if (!assetIndex.contains(handle)) {
+            assetIndex.add(handle).also { debug("Indexed asset ${handle.name}") }
+        }
+        if (!Paths.PROJECT_ASSET_INDEX_FOR(name).containsChild("${handle.uuid}.uuid".toAbsoluteFile())) {
+            info("Asset not indexed in project [$name], indexing now")
+            Paths.PROJECT_ASSET_INDEX_FOR(name).child("${handle.uuid}.uuid").create().write(handle.toString())
+        }
     }
 
     abstract fun initalizeScene(scene: S)

@@ -28,7 +28,7 @@ class DoubleCone : InstanceSupplier {
     }
 
 
-    override fun createModel(): Model? {
+    override fun createModel(): Model {
         modelBuilder.begin()
 
         b = modelBuilder.part("top_cone", primitiveType, attributes, mat)

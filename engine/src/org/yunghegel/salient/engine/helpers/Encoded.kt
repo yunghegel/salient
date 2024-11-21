@@ -7,7 +7,7 @@ import kotlin.contracts.contract
 import kotlin.reflect.KClass
 
 @Serializable
-class Encoded<T> (var data: String="") {
+class Encoded<T> (var data: String="",val json: Boolean = false) {
 
     @Transient
     var ref : T? = null
@@ -67,9 +67,18 @@ inline infix fun <reified T:Any> KClass<T>.fromYaml(path: String) : T {
 
 
 @OptIn(ExperimentalContracts::class, InternalSerializationApi::class)
-inline fun <reified T : Any> encodestring(value:  T): String {
-    contract { returnsNotNull() implies (value is Serializable)  }
+inline fun <reified T : Any> encodestring(value:  T,json:Boolean = false ): String {
+    contract { returnsNotNull() implies (value is Serializable) }
     val serializer = T::class.serializerOrNull()
-    return if (serializer!=null) Serializer.yaml.encodeToString(serializer, value) else (value.toString())
 
-}
+    return if (serializer != null) {
+        if (json) {
+            kotlinx.serialization.json.Json.encodeToString(serializer as SerializationStrategy<T>, value)
+        } else {
+            Serializer.yaml.encodeToString(serializer as SerializationStrategy<T>, value)
+        }
+    } else {
+        throw SerializationException("No serializer found for ${T::class.simpleName}")
+    }
+    }
+

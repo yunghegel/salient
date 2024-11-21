@@ -40,7 +40,7 @@ class ProjectAssetsList(val project: Project, val manager: AssetManager, val sce
             }
 
             override fun copy(item: AssetHandle): AssetHandle {
-              return AssetHandle(item.path.toString())
+              return AssetHandle(item.file.toString())
 
             }
 
@@ -60,7 +60,7 @@ class ProjectAssetsList(val project: Project, val manager: AssetManager, val sce
                 val inspect = SImageButton("inspect_file")
                 val addToScene = STextButton("+scene")
 
-                val type = AssetType.fromFile(item.path.handle)
+                val type = AssetType.fromFile(item.file.handle)
 
 
 

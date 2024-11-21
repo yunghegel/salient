@@ -16,4 +16,6 @@ object rand {
 
     fun vec3norm() = vec3(-1f, 1f)
 
+    fun charseq(length: Int) = (1..length).map { ('a'..'z').random() }.joinToString("")
+
 }

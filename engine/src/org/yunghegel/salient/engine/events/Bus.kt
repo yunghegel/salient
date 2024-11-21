@@ -15,7 +15,7 @@ object Bus {
     val eventBus: EventBus by lazy { Config.eventBusBuilder.build()  }
 
     fun post (event: Any,log: Boolean = true) {
-        if (log) event(event::class.java)
+        if (log) if (event is Event) event(event) else event(event::class.java)
         eventBus.post(event)
     }
 

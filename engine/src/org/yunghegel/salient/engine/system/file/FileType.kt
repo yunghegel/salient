@@ -14,9 +14,9 @@ enum class FileType(val icon: Icons,vararg val extensions: String) {
     PROJECT_INDEX(Icons.TEXT_FILE,"index"),
     LOG(Icons.TEXT_FILE,"log"),
     CONFIG(Icons.CONFIG_FILE,"config"),
-    MODEL(Icons.MODEL_FILE,"gltf","glb","obj","fbx","g3d"),
+    MODEL(Icons.MODEL_FILE,"gltf","glb","obj","fbx","g3d","shape"),
     TEXTURE(Icons.TEXTURE_FILE,"png","jpg","jpeg","bmp","gif","tga","dds","ktx","pvr","astc","webp"),
-    MATERIAL(Icons.MATERIAL_FILE,"mat"),
+    MATERIAL(Icons.MATERIAL_FILE,"material"),
     FOLDER(Icons.FOLDER,""),
     SHADER(Icons.FILE,"vert","vs","frag","fs","geom","gs"),
     OTHER(Icons.FILE);

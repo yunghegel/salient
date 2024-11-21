@@ -78,6 +78,8 @@ class Parser(val context : CLIContext) {
         val options = mutableMapOf<String, String>()
         val flags = mutableSetOf<String>()
 
+        println(args.contentToString())
+
         val cmd = context.run {
             if (args.isEmpty()) {
                 throw IllegalArgumentException("No command provided")
@@ -109,7 +111,11 @@ class Parser(val context : CLIContext) {
                 if (args[1].contains(".")) {
                     ns = args[1].substringBefore(".")
                     name = args[1].substringAfter(".")
-                } else {
+                } else if(context.namespace != "global") {
+                    ns = context.namespace
+                    name = args[1]
+
+                }else {
                     ns = "global"
                     name = args[1]
                 }
@@ -140,6 +146,7 @@ class Parser(val context : CLIContext) {
                 }
             }
 
+            val ns = if (context.namespace != "global") arrayOf("global",context.namespace, ) else args[0]
 
 //        if not namespaced, insert global namespace
             if (args[0] !in commands.keys) {
@@ -161,7 +168,7 @@ class Parser(val context : CLIContext) {
                 return null
             }
 
-            val command = commands[namespace]?.get(commandName) ?: commands["global"]?.get(commandName)
+            val command = commands[namespace]?.get(commandName) ?: commands[context.namespace]?.get(commandName) ?: commands["global"]?.get(commandName)
             ?: throw IllegalArgumentException("Unknown command: $namespace $commandName")
 
             for (arg in args.drop(2)) {

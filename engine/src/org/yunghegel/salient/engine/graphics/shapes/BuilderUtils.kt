@@ -5,18 +5,22 @@ import com.badlogic.gdx.graphics.VertexAttributes
 import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import net.mgsx.gltf.scene3d.attributes.PBRColorAttribute
+import net.mgsx.gltf.scene3d.attributes.PBRFloatAttribute
 
 object BuilderUtils {
     fun buildMaterial(color: Color?): Material {
         val mat = Material()
-        mat.set(PBRColorAttribute.createDiffuse(color))
-        mat.set(PBRColorAttribute.createSpecular(color))
-        mat.set(PBRColorAttribute.createAmbient(color))
-        mat.set(PBRColorAttribute.createEmissive(color))
+//        mat.set(PBRColorAttribute.createDiffuse(color))
+//        mat.set(PBRColorAttribute.createSpecular(color))
+////        mat.set(PBRColorAttribute.createAmbient(color))
+//        mat.set(PBRColorAttribute.createEmissive(color))
         mat.set(PBRColorAttribute.createBaseColorFactor(color))
+        mat.set(PBRFloatAttribute.createMetallic(0.5f))
+        mat.set(PBRFloatAttribute.createRoughness(0.5f))
+
         mat.set(ColorAttribute.createDiffuse(color))
-        mat.set(ColorAttribute.createSpecular(color))
-        mat.set(ColorAttribute.createAmbient(color))
+//        mat.set(ColorAttribute.createSpecular(color))
+//        mat.set(ColorAttribute.createAmbient(color))
         mat.set(ColorAttribute.createEmissive(color))
         mat.set(ColorAttribute.createReflection(color))
         return mat

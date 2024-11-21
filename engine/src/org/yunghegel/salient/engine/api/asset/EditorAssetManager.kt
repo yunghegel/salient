@@ -75,7 +75,7 @@ interface EditorAssetManager<P,S> where P: EditorProject<P,S>, S: EditorScene {
      * Include an asset (previously indexed) for usage in a scene, exposing the object it represents
      * as a dependency of the scene.
      */
-    fun includeAsset(asset: AssetHandle, scene: S)
+    fun includeAsset(asset: AssetHandle, scene: S) : Asset<*>
 
     /**
      * Preload a scenes existing dependencies by reading its asset index and loading the assets they reference.

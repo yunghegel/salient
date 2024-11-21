@@ -30,7 +30,7 @@ class AssetLoader(val path: Filepath, val project: Project = inject()) {
     }
 
     companion object {
-        val assetIndex = { proj: Project -> Paths.PROJECT_SCOPE_ASSETS_DIR_FOR(proj.name) }
+        val assetIndex = { proj: Project -> Paths.PROJECT_ASSET_INDEX_FOR(proj.name) }
     }
 
 

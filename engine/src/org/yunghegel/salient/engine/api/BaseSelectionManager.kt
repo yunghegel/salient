@@ -4,7 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Selection
 import org.yunghegel.salient.engine.api.properties.Selectable
 import org.yunghegel.salient.engine.api.undo.SelectionListener
 
-val UI_SOURCE = SelectionSource.UI
+val UI_SOURCE = SelectionSource.GUI
 val VIEWPORT_SOURCE = SelectionSource.VIEWPORT
 val CODE_SOURCE = SelectionSource.PROGRAMMATIC
 

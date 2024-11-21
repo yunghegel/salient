@@ -5,7 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import org.yunghegel.salient.engine.ui.UI
 
-class STextField(text: String, style: String) : TextField(text, UI.skin,style) {
+open class STextField(text: String, style: String) : TextField(text, UI.skin,style) {
 
     constructor(text: String, onChange: (String) -> Unit) : this(text) {
         addListener(object : ChangeListener() {

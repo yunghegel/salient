@@ -83,7 +83,9 @@ class Scene(val handle:SceneHandle, val project: Project) : EditorScene(handle),
             val scene = Scene(dto.handle!!, inject())
             val assets : AssetManager = inject()
             val project : ProjectManager = inject()
-            assets.initializeScene(scene,project.currentProject!!)
+            val sceneManager : SceneManager = inject()
+
+//            sceneManager.initialize(scene,true)
 //            dto.assetIndex.forEach { asset ->
 //                scene.indexAsset(asset)
 //            }
@@ -107,7 +109,7 @@ class Scene(val handle:SceneHandle, val project: Project) : EditorScene(handle),
                     if (cmp is MaterialsComponent) {
                         cmp.materials.forEach { material ->
                             val spec = MaterialSpec.fromMaterial(material)
-                            dto.scene_materials.materials.add(spec)
+//                            dto.scene_materials.
                         }
                     }
                 }

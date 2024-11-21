@@ -1,5 +1,6 @@
 package org.yunghegel.gdx.utils.ext
 
+import java.lang.reflect.Field
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
@@ -85,9 +86,9 @@ abstract class Ref<T> : Gettable<T> {
     }
 }
 
-class MutableRef<T : Any>(initial: T) : Ref<T>(), Settable<T>, ReadWriteProperty<Any, T> {
+open class MutableRef<T : Any>(initial: T) : Ref<T>(), Settable<T>, ReadWriteProperty<Any, T> {
 
-    private var _value = initial
+    var _value = initial
 
     override operator fun getValue(thisRef: Any, property: KProperty<*>): T {
         track<T>()
@@ -154,6 +155,56 @@ fun <T : Any> T.watcheffects(effect: (T) -> Unit) {
 
 }
 
+fun fieldIsDelegate(field: Field) = field.type.isAssignableFrom(Ref::class.java)
+
+fun findDelegate(owner: Any, of: Any): Any? {
+
+    val fields = owner::class.java.declaredFields
+    fields.forEach { field ->
+        if (fieldIsDelegate(field)) {
+            field.isAccessible = true
+            val delegate = field.get(owner)
+            if (delegate == of) {
+                return field
+            }
+        }
+    }
+    return null
+}
+
+fun <T:Any> Any.watch(fieldName: String, effect: (T) -> Unit) {
+    this::class.java.declaredFields.forEach { field ->
+        println(field.name)
+    }
+    val field = this::class.java.getDeclaredField("$fieldName\$delegate")
+    field.isAccessible = true
+    val delegate = field.get(this)
+    if (delegate is MutableRef<*>) {
+        delegate.subscribers.add({ effect(delegate._value as T) })
+    }
+}
+
+fun <T:Any> watch(prop: KMutableProperty0<T>, effect: (T) -> Unit) {
+    prop.isAccessible = true
+    (prop.getDelegate() as? MutableRef<T>?)?.subscribers?.add({ effect(prop.get()) })
+}
+
 fun <T> computed(getter: Getter<T>) = Computed(getter)
 
 inline fun <reified T : Any> ref(initial: T) = MutableRef(initial)
+
+class TrackedStateVar<T:Any>(initial: T) : MutableRef<T>(initial) {
+
+
+
+    override operator fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+        _value = value
+        trigger<T>()
+    }
+}
+
+
+
+
+
+

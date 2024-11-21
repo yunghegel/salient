@@ -12,7 +12,7 @@ class Sphere @JvmOverloads constructor(
     var divisionsV: Int,
     color: Color? = BuilderUtils.getRandomColor()
 ) : InstanceSupplier(color) {
-    override fun createModel(): Model? {
+    override fun createModel(): Model {
         modelBuilder.begin()
         b = modelBuilder.part("sphere", primitiveType, attributes, mat)
         SphereShapeBuilder.build(b, radius, radius, radius, divisionsU, divisionsV)

@@ -55,7 +55,7 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
         val modelComp = components.find { it is ModelComponent } as ModelComponent?
         if (modelComp === null) debug("ModelComponent not found in cloned gameObject with id ${go.id}")
         modelComp?.let {
-            val copy = if (it.usedAsset == null) ModelComponent(it.meta.id, go) else ModelComponent(it.usedAsset!!, go)
+            val copy = if (it.asset == null) ModelComponent(it.handle, go) else ModelComponent(it.handle, go)
             val renderable = RenderableComponent(it.value!!.instance,go)
             val meshes = MeshComponent(it.value!!.meshes,go)
             val mdlPickable = ModelRenderable(modelComp.value!!.instance, go)

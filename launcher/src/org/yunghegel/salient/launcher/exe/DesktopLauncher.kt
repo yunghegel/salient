@@ -2,10 +2,12 @@ package org.yunghegel.salient.launcher.exe
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
-import kotlinx.coroutines.runBlocking
-import net.mgsx.gltf.scene3d.shaders.PBREmissiveShaderProvider.createConfig
+import org.yunghegel.gdx.utils.ext.inc
 import org.yunghegel.salient.editor.app.Salient
 import org.yunghegel.salient.editor.app.configs.Settings
+import org.yunghegel.salient.engine.LOAD_SETTINGS
+import org.yunghegel.salient.engine.STARTUP
+import org.yunghegel.salient.engine.state
 import org.yunghegel.salient.engine.helpers.Serializer
 import org.yunghegel.salient.engine.system.file.Paths
 import org.yunghegel.salient.launcher.config.LaunchOptions
@@ -23,8 +25,10 @@ object DesktopLauncher {
 
     init {
 
+
 //        daemon = nio.fileDaemon("${Paths.USER_HOME}/.salient")
 //
+
         val yaml = Serializer.yaml
         if (!config_file.exists()) {
             println("Config file not found, creating new one")
@@ -38,6 +42,7 @@ object DesktopLauncher {
             settings = yaml.decodeFromString(Settings.serializer(), config)
         }
         Settings.i = settings
+
     }
 
 

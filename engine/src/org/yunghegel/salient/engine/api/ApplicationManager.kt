@@ -1,6 +1,5 @@
 package org.yunghegel.salient.engine.api
 
-import assimp.ScenePreprocessor.scene
 import com.badlogic.gdx.files.FileHandle
 import com.charleskorn.kaml.Yaml
 import org.yunghegel.gdx.utils.ext.*
@@ -8,8 +7,6 @@ import org.yunghegel.salient.engine.api.asset.EditorAssetManager
 import org.yunghegel.salient.engine.api.model.ProjectHandle
 import org.yunghegel.salient.engine.api.project.EditorProject
 import org.yunghegel.salient.engine.api.scene.EditorScene
-import org.yunghegel.salient.engine.system.file.Filepath
-import org.yunghegel.salient.engine.system.file.Paths
 import org.yunghegel.salient.engine.system.file.file
 import kotlin.properties.Delegates
 
@@ -42,7 +39,7 @@ abstract class ApplicationManager<T: EditorProject<T,S>,S:EditorScene, PManager:
         } ?: Meta()
         val projectHandle : ProjectHandle = meta.lastLoadedProject ?: projectManager.createHandle("default")
         val proj = if (!projectHandle.exists) projectManager.createNew("default")
-        else projectManager.loadProject(projectHandle.path)
+        else projectManager.loadProject(projectHandle.file)
         return proj
     }
 
@@ -68,7 +65,7 @@ abstract class ApplicationManager<T: EditorProject<T,S>,S:EditorScene, PManager:
         val latest = meta.lastLoadedScene ?: project.sceneIndex.lastOrNull() ?: sceneManager.createHandle("default",project)
         println("loading scene: $latest")
         val scene  = if (!latest.exists) sceneManager.createNew("default")
-        else sceneManager.loadScene(latest.path, true)
+        else sceneManager.loadScene(latest.file, true)
         project.initalizeScene(scene)
         assetManager.loadSceneIndex(scene,project).forEach { handle ->
             println("loading asset: $handle")

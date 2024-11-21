@@ -1,5 +1,6 @@
 package org.yunghegel.salient.engine.system.file
 
+import assimp.format.X.size
 import com.badlogic.gdx.files.FileHandle
 import kotlinx.serialization.Serializable
 import java.io.Writer
@@ -10,6 +11,12 @@ import java.nio.file.Path
 class Filepath(val path:String) : Path by Path.of(path) {
 
     constructor(file: FileHandle) : this(file.path())
+
+    val properties : Map<String,String> = mapOf(
+        "lastModified" to lastModified,
+        "size" to size.toString(),
+        "extension" to extension
+    )
 
     val handle : FileHandle
         get() = FileHandle(path)
@@ -55,6 +62,16 @@ class Filepath(val path:String) : Path by Path.of(path) {
         return (!list.contains(file))
     }
 
+    fun create() : Filepath {
+        handle.file().createNewFile()
+        return this
+    }
+
+    fun write(content: String,append:Boolean = false) : Filepath {
+        handle.writeString(content,append)
+        return this
+    }
+
     fun move(target: Filepath) = handle.moveTo(target.handle)
 
     fun copy(target: Filepath) = handle.copyTo(target.handle)
@@ -75,6 +92,9 @@ class Filepath(val path:String) : Path by Path.of(path) {
 
 
     companion object {
+        val GENERATIVE : Filepath = Filepath("generative")
+
+
         fun String.pathOf() = Filepath(this)
 
         fun FileHandle.pathOf() = Filepath(path())

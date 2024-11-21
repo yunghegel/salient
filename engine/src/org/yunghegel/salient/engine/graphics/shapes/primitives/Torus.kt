@@ -15,7 +15,7 @@ class Torus //   defaults .5f,0.1f,47,12
     private val minorSegments: Int,
     color: Color? = BuilderUtils.getRandomColor()
 ) : InstanceSupplier(color) {
-    override fun createModel(): Model? {
+    override fun createModel(): Model {
         modelBuilder.begin()
         b = modelBuilder.part("torus", primitiveType, attributes, mat)
 

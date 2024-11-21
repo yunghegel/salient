@@ -16,7 +16,7 @@ class Circle(color: Color?, var vertices: Int, var radius: Float, var centerY: F
         centerY
     )
 
-    override fun createModel(): Model? {
+    override fun createModel(): Model {
         modelBuilder.begin()
         b = modelBuilder.part("circle", primitiveType, attributes, mat)
         var angle = 0f

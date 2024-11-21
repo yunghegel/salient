@@ -30,7 +30,7 @@ class IconTextfield(option: Option = Option.LEFT, skin: Skin = Scene2DSkin.defau
     val textField = TextField(text,skin,style.textfield_style)
 
     val input : String
-        get() = textField.text
+        get() = textField.text ?: ""
 
     var listener: IconTextfieldListener? = null
         private set

@@ -2,11 +2,11 @@ package org.yunghegel.salient.editor.scene
 
 import com.badlogic.gdx.Gdx
 import com.charleskorn.kaml.Yaml
-import kotlinx.serialization.Serializable
 import org.yunghegel.gdx.utils.ext.addIfNotPresent
 import org.yunghegel.salient.editor.asset.AssetManager
 import org.yunghegel.salient.editor.project.Project
 import org.yunghegel.salient.editor.project.ProjectManager
+import org.yunghegel.salient.engine.LOAD_SCENE
 import org.yunghegel.salient.engine.api.Default
 import org.yunghegel.salient.engine.api.EditorSceneManager
 import org.yunghegel.salient.engine.api.asset.type.ModelAsset
@@ -15,8 +15,8 @@ import org.yunghegel.salient.engine.api.model.SceneHandle
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.scene.SceneLoadedEvent
 import org.yunghegel.salient.engine.events.scene.SceneSavedEvent
-import org.yunghegel.salient.engine.helpers.Ignore
 import org.yunghegel.salient.engine.helpers.save
+import org.yunghegel.salient.engine.state
 import org.yunghegel.salient.engine.system.*
 import org.yunghegel.salient.engine.system.file.Filepath
 import org.yunghegel.salient.engine.system.file.Paths
@@ -55,13 +55,13 @@ class SceneManager : EditorSceneManager<Scene>(), Default<Scene>{
     }
 
     override fun loadScene(file: Filepath, makeCurrent: Boolean): Scene {
-
+            state = LOAD_SCENE
             val path = Paths.SCENE_FILE_FOR(projectManager.currentProject?.name!!, file.handle.nameWithoutExtension())
-            val handle = projectManager.currentProject?.sceneIndex?.find { it.path == path }
+            val handle = projectManager.currentProject?.sceneIndex?.find { it.file == path }
                 ?: projectManager.currentProject?.scenes!!.find { it.handle.name == file.name }?.let { it.handle }
                 ?: SceneHandle(file.name, path)
 
-            val data = handle.path.readString
+            val data = handle.file.readString
             val dto = Yaml.default.decodeFromString(SceneDTO.serializer(), data)
 
             val scene: Scene = Scene.fromDTO(dto)
@@ -86,7 +86,7 @@ class SceneManager : EditorSceneManager<Scene>(), Default<Scene>{
 
     override fun initialize(scene: Scene,makeCurrent:Boolean) {
         projectManager.currentProject?.scenes?.add(scene)
-//        assetManager.initializeScene(scene,projectManager.currentProject!!)
+        assetManager.initializeScene(scene,projectManager.currentProject!!)
         if(makeCurrent) projectManager.currentProject?.currentScene = scene
 //        scene.retrieveAssetIndex().forEach { assetHandle ->
 //            assetManager.includeAsset(assetHandle,scene)
@@ -95,7 +95,7 @@ class SceneManager : EditorSceneManager<Scene>(), Default<Scene>{
     }
 
     override fun saveScene(scene: Scene) {
-        val path = scene.handle.path
+        val path = scene.handle.file
         val handle = scene.handle
         val proj = projectManager.currentProject!!
         val dto = Scene.Data.toDTO(scene)
@@ -113,13 +113,13 @@ class SceneManager : EditorSceneManager<Scene>(), Default<Scene>{
 
     override fun createDefault(): Scene {
         val default =  createNew("default")
-        val defaultAssetHandle = assetManager.createHandle(Gdx.files.internal("models/gltf/logo.gltf"))
-        assetManager.indexHandle(defaultAssetHandle,project)
-        assetManager.includeAsset(defaultAssetHandle,default)
-        default.findAsset(defaultAssetHandle)?.let { asset ->
-            asset as ModelAsset
-
-        }
+//        val defaultAssetHandle = assetManager.createHandle(Gdx.files.internal("models/gltf/logo.gltf"))
+//        assetManager.indexHandle(defaultAssetHandle,project)
+//        assetManager.includeAsset(defaultAssetHandle,default)
+//        default.findAsset(defaultAssetHandle)?.let { asset ->
+//            asset as ModelAsset
+//
+//        }
 
         return default
     }

@@ -37,7 +37,11 @@ class MaterialsComponent(val materials: GdxArray<Material>,go: GameObject) : Ent
                 }
             }
 
-    override val iconName: String = "material_object"
+        override fun onComponentAdded(go: GameObject) {
+            super.onComponentAdded(go)
+        }
+
+        override val iconName: String = "material_object"
 
     override val type: KClass<out BaseComponent> = MaterialsComponent::class
 

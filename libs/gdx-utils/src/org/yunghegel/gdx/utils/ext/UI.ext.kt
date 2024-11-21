@@ -382,9 +382,15 @@ fun dialog(content: Actor, title: String?,skin:Skin): Dialog {
     dialog.contentTable.add(content).row()
     // dialog.getContentVisTable().add(trig(skin, "Close", ()->dialog.hide()));
     dialog.button("Close", dialog)
-
     return dialog
 }
+
+fun Dialog.part(content: Actor, mapResult: (Actor)->Unit) {
+    contentTable.add(content).row()
+    mapResult(content)
+}
+
+
 
 fun recurseTable( table: Table, task: (Actor)->Unit) {
     for (child in table.children) {

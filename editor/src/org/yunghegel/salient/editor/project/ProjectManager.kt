@@ -5,10 +5,10 @@ import com.charleskorn.kaml.Yaml
 import org.yunghegel.salient.editor.asset.AssetManager
 import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.editor.scene.SceneManager
-import org.yunghegel.salient.engine.api.Default
+import org.yunghegel.salient.engine.*
 import org.yunghegel.salient.engine.api.EditorProjectManager
+import org.yunghegel.salient.engine.api.Meta
 import org.yunghegel.salient.engine.api.dto.ProjectDTO
-import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.model.ProjectHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
 import org.yunghegel.salient.engine.events.Bus.post
@@ -33,15 +33,14 @@ class ProjectManager : EditorProjectManager<Project,Scene>() {
 
     override var projectDir: FileHandle = Paths.PROJECTS_DIR.handle
 
+    val meta : Meta by lazy { inject() }
+
     override var currentProject: Project? = null
         set(value) {
             require(value != null) { "Project cannot be null" }
             val old = field
             field = value
             post(ProjectChangedEvent(old, value))
-        }
-        get() {
-            return field
         }
 
     init {
@@ -52,6 +51,7 @@ class ProjectManager : EditorProjectManager<Project,Scene>() {
     }
 
     override fun loadProject(file: Filepath): Project {
+        state = LOAD_PROJECT
         val handle = createHandle(file.handle.nameWithoutExtension())
         val data = file.readString
         val dto : ProjectDTO = Yaml.default.decodeFromString(ProjectDTO.serializer(),data)
@@ -69,7 +69,7 @@ class ProjectManager : EditorProjectManager<Project,Scene>() {
 
     override fun saveProject(project: Project) {
         val dto = Project.Data.toDTO(project)
-        val path = project.file.pathOf()
+        val path = project.filepath.pathOf()
         path.mkfile()
         val data = Yaml.default.encodeToString(ProjectDTO.serializer(),dto)
         info("Saving project ${project.handle.name}")
@@ -77,6 +77,8 @@ class ProjectManager : EditorProjectManager<Project,Scene>() {
         project.sceneIndex.forEach { handle ->
             SceneHandle.saveToFile(handle,project)
         }
+
+        assetManager.exportProjectIndex(project)
 
         project.scenes.forEach { scene ->
             sceneManager.saveScene(scene)
@@ -98,7 +100,7 @@ class ProjectManager : EditorProjectManager<Project,Scene>() {
     private fun createDirectories(name: String) {
         val projectDir = Paths.PROJECT_DIR_FOR(name)
         val sceneDir = Paths.SCENE_DIR_FOR(name)
-        val assetDir = Paths.PROJECT_SCOPE_ASSETS_DIR_FOR(name)
+        val assetDir = Paths.PROJECT_ASSET_INDEX_FOR(name)
         val projectAssets = Paths.PROJECT_ASSET_DIR_FOR(name)
         val sceneIndices = Paths.SCENE_INDEX_DIR_FOR(name)
         projectDir.mkdir()
@@ -110,8 +112,11 @@ class ProjectManager : EditorProjectManager<Project,Scene>() {
 
 
     override fun initialize(project: Project) {
-        assetManager.initializeProject(project)
-        currentProject = project
+        state = INITIALIZE_PROJECT doing {
+            assetManager.initializeProject(project)
+            currentProject = project
+        }
+
     }
 
     override fun createDefault(): Project {

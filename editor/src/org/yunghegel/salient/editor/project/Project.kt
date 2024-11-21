@@ -27,7 +27,7 @@ typealias ProjectFile = SFile
 class Project(val project_handle: ProjectHandle) : EditorProject<Project,Scene>(project_handle), NamedObjectResource by project_handle {
 
 
-    val file : ProjectFile = Paths.PROJECT_FILE_FOR(handle.name).handle
+    val filepath : ProjectFile = Paths.PROJECT_FILE_FOR(handle.name).handle
 
     @Transient
     override val projectManager: ProjectManager = inject()
@@ -63,6 +63,8 @@ class Project(val project_handle: ProjectHandle) : EditorProject<Project,Scene>(
     override fun toString(): String {
         return "Project: [$name, $handle]\nScenes: ${sceneIndex.joinToString()}\nAssets: ${assetIndex.joinToString()}"
     }
+
+
 
 
     companion object Data : DTOAdapter<Project, ProjectDTO> {

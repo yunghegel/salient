@@ -32,6 +32,7 @@ open class SLabel(text: String, styleName: String = "default") : Label(text, UI.
 //    f
     companion object {
     fun replaceAnsiWithMarkup(text: String): String {
+
         val sb = StringBuilder()
         var i = 0
         while (i < text.length) {

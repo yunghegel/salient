@@ -2,6 +2,7 @@ package org.yunghegel.salient.engine.ui.scene2d
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Window
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
@@ -9,7 +10,7 @@ import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.VisWindow
 import org.yunghegel.salient.engine.ui.UI
 
-open class SWindow(title: String,stylename: String = "default",closeButton: Boolean = true) :VisWindow(title,stylename) {
+open class SWindow(title: String,stylename: String = "custom",closeButton: Boolean = true) :VisWindow(title,stylename) {
 
     constructor(title: String,closeButton:Boolean) : this(title,"default",closeButton) {
 
@@ -17,9 +18,11 @@ open class SWindow(title: String,stylename: String = "default",closeButton: Bool
 
     init {
         if(closeButton) {
-            addCloseButton("close-window")
+            addCloseButton("close")
         }
     }
+
+    var onClose : ()->Unit = {}
 
     fun addCloseButton(style: String) {
         val titleLabel = titleLabel
@@ -29,6 +32,7 @@ open class SWindow(title: String,stylename: String = "default",closeButton: Bool
         closeButton.addListener(object : ChangeListener() {
             override fun changed(event: ChangeEvent, actor: Actor) {
                 remove()
+                onClose()
             }
         })
         closeButton.addListener(object : ClickListener() {
@@ -39,6 +43,11 @@ open class SWindow(title: String,stylename: String = "default",closeButton: Bool
         })
         if (titleLabel.labelAlign == Align.center && titleTable.children.size == 2) titleTable.getCell(titleLabel)
             .padLeft(closeButton.width * 2)
+    }
+
+    fun showWindow(stage: Stage, x: Float, y: Float) {
+        stage.addActor(this)
+        setPosition(x, y)
     }
 
 }

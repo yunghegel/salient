@@ -2,6 +2,7 @@ package org.yunghegel.salient.editor.plugins.base
 
 import com.badlogic.ashley.core.Engine
 import org.yunghegel.salient.editor.cmd.ProjectContext
+import org.yunghegel.salient.editor.cmd.UICommands
 import org.yunghegel.salient.engine.system.InjectionContext
 import org.yunghegel.salient.editor.plugins.base.systems.HotkeySystem
 import org.yunghegel.salient.editor.plugins.base.systems.ToolSystem
@@ -26,6 +27,7 @@ class DefaultPlugin() : Plugin {
         engine.addSystem(hotkeySystem)
         Console.register(Selection())
         Console.register(ProjectContext())
+        Console.register(UICommands())
     }
 
     override val name: String = "default_plugin"

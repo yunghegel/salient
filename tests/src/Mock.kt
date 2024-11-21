@@ -1,7 +1,5 @@
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Gdx.app
 import com.badlogic.gdx.graphics.g3d.Model
-import org.yunghegel.salient.editor.asset.AssetManager
 import org.yunghegel.salient.editor.project.ProjectManager
 import org.yunghegel.salient.editor.scene.SceneManager
 import org.yunghegel.salient.engine.api.asset.type.ModelAsset
@@ -13,7 +11,6 @@ import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.component.ModelComponent
 import org.yunghegel.salient.engine.system.file.Filepath
 import org.yunghegel.salient.engine.system.singleton
-import org.yunghegel.salient.engine.ui.UI
 
 object Mock {
 
@@ -23,7 +20,7 @@ object Mock {
     val scenemanager = SceneManager().also { singleton(it)}
     val scene = scenemanager.createDefault().also { scenemanager.initialize(it,true) }
 
-    val projecthandle = ProjectHandle(project.name, project.path)
+    val projecthandle = ProjectHandle(project.name, project.file)
 
     val handle =  AssetHandle("/home/jamie/Desktop/salient/editor/assets/models/gltf/Roundcube.gltf")
 
@@ -43,8 +40,7 @@ object Mock {
 
     fun prepareModel(model: Model) : GameObject {
         modelAsset.useAsset(model, gameObject)
-        val mc = ModelComponent(modelAsset,gameObject)
-        mc.applyAsset(modelAsset)
+        val mc = ModelComponent(modelAsset.handle,gameObject)
         gameObject.add(mc)
         return gameObject
     }

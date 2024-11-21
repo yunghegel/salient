@@ -10,7 +10,7 @@ import org.yunghegel.salient.engine.system.file.Filepath
 import org.yunghegel.salient.engine.system.file.Paths
 
 @Serializable
-open class SceneHandle(override val name: String, override val path: Filepath, @Transient val serializerid: Int? = null, @Transient val serialuuid: String?=null, @Transient val proj: EditorProject<*,*>? = null) :
+open class SceneHandle(override val name: String, override val file: Filepath, @Transient val serializerid: Int? = null, @Transient val serialuuid: String?=null, @Transient val proj: EditorProject<*,*>? = null) :
     NamedObjectResource {
 
     init {
@@ -26,7 +26,7 @@ open class SceneHandle(override val name: String, override val path: Filepath, @
         if (other !is SceneHandle) return false
 
         if (name != other.name) return false
-        if (path != other.path) return false
+        if (file != other.file) return false
         if (serializerid != other.serializerid) return false
         if (serialuuid != other.serialuuid) return false
         if (proj != other.proj) return false
@@ -37,7 +37,7 @@ open class SceneHandle(override val name: String, override val path: Filepath, @
     }
 
     override fun toString(): String {
-        return "SceneHandle[name: $name, path: $path, id: $id, uuid: $uuid]"
+        return "SceneHandle[name: $name, path: $file, id: $id, uuid: $uuid]"
     }
 
     companion object {

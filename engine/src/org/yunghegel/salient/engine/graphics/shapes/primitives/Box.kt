@@ -7,12 +7,12 @@ import org.yunghegel.salient.engine.graphics.shapes.BuilderUtils
 import org.yunghegel.salient.engine.graphics.shapes.InstanceSupplier
 
 open class Box @JvmOverloads constructor(
-    private val width: Float,
-    private val depth: Float,
-    private val height: Float,
+    var width: Float,
+    var depth: Float,
+    var height: Float,
     color: Color? = BuilderUtils.getRandomColor()
 ) : InstanceSupplier(color) {
-    override fun createModel(): Model? {
+    override fun createModel(): Model {
         modelBuilder.begin()
         b = modelBuilder.part("box", primitiveType, attributes, mat)
         BoxShapeBuilder.build(b, width, depth, height)

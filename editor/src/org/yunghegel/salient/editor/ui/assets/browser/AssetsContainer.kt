@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent
 import com.badlogic.gdx.scenes.scene2d.utils.Selection
 import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.layout.GridGroup
@@ -25,7 +26,7 @@ import org.yunghegel.salient.engine.ui.table
 
 class AssetsContainer(skin : Skin = UI.skin, val browser: AssetBrowser) : ResultsContainer<Asset<*>,AssetActor>(skin,browser) {
 
-    private val grid : GridGroup = GridGroup()
+    internal val grid : GridGroup = GridGroup()
 
     internal val left = table()
     internal val right = table()
@@ -67,6 +68,14 @@ class AssetsContainer(skin : Skin = UI.skin, val browser: AssetBrowser) : Result
 
         touchable = Touchable.enabled
 
+        category.onChange {
+            getAssetActors().forEach {
+                if (!manager.keep(it.asset)) removeAsset(it.asset)
+            }
+        }
+
+
+
         onTouchEvent { event, x, y, pointer, button ->
             if (event.type== InputEvent.Type.touchDown) {
                 val res = hit(x,y,true)
@@ -86,6 +95,9 @@ class AssetsContainer(skin : Skin = UI.skin, val browser: AssetBrowser) : Result
 
     fun addAsset(asset : Asset<*>) {
         addResult(AssetActor(asset))
+        pack()
+        layout()
+
     }
 
     fun removeAsset(asset : Asset<*>) {

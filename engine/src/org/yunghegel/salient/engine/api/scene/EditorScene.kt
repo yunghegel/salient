@@ -1,29 +1,26 @@
 package org.yunghegel.salient.engine.api.scene
 
 import com.badlogic.gdx.utils.Disposable
-import kotlinx.serialization.Serializable
 import org.yunghegel.gdx.utils.data.ID
 import org.yunghegel.gdx.utils.data.Mask
 import org.yunghegel.salient.engine.api.*
 import org.yunghegel.salient.engine.api.asset.Asset
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
-import org.yunghegel.salient.engine.events.Bus.post
-import org.yunghegel.salient.engine.events.asset.AssetIndexedEvent
+import org.yunghegel.salient.engine.api.properties.NamedObjectResource
 import org.yunghegel.salient.engine.helpers.Ignore
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.SceneContext
-import org.yunghegel.salient.engine.system.file.Filepath
-import org.yunghegel.salient.engine.system.file.Paths
+import org.yunghegel.salient.engine.system.info
 
-abstract class EditorScene(val ref: SceneHandle) : UpdateRoutine,
+abstract class EditorScene(val ref: SceneHandle) : UpdateRoutine, NamedObjectResource,
 
     RendererRoutine, ResizeRoutine, Disposable, Mask {
 
 
     override var mask: Int = 0
 
-    private val assetIndex : MutableList<AssetHandle> = mutableListOf()
+    val index : MutableList<AssetHandle> = mutableListOf()
 
     @Ignore
     val assets : MutableList<Asset<*>> = mutableListOf()
@@ -42,12 +39,13 @@ abstract class EditorScene(val ref: SceneHandle) : UpdateRoutine,
     abstract val selection : BaseSelectionManager<GameObject>
 
     fun indexAsset(asset: AssetHandle) {
-        assetIndex.forEach { if (it.uuid == asset.uuid) return }
-        assetIndex.add(asset)
+        index.forEach { if (it.uuid == asset.uuid) return }
+        info("Indexed asset ${asset.name} for scene ${ref.name}")
+        index.add(asset)
     }
 
     fun retrieveAssetIndex() : List<AssetHandle> {
-        return assetIndex
+        return index
     }
 
     fun findAsset(handle : ID) : Asset<*>? {
@@ -59,7 +57,7 @@ abstract class EditorScene(val ref: SceneHandle) : UpdateRoutine,
 
     companion object {
 
-        val EditorScene.folder get() = ref.path
+        val EditorScene.folder get() = ref.file
 
         const val ASSETS_INITIALIZED = 1
         const val SCENE_CONTEXT_INITIALIZED = 2

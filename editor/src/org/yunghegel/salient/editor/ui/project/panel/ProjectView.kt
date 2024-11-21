@@ -1,13 +1,13 @@
-package org.yunghegel.salient.editor.ui.project
+package org.yunghegel.salient.editor.ui.project.panel
 
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.scenes.scene2d.ui.SplitPane
 import org.yunghegel.gdx.utils.ext.TOP_LEFT
 import org.yunghegel.salient.editor.project.Project
+import org.yunghegel.salient.editor.ui.project.FileTree
 import org.yunghegel.salient.engine.system.file.Paths
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.scene2d.STable
-import org.yunghegel.salient.engine.ui.table
 
 class ProjectView : STable() {
 

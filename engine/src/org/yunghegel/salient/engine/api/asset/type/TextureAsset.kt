@@ -13,7 +13,7 @@ class TextureAsset(path: Filepath) : Asset<Texture>(path,Texture::class.java) {
         inner class TextureLoader : Loader<Texture>() {
 
             override fun resolveHandle(assetHandle: AssetHandle): FileHandle {
-                return assetHandle.path.handle
+                return assetHandle.file.handle
             }
 
             override fun load(assetHandle: AssetHandle): Texture {

@@ -1,18 +1,26 @@
 package org.yunghegel.salient.engine.api
 
 import com.charleskorn.kaml.Yaml
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import kotlinx.serialization.serializer
 import org.yunghegel.salient.engine.api.model.ProjectHandle
 import org.yunghegel.salient.engine.api.model.SceneHandle
+import org.yunghegel.salient.engine.api.properties.Resource
 import org.yunghegel.salient.engine.events.lifecycle.onShutdown
 import org.yunghegel.salient.engine.events.project.onProjectChanged
 import org.yunghegel.salient.engine.events.scene.onSceneChanged
+import org.yunghegel.salient.engine.helpers.encodestring
 import org.yunghegel.salient.engine.helpers.save
+import org.yunghegel.salient.engine.system.file.Filepath
 import org.yunghegel.salient.engine.system.file.Paths
 
+@OptIn(InternalSerializationApi::class)
 @Serializable
-class Meta {
+class Meta : Resource {
+
+    override val file: Filepath = Paths.SALIENT_METAFILE
 
     init {
         onProjectChanged { event ->
@@ -23,7 +31,8 @@ class Meta {
             lastLoadedScene = event.new.ref
         }
         onShutdown {
-            val content = Yaml.default.encodeToString(serializer(), this)
+            val content = Yaml.default.encodeToString(Meta::class.serializer(), this)
+            println(this.toString())
             save(Paths.SALIENT_METAFILE.path) { content }
         }
 
@@ -42,7 +51,7 @@ class Meta {
     var bootstrapDefaultScene: Boolean = false
 
     val lastModified: Long
-        get() = lastLoadedProject?.path?.lastModified?.toLong() ?: 0L
+        get() = lastLoadedProject?.file?.lastModified?.toLong() ?: 0L
 
     fun conf(action: Meta.() -> Unit) = this.apply(action)
 
@@ -50,6 +59,10 @@ class Meta {
         if (recentProjects.contains(project)) recentProjects.remove(project)
         if (recentProjects.size >= 5) recentProjects.removeAt(0)
         recentProjects.add(project)
+    }
+
+    override fun toString(): String {
+        return encodestring(this )
     }
 
 }

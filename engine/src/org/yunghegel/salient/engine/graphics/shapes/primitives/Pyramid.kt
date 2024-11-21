@@ -11,7 +11,7 @@ class Pyramid @JvmOverloads constructor(
     var height: Float,
     color: Color? = BuilderUtils.getRandomColor()
 ) : InstanceSupplier(color) {
-    override fun createModel(): Model? {
+    override fun createModel(): Model {
         modelBuilder.begin()
         b = modelBuilder.part(
             "square_pyramid",

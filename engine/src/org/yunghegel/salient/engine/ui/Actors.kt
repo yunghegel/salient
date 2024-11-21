@@ -11,6 +11,7 @@ import ktx.scene2d.vis.visTooltip
 import org.yunghegel.salient.engine.ui.scene2d.SCheckBox
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
+import org.yunghegel.salient.engine.ui.widgets.InputTable
 
 fun Actor.addTooltip(conf: STable.() -> Unit) {
     val table = STable()
@@ -69,10 +70,29 @@ fun textbutton(text: String, action: ()->Unit) : SLabel {
     return label
 }
 
-fun STable.child(conf: STable.(STable) -> Unit) : Cell<STable> {
-    val table = STable()
+fun STable.child(conf: InputTable.(STable) -> Unit) : Cell<InputTable> {
+    val table = InputTable()
     table.conf(table)
     return add(table)
+}
+
+class TableBuilder : STable() {
+
+    fun text(text: String, setter: (()->String)? = null) : Cell<SLabel> {
+        val label = if (setter !=null) label(setter) else label(text)
+        return add(label)
+    }
+
+    fun button(text: String, action: ()->Unit) : Cell<SLabel> {
+        val button = textbutton(text,action)
+        return add(button)
+    }
+
+    fun boolean(label: String, value: Boolean, change: (Boolean)->Unit) : Cell<SCheckBox> {
+        val checkbox = flag(label,value,change)
+        return add(checkbox)
+    }
+
 }
 
 

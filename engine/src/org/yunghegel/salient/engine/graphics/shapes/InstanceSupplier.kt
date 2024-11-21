@@ -29,6 +29,7 @@ abstract class InstanceSupplier(protected var color: Color?) : ModelSupplier {
         (VertexAttributes.Usage.Position or VertexAttributes.Usage.TextureCoordinates or VertexAttributes.Usage.Normal or VertexAttributes.Usage.ColorUnpacked).toLong()
 
 
+
     fun setPrimitiveType(primitiveType: Int): InstanceSupplier {
         this.primitiveType = primitiveType
         return this

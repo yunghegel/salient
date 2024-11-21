@@ -4,26 +4,35 @@ package org.yunghegel.salient.engine.api.model
 
 import com.badlogic.gdx.files.FileHandle
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.yunghegel.gdx.utils.data.ID
+import org.yunghegel.gdx.utils.data.ID.Companion.generateUUID
 import org.yunghegel.gdx.utils.data.Named
+import org.yunghegel.salient.engine.api.asset.Extras
 import org.yunghegel.salient.engine.api.properties.Resource
 import org.yunghegel.salient.engine.system.file.FileType
 import org.yunghegel.salient.engine.system.file.Filepath
 
 @Serializable
-class AssetHandle(val pth: String="") : Resource, ID, Named {
+open class AssetHandle(@Transient val pth: String="", @Transient private val _uuid: String = generateUUID(), @Transient val _extras: Map<String,String> = mapOf()) : Resource, ID, Named {
 
     constructor(handle:FileHandle) : this(handle.path())
 
     override val id: Int = generateID()
 
-    override val path: Filepath = Filepath(pth)
+    override val file: Filepath = Filepath(pth)
 
-    override val uuid: String = generateUUID()
+    override val uuid: String = _uuid
 
-    override val name: String = path.name
+    override val name: String = file.name
 
-    val type : String = resolveType(path.extension)
+    val type : String = resolveType(file.extension)
+
+    val extras : Extras = Extras()
+
+    init {
+        _extras.forEach { (key, value) -> extras[key] = value }
+    }
 
     fun resolveType(ext: String) : String {
         FileType.entries.forEach { type ->
@@ -39,7 +48,7 @@ class AssetHandle(val pth: String="") : Resource, ID, Named {
         if (this === other) return true
         if (other !is AssetHandle) return false
 
-        if (path != other.path) return false
+        if (file != other.file) return false
 
         if (uuid != other.uuid) return false
 
@@ -47,7 +56,7 @@ class AssetHandle(val pth: String="") : Resource, ID, Named {
     }
 
     override fun toString(): String {
-        return "AssetHandle[$name, $path, $uuid, $type]"
+        return "AssetHandle[$name, $file, $uuid, $type, $extras]"
     }
 
 }

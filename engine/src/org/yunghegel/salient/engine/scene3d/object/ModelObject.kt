@@ -12,15 +12,3 @@ import org.yunghegel.salient.engine.scene3d.ModelRenderable
 import org.yunghegel.salient.engine.scene3d.graph.ObjectNode
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.Icon
-
-class ModelNode(name:String = "model", model: Model) : ObjectNode<Model>(name,model) {
-
-    override fun emitComponents(obj: Model): List<BaseComponent> {
-        val mats = obj.materials
-        val mesh = obj.meshes
-        val renderable = obj.instance
-
-
-
-    }
-}

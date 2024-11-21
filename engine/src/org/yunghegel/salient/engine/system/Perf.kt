@@ -116,8 +116,21 @@ object Perf {
     }
 }
 
-fun profile (name: String, block: () -> Unit) {
+fun profile (name: String, flush: Boolean = false, block: () -> Unit) {
     val index = Perf.start(name)
     block()
     Perf.end(index)
+    if (flush) {
+        Perf.flush(index)
+    }
+}
+
+fun <T> profile(name: String, flush: Boolean = false, block: () -> T) : T {
+    val index = Perf.start(name)
+    val result = block()
+    Perf.end(index)
+    if (flush) {
+        Perf.flush(index)
+    }
+    return result
 }

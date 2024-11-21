@@ -6,6 +6,7 @@ import org.yunghegel.gdx.utils.ui.Hoverable
 class TypedPayload<T>(obj: T? = null) : DragAndDrop.Payload() {
 
 
+    val props = mutableMapOf<String, Any>()
 
     var hoverable : Hoverable.HoverQueryable? = null
 
