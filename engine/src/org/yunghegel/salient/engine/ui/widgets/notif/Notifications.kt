@@ -22,6 +22,7 @@ import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.table
+import org.yunghegel.salient.engine.ui.widgets.InputResult
 import org.yunghegel.salient.engine.ui.widgets.InputTable
 import org.yunghegel.salient.engine.ui.widgets.Result
 import java.util.*
@@ -201,7 +202,7 @@ class SToast(val strategy:AlertStrategy, val severity: Severity,val content: Tab
             titleLabel.setText(value)
         }
     var onClose : ()->Unit = {}
-    var useResult : (Result)->Unit = {}
+    var useResult: (InputResult) -> Unit = {}
     var configItem = true
     var id = "undefined"
 
@@ -216,7 +217,7 @@ class SToast(val strategy:AlertStrategy, val severity: Severity,val content: Tab
         }
     }
 
-    val result : Result?
+    val result: InputResult?
         get() = if (content is InputTable) content.result else null
 
     var closed = false

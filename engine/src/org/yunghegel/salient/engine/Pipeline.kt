@@ -217,6 +217,12 @@ open class Pipeline() : Engine() {
         return entity
     }
 
+    fun reset() {
+        entities.forEach { entity ->
+            removeEntity(entity)
+        }
+    }
+
     fun push (entity:Entity) {
         require (entity.getComponent(FunctionComponent::class.java) != null && entity.getComponent(State::class.java) !=null) { "Entity must have FunctionComponent and StateComponent" }
         addEntity(entity)

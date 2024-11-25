@@ -19,7 +19,7 @@ abstract class EditorProjectManager<P:EditorProject<P,S>,S:EditorScene> : Defaul
 
     abstract var currentProject : P?
 
-    abstract fun loadProject(file : Filepath) : P
+    abstract fun loadProject(file: Filepath, makeCurrent: Boolean = true): P
 
     abstract fun saveProject(project: P)
 

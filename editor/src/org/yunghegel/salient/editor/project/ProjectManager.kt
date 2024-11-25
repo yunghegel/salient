@@ -50,7 +50,7 @@ class ProjectManager : EditorProjectManager<Project,Scene>() {
 
     }
 
-    override fun loadProject(file: Filepath): Project {
+    override fun loadProject(file: Filepath, makeCurrent: Boolean): Project {
         state = LOAD_PROJECT
         val handle = createHandle(file.handle.nameWithoutExtension())
         val data = file.readString
@@ -60,7 +60,7 @@ class ProjectManager : EditorProjectManager<Project,Scene>() {
 
         post(ProjectLoadedEvent(project))
 
-        if (currentProject==null) {
+        if (makeCurrent) {
             currentProject = project
         }
 

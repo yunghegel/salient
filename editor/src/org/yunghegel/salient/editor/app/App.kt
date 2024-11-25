@@ -52,7 +52,9 @@ class App : AppModule() {
     internal val sceneManager: SceneManager = SceneManager()
     internal val assetManager: AssetManager = AssetManager()
     private val actionHistory = ActionHistory(100)
-    private lateinit var meta: Meta
+    lateinit var meta: Meta
+
+    lateinit var index: MutableMap<ProjectHandle, List<SceneHandle>>
 
     @OptIn(Reflection::class)
     override val registry: InjectionContext.() -> Unit = {
@@ -91,7 +93,9 @@ class App : AppModule() {
             var project: Project by notnull()
             var scene: Scene by notnull()
 
-            val projects = projectIndices()
+            index = projectIndices().associateBy({ it }, { sceneIndices(it) }).toMutableMap()
+
+
 
 
             meta = fetchMeta().apply {
@@ -203,6 +207,22 @@ class App : AppModule() {
             }
             return projects
         }
+
+    fun sceneIndices(project: ProjectHandle): List<SceneHandle> {
+        state = PROJECT_SCENE_INDEX_DISCOVERY
+        val scenes = mutableListOf<SceneHandle>()
+        profile("discover scenes") {
+            project.file.child("scenes").children.filter { it.value.isDirectory }.forEach {
+                it.value.list().filter { it.extension() == "scene" }.forEach { file ->
+                    ({ SceneHandle(file.nameWithoutExtension(), file.pathOf()) }.let {
+                        scenes.add(it().also { post(SceneDiscoveryEvent(it)) }
+                            .also { debug("Scene discovery: $it ") })
+                    })
+                }
+            }
+        }
+        return scenes
+    }
 
 
 

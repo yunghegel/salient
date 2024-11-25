@@ -39,7 +39,7 @@ abstract class ApplicationManager<T: EditorProject<T,S>,S:EditorScene, PManager:
         } ?: Meta()
         val projectHandle : ProjectHandle = meta.lastLoadedProject ?: projectManager.createHandle("default")
         val proj = if (!projectHandle.exists) projectManager.createNew("default")
-        else projectManager.loadProject(projectHandle.file)
+        else projectManager.loadProject(projectHandle.file, true)
         return proj
     }
 

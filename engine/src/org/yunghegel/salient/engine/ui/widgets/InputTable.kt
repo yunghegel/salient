@@ -22,11 +22,10 @@ import org.yunghegel.salient.engine.ui.widgets.value.widgets.LabeledFloatField
 import org.yunghegel.salient.engine.ui.widgets.value.widgets.LabeledIntField
 import org.yunghegel.salient.engine.ui.widgets.value.widgets.LabeledTextField
 
-class InputTable(val title: String="") : STable() {
+class InputTable(val title: String = "", val result: InputResult = Result()) : STable() {
 
-    val result = Result()
 
-    var submit : (Result)->Unit = {}
+    var submit: (InputResult) -> Unit = {}
     val content = table()
 
     init {
@@ -49,7 +48,7 @@ class InputTable(val title: String="") : STable() {
         addsubmit = true
     }
 
-    fun addSubmit(with: (Result)->Unit) {
+    fun addSubmit(with: (InputResult) -> Unit) {
         addsubmit = true
         separator()
         row()
@@ -124,7 +123,7 @@ class InputTable(val title: String="") : STable() {
         result[name] = default
         textfield.onChange {
             result[name] = textfield.text ?: default
-            submit(result)
+            change(result[name]!! as String)
         }
        return content.add(textfield)
     }
@@ -214,7 +213,7 @@ class InputTable(val title: String="") : STable() {
         add(Separator()).colspan(2).fillX().expandX().align(Align.center).row()
     }
 
-    fun withResult(action: (Result) -> Unit) {
+    fun withResult(action: (InputResult) -> Unit) {
         submit = action
     }
 

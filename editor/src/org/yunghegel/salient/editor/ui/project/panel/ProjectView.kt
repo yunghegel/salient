@@ -11,7 +11,7 @@ import org.yunghegel.salient.engine.ui.scene2d.STable
 
 class ProjectView : STable() {
 
-    val proj : Project = inject()
+    val proj: Project by lazy { inject() }
 
     val fileSystem : FileTree = FileTree(Paths.PROJECT_DIR_FOR(proj.name).handle)
     val pane : ScrollPane

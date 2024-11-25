@@ -7,6 +7,7 @@ import com.kotcrab.vis.ui.widget.MenuBar
 import com.kotcrab.vis.ui.widget.MenuItem
 import ktx.actors.onClick
 import org.yunghegel.salient.engine.ui.UI
+import org.yunghegel.salient.engine.ui.widgets.InputResult
 import org.yunghegel.salient.engine.ui.widgets.Result
 import org.yunghegel.salient.engine.ui.widgets.notif.SToast
 
@@ -34,7 +35,7 @@ class ViewportMenu : MenuBar("no-bg") {
 
     inner class ViewportMenuItem(name: String) : Menu(name, "viewport") {
 
-        fun define(name: String, icon: String, toast: SToast? = null, handleResult: (Result)->Unit) {
+        fun define(name: String, icon: String, toast: SToast? = null, handleResult: (InputResult) -> Unit) {
             val drawable : Drawable = UI.skin.getDrawable(icon)
             val item = MenuItem(name,drawable)
             toast?.let { notif ->

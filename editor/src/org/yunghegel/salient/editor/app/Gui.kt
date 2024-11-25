@@ -79,7 +79,7 @@ class Gui : EditorFrame() {
 
     val textEditor: SimpleTextEditor = SimpleTextEditor(skin, "Shader Editor")
 
-    val scene: Scene = inject()
+    val scene: Scene by lazy { inject() }
     val salient: Salient = inject()
 
     val viewportSplit: ViewportSplit
@@ -119,7 +119,8 @@ class Gui : EditorFrame() {
 
                         addSubmit { r->
                             val params = prim.defaultParams
-                            r.forEach { key, value ->
+                            r.forEach { item ->
+                                val (key, value) = item
                                 when (value) {
                                     is Int -> params.integerParams[key] = value
                                     is Float -> params.floatParmas[key] = value
@@ -138,7 +139,7 @@ class Gui : EditorFrame() {
                         }
                     }
                 , { r ->
-                        r.forEach { key, value ->
+                        r.forEach { (key, value) ->
                             println("$key : $value")
                         }
 

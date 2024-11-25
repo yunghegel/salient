@@ -10,6 +10,7 @@ import org.yunghegel.gdx.utils.ext.clearColor
 import org.yunghegel.gdx.utils.ext.clearDepth
 import org.yunghegel.gdx.utils.ext.delta
 import org.yunghegel.gdx.utils.ext.notnull
+import org.yunghegel.gdx.utils.ext.padVertical
 import org.yunghegel.salient.core.graphics.util.OutlineDepth
 import org.yunghegel.salient.editor.app.configs.Settings
 import org.yunghegel.salient.editor.input.ViewportController
@@ -21,25 +22,31 @@ import org.yunghegel.salient.editor.plugins.outline.OutlinerPlugin
 import org.yunghegel.salient.editor.plugins.outline.lib.Outliner
 import org.yunghegel.salient.editor.plugins.picking.PickingPlugin
 import org.yunghegel.salient.editor.project.Project
+import org.yunghegel.salient.editor.project.ProjectManager
 import org.yunghegel.salient.editor.scene.Scene
+import org.yunghegel.salient.editor.scene.SceneManager
 import org.yunghegel.salient.engine.InterfaceInitializedEvent
 import org.yunghegel.salient.engine.Pipeline
 import org.yunghegel.salient.engine.STARTUP
 import org.yunghegel.salient.engine.Startup
 import org.yunghegel.salient.engine.State.*
 import org.yunghegel.salient.engine.api.ecs.System
+import org.yunghegel.salient.engine.api.model.ProjectHandle
 import org.yunghegel.salient.engine.api.plugin.Plugin
 import org.yunghegel.salient.engine.api.tool.Tool
 import org.yunghegel.salient.engine.api.undo.ActionHistoryKeyListener
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.lifecycle.EditorInitializedEvent
 import org.yunghegel.salient.engine.events.lifecycle.WindowResizedEvent
+import org.yunghegel.salient.engine.events.lifecycle.onEditorInitialized
+import org.yunghegel.salient.engine.events.scene.onSceneChanged
 import org.yunghegel.salient.engine.graphics.FBO
 import org.yunghegel.salient.engine.graphics.GFX
 import org.yunghegel.salient.engine.input.Input
 import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.system.*
 import org.yunghegel.salient.engine.ui.UI
+import org.yunghegel.salient.engine.ui.scene2d.SSelectBox
 import kotlin.collections.set
 import kotlin.reflect.KClass
 
@@ -62,10 +69,12 @@ class Salient : ApplicationAdapter() {
 
     private var state: State by notnull()
 
+
     val pipeline: Pipeline = Companion
 
 
     val index = Index<Named>()
+
 
     data class PluginSet(val tools:MutableList<Tool>?,val systems:MutableList<System<Project,Scene>>?,val plugins:MutableList<Plugin>?)
 
@@ -126,6 +135,32 @@ class Salient : ApplicationAdapter() {
             index.types[Tool::class.java]?.filter { it is Tool && it.active }?.joinToString { it.name } ?: "None"
         }
         post(EditorInitializedEvent())
+
+        UI.DialogStage.popup {
+            val pm: ProjectManager = inject()
+            val sm: SceneManager = inject()
+            title("Welcome to Salient")
+            icon("logo16")
+            content {
+                var scenes = SSelectBox<String>()
+                choice(
+                    "Select a project to open",
+                    app.meta.recentProjects.map { it.name },
+                    app.meta.lastLoadedProject?.name ?: "default"
+                ) { picked ->
+                    app.meta.lastLoadedProject = app.meta.recentProjects.find { it.name == picked }
+                    app.meta.lastLoadedProject?.let {
+                        result["projectChoice"] = it
+                        val items = app.index[it] ?: emptyList()
+                        scenes.setItems(*items.map { it.name }.toTypedArray())
+                    }
+                }
+                row()
+                label("Select a scene to open").padVertical(10f)
+                add(scenes)
+                row()
+            }
+        }
     }
 
     private fun createPlugin(plugin: Plugin) {
@@ -184,6 +219,7 @@ class Salient : ApplicationAdapter() {
 
 //        }
 
+        onEditorInitialized {
             scene.apply {
                 context.run {
                     push(INIT) { delta ->
@@ -207,11 +243,11 @@ class Salient : ApplicationAdapter() {
                         scene.renderer.prepareContext(scene.context, false)
                     }
                     push(COLOR_PASS) { _ ->
-                            gui.updateviewport()
-                            modelBatch.begin(perspectiveCamera)
-                            graph.root.renderColor(delta, modelBatch, scene.context)
-                            graph.root.renderDebug(scene.context)
-                            modelBatch.end()
+                        gui.updateviewport()
+                        modelBatch.begin(perspectiveCamera)
+                        graph.root.renderColor(delta, modelBatch, scene.context)
+                        graph.root.renderDebug(scene.context)
+                        modelBatch.end()
 
                     }
 
@@ -232,6 +268,9 @@ class Salient : ApplicationAdapter() {
                     }
                 }
             }
+        }
+
+
     }
 
     /**
@@ -241,17 +280,10 @@ class Salient : ApplicationAdapter() {
         val delta = Gdx.graphics.deltaTime
         clearColor()
         clearDepth()
-
-        scene.apply {context.run {
-            this@Salient.render(delta)
-        } }
         update(delta)
     }
 
-    context(SceneContext,Scene) fun render(delta:Float) {
 
-
-    }
 
     override fun resize(width: Int, height: Int) {
         UI.resize(width, height)

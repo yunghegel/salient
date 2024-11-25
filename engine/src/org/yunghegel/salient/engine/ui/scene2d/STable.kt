@@ -1,7 +1,9 @@
 package org.yunghegel.salient.engine.ui.scene2d
 
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.ui.Cell
 import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.ui.Table.Debug.actor
 import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
 import com.ray3k.stripe.PopTableClickListener
@@ -24,6 +26,15 @@ open class STable : Table(UI.skin) {
     override fun getPrefHeight(): Float {
         if (heightFunction!=null) return heightFunction!!.invoke()
         return super.getPrefHeight()
+    }
+
+    fun <T : Actor> prepend(actor: T): Cell<T> {
+        val cell = add(actor)
+        if (children.size > 1) {
+            val index = children.indexOf(actor)
+            children.swap(index, 0)
+        }
+        return cell
     }
 
     fun constrainAsPercentOfActor(actor:Actor,percentW: Float, percentH: Float, minimum: Float, maximum:Float) {

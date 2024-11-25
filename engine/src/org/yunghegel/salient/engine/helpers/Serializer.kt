@@ -23,7 +23,7 @@ object Serializer {
         ignoreUnknownKeys = true
     }
 
-    val gdxJson : GdxJson = GdxJson()
+    val gdx: GdxJson = GdxJson()
 
     inline fun <reified T:Any> fromYaml(yamlString: String, clazz: Class<T>): T {
         return try { T::class.fromYaml(yamlString) } catch (e: Exception) { throw e }
