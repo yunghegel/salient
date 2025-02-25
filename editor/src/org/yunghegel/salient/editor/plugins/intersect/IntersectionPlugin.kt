@@ -2,10 +2,10 @@ package org.yunghegel.salient.editor.plugins.intersect
 
 import com.badlogic.ashley.core.Engine
 import org.yunghegel.salient.engine.system.InjectionContext
-import org.yunghegel.salient.editor.app.salient
 import org.yunghegel.salient.editor.plugins.intersect.tools.IntersectorTool
 import org.yunghegel.salient.engine.api.ecs.System
 import org.yunghegel.salient.engine.api.plugin.Plugin
+import org.yunghegel.salient.engine.api.tool.InputTool
 import org.yunghegel.salient.engine.api.tool.Tool
 
 class IntersectionPlugin : Plugin {

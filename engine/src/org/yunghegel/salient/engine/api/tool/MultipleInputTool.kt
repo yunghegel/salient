@@ -7,7 +7,7 @@ import ktx.collections.GdxArray
 import org.yunghegel.salient.engine.input.Input
 
 
-abstract class MultipleInputTool(name:String, val maxPoints : Int = 1) : InputTool(name) {
+abstract class MultipleInputTool(name: String, val maxPoints: Int = 1) : MouseTool(name) {
 
     private var running = false
 

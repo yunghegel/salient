@@ -3,7 +3,9 @@ package org.yunghegel.salient.engine.events.asset
 import org.greenrobot.eventbus.Subscribe
 import org.yunghegel.salient.engine.api.asset.Asset
 import org.yunghegel.salient.engine.events.Bus
+import org.yunghegel.salient.engine.events.Event
 
+@Event("asset.added", [Asset::class])
 class AssetAddedEvent(val asset: Asset<*>) {
 
     interface Listener {

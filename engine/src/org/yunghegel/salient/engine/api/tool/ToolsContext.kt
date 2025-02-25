@@ -4,9 +4,9 @@ import com.badlogic.gdx.utils.ObjectSet
 
 class ToolsContext : ToolManager {
 
-    override val toolRegistry : ObjectSet<Class<out Tool>> = ObjectSet()
+    override val toolRegistry: ObjectSet<Class<out InputTool>> = ObjectSet()
 
-    override val tools : ObjectSet<Tool> = ObjectSet()
+    override val tools: ObjectSet<InputTool> = ObjectSet()
 
-    override val active : ObjectSet<Tool> = ObjectSet()
+    override val active: ObjectSet<InputTool> = ObjectSet()
 }

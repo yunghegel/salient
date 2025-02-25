@@ -137,6 +137,22 @@ object Dialogs {
         return Gdx.files.absolute(response)
     }
 
+    fun selectFolderDialog(title: String?, default: String = System.getProperty("user.home")): FileHandle? {
+        //fix file path characters
+        var defaultPath = default
+        if (UIUtils.isWindows) {
+            defaultPath = defaultPath.replace("/", "\\")
+            if (!defaultPath.endsWith("\\")) defaultPath += "\\"
+        } else {
+            defaultPath = defaultPath.replace("\\", "/")
+            if (!defaultPath.endsWith("/")) defaultPath += "/"
+        }
+
+        val response = TinyFileDialogs.tinyfd_selectFolderDialog(title, defaultPath) ?: return null
+
+        return Gdx.files.absolute(response)
+    }
+
 }
 
 enum class MessageType(val tinyfdString: String) {

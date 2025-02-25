@@ -36,6 +36,36 @@ task release(type: Copy) {
     group "salient"
     from jar
     into releaseDir
+
+    switch (os) {
+        case org.gradle.internal.os.OperatingSystem.LINUX:
+            def executable = new File(rootProject.file("release"), "salient")
+            executable.createNewFile()
+            executable.text = "#!/bin/bash\njava -jar salient-${version}.jar \$@"
+            executable.setExecutable(true)
+
+            from executable
+            into project.file("release")
+
+            break
+        case org.gradle.internal.os.OperatingSystem.MAC_OS:
+            def executable = new File(rootProject.file("release"), "salient")
+            executable.createNewFile()
+            executable.text = "#!/bin/bash\njava -jar salient-${version}.jar \$@"
+            executable.setExecutable(true)
+
+            from executable
+            into project.file("release")
+            break
+        case org.gradle.internal.os.OperatingSystem.WINDOWS:
+            def executable = new File(rootProject.file("release"), "salient.bat")
+            executable.createNewFile()
+            executable.text = "@echo off\njava -jar salient-${version}.jar %*"
+
+            from executable
+            into project.file("release")
+            break
+    }
 }
 
 jar {

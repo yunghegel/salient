@@ -1,26 +1,17 @@
 package org.yunghegel.salient.editor.plugins.gizmos.lib
 
 import com.badlogic.ashley.core.Component
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g3d.ModelBatch
-import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
-import org.checkerframework.checker.units.qual.s
-import org.yunghegel.gdx.utils.ext.each
 import org.yunghegel.gdx.utils.selection.Picker
-import org.yunghegel.salient.editor.app.salient
 import org.yunghegel.salient.editor.plugins.gizmos.systems.GizmoSystem
 import org.yunghegel.salient.editor.plugins.picking.PickablesBag
-import org.yunghegel.salient.editor.plugins.picking.systems.PickingSystem
-import org.yunghegel.salient.engine.State
-import org.yunghegel.salient.engine.api.tool.InputTool
-import org.yunghegel.salient.engine.input.Input
+import org.yunghegel.salient.engine.api.tool.MouseTool
 import org.yunghegel.salient.engine.system.debug
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.tool.ToolHandle
-import org.yunghegel.salient.engine.ui.UI
 
 /**
  * A tool that allows the user to manipulate objects in the scene.
@@ -29,7 +20,8 @@ import org.yunghegel.salient.engine.ui.UI
  * visual representations of the gizmo's functionality and enable interaction.
  */
 
-abstract class Gizmo<T, H: GizmoHandle<T>>(name: String,val system: GizmoSystem,key:Int) : InputTool(name,key), Component {
+abstract class Gizmo<T, H : GizmoHandle<T>>(name: String, val system: GizmoSystem, key: Int) : MouseTool(name, key),
+    Component {
 
     private var tmp : InputProcessor? = null
 

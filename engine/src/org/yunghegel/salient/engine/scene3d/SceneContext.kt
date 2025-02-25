@@ -1,6 +1,7 @@
 package org.yunghegel.salient.engine.scene3d
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.Cubemap
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.PerspectiveCamera
@@ -54,6 +55,10 @@ class SceneContext(private var scene:EditorScene) : SceneEnvironment(), Disposab
 
     val dirLight: DirectionalLightEx = DirectionalLightData().fromDTO(DirectionalLightData.default)
 
+    var current: Camera
+
+
+
     init {
 
         modelBatch = ModelBatch(PBRShaderProvider(PBRShaderProvider.createDefaultConfig()), SceneRenderableSorter())
@@ -69,6 +74,8 @@ class SceneContext(private var scene:EditorScene) : SceneEnvironment(), Disposab
             position.set(2.5f, 2.5f, 2.5f)
             lookAt(0f, 0f, 0f)
         }
+
+        current = perspectiveCamera
         viewport = ScreenViewport(perspectiveCamera)
         shapeCache = ShapeCache()
         debugContext = DebugContext(inject(), perspectiveCamera, inject(), inject(), modelBatch,shapeCache)
@@ -91,6 +98,13 @@ class SceneContext(private var scene:EditorScene) : SceneEnvironment(), Disposab
 
         register {
             bind(SceneGraphicsResources::class) { this }
+//            bind(Camera::class) {
+//                if (current is OrthographicCamera) {
+//                    orthographicCamera
+//                } else {
+//                    perspectiveCamera
+//                }
+//            }
         }
 
     }

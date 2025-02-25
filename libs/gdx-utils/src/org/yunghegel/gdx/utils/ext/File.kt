@@ -1,6 +1,7 @@
 package org.yunghegel.gdx.utils.ext
 
 import com.badlogic.gdx.files.FileHandle
+import kotlin.io.path.Path
 
 
 fun Iterable<FileHandle>.withExtension(ext: String): List<FileHandle> {
@@ -37,4 +38,14 @@ fun FileHandle.dir(path:String, action: (FileHandle)->Unit = {}) : FileHandle {
 
 fun String.withExtension(ext: String): String {
     return "$this.$ext"
+}
+
+fun String.resolve(path: String): String {
+    val actual = Path(this).resolve(path)
+    return actual.toString()
+}
+
+fun String.relativeTo(path: String): String {
+    val actual = Path(this).relativize(Path(path))
+    return actual.toString()
 }

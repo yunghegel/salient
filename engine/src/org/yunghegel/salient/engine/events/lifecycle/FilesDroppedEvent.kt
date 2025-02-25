@@ -2,7 +2,9 @@ package org.yunghegel.salient.engine.events.lifecycle
 
 import org.greenrobot.eventbus.Subscribe
 import org.yunghegel.salient.engine.events.Bus
+import org.yunghegel.salient.engine.events.Event
 
+@Event("lifecycle.filesDropped", [Array<String>::class])
 class FilesDroppedEvent(val paths: Array<out String>) {
 
     interface Listener {

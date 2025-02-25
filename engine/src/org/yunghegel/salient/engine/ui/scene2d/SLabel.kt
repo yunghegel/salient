@@ -1,12 +1,10 @@
 package org.yunghegel.salient.engine.ui.scene2d
 
 import com.badlogic.gdx.scenes.scene2d.ui.Label
+import ktx.async.schedule
+import org.yunghegel.gdx.utils.temporal
 import org.yunghegel.salient.engine.ui.UI
 open class SLabel(text: String, styleName: String = "default") : Label(text, UI.skin, styleName) {
-
-    init {
-
-    }
 
     private var provider: (() -> String)? = null
 
@@ -16,11 +14,22 @@ open class SLabel(text: String, styleName: String = "default") : Label(text, UI.
         this.provider = provider
     }
 
-    override fun act(delta: Float) {
+    val updateText = temporal(1f / 60f, true) {
         if (provider != null) {
             setText(provider!!.invoke())
         }
+    }
+
+
+    override fun act(delta: Float) {
+        updateText.update(delta)
         super.act(delta)
+
+    }
+
+    override fun invalidate() {
+        super.invalidate()
+
     }
 
     override fun getPrefWidth(): Float {

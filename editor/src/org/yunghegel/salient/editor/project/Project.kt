@@ -23,7 +23,6 @@ import org.yunghegel.salient.engine.system.inject
 typealias ProjectDirectory = SFile
 typealias ProjectFile = SFile
 
-
 class Project(val project_handle: ProjectHandle) : EditorProject<Project,Scene>(project_handle), NamedObjectResource by project_handle {
 
 

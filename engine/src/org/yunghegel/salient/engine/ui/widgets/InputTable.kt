@@ -102,6 +102,17 @@ class InputTable(val title: String = "", val result: InputResult = Result()) : S
         return content.add(button)
     }
 
+    fun imageTextButton(text: String, drawable: String, action: (SImageTextButton) -> Unit): Cell<SImageTextButton> {
+        val button = SImageTextButton(text, drawable)
+        button.onClick {
+            action(button)
+            submit(result)
+        }
+
+        add(button)
+        return content.add(button)
+    }
+
     fun label(text:String, style: String = "default") : Cell<SLabel> {
         val label = SLabel(text,style)
         return content.add(label)

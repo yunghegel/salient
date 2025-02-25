@@ -6,7 +6,7 @@ import java.util.*
 
 interface ID {
 
-    val uuid: String
+    open val uuid: String get() = generateUUID()
 
     val id: Int
 

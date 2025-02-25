@@ -10,12 +10,12 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
-import org.yunghegel.gdx.utils.ext.delta
 import org.yunghegel.gdx.utils.selection.PickerColorEncoder
 import org.yunghegel.salient.editor.plugins.gizmos.lib.GizmoHandle
 import org.yunghegel.salient.editor.plugins.gizmos.lib.GizmoModels
 import org.yunghegel.salient.editor.plugins.gizmos.lib.transform.TransformGizmo
 import org.yunghegel.salient.editor.plugins.gizmos.systems.GizmoSystem
+import org.yunghegel.salient.engine.graphics.RenderUsage
 import org.yunghegel.salient.engine.input.Input
 import org.yunghegel.salient.engine.scene3d.GameObject
 
@@ -115,7 +115,7 @@ class ScaleTool(system : GizmoSystem) : TransformGizmo<GameObject, ScaleTool.Sca
 
     }
 
-    override fun render(modelBatch: ModelBatch, environment: Environment?) {
+    override fun render(modelBatch: ModelBatch, environment: Environment) {
         renderHandles(modelBatch)
     }
 

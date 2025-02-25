@@ -35,6 +35,7 @@ data class CameraData(
             cam.viewportHeight = 1f
             cam.position.set(data.position.x, data.position.y, data.position.z)
             cam.direction.set(data.rotation.x, data.rotation.y, data.rotation.z)
+            cam.up.set(0f, 1f, 0f)
             cam.update()
         }
 

@@ -1,14 +1,11 @@
 package org.yunghegel.salient.engine.scene3d.component
 
-import com.badlogic.gdx.graphics.Camera
-import com.badlogic.gdx.graphics.g3d.ModelBatch
-import com.badlogic.gdx.graphics.g3d.RenderableProvider
-import org.yunghegel.gdx.utils.ext.each
 import org.yunghegel.gdx.utils.selection.Pickable
 import org.yunghegel.gdx.utils.selection.PickerColorEncoder
 import org.yunghegel.salient.engine.api.ecs.BaseComponent
 import org.yunghegel.salient.engine.api.ecs.ComponentCloneable
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
+import org.yunghegel.salient.engine.api.ecs.ObjectEntity
 import org.yunghegel.salient.engine.api.flags.*
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.ModelRenderable
@@ -30,6 +27,14 @@ class PickableComponent(val pickable: Pickable,go: GameObject) : EntityComponent
     init {
         implements(depth)
         depthCondition { go.getComponent(SelectedComponent::class.java) != null }
+        addListener {
+            added = { _ ->
+                go.set(ALLOW_SELECTION)
+            }
+            removed = { _ ->
+                go.clear(ALLOW_SELECTION)
+            }
+        }
     }
 
     override fun apply(comp: PickableComponent, target: GameObject) {
@@ -46,13 +51,7 @@ class PickableComponent(val pickable: Pickable,go: GameObject) : EntityComponent
         return PickableComponent(pickable,target)
     }
 
-    override fun onComponentRemoved(go: GameObject) {
-        go.set(ALLOW_SELECTION)
-    }
 
-    override fun onComponentAdded(go: GameObject) {
-        go.clear(ALLOW_SELECTION)
-    }
 
     context(SceneContext) override fun renderDepth(delta: Float) {
         if (pickable is ModelRenderable) {

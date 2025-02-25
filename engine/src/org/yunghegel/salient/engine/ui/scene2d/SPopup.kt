@@ -41,7 +41,7 @@ class SPopup : STable(), InputResult by Result() {
         add(title).growX().maxHeight(22f).row()
         add(content).grow().row()
         title.background = UI.drawable("tab_down", Color.WHITE)
-        content.background = UI.drawable("panel_body_background")
+        background = UI.drawable("panel_body_background")
     }
 
     fun icon(name: String) {
@@ -85,8 +85,7 @@ class SPopup : STable(), InputResult by Result() {
 
         fun focusChanged(event: FocusEvent) {
             val stage = getStage();
-            if (modal && stage != null && stage.root.getChildren().size > 0
-                && stage.root.getChildren().peek() == this
+            if (modal && stage != null && stage.root.getChildren().size > 0 && stage.root.children.peek().equals(this)
             ) { // Dialog is top most actor.
                 val newFocusedActor = event.relatedActor;
                 if (newFocusedActor != null && !newFocusedActor.isDescendantOf(this@SPopup)) event.cancel();

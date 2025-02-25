@@ -3,8 +3,7 @@ package org.yunghegel.salient.engine.api.tool
 import com.badlogic.gdx.math.Vector2
 
 
-
-abstract class DrawTool (name: String) : InputTool(name) {
+abstract class DrawTool(name: String) : MouseTool(name) {
 
     private val current = Vector2()
 

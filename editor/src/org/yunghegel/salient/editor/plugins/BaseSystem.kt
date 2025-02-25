@@ -9,7 +9,7 @@ import org.yunghegel.salient.editor.project.Project
 import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.engine.Pipeline
 import org.yunghegel.salient.engine.api.ecs.*
-import org.yunghegel.salient.engine.api.tool.Tool
+import org.yunghegel.salient.engine.api.tool.InputTool
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.SystemLoadedEvent
 import org.yunghegel.salient.engine.scene3d.SceneContext
@@ -31,9 +31,9 @@ open class BaseSystem (override val name: String,prio : Int=0, family:Family = F
 
     val index : Index<Named> = inject()
 
-    fun <T: Tool> tool(name: String) : T? {
+    fun <T : InputTool> tool(name: String): T? {
         var tool : T? = null
-        index.list(Tool::class.java)?.forEach {
+        index.list(InputTool::class.java)?.forEach {
             if (it.name == name) {
                 tool = it as T
             }

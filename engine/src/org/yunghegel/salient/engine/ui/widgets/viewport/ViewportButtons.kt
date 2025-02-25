@@ -4,7 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup
 import com.badlogic.gdx.utils.Align
 import ktx.scene2d.*
-import org.yunghegel.salient.engine.api.tool.Tool
+import org.yunghegel.salient.engine.api.tool.InputTool
 import org.yunghegel.salient.engine.ui.ToolButton
 
 
@@ -16,7 +16,7 @@ internal fun button(icon: String, tip: String) = scene2d {
     }
 }
 
-fun toolButton(icon:String,tool: Tool) : ToolButton {
+fun toolButton(icon: String, tool: InputTool): ToolButton {
     val button = ToolButton(icon,tool)
     button.setSize(32f,32f)
     return button
@@ -30,7 +30,7 @@ class Tools : VerticalGroup() {
 //    val selectButton = button("select", "Select")
     val toolGroup = ButtonGroup<ToolButton>()
 
-    fun createTool(icon:String,tool: Tool, enabled: Boolean = false) {
+    fun createTool(icon: String, tool: InputTool, enabled: Boolean = false) {
         val button = toolButton(icon,tool)
         addActor(button)
         toolGroup.add(button)

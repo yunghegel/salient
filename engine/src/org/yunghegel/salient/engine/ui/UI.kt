@@ -156,6 +156,8 @@ object UI : UIModule(), Resizable {
 
     object DialogStage : Stage()  {
 
+        private val activeDialogs = mutableListOf<SPopup>()
+
         fun popup(show: Boolean = true, build: SPopup.PopupBuilder.() -> Unit): SPopup {
             Input.pauseExcept(this)
             val builder = SPopup.PopupBuilder()
@@ -173,8 +175,19 @@ object UI : UIModule(), Resizable {
             dialog.show(this)
         }
 
+        override fun act(delta: Float) {
+            if (activeDialogs.isEmpty()) {
+                return
+            }
+            super.act(delta)
+        }
 
-
+        override fun draw() {
+            if (activeDialogs.isEmpty()) {
+                return
+            }
+            super.draw()
+        }
     }
 
 }

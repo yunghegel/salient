@@ -22,6 +22,15 @@ class VertexTests {
     val color = floatArrayOf(1f,0f,0f)
 
     val vert: IVertex
+    val vert2: IVertex
+    val vert3: IVertex
+
+    val edge1: IEdge
+    val edge2: IEdge
+    val edge3: IEdge
+
+    val face: IFace
+
 
     val attributes = VertexAttributes(VertexAttribute.Position(),VertexAttribute.Normal(),VertexAttribute.TexCoords(0),VertexAttribute.ColorUnpacked())
     val floatArray = FloatArray(attributes.vertexSize / 4)
@@ -43,7 +52,33 @@ class VertexTests {
 
         ifs = IFSMesh(attributes)
 
-        vert = IVertex(0,ifs)
+        ifs.observeVerts({ v ->
+            println("Vertex[${v.element.index}] EVENT: ${v.type}")
+        })
+
+        ifs.observeEdges({ e ->
+            println("Edge[${e.element.index}] EVENT: ${e.type}")
+        })
+
+        ifs.observeFaces({ f ->
+            println("Face[${f.element.index}] EVENT: ${f.type}")
+        })
+
+        vert = ifs.createVertex(0, org.yunghegel.gdx.meshgen.data.VertexInfo(1f, 1f, 1f))
+        vert2 = ifs.createVertex(1, org.yunghegel.gdx.meshgen.data.VertexInfo(2f, 2f, 2f))
+        vert3 = ifs.createVertex(2, org.yunghegel.gdx.meshgen.data.VertexInfo(3f, 3f, 3f))
+
+        edge1 = ifs.createEdge(vert.index, vert2.index)
+        edge2 = ifs.createEdge(vert2.index, vert3.index)
+        edge3 = ifs.createEdge(vert3.index, vert.index)
+
+        face = ifs.createFace(0, vert.index, vert2.index, vert3.index)
+
+        ifs.initialConstructionComplete = true
+
+
+
+
 
     }
 

@@ -68,7 +68,7 @@ class GeometryCache<V, F, E, M>(val data: M, meshReconstructor: MeshConstructor<
 //                    perf("REBUILD ${dirtyVerts.size} vertices ...") {
                         while (!dirtyVerts.isEmpty()) {
                             val change = dirtyVerts.pop()
-                            buildVertex(this@GeometryCache.data, change, cached)
+//                            buildVertex(this@GeometryCache.data, change, cached)
 //                        }
                     }
                 }
@@ -83,7 +83,7 @@ class GeometryCache<V, F, E, M>(val data: M, meshReconstructor: MeshConstructor<
 //                    perf("REBUILT ${dirtyFaces.size} faces") {
                         while (!dirtyFaces.isEmpty()) {
                             val change = dirtyFaces.pop()
-                            buildFace(this@GeometryCache.data, change, cached)
+//                            buildFace(this@GeometryCache.data, change, cached)
 //                        }
                     }
 
@@ -99,7 +99,7 @@ class GeometryCache<V, F, E, M>(val data: M, meshReconstructor: MeshConstructor<
                     perf("REBUILT ${dirtyEdges.size} edges") {
                         while (!dirtyEdges.isEmpty()) {
                             val change = dirtyEdges.pop()
-                            buildEdge(this@GeometryCache.data, change, cached)
+//                            buildEdge(this@GeometryCache.data, change, cached)
                         }
                     }
                 }

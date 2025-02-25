@@ -3,7 +3,9 @@ package org.yunghegel.salient.engine.events.asset
 import org.greenrobot.eventbus.Subscribe
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.events.Bus
+import org.yunghegel.salient.engine.events.Event
 
+@Event("asset.unindexed", [AssetHandle::class])
 class AssetUnindexedEvent(val handle:AssetHandle) {
 
     interface Listener {

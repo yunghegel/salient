@@ -2,6 +2,7 @@ package org.yunghegel.salient.editor.ui.scene.inspector
 
 import ktx.actors.onChange
 import org.yunghegel.gdx.utils.ext.padHorizontal
+import org.yunghegel.salient.engine.api.ecs.TagsComponent
 import org.yunghegel.salient.engine.events.scene.onSingleGameObjectDeselected
 import org.yunghegel.salient.engine.events.scene.onSingleGameObjectSelected
 import org.yunghegel.salient.engine.scene3d.GameObject
@@ -35,8 +36,10 @@ class InspectorHeader : STable() {
         current = go
         nameField.text = go.name
         tags.clearChildren()
-        go.tags.forEach { tag ->
+        go[TagsComponent::class]?.tags?.let {
+            it.forEach { tag ->
             tags.add(Tag(tag)).height(20f)
+        }
         }
     }
 

@@ -1,5 +1,5 @@
 package org.yunghegel.salient.engine.api.tool
 
 interface ToolGroupHandler {
-    fun onToolChanged(tool: Tool?)
+    fun onToolChanged(tool: InputTool?)
 }

@@ -10,7 +10,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-abstract class RectangleTool(name:String) : InputTool(name) {
+abstract class RectangleTool(name: String) : MouseTool(name) {
 
     protected var startPoint: Vector2 = Vector2()
     protected var endPoint: Vector2 = Vector2()

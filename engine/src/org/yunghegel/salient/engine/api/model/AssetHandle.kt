@@ -59,4 +59,17 @@ open class AssetHandle(@Transient val pth: String="", @Transient private val _uu
         return "AssetHandle[$name, $file, $uuid, $type, $extras]"
     }
 
+    override fun hashCode(): Int {
+        var result = id
+        result = 31 * result + pth.hashCode()
+        result = 31 * result + _uuid.hashCode()
+        result = 31 * result + _extras.hashCode()
+        result = 31 * result + file.hashCode()
+        result = 31 * result + uuid.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + type.hashCode()
+        result = 31 * result + extras.hashCode()
+        return result
+    }
+
 }

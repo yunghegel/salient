@@ -4,13 +4,16 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.glutils.GLFormat
+import com.badlogic.gdx.utils.Align.topRight
 import ktx.app.clearScreen
 import org.yunghegel.gdx.utils.data.Named
 import org.yunghegel.gdx.utils.ext.clearColor
 import org.yunghegel.gdx.utils.ext.clearDepth
 import org.yunghegel.gdx.utils.ext.delta
+import org.yunghegel.gdx.utils.ext.getBounds
 import org.yunghegel.gdx.utils.ext.notnull
-import org.yunghegel.gdx.utils.ext.padVertical
+import org.yunghegel.gdx.utils.ext.toOpenGLCoords
+import org.yunghegel.gdx.utils.ext.topRight
 import org.yunghegel.salient.core.graphics.util.OutlineDepth
 import org.yunghegel.salient.editor.app.configs.Settings
 import org.yunghegel.salient.editor.input.ViewportController
@@ -22,31 +25,24 @@ import org.yunghegel.salient.editor.plugins.outline.OutlinerPlugin
 import org.yunghegel.salient.editor.plugins.outline.lib.Outliner
 import org.yunghegel.salient.editor.plugins.picking.PickingPlugin
 import org.yunghegel.salient.editor.project.Project
-import org.yunghegel.salient.editor.project.ProjectManager
 import org.yunghegel.salient.editor.scene.Scene
-import org.yunghegel.salient.editor.scene.SceneManager
 import org.yunghegel.salient.engine.InterfaceInitializedEvent
 import org.yunghegel.salient.engine.Pipeline
-import org.yunghegel.salient.engine.STARTUP
 import org.yunghegel.salient.engine.Startup
 import org.yunghegel.salient.engine.State.*
 import org.yunghegel.salient.engine.api.ecs.System
-import org.yunghegel.salient.engine.api.model.ProjectHandle
 import org.yunghegel.salient.engine.api.plugin.Plugin
+import org.yunghegel.salient.engine.api.tool.InputTool
 import org.yunghegel.salient.engine.api.tool.Tool
 import org.yunghegel.salient.engine.api.undo.ActionHistoryKeyListener
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.lifecycle.EditorInitializedEvent
-import org.yunghegel.salient.engine.events.lifecycle.WindowResizedEvent
 import org.yunghegel.salient.engine.events.lifecycle.onEditorInitialized
-import org.yunghegel.salient.engine.events.scene.onSceneChanged
 import org.yunghegel.salient.engine.graphics.FBO
 import org.yunghegel.salient.engine.graphics.GFX
 import org.yunghegel.salient.engine.input.Input
-import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.system.*
 import org.yunghegel.salient.engine.ui.UI
-import org.yunghegel.salient.engine.ui.scene2d.SSelectBox
 import kotlin.collections.set
 import kotlin.reflect.KClass
 
@@ -76,7 +72,11 @@ class Salient : ApplicationAdapter() {
     val index = Index<Named>()
 
 
-    data class PluginSet(val tools:MutableList<Tool>?,val systems:MutableList<System<Project,Scene>>?,val plugins:MutableList<Plugin>?)
+    data class PluginSet(
+        val tools: MutableList<Tool>?,
+        val systems: MutableList<System<Project, Scene>>?,
+        val plugins: MutableList<Plugin>?
+    )
 
     val registry : PluginSet
     lateinit var viewportController: ViewportController
@@ -85,9 +85,14 @@ class Salient : ApplicationAdapter() {
         index.types[Tool::class.java] = mutableListOf()
         index.types[System::class.java] = mutableListOf()
         index.types[Plugin::class.java] = mutableListOf()
-        registry = PluginSet(index.list(Tool::class.java)!! as MutableList<Tool>,index.list(System::class.java)!! as MutableList<System<Project,Scene>>,index.list(Plugin::class.java)!! as MutableList<Plugin>)
+        registry = PluginSet(
+            index.list(Tool::class.java)!! as MutableList<Tool>,
+            index.list(System::class.java)!! as MutableList<System<Project, Scene>>,
+            index.list(Plugin::class.java)!! as MutableList<Plugin>
+        )
     }
     val outliner : OutlineDepth by lazy { inject() }
+
     override fun create() {
 
     /* allow asyncronous actions when we need it */
@@ -131,36 +136,8 @@ class Salient : ApplicationAdapter() {
             createPlugin(plugin)
         }
 
-        Netgraph.add("tools") {
-            index.types[Tool::class.java]?.filter { it is Tool && it.active }?.joinToString { it.name } ?: "None"
-        }
         post(EditorInitializedEvent())
 
-        UI.DialogStage.popup {
-            val pm: ProjectManager = inject()
-            val sm: SceneManager = inject()
-            title("Welcome to Salient")
-            icon("logo16")
-            content {
-                var scenes = SSelectBox<String>()
-                choice(
-                    "Select a project to open",
-                    app.meta.recentProjects.map { it.name },
-                    app.meta.lastLoadedProject?.name ?: "default"
-                ) { picked ->
-                    app.meta.lastLoadedProject = app.meta.recentProjects.find { it.name == picked }
-                    app.meta.lastLoadedProject?.let {
-                        result["projectChoice"] = it
-                        val items = app.index[it] ?: emptyList()
-                        scenes.setItems(*items.map { it.name }.toTypedArray())
-                    }
-                }
-                row()
-                label("Select a scene to open").padVertical(10f)
-                add(scenes)
-                row()
-            }
-        }
     }
 
     private fun createPlugin(plugin: Plugin) {
@@ -211,10 +188,10 @@ class Salient : ApplicationAdapter() {
         buffers["color"] = color
 
 //        onWindowResized { event ->
-            once(INIT) {
-                buffers["depth"] = FBO.ensureScreenSize(buffers["depth"]!!, GLFormat.RGBA32, true)
-                buffers["color"] = FBO.ensureScreenSize(buffers["color"]!!, GLFormat.RGBA32, true)
-            }
+//            once(INIT) {
+//                buffers["depth"] = FBO.ensureScreenSize(buffers["depth"]!!, GLFormat.RGBA32, true)
+//                buffers["color"] = FBO.ensureScreenSize(buffers["color"]!!, GLFormat.RGBA32, true)
+//            }
 
 
 //        }
@@ -227,8 +204,10 @@ class Salient : ApplicationAdapter() {
 
                     }
                     push(UI_LOGIC,transition = {  }) { delta ->
-                        ui.act()
+                        ui.act(delta)
                         gui.viewportWidget.update()
+//                        gui.viewportWidget.updateCompass()
+
 
                     }
                     push(PREPARE_SCENE) { delta ->
@@ -243,28 +222,42 @@ class Salient : ApplicationAdapter() {
                         scene.renderer.prepareContext(scene.context, false)
                     }
                     push(COLOR_PASS) { _ ->
+
                         gui.updateviewport()
                         modelBatch.begin(perspectiveCamera)
                         graph.root.renderColor(delta, modelBatch, scene.context)
                         graph.root.renderDebug(scene.context)
                         modelBatch.end()
 
+                        with(gui.viewportWidget.compass) {
+                            val pos = toOpenGLCoords(gui.viewportWidget.getBounds().topRight()).sub(0.06f, 0.065f)
+                            setPos(0.94f, 0.935f)
+                            update(Gdx.graphics.deltaTime, gui.viewportWidget.width, gui.viewportWidget.height)
+                            render(delta)
+
+                        }
                     }
 
                     push(BEFORE_UI_PASS) {_ ->
                         with(Outliner.settings) {
                             outliner.render(spriteBatch,depthTex,perspectiveCamera)
                         }
+
                     }
 
                     push(UI_PASS) { delta ->
                         ui.viewport.apply()
                         ui.draw()
-
                         UI.DialogStage.apply {
                             act()
                             draw()
                         }
+
+
+//                        gui.viewportWidget.compass.update(Gdx.graphics.deltaTime,gui.viewportWidget.width,gui.viewportWidget.height)
+//
+
+
                     }
                 }
             }
@@ -281,6 +274,8 @@ class Salient : ApplicationAdapter() {
         clearColor()
         clearDepth()
         update(delta)
+
+
     }
 
 
@@ -333,8 +328,8 @@ fun <T: Plugin> plugin(type: KClass<T>, use:T.()->Unit)  {
     plugin?.let { use(it) }
 }
 
-fun <T: Tool> tool(type: KClass<T>, use:T.()->Unit)  {
-    val tool =  index.list(Tool::class.java)?.find { it::class == type } as T?
+fun <T : InputTool> tool(type: KClass<T>, use: T.() -> Unit) {
+    val tool = index.list(InputTool::class.java)?.find { it::class == type } as T?
     tool?.let { use(it) }
 }
 

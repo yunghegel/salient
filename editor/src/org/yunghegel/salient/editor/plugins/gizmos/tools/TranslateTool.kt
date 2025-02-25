@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import org.yunghegel.salient.editor.plugins.gizmos.lib.transform.TransformGizmo
 import org.yunghegel.salient.editor.plugins.gizmos.systems.GizmoSystem
+import org.yunghegel.salient.engine.graphics.RenderUsage
 import org.yunghegel.salient.engine.graphics.TransformState
 import org.yunghegel.salient.engine.helpers.TextRenderer.camera
 import org.yunghegel.salient.engine.input.Input
@@ -188,7 +189,7 @@ class TranslateTool(system : GizmoSystem) : TransformGizmo<GameObject, Translate
         renderHandles(batch)
     }
 
-    override fun render(modelBatch: ModelBatch, environment: Environment?) {
+    override fun render(modelBatch: ModelBatch, environment: Environment) {
         renderHandles(modelBatch)
     }
 

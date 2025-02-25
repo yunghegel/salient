@@ -25,7 +25,7 @@ class GlobalCommands(val context : CLIContext) {
                                 val parameterAnnotation = param.findAnnotation<Argument>()!!
                                 info[name] = Pair(parameterAnnotation.name, parameterAnnotation.description)
                                 val name = parameterAnnotation.name
-                                val type = param.type.classifier.toString().substringAfterLast(".").toLowerCase()
+                                val type = param.type.classifier.toString().substringAfterLast(".").lowercase()
 
                                 "${name.purple()}: ${type.purple()}"
                             }
@@ -34,7 +34,7 @@ class GlobalCommands(val context : CLIContext) {
                                 val optionAnnotation = param.findAnnotation<Option>()!!
                                 info[name] = Pair(optionAnnotation.name, optionAnnotation.description)
                                 val name = optionAnnotation.name
-                                val type = param.type.classifier.toString().substringAfterLast(".").toLowerCase()
+                                val type = param.type.classifier.toString().substringAfterLast(".").lowercase()
                                 "${name.purple()}: ${type.purple()}"
                             }
 
@@ -82,14 +82,14 @@ class GlobalCommands(val context : CLIContext) {
                              param.hasAnnotation<Argument>() -> {
                                  val parameterAnnotation = param.findAnnotation<Argument>()!!
                                  val name = parameterAnnotation.name
-                                 val type = param.type.classifier.toString().substringAfterLast(".").toLowerCase()
+                                 val type = param.type.classifier.toString().substringAfterLast(".").lowercase()
                                  "$name: $type"
                              }
 
                              param.hasAnnotation<Option>() -> {
                                  val optionAnnotation = param.findAnnotation<Option>()!!
                                  val name = optionAnnotation.name
-                                 val type = param.type.classifier.toString().substringAfterLast(".").toLowerCase()
+                                 val type = param.type.classifier.toString().substringAfterLast(".").lowercase()
                                  "$name: $type"
                              }
 
@@ -120,14 +120,16 @@ class GlobalCommands(val context : CLIContext) {
                                          param.hasAnnotation<Argument>() -> {
                                              val parameterAnnotation = param.findAnnotation<Argument>()!!
                                              val name = parameterAnnotation.name
-                                             val type = param.type.classifier.toString().substringAfterLast(".").toLowerCase()
+                                             val type =
+                                                 param.type.classifier.toString().substringAfterLast(".").lowercase()
                                              "$name: $type"
                                          }
 
                                          param.hasAnnotation<Option>() -> {
                                              val optionAnnotation = param.findAnnotation<Option>()!!
                                              val name = optionAnnotation.name
-                                             val type = param.type.classifier.toString().substringAfterLast(".").toLowerCase()
+                                             val type =
+                                                 param.type.classifier.toString().substringAfterLast(".").lowercase()
                                              "$name: $type"
                                          }
 

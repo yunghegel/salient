@@ -3,7 +3,9 @@ package org.yunghegel.salient.engine.events.history
 import org.greenrobot.eventbus.Subscribe
 import org.yunghegel.salient.engine.api.undo.Action
 import org.yunghegel.salient.engine.events.Bus
+import org.yunghegel.salient.engine.events.Event
 
+@Event("action.undone", [Action::class])
 class ActionUndoneEvent(val action: Action) {
 
     interface Listener {

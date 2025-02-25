@@ -36,18 +36,18 @@ class GLTFAssetLoader(val file : FileHandle)  {
         gltf = dataFileResolver.root
         populateMaterialImageMap()
         materialImageMap.forEach({ (key,value) ->
-            val image = getImage(key)
-            image?.let { i ->
-                val path = resolveImagePath(i)
-                println("Image $key: $path")
-                val file = FileHandle(path)
-                 if (!file.exists()) {
-                    println("File does not exist: $path")
-                } else {
-                    println("File exists: $path")
-                }
-                textureMap[value] = file
-            }
+//            val image = getImage(key)
+//            image?.let { i ->
+//                val path = resolveImagePath(i)
+//                println("Image $key: $path")
+//                val file = FileHandle(path)
+//                 if (!file.exists()) {
+//                    println("File does not exist: $path")
+//                } else {
+//                    println("File exists: $path")
+//                }
+//                textureMap[value] = file
+//            }
         })
         return GLTFAsset(dataFileResolver.root, asset)
     }

@@ -23,7 +23,7 @@ class Commands : HashMap<String, MutableMap<String, CLICommand>>() {
                             param.hasAnnotation<Argument>() -> {
                                 val parameterAnnotation = param.findAnnotation<Argument>()!!
                                 val name = parameterAnnotation.name
-                                val type = param.type.classifier.toString().substringAfterLast(".").toLowerCase()
+                                val type = param.type.classifier.toString().substringAfterLast(".").lowercase()
                                 map[name] = parameterAnnotation.description
                                 "$name: ${type.blue()}"
                             }
@@ -31,7 +31,7 @@ class Commands : HashMap<String, MutableMap<String, CLICommand>>() {
                             param.hasAnnotation<Option>() -> {
                                 val optionAnnotation = param.findAnnotation<Option>()!!
                                 val name = optionAnnotation.name
-                                val type = param.type.classifier.toString().substringAfterLast(".").toLowerCase()
+                                val type = param.type.classifier.toString().substringAfterLast(".").lowercase()
                                 map[name] = optionAnnotation.description
                                 "$name: ${type.blue()}"
                             }

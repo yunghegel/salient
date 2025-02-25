@@ -1,9 +1,9 @@
 package org.yunghegel.salient.engine.events
 
 import org.greenrobot.eventbus.Subscribe
-import org.yunghegel.salient.engine.api.tool.Tool
+import org.yunghegel.salient.engine.api.tool.InputTool
 
-class ToolLoadedEvent(val tool: Tool) {
+class ToolLoadedEvent(val tool: InputTool) {
 
     interface Listener {
         @Subscribe

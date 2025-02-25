@@ -56,6 +56,8 @@ class Meta : Resource {
     fun conf(action: Meta.() -> Unit) = this.apply(action)
 
     private fun pushRecentProject(project: ProjectHandle) {
+        if (recentProjects.any { it.name == project.name || it.file.path == project.file.path }) return
+        
         if (recentProjects.contains(project)) recentProjects.remove(project)
         if (recentProjects.size >= 5) recentProjects.removeAt(0)
         recentProjects.add(project)

@@ -19,14 +19,11 @@ import org.yunghegel.gdx.utils.ext.padHorizontal
 import org.yunghegel.salient.engine.onInterfaceInitialized
 import org.yunghegel.salient.engine.system.file.FileOpener
 import org.yunghegel.salient.engine.system.info
-import org.yunghegel.salient.engine.ui.UI
-import org.yunghegel.salient.engine.ui.child
-import org.yunghegel.salient.engine.ui.pop
+import org.yunghegel.salient.engine.ui.*
 import org.yunghegel.salient.engine.ui.scene2d.SImage
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 import org.yunghegel.salient.engine.ui.scene2d.SLabel
 import org.yunghegel.salient.engine.ui.scene2d.STable
-import org.yunghegel.salient.engine.ui.table
 import org.yunghegel.salient.engine.ui.tree.TreeActor
 import org.yunghegel.salient.engine.ui.tree.TreeNode
 import org.yunghegel.salient.engine.ui.tree.TreeWidget
@@ -38,12 +35,16 @@ private typealias FNode = TreeNode<FileHandle, FileTree.FileTable>
 
 @Suppress("UNCHECKED_CAST")
 class FileTree(val rootObj: FileHandle) : TreeWidget<TreeNode<FileHandle, FileTree.FileTable>,FileHandle, FileTree.FileTable>(rootObj) {
-    
-    
+
+    override var root: TreeNode<FileHandle, FileTable> = constructNode(rootObj)
     init {
+        setIconSpacing(5f, 2f)
+        setPadding(5f, 0f)
+        setYSpacing(2f)
         createDragAndDrop()
         style.over = null
         buildTree(root,rootObj)
+        add(root)
     }
 
     private var state = object {
@@ -264,40 +265,36 @@ class FileTree(val rootObj: FileHandle) : TreeWidget<TreeNode<FileHandle, FileTr
 
 
         override fun buildActor(obj: FileHandle) {
+            val iconTable = STable().apply { align(Align.left) }
+            val labelTable = STable().apply { align(Align.left) }
+            val buttonTable = STable().apply { align(Align.right) }
 
 
+            val label = SLabel(file.name())
 
-            val imageIcon = resolveIcon(obj)
-            icon = imageIcon
-            val image = SImage(icon!!)
-            val label = EditableTextField(obj.name())
-            title = label
-            iconImage = image
-//            label.textField.el.setEllipsis(true)
-            label.touchable = Touchable.disabled
-//            label.wrap = true
-
-
-            overflow.pop {
-                val label = SLabel("Open")
-                add(label).row()
-                label.onClick {
-                    FileOpener.open(file.file())
-                }
+            val icon = if (file.isDirectory) Icons.folderIcon else when (file.extension()) {
+                "salient" -> Icons.projectFile
+                "mat" -> Icons.materialFile
+                "png" -> Icons.textureFile
+                "scene" -> Icons.sceneFile
+                "obj" -> Icons.modelFile
+                "fbx" -> Icons.modelFile
+                "gltf" -> Icons.modelFile
+                "glb" -> Icons.modelFile
+                else -> Icons.fileIcon
             }
 
-            child { table ->
-                add(iconImage).size(18f).padRight(4f)
-                add(title).growX()
-                tableactors = table
-            }.growX()
+            val overflow = SImageButton("overflow-menu")
 
-            add(overflow).size(18f).padLeft(4f)
+            add(iconTable).padHorizontal(2f)
+            add(labelTable).growX().left().minWidth(100f)
+            add(buttonTable).growX().right().padHorizontal(2f)
+
+            iconTable.add(SImage(icon)).padHorizontal(2f)
+            labelTable.add(label).growX().left().minWidth(100f)
+            buttonTable.add(overflow).padHorizontal(2f)
 
 
-
-
-            align(Align.left)
         }
 
         fun resolveIcon(obj : FileHandle) : Drawable {

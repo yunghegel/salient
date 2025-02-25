@@ -4,6 +4,7 @@ import com.badlogic.gdx.files.FileHandle
 import kotlinx.serialization.Serializable
 import org.yunghegel.gdx.utils.ext.withExtension
 import org.yunghegel.salient.engine.api.model.ProjectHandle
+import org.yunghegel.salient.engine.api.model.SceneHandle
 import org.yunghegel.salient.engine.api.project.EditorProject
 import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.system.file.Filepath
@@ -31,6 +32,16 @@ abstract class EditorProjectManager<P:EditorProject<P,S>,S:EditorScene> : Defaul
         val handle =  ProjectHandle(name, Paths.PROJECTS_DIR.child(name.withExtension("salient")))
         index.add(handle)
         return handle
+    }
+
+    fun discoverScenes(project: ProjectHandle): List<SceneHandle> {
+        val scenes = mutableListOf<SceneHandle>()
+        project.file.list.forEach {
+            if (it.extension() == "scene") {
+                scenes.add(SceneHandle(it.nameWithoutExtension(), it.pathOf()))
+            }
+        }
+        return scenes
     }
 
 

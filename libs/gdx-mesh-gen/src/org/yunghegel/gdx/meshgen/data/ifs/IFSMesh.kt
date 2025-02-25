@@ -129,10 +129,10 @@ open class IFSMesh(vertAttributes: VertexAttributes = VertexAttributes(VertexAtt
             println("Vertex[${change.element.index}] EVENT: ${change.type}")
         }
         observeFaces { change ->
-//            println("Face[${change.element.index}] EVENT: ${change.type}")
+            println("Face[${change.element.index}] EVENT: ${change.type}")
         }
         observeEdges { change ->
-//            println("Edge[${change.element.index}] -> EVENT: ${change.type}")
+            println("Edge[${change.element.index}] -> EVENT: ${change.type}")
         }
     }
 

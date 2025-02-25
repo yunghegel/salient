@@ -96,14 +96,14 @@ class ViewportPanel(val viewport : ScreenViewport) : STable() {
 //
         rowThree.align(Align.bottomRight)
         rowThreeRight.apply {
-            Netgraph.listen { key, value ->
-                val label = label("$key : ${value()}",skin = skin, style = "default-small") {
-                    "$key : ${value()}"
-                }.apply {
-                    align(Align.right)
-                }
-                add(label).row()
-            }
+//            Netgraph.listen { key, value ->
+//                val label = label("$key : ${value()}",skin = skin, style = "default-small") {
+//                    "$key : ${value()}"
+//                }.apply {
+//                    align(Align.right)
+//                }
+//                add(label).row()
+//            }
         }
 //
         rowOneLeft.add(config).align(Align.topLeft).pad(10f).size(20f)
@@ -111,13 +111,22 @@ class ViewportPanel(val viewport : ScreenViewport) : STable() {
 //        config.onClick { if (isChecked) popup.show(stage) else popup.hide() }
         rowOneLeft.add(viewportMenu.table).growX()
         rowTwoLeft.add(tools).growY().left().pad(10f).width(20f)
+
+        addListener(compass)
     }
 
     fun update() {
+        viewportWidget.updateViewport(false)
+    }
+
+    fun updateCompass() {
         val pos = calculateCompassPosition()
         compass.setPos(pos.x,pos.y)
         compass.update(Gdx.graphics.deltaTime,pos.x,pos.y)
-        viewportWidget.updateViewport(false)
+    }
+
+    fun drawCompass(delta: Float) {
+        compass.render(delta)
     }
 
     fun calculateCompassPosition() : Vector2 {
@@ -129,9 +138,9 @@ class ViewportPanel(val viewport : ScreenViewport) : STable() {
 
     }
     override fun act(delta: Float) {
-        pipeline.once(State.UI_PASS) {
-            compass.render(delta = Gdx.graphics.deltaTime)
-        }
+//        pipeline.once(State.UI_PASS) {
+//            compass.render(delta = Gdx.graphics.deltaTime)
+//        }
         super.act(delta)
     }
 

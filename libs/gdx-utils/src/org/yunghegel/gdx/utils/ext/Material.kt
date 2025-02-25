@@ -115,7 +115,10 @@ fun textureAttr(kind: String, mat: Material) : TextureAttribute? {
         "emissive" -> mat.get(TextureAttribute.Emissive) as TextureAttribute?
         "ambient" -> mat.get(TextureAttribute.Ambient) as TextureAttribute?
         "reflection" -> mat.get(TextureAttribute.Reflection) as TextureAttribute?
-        else -> throw IllegalArgumentException("Unknown texture attribute kind: $kind")
+        else -> {
+            println("Unknown texture attribute kind: $kind")
+            null
+        }
     }
 }
 

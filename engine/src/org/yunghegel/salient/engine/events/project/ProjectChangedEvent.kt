@@ -3,7 +3,9 @@ package org.yunghegel.salient.engine.events.project
 import org.greenrobot.eventbus.Subscribe
 import org.yunghegel.salient.engine.api.project.EditorProject
 import org.yunghegel.salient.engine.events.Bus
+import org.yunghegel.salient.engine.events.Event
 
+@Event("project.changed", [EditorProject::class, EditorProject::class])
 class ProjectChangedEvent(val old:EditorProject<*,*>?,val new : EditorProject<*,*>) {
 
     interface Listener {

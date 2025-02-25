@@ -3,6 +3,7 @@ package org.yunghegel.salient.engine
 import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
+import com.badlogic.ashley.core.EntityListener
 import com.badlogic.ashley.core.Family
 import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.Gdx
@@ -11,7 +12,10 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.GLFormat
 import com.badlogic.gdx.graphics.glutils.GLFrameBuffer.FrameBufferBuilder
+import ktx.ashley.has
 import net.mgsx.gltf.scene3d.scene.Scene
+import org.yunghegel.salient.engine.api.ecs.BaseComponent
+import org.yunghegel.salient.engine.api.ecs.ObjectEntity
 import org.yunghegel.salient.engine.api.properties.Resizable
 import org.yunghegel.salient.engine.graphics.FBO
 import org.yunghegel.salient.engine.graphics.GFX
@@ -108,7 +112,7 @@ sealed class StateSystem(val state: State) : IteratingSystem(Family.all(Function
     }
 }
 
-class AutoremoveEntiy : Entity()
+class AutoremoveEntiy : ObjectEntity()
 
 /**
  * A component that holds a function object, to be executed by a system.
@@ -156,6 +160,10 @@ open class Pipeline() : Engine() {
 
     var colorTex : Texture? = null
     var depthTex : Texture? = null
+
+    init {
+
+    }
 
 
     val buffers : MutableMap<String,FrameBuffer?> = mutableMapOf()

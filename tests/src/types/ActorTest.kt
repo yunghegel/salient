@@ -34,7 +34,7 @@ class ActorTest(
         createActor()?.let { created ->
             actor = created
             configureActor(created)
-            table.add(created).center()
+            table.add(created).center().also { if (created is STable) it.grow() }
         }
         Gdx.input.inputProcessor = stage
         also()

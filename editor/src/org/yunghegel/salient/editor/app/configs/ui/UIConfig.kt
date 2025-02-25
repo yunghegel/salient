@@ -3,7 +3,7 @@ package org.yunghegel.salient.editor.app.configs.ui
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.yunghegel.salient.editor.app.Gui
-import org.yunghegel.salient.editor.app.configs.Configuration
+import org.yunghegel.salient.engine.api.Configuration
 import org.yunghegel.salient.engine.events.lifecycle.onEditorInitialized
 import org.yunghegel.salient.engine.system.inject
 

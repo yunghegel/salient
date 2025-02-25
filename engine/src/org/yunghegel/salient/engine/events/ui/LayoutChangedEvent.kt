@@ -2,7 +2,9 @@ package org.yunghegel.salient.engine.events.ui
 
 import org.greenrobot.eventbus.Subscribe
 import org.yunghegel.salient.engine.events.Bus
+import org.yunghegel.salient.engine.events.Event
 
+@Event("layout.changed")
 class LayoutChangedEvent {
 
     interface Listener {

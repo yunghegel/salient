@@ -1,4 +1,4 @@
-package org.yunghegel.salient.editor.app.configs
+package org.yunghegel.salient.engine.api
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -6,10 +6,10 @@ import kotlinx.serialization.Transient
 typealias SyncAction<T> = () -> T
 
 @Serializable
-abstract class Configuration {
+abstract class Configuration() {
 
     fun index() {
-        sync_actions.add { false}
+        sync_actions.add { false }
     }
 
     @Transient
@@ -20,11 +20,6 @@ abstract class Configuration {
     }
 
     fun sync() {
-        sync_actions.forEach { it.invoke()
-
-        }
+        sync_actions.forEach { it.invoke() }
     }
-
-
-
 }

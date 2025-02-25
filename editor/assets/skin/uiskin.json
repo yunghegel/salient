@@ -1069,6 +1069,12 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	log_view: {
 		imageUp: log
 	}
+  profiler: {
+    imageUp: stats
+  }
+  performance: {
+    imageUp: Performance
+  }
 	object: {
 		imageUp: object
 		imageDisabled: object_locked

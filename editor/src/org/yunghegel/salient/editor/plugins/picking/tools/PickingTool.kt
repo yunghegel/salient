@@ -1,10 +1,8 @@
 package org.yunghegel.salient.editor.plugins.picking.tools
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector3
-import org.yunghegel.gdx.utils.ext.popupMenu
 import org.yunghegel.gdx.utils.selection.Pickable
 import org.yunghegel.salient.editor.input.ViewportController
 import org.yunghegel.salient.editor.input.delegateInput
@@ -12,22 +10,21 @@ import org.yunghegel.salient.editor.input.undelegateInput
 import org.yunghegel.salient.editor.plugins.intersect.tools.IntersectorTool
 import org.yunghegel.salient.editor.plugins.picking.systems.PickingSystem
 import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.api.tool.InputTool
-import org.yunghegel.salient.engine.api.tool.Tool
+import org.yunghegel.salient.engine.api.tool.MouseTool
+import org.yunghegel.salient.engine.graphics.RenderUsage
 import org.yunghegel.salient.engine.graphics.util.DebugDrawer
 import org.yunghegel.salient.engine.input.Input
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.widgets.OptionMenu
-import org.yunghegel.salient.engine.ui.widgets.menu.ContextMenu
 
-class PickingTool( val pickingSystem : PickingSystem) : InputTool("picking_tool", Input.Keys.S){
+class PickingTool(val pickingSystem: PickingSystem) : MouseTool("picking_tool", Input.Keys.S) {
 
 
 
     override val blocking: Boolean = false
 
     init {
-        renderMask.set(Tool.RenderUsage.SHAPE_RENDERER,true)
+        renderMask.set(RenderUsage.SHAPE_RENDERER, true)
     }
 
     val intersector : IntersectorTool by lazy { inject() }

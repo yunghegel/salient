@@ -9,13 +9,14 @@ import org.yunghegel.salient.editor.app.Salient.Companion.once
 import org.yunghegel.salient.editor.app.salient
 import org.yunghegel.salient.editor.plugins.BaseSystem
 import org.yunghegel.salient.engine.State
-import org.yunghegel.salient.engine.api.tool.Tool
+import org.yunghegel.salient.engine.api.tool.InputTool
+import org.yunghegel.salient.engine.graphics.RenderUsage
 import org.yunghegel.salient.engine.api.tool.ToolComponent
 import org.yunghegel.salient.engine.system.Netgraph
 
 class ToolSystem : BaseSystem("ToolSystem", State.AFTER_COLOR_PASS, Family.one(ToolComponent::class.java).get()) {
 
-    val tools = mutableListOf<Tool>()
+    val tools = mutableListOf<InputTool>()
 
     val buf = engine.buildBuffer("tool_buffer")
 
@@ -63,17 +64,18 @@ class ToolSystem : BaseSystem("ToolSystem", State.AFTER_COLOR_PASS, Family.one(T
         }
 
 
-
-    fun renderTool(tool: Tool, batch: ModelBatch, env: Environment) = with(sceneContext) {
+    fun renderTool(tool: InputTool, batch: ModelBatch, env: Environment) = with(sceneContext) {
         tool.renderMask.eachTrue { enum ->
             when (enum) {
-                Tool.RenderUsage.SHAPE_RENDERER -> {
+                RenderUsage.SHAPE_RENDERER -> {
                     tool.render(shapeRenderer)
                 }
-                Tool.RenderUsage.BATCH -> {
+
+                RenderUsage.BATCH -> {
                    tool.render(spriteBatch)
                 }
-                Tool.RenderUsage.MODEL_BATCH -> {
+
+                RenderUsage.MODEL_BATCH -> {
                     tool.render(batch,env)
                 }
             }

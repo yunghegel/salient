@@ -1,5 +1,6 @@
 package org.yunghegel.salient.engine.graphics
 
+import com.badlogic.gdx.graphics.g2d.PolygonBatch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
@@ -15,5 +16,6 @@ interface SharedGraphicsResources {
     var grid : Grid
     var shapeRenderer: ShapeRenderer
     var whitePixel : TextureRegion
+    var polygonBatch: PolygonBatch
 
 }

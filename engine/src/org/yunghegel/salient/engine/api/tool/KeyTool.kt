@@ -1,6 +1,6 @@
 package org.yunghegel.salient.engine.api.tool
 
-abstract class KeyTool(name:String) : InputTool(name) {
+abstract class KeyTool(name: String) : MouseTool(name) {
 
     val keymap : HashMap<Int,()->Unit> = HashMap()
 

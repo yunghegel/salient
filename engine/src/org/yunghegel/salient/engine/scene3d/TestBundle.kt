@@ -37,6 +37,7 @@ import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.layout.PanelWindow
 import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.scene2d.SWindow
+import org.yunghegel.salient.engine.ui.widgets.viewport.Compass
 
 class TestBundle() {
 
@@ -64,6 +65,7 @@ class TestBundle() {
     lateinit var root: Window
     lateinit var spriteBatch: SpriteBatch
     lateinit var font : BitmapFont
+    lateinit var compass: Compass
     val shapeRenderer : ShapeRenderer by lazy { ShapeRenderer().apply {
         setAutoShapeType(true)
     } }

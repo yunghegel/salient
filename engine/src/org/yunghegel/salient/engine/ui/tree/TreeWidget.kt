@@ -30,9 +30,9 @@ abstract class TreeWidget<Node, Object, A >(rootobject: Object) : TreeEx<Node, O
     abstract val resolveChildren : (Object) -> List<Object>?
     val row : Drawable = UI.skin.drawable("selection-dark")
 
-    open var root : Node = constructNode(rootobject)
 
     val map : MutableMap<Object,Node> = mutableMapOf()
+    open var root: Node = constructNode(rootobject)
 
     var _padding = 4f
 

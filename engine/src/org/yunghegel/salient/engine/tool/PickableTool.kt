@@ -5,14 +5,10 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch
 import ktx.collections.GdxArray
 import org.yunghegel.gdx.utils.ext.draw
 import org.yunghegel.gdx.utils.selection.Picker
-import org.yunghegel.gdx.utils.selection.PickerShader
-import org.yunghegel.salient.engine.api.tool.InputTool
+import org.yunghegel.salient.engine.api.tool.MouseTool
 import org.yunghegel.salient.engine.events.scene.onSingleGameObjectSelected
-import org.yunghegel.salient.engine.scene3d.component.PickableComponent
-import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.ui.widgets.notif.notify
 
-abstract class PickableTool(name: String, val picker : Picker) : InputTool(name) {
+abstract class PickableTool(name: String, val picker: Picker) : MouseTool(name) {
 
    val handles = GdxArray<ToolHandle>()
 
@@ -41,9 +37,7 @@ abstract class PickableTool(name: String, val picker : Picker) : InputTool(name)
     }
 
 
-
-
-    override fun render(modelBatch: ModelBatch, environment: Environment?) {
+    override fun render(modelBatch: ModelBatch, environment: Environment) {
         if (active) {
                 if (environment != null) modelBatch.render(handles, environment)
                 else modelBatch.render(handles)

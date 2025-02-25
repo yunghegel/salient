@@ -5,8 +5,6 @@ import com.badlogic.gdx.math.Vector3
 
 interface Transformable {
 
-
-
     fun translate(x: Float, y: Float, z: Float)
 
     fun translate(v: Vector3) {

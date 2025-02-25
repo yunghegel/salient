@@ -37,9 +37,6 @@ class MaterialsComponent(val materials: GdxArray<Material>,go: GameObject) : Ent
                 }
             }
 
-        override fun onComponentAdded(go: GameObject) {
-            super.onComponentAdded(go)
-        }
 
         override val iconName: String = "material_object"
 

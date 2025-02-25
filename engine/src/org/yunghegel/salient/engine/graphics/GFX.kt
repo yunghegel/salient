@@ -2,6 +2,9 @@ package org.yunghegel.salient.engine.graphics
 
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.GL30
+import com.badlogic.gdx.graphics.g2d.PolygonBatch
+import com.badlogic.gdx.graphics.g2d.PolygonSprite
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
@@ -18,19 +21,24 @@ import space.earlygrey.shapedrawer.ShapeDrawer
 object GFX : GraphicsModule(), SharedGraphicsResources {
 
     override var spriteBatch: SpriteBatch by notnull()
+    override var polygonBatch: PolygonBatch by notnull()
+
     override var debugDrawer: DebugDrawer by notnull()
+    override var shapeRenderer: ShapeRenderer by notnull()
     override var shapeDrawer: ShapeDrawer by notnull()
     override var grid : Grid by notnull()
-    override var shapeRenderer: ShapeRenderer  by notnull()
     override var whitePixel : TextureRegion by notnull()
+
 
     override val registry: InjectionContext.() -> Unit = {
         whitePixel = WhitePixelUtils.createWhitePixelTexture()
         spriteBatch = SpriteBatch()
+        polygonBatch = PolygonSpriteBatch()
         debugDrawer = DebugDrawer()
-        shapeDrawer = ShapeDrawer(spriteBatch)
+        shapeDrawer = ShapeDrawer(spriteBatch, whitePixel)
         grid = Grid()
         shapeRenderer = ShapeRenderer()
+
         shapeRenderer.setAutoShapeType(true)
 
         bindSingleton(spriteBatch)

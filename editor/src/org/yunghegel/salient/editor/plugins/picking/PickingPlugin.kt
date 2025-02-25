@@ -1,19 +1,16 @@
 package org.yunghegel.salient.editor.plugins.picking
 
 import com.badlogic.ashley.core.Engine
-import com.badlogic.ashley.core.EntitySystem
 import org.yunghegel.salient.engine.system.InjectionContext
-import org.yunghegel.salient.editor.app.Salient
 import org.yunghegel.salient.editor.app.Salient.Companion.addSystem
 import org.yunghegel.salient.editor.app.salient
-import org.yunghegel.salient.editor.plugins.BaseSystem
 import org.yunghegel.salient.editor.plugins.picking.systems.HoverSystem
 import org.yunghegel.salient.editor.plugins.picking.systems.PickingSystem
 import org.yunghegel.salient.editor.plugins.picking.tools.HoverTool
 import org.yunghegel.salient.editor.plugins.picking.tools.PickingTool
 import org.yunghegel.salient.engine.api.ecs.System
 import org.yunghegel.salient.engine.api.plugin.Plugin
-import org.yunghegel.salient.engine.system.inject
+import org.yunghegel.salient.engine.api.tool.InputTool
 import org.yunghegel.salient.engine.api.tool.Tool
 import org.yunghegel.salient.engine.scene3d.GameObject
 

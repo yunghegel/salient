@@ -6,10 +6,14 @@ import org.yunghegel.salient.editor.cmd.UICommands
 import org.yunghegel.salient.engine.system.InjectionContext
 import org.yunghegel.salient.editor.plugins.base.systems.HotkeySystem
 import org.yunghegel.salient.editor.plugins.base.systems.ToolSystem
+import org.yunghegel.salient.editor.plugins.sys.ProfilerComponent
 import org.yunghegel.salient.engine.api.ecs.System
+import org.yunghegel.salient.engine.api.ecs.TagsComponent
 import org.yunghegel.salient.engine.api.plugin.Plugin
+import org.yunghegel.salient.engine.api.tool.InputTool
 import org.yunghegel.salient.engine.api.tool.Tool
 import org.yunghegel.salient.engine.cmd.Selection
+import org.yunghegel.salient.engine.helpers.Pools
 import org.yunghegel.salient.engine.ui.widgets.aux.Console
 
 class DefaultPlugin() : Plugin {
@@ -23,11 +27,14 @@ class DefaultPlugin() : Plugin {
     }
 
     override fun init(engine: Engine) {
+        Pools.entityPool.defaults(ProfilerComponent::class, TagsComponent::class)
+
         engine.addSystem(toolSystem)
         engine.addSystem(hotkeySystem)
         Console.register(Selection())
         Console.register(ProjectContext())
         Console.register(UICommands())
+
     }
 
     override val name: String = "default_plugin"

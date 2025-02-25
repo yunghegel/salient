@@ -2,7 +2,9 @@ package org.yunghegel.salient.engine.events.lifecycle
 
 import org.greenrobot.eventbus.Subscribe
 import org.yunghegel.salient.engine.events.Bus
+import org.yunghegel.salient.engine.events.Event
 
+@Event("lifecycle.windowResized", [Int::class, Int::class])
 class WindowResizedEvent(val width:Int,val height:Int) {
 
     interface Listener {

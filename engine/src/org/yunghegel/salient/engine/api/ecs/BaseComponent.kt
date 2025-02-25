@@ -1,12 +1,7 @@
 package org.yunghegel.salient.engine.api.ecs
 
 import com.badlogic.ashley.core.Component
-import com.badlogic.gdx.utils.Predicate
 import org.yunghegel.gdx.utils.data.EnumBitmask
-import org.yunghegel.gdx.utils.ext.each
-import org.yunghegel.salient.engine.api.properties.Type
-import org.yunghegel.salient.engine.api.properties.Typed
-import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.system.debug
 import kotlin.reflect.KClass
@@ -28,6 +23,40 @@ abstract class BaseComponent() : Component, Cloneable {
 
     fun interface Predicate {
         fun evaluate() : Boolean
+    }
+
+    interface Listener {
+        fun onComponentAdded(entity: ObjectEntity)
+        fun onComponentRemoved(entity: ObjectEntity)
+        class Builder(builder: Builder.() -> Unit) {
+
+
+            var added: (ObjectEntity) -> Unit = {}
+            var removed: (ObjectEntity) -> Unit = {}
+
+            init {
+                builder()
+            }
+
+            fun build() = object : Listener {
+                override fun onComponentAdded(entity: ObjectEntity) = added(entity)
+                override fun onComponentRemoved(entity: ObjectEntity) = removed(entity)
+            }
+        }
+    }
+
+    private val listeners = mutableListOf<Listener>()
+
+    fun addListener(listener: Listener) {
+        listeners.add(listener)
+    }
+
+    fun addListener(builder: Listener.Builder.() -> Unit) {
+        listeners.add(Listener.Builder(builder).build())
+    }
+
+    fun removeListener(listener: Listener) {
+        listeners.remove(listener)
     }
 
 
@@ -71,9 +100,15 @@ abstract class BaseComponent() : Component, Cloneable {
         preconditions[Routine.COLOR]!!.add(Predicate { implementations.get(Routine.COLOR) })
     }
 
-    open fun onComponentAdded(go: GameObject) {debug("Component added: ${this::class.simpleName}")}
+    fun onComponentAdded(entity: ObjectEntity) {
+        debug("Component added: ${this::class.simpleName}")
+        listeners.forEach { it.onComponentAdded(entity) }
+    }
 
-    open fun onComponentRemoved(go: GameObject) {}
+    fun onComponentRemoved(entity: ObjectEntity) {
+        debug("Component removed: ${this::class.simpleName}")
+        listeners.forEach { it.onComponentRemoved(entity) }
+    }
 
     open val renderer : Boolean = false
 

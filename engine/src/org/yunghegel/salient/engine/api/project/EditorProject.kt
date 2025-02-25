@@ -13,7 +13,7 @@ import org.yunghegel.salient.engine.system.debug
 import org.yunghegel.salient.engine.system.file.Paths
 import org.yunghegel.salient.engine.system.info
 
-@Serializable
+
 abstract class EditorProject<P:EditorProject<P,S>,S:EditorScene>(val handle: org.yunghegel.salient.engine.api.model.ProjectHandle) : NamedObjectResource  {
 
 

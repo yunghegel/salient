@@ -88,9 +88,7 @@ class Compass(val camera: PerspectiveCamera) :InputListener()  {
         localCam.near = 0.01f
         localCam.far = 1000f
 
-       every(1f) { dt ->
-            update(dt, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
-       }
+
     }
 
     fun setPos(x:Float,y:Float){
@@ -190,6 +188,7 @@ class Compass(val camera: PerspectiveCamera) :InputListener()  {
     override fun mouseMoved(event: InputEvent?, x: Float, y: Float): Boolean {
         val intersection = checkIntersection()
         if (intersection != -1) {
+            println("intersection: $intersection")
             intersectedIdx = intersection
             previousHoveredHandle = hoveredHandle
             hoveredHandle = handles.firstOrNull { handle -> handle.id == intersection }

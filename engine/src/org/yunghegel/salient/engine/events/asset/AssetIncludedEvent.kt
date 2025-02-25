@@ -4,7 +4,9 @@ import org.greenrobot.eventbus.Subscribe
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.events.Bus
+import org.yunghegel.salient.engine.events.Event
 
+@Event("asset.included", [AssetHandle::class, EditorScene::class])
 class AssetIncludedEvent(val asset: AssetHandle, val scene: EditorScene) {
 
     interface Listener {

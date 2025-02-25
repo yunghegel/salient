@@ -2,6 +2,7 @@ package org.yunghegel.salient.engine.events
 
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.EventBusBuilder
+import org.yunghegel.gdx.utils.reflection.annotatedWith
 import org.yunghegel.salient.engine.system.Log
 import org.yunghegel.salient.engine.system.emitEvent
 import org.yunghegel.salient.engine.system.event
@@ -15,7 +16,7 @@ object Bus {
     val eventBus: EventBus by lazy { Config.eventBusBuilder.build()  }
 
     fun post (event: Any,log: Boolean = true) {
-        if (log) if (event is Event) event(event) else event(event::class.java)
+        if (log) if (event::class.annotatedWith(Event::class) && event is BaseEvent) event(event) else event(event::class.java)
         eventBus.post(event)
     }
 

@@ -2,6 +2,7 @@ package org.yunghegel.salient.engine.api.ecs
 
 import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Entity
+import org.yunghegel.salient.engine.system.warn
 import kotlin.reflect.KClass
 
 const val VISIBLE = 1
@@ -23,6 +24,15 @@ open class ObjectEntity : Entity() {
 
     operator fun <T:BaseComponent> get(type: KClass<T>): T? {
         return entityComponents[type.java] as T?
+    }
+
+    operator fun <T : BaseComponent> set(type: KClass<T>, component: T) {
+        if (entityComponents.containsKey(type.java)) {
+            warn("Component $type already exists in entity")
+        } else {
+            entityComponents[type.java] = component
+            add(component)
+        }
     }
 
     fun checkFlag(flag: Int): Boolean {
@@ -60,6 +70,7 @@ open class ObjectEntity : Entity() {
     override fun add(component: Component): Entity {
         if (component is BaseComponent) {
             entityComponents[component.javaClass] = component
+            component.onComponentAdded(this)
         }
         return super.add(component)
     }
@@ -68,6 +79,7 @@ open class ObjectEntity : Entity() {
         val item = super.remove(componentClass)
         if (item is BaseComponent) {
             entityComponents.remove(item.javaClass)
+            item.onComponentRemoved(this)
         }
         return item
     }

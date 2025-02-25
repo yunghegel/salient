@@ -9,9 +9,9 @@ import org.lwjgl.opengl.GL30
 import org.yunghegel.salient.engine.graphics.GFX
 import org.yunghegel.salient.engine.graphics.util.attach
 import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.api.tool.Tool
+import org.yunghegel.salient.engine.api.tool.InputTool
 
-class FrameBuffers : Tool("fbo_tool") {
+class FrameBuffers : InputTool("fbo_tool") {
 
     val cache : MutableMap<String,FrameBuffer> = mutableMapOf()
 

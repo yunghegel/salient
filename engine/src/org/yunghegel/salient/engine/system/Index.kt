@@ -4,7 +4,7 @@ import ktx.collections.GdxArray
 import org.yunghegel.gdx.utils.data.Named
 import org.yunghegel.salient.engine.api.ecs.System
 import org.yunghegel.salient.engine.api.plugin.Plugin
-import org.yunghegel.salient.engine.api.tool.Tool
+import org.yunghegel.salient.engine.api.tool.InputTool
 
 
 class Index<T> where T: Named {
@@ -17,7 +17,7 @@ class Index<T> where T: Named {
 
 
     val names = mapOf(
-        "tools" to Tool::class.java,
+        "tools" to InputTool::class.java,
         "systems" to System::class.java,
         "plugins" to Plugin::class.java,
         )

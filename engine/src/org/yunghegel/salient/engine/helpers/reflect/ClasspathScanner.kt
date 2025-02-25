@@ -12,21 +12,26 @@ class ClasspathScanner(private val root: String) {
         classes = scan(root)
     }
 
-    private fun scan(path: String) : Set<ClassPath.ClassInfo> {
-        val classLoader = ClassLoader.getSystemClassLoader()
-        return ClassPath.from(classLoader).getTopLevelClassesRecursive(path)
-    }
 
     fun process(action: (ClassPath.ClassInfo) -> Unit) {
         classes.forEach(action)
     }
 
-    fun ClassPath.ClassInfo.iterateProperties(action: (Array<Field>,Array<Method>,Array<out Class<*>>) -> Unit) {
-        val clazz = load()
-        val fields = clazz.declaredFields
-        val methods = clazz.declaredMethods
-        val interfaces = clazz.interfaces
-        action(fields,methods,interfaces)
+
+    companion object {
+
+        fun scan(path: String): Set<ClassPath.ClassInfo> {
+            val classLoader = ClassLoader.getSystemClassLoader()
+            return ClassPath.from(classLoader).getTopLevelClassesRecursive(path)
+        }
     }
 
+}
+
+fun ClassPath.ClassInfo.iterateProperties(action: (Array<Field>, Array<Method>, Array<out Class<*>>) -> Unit) {
+    val clazz = load()
+    val fields = clazz.declaredFields
+    val methods = clazz.declaredMethods
+    val interfaces = clazz.interfaces
+    action(fields, methods, interfaces)
 }

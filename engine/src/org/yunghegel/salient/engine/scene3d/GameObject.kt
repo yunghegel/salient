@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.math.Matrix4
+import imgui.stb_.TrueType.tag
 import org.yunghegel.gdx.utils.data.EnumBitmask
 import org.yunghegel.gdx.utils.data.EnumMask
 import org.yunghegel.gdx.utils.ext.*
@@ -18,6 +19,7 @@ import org.yunghegel.salient.engine.api.dto.component.MaterialComponentDTO
 import org.yunghegel.salient.engine.api.dto.component.ModelComponentDTO
 import org.yunghegel.salient.engine.api.dto.datatypes.Matrix4Data
 import org.yunghegel.salient.engine.api.ecs.BaseComponent
+import org.yunghegel.salient.engine.api.ecs.TagsComponent
 import org.yunghegel.salient.engine.api.flags.*
 import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.events.Bus.post
@@ -36,16 +38,22 @@ import kotlin.reflect.KClass
 const val VISIBLE = 1
 
 
-open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:EditorScene) : Spatial<GameObject>(name), Iterable<GameObject>, UpdateRoutine, Tagged,
+open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene: EditorScene) : Spatial<GameObject>(name),
+    Iterable<GameObject>, UpdateRoutine,
     EnumMask<GameObjectFlag>, Store, Hoverable.HoverQueryable, Icon, Cloneable, Deferrable {
 
     override val iconName: String
-        get() = when {
+        get() {
+            val tags = this[TagsComponent::class] ?: return "transform_object"
+            return tags.run {
+                when {
             taggedAny("point_light", "spot_light", "directional_light") -> "light_object"
             tagged("camera") -> "camera_object"
             tagged("model") -> "geometry"
             tagged("root") -> "scene_tree"
             else -> "transform_object"
+                }
+            }
         }
 
     override val deferred: Stack<Deferred> = Stack()
@@ -71,7 +79,6 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
 
     override val bitmask = EnumBitmask(GameObjectFlag::class.java, EnumBitmask.fromValues(DRAW_BOUNDS, DRAW_ORIGIN, RENDER, ALLOW_SELECTION))
 
-    override val tags: MutableSet<String> = mutableSetOf()
 
     override val map: MutableMap<String, String> = mutableMapOf()
 
@@ -88,7 +95,7 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
     init {
         add(TransformComponent(this))
         engine.addEntity(this)
-        tag(name)
+
 
 
     }
@@ -96,9 +103,6 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
     override fun add(component: Component): Entity {
         post(GameObjectComponentAddedEvent(this, component))
         if (component is BaseComponent) component.onComponentAdded(this)
-        if (component is ModelComponent) tag("model")
-        if (component is PickableComponent) tag("pickable")
-        if (component is LightComponent) tag("light")
         super.add(component)
         return this
     }
@@ -170,7 +174,7 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
         return getComponents().find { it::class == type } as T?
     }
     override fun toString(): String {
-        return "GameObject[$name:$id:(${tags.joinToString { "," }})]"
+        return "GameObject[$name:$id]"
     }
 
     companion object {
@@ -180,7 +184,8 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
             val go = GameObject(dto.name, Matrix4(), scene)
             go.id = dto.id.toInt()
             go.combined.set(Matrix4Data.toMat4(dto.transform))
-            dto.tags.forEach { go.tag(it) }
+            val tags = go[TagsComponent::class] ?: TagsComponent()
+            dto.tags.forEach { tags.tag(it) }
             go.bitmask.fromMask(dto.flags)
             dto.components.each {
                 info("Component type: ${it.type}")
@@ -208,7 +213,8 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene:Ed
             dto.id = model.id.toString()
             dto.transform = Matrix4Data.fromMat4(model.combined)
             dto.flags = EnumBitmask.toMask(model.bitmask.getTrue())
-            model.tags.forEach { dto.tags.add(it) }
+            val tags = model[TagsComponent::class] ?: TagsComponent()
+            tags.tags.forEach { dto.tags.add(it) }
             model.components.forEach {
                 when (it) {
                     is ModelComponent -> {

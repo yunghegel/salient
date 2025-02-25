@@ -8,6 +8,10 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.FlushablePool
 import com.badlogic.gdx.utils.Pool
 import org.yunghegel.salient.engine.AutoremoveEntiy
+import org.yunghegel.salient.engine.api.ecs.BaseComponent
+import org.yunghegel.salient.engine.api.ecs.ObjectEntity
+import kotlin.reflect.KClass
+import kotlin.reflect.full.primaryConstructor
 
 object Pools {
     val vector2Pool: Pool<Vector2> = object : Pool<Vector2>() {
@@ -66,18 +70,27 @@ object Pools {
         }
     }
 
-    val entityPool = object : Pool<Entity>() {
+    class EntityPool : Pool<Entity>() {
+
+        val defaultComponents: MutableList<KClass<out BaseComponent>> = mutableListOf()
 
         override fun newObject(): Entity {
-            return Entity()
+            val entity = ObjectEntity()
+            defaultComponents.mapNotNull { it.primaryConstructor?.call() }.forEach(entity::add)
+            return entity
         }
 
         override fun reset(entity: Entity) {
-            entity.removeAll()
+            val removable = entity.components.filter { it::class !in defaultComponents }
+            removable.forEach { entity.remove(it::class.java) }
         }
 
-
+        fun defaults(vararg component: KClass<out BaseComponent>) {
+            defaultComponents.addAll(component)
+        }
     }
+
+    val entityPool = EntityPool()
 
     val autotoremoveEntityPool = object : Pool<AutoremoveEntiy>() {
 

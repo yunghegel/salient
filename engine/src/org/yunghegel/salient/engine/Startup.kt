@@ -10,7 +10,6 @@ import org.yunghegel.gdx.utils.ext.inc
 import org.yunghegel.gdx.utils.ext.ref
 import org.yunghegel.gdx.utils.ext.watch
 import org.yunghegel.salient.engine.events.Bus
-import org.yunghegel.salient.engine.events.Event
 import org.yunghegel.salient.engine.system.profile
 import java.time.Instant
 import java.util.*
@@ -296,7 +295,7 @@ class StartupTracker : ReadWriteProperty<Any?, Phase> {
 
 }
 
-class PhaseChangedEvent(val phase: Phase) : Event() {
+class PhaseChangedEvent(val phase: Phase) {
 
         interface Listener {
             fun onPhaseChanged(event: PhaseChangedEvent)

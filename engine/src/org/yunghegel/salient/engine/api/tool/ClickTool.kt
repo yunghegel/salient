@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2
 import org.yunghegel.salient.engine.input.Input
 
 
-abstract class ClickTool(name: String) : InputTool(name) {
+abstract class ClickTool(name: String) : MouseTool(name) {
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (button == Input.Buttons.LEFT) {

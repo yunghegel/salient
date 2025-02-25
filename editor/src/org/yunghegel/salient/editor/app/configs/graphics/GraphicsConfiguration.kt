@@ -6,7 +6,7 @@ import com.badlogic.gdx.backends.lwjgl3.*
 import kotlinx.serialization.Serializable
 import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.*
-import org.yunghegel.salient.editor.app.configs.Configuration
+import org.yunghegel.salient.engine.api.Configuration
 
 
 @Serializable

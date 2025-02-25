@@ -3,14 +3,11 @@ package org.yunghegel.salient.engine.ui.widgets
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.Touchable
-import com.badlogic.gdx.scenes.scene2d.ui.Container
 import com.badlogic.gdx.utils.Scaling
-import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.badlogic.gdx.utils.viewport.Viewport
-import ktx.actors.onKey
 import ktx.actors.onKeyDown
 import org.yunghegel.gdx.utils.ext.textureDrawable
-import org.yunghegel.gdx.utils.temporalAction
+import org.yunghegel.gdx.utils.temporal
 import org.yunghegel.salient.engine.input.Input
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.UI
@@ -18,7 +15,7 @@ import org.yunghegel.salient.engine.ui.scene2d.SImage
 import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.scene2d.SWindow
 
-class BufferWindow (name:String): SWindow(name,"custom",true) {
+class BufferWindow(name: String) : SWindow(name, "default", true) {
 
     val container : STable = STable()
 
@@ -71,7 +68,7 @@ class BufferWindow (name:String): SWindow(name,"custom",true) {
         }
     }
 
-    val updateAction = temporalAction({update()}, 0.1f)
+    val updateAction = temporal(0.1f) { update() }
 
     override fun act(delta: Float) {
         super.act(delta)

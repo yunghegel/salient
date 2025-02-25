@@ -1,6 +1,7 @@
 package org.yunghegel.salient.engine.api.scene
 
 import com.badlogic.gdx.utils.Disposable
+import kotlinx.serialization.Serializable
 import org.yunghegel.gdx.utils.data.ID
 import org.yunghegel.gdx.utils.data.Mask
 import org.yunghegel.salient.engine.api.*

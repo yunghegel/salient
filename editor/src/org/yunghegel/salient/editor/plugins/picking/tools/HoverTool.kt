@@ -10,10 +10,9 @@ import org.yunghegel.salient.engine.api.flags.GameObjectFlag
 import org.yunghegel.salient.engine.scene3d.component.PickableComponent
 import org.yunghegel.salient.engine.system.Netgraph
 import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.api.tool.InputTool
-import org.yunghegel.salient.engine.ui.UI
+import org.yunghegel.salient.engine.api.tool.MouseTool
 
-class HoverTool(val pickingSystem: HoverSystem) : InputTool("hover_tool"){
+class HoverTool(val pickingSystem: HoverSystem) : MouseTool("hover_tool") {
 
     var previous : Pickable? = null
         set(value) {

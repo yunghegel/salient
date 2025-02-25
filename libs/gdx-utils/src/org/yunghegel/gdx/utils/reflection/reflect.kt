@@ -79,6 +79,10 @@ fun <T : Any> newInstance(type: KClass<T>): T {
     return type.createInstance()
 }
 
+fun KClass<*>.annotatedWith(annotation: KClass<out Annotation>): Boolean {
+    return annotations.any { it.annotationClass == annotation }
+}
+
 @Suppress("UNCHECKED_CAST")
 fun <T> newInstance(className: String?): T {
     return try {

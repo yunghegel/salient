@@ -2,14 +2,19 @@ package org.yunghegel.salient.launcher.exe
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
+import net.mgsx.gltf.scene3d.shaders.PBREmissiveShaderProvider.createConfig
 import org.yunghegel.gdx.utils.ext.inc
+import org.yunghegel.gdx.utils.ext.resolve
 import org.yunghegel.salient.editor.app.Salient
 import org.yunghegel.salient.editor.app.configs.Settings
 import org.yunghegel.salient.engine.LOAD_SETTINGS
 import org.yunghegel.salient.engine.STARTUP
 import org.yunghegel.salient.engine.state
 import org.yunghegel.salient.engine.helpers.Serializer
+import org.yunghegel.salient.engine.helpers.reflect.ClasspathScanner
+import org.yunghegel.salient.engine.helpers.reflect.iterateProperties
 import org.yunghegel.salient.engine.system.file.Paths
+import org.yunghegel.salient.engine.system.register
 import org.yunghegel.salient.launcher.config.LaunchOptions
 import java.io.File
 
@@ -18,17 +23,12 @@ object DesktopLauncher {
     private val nativeService = NativeService()
 
     private val settings : Settings
-    private val config_file = File("${Paths.USER_HOME}/.salient/salient.config")
+    private val config_file = File(Paths.USER_HOME.resolve(".salient/salient.config"))
 
 //    val daemon : WatchService
 
 
     init {
-
-
-//        daemon = nio.fileDaemon("${Paths.USER_HOME}/.salient")
-//
-
         val yaml = Serializer.yaml
         if (!config_file.exists()) {
             println("Config file not found, creating new one")
@@ -42,6 +42,9 @@ object DesktopLauncher {
             settings = yaml.decodeFromString(Settings.serializer(), config)
         }
         Settings.i = settings
+        register {
+            singleton(settings)
+        }
 
     }
 
@@ -52,11 +55,17 @@ object DesktopLauncher {
         val config = createConfig()
         config.setWindowListener(nativeService)
         val opts = LaunchOptions(args)
-//        opts.whenOption("test") {
-//            Lwjgl3Application(TestApplication(), config)
-//            return@whenOption
-//        }
-
+        ClasspathScanner.scan("org.yunghegel.salient.engine").forEach { info ->
+            info.iterateProperties { fields, methods, interfaces ->
+                StringBuilder().apply {
+                    append("Class: ${info.name}\n")
+                    append("Fields: ${fields.joinToString { it.name }}\n")
+                    append("Methods: ${methods.joinToString { it.name }}\n")
+                    append("Interfaces: ${interfaces.joinToString { it.simpleName }}\n")
+                    println(toString())
+                }
+            }
+        }
 
         Lwjgl3Application(Salient(), config).apply {
             addLifecycleListener(nativeService)

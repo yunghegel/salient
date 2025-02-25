@@ -25,16 +25,6 @@ object Serializer {
 
     val gdx: GdxJson = GdxJson()
 
-    inline fun <reified T:Any> fromYaml(yamlString: String, clazz: Class<T>): T {
-        return try { T::class.fromYaml(yamlString) } catch (e: Exception) { throw e }
-    }
 
-    inline fun <reified T:Any> fromPath(path: String): T {
-        return try { T::class.from(path) } catch (e: Exception) { throw e }
-    }
-
-    fun saveYaml(path: String, data: String) {
-        save(path) { data }
-    }
 
 }

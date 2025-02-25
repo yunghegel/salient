@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import org.yunghegel.gdx.utils.ext.Ansi
 import org.yunghegel.gdx.utils.ext.colorize
+import org.yunghegel.salient.engine.events.BaseEvent
 import org.yunghegel.salient.engine.events.Event
 
 import org.yunghegel.salient.engine.events.lifecycle.onShutdown
@@ -147,7 +148,7 @@ fun event(type: Class<*>) {
     Log.log(type.simpleName, LogLevel.Event)
 }
 
-fun event(event: Event) {
+fun event(event: BaseEvent) {
     Log.log(event.toString(), LogLevel.Event)
 }
 

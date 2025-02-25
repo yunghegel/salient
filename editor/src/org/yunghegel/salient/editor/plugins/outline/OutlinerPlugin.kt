@@ -9,7 +9,7 @@ import org.yunghegel.salient.editor.plugins.outline.lib.Outliner
 import org.yunghegel.salient.editor.plugins.outline.systems.OutlineSystem
 import org.yunghegel.salient.engine.api.plugin.Plugin
 import org.yunghegel.salient.engine.api.ecs.System
-import org.yunghegel.salient.engine.scene3d.GameObject
+import org.yunghegel.salient.engine.api.tool.InputTool
 import org.yunghegel.salient.engine.api.tool.Tool
 
 class OutlinerPlugin : Plugin {

@@ -15,9 +15,6 @@ buildscript {
         classpath  "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
         classpath  "com.adarshr:gradle-test-logger-plugin:$testLoggerVersion"
         classpath"edu.sc.seis.launch4j:launch4j:$launch4jVersion"
-        classpath "com.diffplug.spotless:spotless-plugin-gradle:$spotlessVersion"
-        classpath "anverus.tools:gradle-build-timer:$gradleBuildTimerVersion"
-        classpath"com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
     }
 }
 
@@ -213,7 +210,8 @@ configure(project(":editor")) {
 
 configure(testing) {
 //    only build if instruicted
-
+    1
+    0
     if (launchTests) {
         tasks.withType(Test) {
             useJUnitPlatform()
@@ -231,6 +229,7 @@ configure(testing) {
 
 
 }
+
 
 
 task dist(type: Copy) {
@@ -276,6 +275,7 @@ task dist(type: Copy) {
     releaseDir.listFiles().each { file ->
         file.setExecutable(true)
     }
+
 }
 
 
@@ -301,29 +301,11 @@ configure(launcher) {
             jvmArgs "-Djava.awt.headless=true"
         }
     }
+
+
 }
 
-void makeExecutable() {
-    switch (os) {
-        case OperatingSystem.LINUX:
-            def executable = new File(project.file("release"), "salient")
-            executable.createNewFile()
-            executable.text = "#!/bin/bash\njava -jar salient-${version}.jar \$@"
-            executable.setExecutable(true)
-            break
-        case OperatingSystem.MAC_OS:
-            def executable = new File(project.file("release"), "salient")
-            executable.createNewFile()
-            executable.text = "#!/bin/bash\njava -jar salient-${version}.jar \$@"
-            executable.setExecutable(true)
-            break
-        case OperatingSystem.WINDOWS:
-            def executable = new File(project.file("release"), "salient.bat")
-            executable.createNewFile()
-            executable.text = "@echo off\njava -jar salient-${version}.jar %*"
-            break
-    }
-}
+
 
 
 

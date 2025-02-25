@@ -14,14 +14,9 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.BoundingBox
 import ktx.math.minus
-import ktx.math.plus
 import net.mgsx.gltf.scene3d.attributes.PBRColorAttribute
-import net.mgsx.gltf.scene3d.utils.MaterialConverter
 import org.yunghegel.gdx.utils.ext.*
 import org.yunghegel.salient.editor.app.Gui
-import org.yunghegel.salient.editor.app.Salient.Companion.push
-import org.yunghegel.salient.editor.app.salient
-import org.yunghegel.salient.editor.app.scene
 import org.yunghegel.salient.editor.input.delegateInput
 import org.yunghegel.salient.editor.input.undelegateInput
 import org.yunghegel.salient.editor.plugins.intersect.lib.IntersectionQuery
@@ -30,23 +25,18 @@ import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.engine.Pipeline
 import org.yunghegel.salient.engine.State
 import org.yunghegel.salient.engine.api.asset.type.ModelAsset
-import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.graphics.shapes.primitives.Cylinder
 import org.yunghegel.salient.engine.input.Input
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.scene3d.component.ModelComponent
 import org.yunghegel.salient.engine.scene3d.component.RenderableComponent
-import org.yunghegel.salient.engine.scene3d.component.TransformComponent
-import org.yunghegel.salient.engine.scene3d.events.GameObjectAddedEvent
-import org.yunghegel.salient.engine.system.Netgraph
 import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.api.tool.InputTool
+import org.yunghegel.salient.engine.api.tool.MouseTool
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.widgets.notif.notify
-import kotlin.math.max
 
-class PlacementTool : InputTool("placement_tool") {
+class PlacementTool : MouseTool("placement_tool") {
 
     var ghostMat = Material()
     val context : SceneContext by lazy { inject() }
@@ -184,7 +174,7 @@ class PlacementTool : InputTool("placement_tool") {
         super.deactivate()
     }
 
-    override fun update(deltaTime: Float) {
+    override fun update(delta: Float) {
         if (active) {
 
             intersection = intersector.query(IntersectionQuery.PLANE_XZ) { result ->

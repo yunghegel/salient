@@ -12,10 +12,10 @@ import org.yunghegel.salient.engine.system.inject
 
 class ToolGroup(var handler: ToolGroupHandler) : InputMultiplexer() {
 
-    val tools: Array<Tool> = Array()
+    val tools: Array<InputTool> = Array()
 
-    private var activeTool: Tool? = null
-    private var defaultTool: Tool? = null
+    private var activeTool: InputTool? = null
+    private var defaultTool: InputTool? = null
 
     private val group: ButtonGroup<Button>
 
@@ -24,18 +24,18 @@ class ToolGroup(var handler: ToolGroupHandler) : InputMultiplexer() {
         group.setMinCheckCount(0)
     }
 
-    fun setDefaultTool(defaultTool: Tool?) {
+    fun setDefaultTool(defaultTool: InputTool?) {
         this.defaultTool = defaultTool
     }
 
-    fun getActiveTool(): Tool? {
+    fun getActiveTool(): InputTool? {
         return activeTool
     }
 
-    fun setActiveTool(tool: Tool?) {
+    fun setActiveTool(tool: InputTool?) {
         if (activeTool != null) {
             activeTool?.deactivate()
-            if (tool is InputTool) {
+            if (tool is MouseTool) {
                 removeProcessor(activeTool)
             }
 
@@ -46,7 +46,7 @@ class ToolGroup(var handler: ToolGroupHandler) : InputMultiplexer() {
         if (activeTool != null) {
             activeTool?.group = this
             handler.onToolChanged(activeTool)
-            if (activeTool is InputTool) {
+            if (activeTool is MouseTool) {
                 addProcessor(activeTool)
             }
             activeTool!!.activate()
@@ -59,7 +59,7 @@ class ToolGroup(var handler: ToolGroupHandler) : InputMultiplexer() {
         if (activeTool != null) activeTool!!.render(renderer)
     }
 
-    fun end(tool: Tool) {
+    fun end(tool: InputTool) {
         setActiveTool(defaultTool)
     }
 

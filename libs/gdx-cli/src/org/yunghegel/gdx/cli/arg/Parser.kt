@@ -290,7 +290,7 @@ class Parser(val context : CLIContext) {
                             val parameterAnnotation = param.findAnnotation<Argument>()!!
                             info[name] = Pair(parameterAnnotation.name, parameterAnnotation.description)
                             val name = parameterAnnotation.name
-                            val type = param.type.classifier.toString().substringAfterLast(".").toLowerCase()
+                            val type = param.type.classifier.toString().substringAfterLast(".").lowercase()
 
                             "$name: $type"
                         }
@@ -299,7 +299,7 @@ class Parser(val context : CLIContext) {
                             val optionAnnotation = param.findAnnotation<Option>()!!
                             info[name] = Pair(optionAnnotation.name, optionAnnotation.description)
                             val name = optionAnnotation.name
-                            val type = param.type.classifier.toString().substringAfterLast(".").toLowerCase()
+                            val type = param.type.classifier.toString().substringAfterLast(".").lowercase()
                             "$name: $type"
                         }
 

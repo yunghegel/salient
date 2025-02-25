@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.scenes.scene2d.ui.SplitPane
 import org.yunghegel.gdx.utils.ext.TOP_LEFT
 import org.yunghegel.salient.editor.project.Project
+import org.yunghegel.salient.editor.ui.project.FileSystem
 import org.yunghegel.salient.editor.ui.project.FileTree
 import org.yunghegel.salient.engine.system.file.Paths
 import org.yunghegel.salient.engine.system.inject
@@ -13,7 +14,8 @@ class ProjectView : STable() {
 
     val proj: Project by lazy { inject() }
 
-    val fileSystem : FileTree = FileTree(Paths.PROJECT_DIR_FOR(proj.name).handle)
+    val fileSystem: FileTree = FileTree(Paths.SALIENT_HOME.handle)
+    val workspace = Workspace()
     val pane : ScrollPane
 
     var top = STable()
@@ -28,7 +30,7 @@ class ProjectView : STable() {
                 return fileSystem.getPrefHeight()
             }
         }
-        pane = ScrollPane(fileSystem)
+        pane = ScrollPane(workspace)
         pane.setScrollingDisabled(true,false)
 //        top.add(pane).grow()
         add(pane).pad(2f).grow()

@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle
 import com.badlogic.gdx.scenes.scene2d.ui.Tree
 import com.ray3k.stripe.PopTable
 import org.yunghegel.salient.engine.api.ecs.BaseComponent
+import org.yunghegel.salient.engine.api.ecs.TagsComponent
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.component.MaterialsComponent
 import org.yunghegel.salient.engine.scene3d.component.MeshComponent
@@ -53,14 +54,16 @@ abstract class SNode<T, A: Actor,V>(actor:A,val obj:V) : Tree.Node<SNode<T, A,V>
 
         fun resolveGameObjectIcon(go: GameObject) : String {
 
+            val tags = go[TagsComponent::class] ?: return "transform_object"
 
 
 
-                if (go.taggedAny("point_light", "spot_light", "directional_light")) return "light_object"
-                if (go tagged "camera") return "camera_object"
-                if (go tagged "model") return "geometry"
-                if (go tagged "camera") return "camera_object"
-                if (go tagged "root") return "scene_tree"
+
+            if (tags.taggedAny("point_light", "spot_light", "directional_light")) return "light_object"
+            if (tags tagged "camera") return "camera_object"
+            if (tags tagged "model") return "geometry"
+            if (tags tagged "camera") return "camera_object"
+            if (tags tagged "root") return "scene_tree"
                 else return "transform_object"
 
         }

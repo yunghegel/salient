@@ -34,7 +34,7 @@ object Perf {
 
     var metrics: ObjectMap<String, Metric> = ObjectMap()
     private val names = Array<String>()
-    private val listeners = Array<PerfEndedListener>()
+    private val listeners = Array<ProfileListener>()
 
     fun start(name: String): Int {
         var m = metrics.get(name)
@@ -55,18 +55,19 @@ object Perf {
         }
     }
 
-    fun end(index: Int) {
+    fun end(index: Int): Metric {
         val m = metrics.get(names[index])
         if (m.started) {
             m.duration = time - m.startTime
             m.started = false
         }
         for (listener in listeners) {
-            listener.perfEnded(m, names[index])
+            listener.profiled(m, names[index])
         }
         writer!!.println(names[index] + ": " + m.duration)
         writer!!.flush()
         total += m.duration
+        return m
     }
 
     fun flush(index: Int) {
@@ -95,8 +96,11 @@ object Perf {
     private val time: Long
         get() = System.currentTimeMillis()
 
-    fun addListener(listener: PerfEndedListener) {
-        listeners.add(listener)
+    fun listen(listener: (Metric, String) -> Unit) {
+        listeners.add(ProfileListener { metric, name ->
+            listener(metric, name)
+            true
+        })
     }
 
     class Metric {
@@ -111,8 +115,8 @@ object Perf {
 
     }
 
-    interface PerfEndedListener {
-        fun perfEnded(metric: Metric?, name: String?): Boolean
+    fun interface ProfileListener {
+        fun profiled(metric: Metric, name: String): Boolean
     }
 }
 

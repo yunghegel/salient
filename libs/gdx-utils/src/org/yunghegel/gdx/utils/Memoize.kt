@@ -9,19 +9,12 @@ import kotlin.reflect.KProperty
  * unwise to call on functions with infinite domain or on every frame
  */
 
-fun <T, R> ((T) -> R).memoize(): (T) -> R {
-    val values = HashMap<T, R>()
-    return { x: T ->
-        values.getOrPut(x) {
-            this(x)
-        }
-    }
-}
+
 
 /**
  * Memoize with fixed size
  */
-fun <T, R> ((T) -> R).memoize(size: Int): (T) -> R {
+fun <T, R> ((T) -> R).memoize(size: Int = 100): (T) -> R {
     val values = HashMap<T, R>()
     return { x: T ->
         if (values.size == size) {
@@ -36,7 +29,7 @@ fun <T, R> ((T) -> R).memoize(size: Int): (T) -> R {
 /**
  * Memoize with eviction strategy
  */
-fun <T, R> ((T) -> R).memoize(size: Int, eviction: (Map<T, R>) -> Unit): (T) -> R {
+fun <T, R> ((T) -> R).memoize(size: Int = 100, eviction: (Map<T, R>) -> Unit): (T) -> R {
     val values = LinkedHashMap<T, R>(size)
     return { x: T ->
         if (values.size == size) {
@@ -48,7 +41,7 @@ fun <T, R> ((T) -> R).memoize(size: Int, eviction: (Map<T, R>) -> Unit): (T) -> 
     }
 }
 
-fun <T, R> ((T,T) -> R).memoize(size: Int, eviction: ((Map<T, R>) -> Unit)?=null): (T,T) -> R {
+fun <T, R> ((T, T) -> R).memoize(size: Int = 100, eviction: ((Map<T, R>) -> Unit)? = null): (T, T) -> R {
     val values = LinkedHashMap<T, R>(size)
     return { x: T, y:T ->
         if (values.size == size) {
@@ -64,7 +57,7 @@ fun <T, R> ((T,T) -> R).memoize(size: Int, eviction: ((Map<T, R>) -> Unit)?=null
     }
 }
 
-fun <T, R> ((T,T,T) -> R).memoize(size: Int, eviction: (Map<T, R>) -> Unit): (T,T,T) -> R {
+fun <T, R> ((T, T, T) -> R).memoize(size: Int = 100, eviction: (Map<T, R>) -> Unit): (T, T, T) -> R {
     val values = LinkedHashMap<T, R>(size)
     return { x: T, y:T, z:T ->
         if (values.size == size) {

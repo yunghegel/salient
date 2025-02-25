@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Frustum
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.math.collision.BoundingBox
 import net.mgsx.gltf.scene3d.lights.PointLightEx
 import net.mgsx.gltf.scene3d.lights.SpotLightEx
 import org.yunghegel.salient.engine.system.inject
@@ -274,6 +275,39 @@ class DebugDrawer {
             setColor(Color(0f, 0f, 0f, 0.5f))
         }
         drawWireSphere(pointLightEx.position, cbrt(pointLightEx.intensity.toDouble()).toFloat())
+    }
+
+    fun drawBoundingBox(boundingBox: BoundingBox) {
+        val bottomLeftFront = Vector3(boundingBox.min.x, boundingBox.min.y, boundingBox.min.z)
+        val bottomRightFront = Vector3(boundingBox.max.x, boundingBox.min.y, boundingBox.min.z)
+
+        val topLeftFront = Vector3(boundingBox.min.x, boundingBox.max.y, boundingBox.min.z)
+        val topRightFront = Vector3(boundingBox.max.x, boundingBox.max.y, boundingBox.min.z)
+
+        val bottomLeftBack = Vector3(boundingBox.min.x, boundingBox.min.y, boundingBox.max.z)
+
+        val bottomRightBack = Vector3(boundingBox.max.x, boundingBox.min.y, boundingBox.max.z)
+
+        val topLeftBack = Vector3(boundingBox.min.x, boundingBox.max.y, boundingBox.max.z)
+        val topRightBack = Vector3(boundingBox.max.x, boundingBox.max.y, boundingBox.max.z)
+
+        renderer.line(bottomLeftFront, bottomRightFront)
+        renderer.line(bottomRightFront, topRightFront)
+        renderer.line(topRightFront, topLeftFront)
+        renderer.line(topLeftFront, bottomLeftFront)
+
+        renderer.line(bottomLeftBack, bottomRightBack)
+        renderer.line(bottomRightBack, topRightBack)
+        renderer.line(topRightBack, topLeftBack)
+        renderer.line(topLeftBack, bottomLeftBack)
+
+        renderer.line(bottomLeftFront, bottomLeftBack)
+        renderer.line(bottomRightFront, bottomRightBack)
+
+        renderer.line(topRightFront, topRightBack)
+        renderer.line(topLeftFront, topLeftBack)
+
+
     }
 
     companion object {

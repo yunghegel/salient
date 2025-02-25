@@ -16,6 +16,7 @@ import org.yunghegel.salient.editor.plugins.gizmos.lib.GizmoHandle
 import org.yunghegel.salient.editor.plugins.gizmos.lib.GizmoModels
 import org.yunghegel.salient.editor.plugins.gizmos.lib.transform.TransformGizmo
 import org.yunghegel.salient.editor.plugins.gizmos.systems.GizmoSystem
+import org.yunghegel.salient.engine.graphics.RenderUsage
 import org.yunghegel.salient.engine.input.Input
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.system.inject
@@ -104,7 +105,7 @@ class RotateTool( system: GizmoSystem) : TransformGizmo<GameObject, RotateTool.R
         renderHandles(batch)
     }
 
-    override fun render(modelBatch: ModelBatch, environment: Environment?) {
+    override fun render(modelBatch: ModelBatch, environment: Environment) {
         renderHandles(modelBatch)
     }
     fun calculateAngle(target: GameObject): Float {

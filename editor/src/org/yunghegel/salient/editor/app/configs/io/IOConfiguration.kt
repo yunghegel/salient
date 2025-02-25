@@ -1,7 +1,7 @@
 package org.yunghegel.salient.modules.io.shared.config
 
 import kotlinx.serialization.Serializable
-import org.yunghegel.salient.editor.app.configs.Configuration
+import org.yunghegel.salient.engine.api.Configuration
 import org.yunghegel.salient.editor.app.configs.io.LogConfig
 
 @Serializable

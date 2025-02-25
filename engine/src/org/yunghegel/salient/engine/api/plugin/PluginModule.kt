@@ -2,7 +2,7 @@ package org.yunghegel.salient.engine.api.plugin
 
 import com.badlogic.ashley.core.EntitySystem
 import org.yunghegel.salient.engine.system.InjectionContext
-import org.yunghegel.salient.engine.api.tool.Tool
+import org.yunghegel.salient.engine.api.tool.InputTool
 
 interface PluginModule {
 
@@ -10,7 +10,7 @@ interface PluginModule {
 
     val plugins: MutableList<Plugin>
 
-    val tools: MutableList<Tool>
+    val tools: MutableList<InputTool>
 
     val afterEval : MutableList<()->Unit>
 
@@ -27,7 +27,7 @@ interface PluginModule {
 
         abstract val _plugins: MutableList<Plugin>
 
-        abstract val _tools: MutableList<Tool>
+        abstract val _tools: MutableList<InputTool>
 
         var _doLast : MutableList<() -> Unit> = mutableListOf()
 
@@ -56,7 +56,7 @@ interface PluginModule {
             _plugins.addAll(configure())
         }
 
-        fun tools(configure: ()->List<Tool>) {
+        fun tools(configure: () -> List<InputTool>) {
             _tools.addAll(configure())
         }
 
@@ -74,7 +74,7 @@ interface PluginModule {
 
                 override val plugins: MutableList<Plugin> = _plugins
 
-                override val tools: MutableList<Tool> = _tools
+                override val tools: MutableList<InputTool> = _tools
 
                 override val afterEval: MutableList<() -> Unit> = mutableListOf()
 
@@ -96,7 +96,7 @@ fun module(configure: PluginModule.Builder.()->Unit): PluginModule {
 
         override val _plugins: MutableList<Plugin> = mutableListOf()
 
-        override val _tools: MutableList<Tool> = mutableListOf()
+        override val _tools: MutableList<InputTool> = mutableListOf()
 
         init {
             configure()
