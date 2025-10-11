@@ -1,0 +1,474 @@
+%%{init: {'theme': 'neutral', 'themeVariables': { 'fontSize': '14px' }, 'flowchart': { 'curve': 'linear' } }}%%
+graph TD
+%% ========================================
+%% PHASE 1: FRAME START & SCENE PREPARATION
+%% ========================================
+subgraph Phase1[CPU: Frame Start & Scene Preparation]
+    A[Application.renderFrame] --> B[RenderingEngine.beginFrame]
+    B --> C[Acquire Swapchain Image]
+    
+    C --> D{Acquire Success?}
+    D -->|Timeout/Error| D1[Log Warning]
+    D1 --> D2[Skip Frame]
+    D2 --> END[End]
+    
+    D -->|Success| E[Scene Traversal Start]
+    E --> F{For Each Active Camera}
+    
+    F --> G[Update Camera Transform]
+    G --> H[Calculate View & Projection Matrices]
+    H --> I[Update Frustum Planes]
+    
+    I --> J[Frustum Culling]
+    J --> K[Occlusion Culling - Optional]
+    K --> L[Distance-based LOD Selection]
+    L --> M[Collect Visible Renderables]
+    
+    M --> N[Sort by Material/Mesh]
+    N --> O[Create RenderScene Object]
+    O --> P[Partition Objects by RenderQueue]
+    
+    P --> Q[Opaque Queue]
+    P --> R[Transparent Queue - Depth Sorted]
+    P --> S[UI/Overlay Queue]s
+    
+    Q --> T[RenderGraphBuilder.beginFrame]
+    R --> T
+    S --> T
+end
+
+%% ========================================
+%% PHASE 2: RENDER GRAPH CONSTRUCTION
+%% ========================================
+subgraph Phase2[CPU: Render Graph Construction]
+    T --> U[Initialize Graph Context]
+    U --> V[Declare Virtual Resources]
+    
+    V --> V1[Declare: ShadowMapAtlas]
+    V --> V2[Declare: DepthBuffer]
+    V --> V3[Declare: GBuffer_Albedo]
+    V --> V4[Declare: GBuffer_Normal]
+    V --> V5[Declare: GBuffer_Material]
+    V --> V6[Declare: HDR_SceneColor]
+    V --> V7[Declare: LDR_FinalImage]
+    V --> V8[Declare: BloomChain_Mips]
+    
+    V1 --> W[Begin Pass Registration]
+    V2 --> W
+    V3 --> W
+    V4 --> W
+    V5 --> W
+    V6 --> W
+    V7 --> W
+    V8 --> W
+    
+    %% Shadow Pass Registration
+    W --> X1[Register: ShadowPass]
+    X1 --> X2[For Each Directional Light]
+    X2 --> X3[Add Cascade Shadow Map Sub-Pass]
+    X3 --> X4[Declare Write: ShadowMapAtlas]
+    X4 --> X5[Bind Shader: shadow_depth.vert/frag]
+    X5 --> X6{Request Resources from ResourceManager}
+    X6 -->|Success| X7[Store Shadow Matrix Uniform Buffer]
+    X6 -->|Failure| X6_ERR[Log Error: Resource Allocation Failed]
+    X6_ERR --> ERR_HANDLER[Error Recovery Handler]
+    X7 --> X8[Add to Pass List]
+    
+    %% Depth Pre-Pass
+    X8 --> Y1[Register: DepthPrePass]
+    Y1 --> Y2[Declare Write: DepthBuffer]
+    Y2 --> Y3[Bind Shader: depth_prepass.vert/frag]
+    Y3 --> Y4{Request Material from MaterialSystem}
+    Y4 -->|Success| Y5[Configure Depth-Only Pipeline State]
+    Y4 -->|Cache Miss| Y6[MaterialSystem: Compile Shader Variant]
+    Y6 --> Y7{Compilation Success?}
+    Y7 -->|Failed| Y7_ERR[Log Error: Shader Compilation Failed]
+    Y7_ERR --> ERR_HANDLER
+    Y7 -->|Success| Y8[Cache Compiled Shader]
+    Y8 --> Y5
+    Y5 --> Y9[Add to Pass List]
+    
+    %% G-Buffer Pass
+    Y9 --> Z1[Register: GBufferPass]
+    Z1 --> Z2[Declare Read: DepthBuffer - Optional Early-Z]
+    Z2 --> Z3[Declare Write: GBuffer_Albedo]
+    Z3 --> Z4[Declare Write: GBuffer_Normal]
+    Z4 --> Z5[Declare Write: GBuffer_Material]
+    Z5 --> Z6{For Each Visible Opaque Object}
+    Z6 --> Z7[MaterialSystem: Get Material Shader Variant]
+    Z7 --> Z8[Check Feature Flags: Normal Map, PBR, etc.]
+    Z8 --> Z9[ShaderLibrary: Select Permutation]
+    Z9 --> Z10[Bind Textures & Uniforms]
+    Z10 --> Z11[Add DrawCall to Pass]
+    Z11 --> Z12{More Objects?}
+    Z12 -->|Yes| Z6
+    Z12 -->|No| Z13[Add to Pass List]
+    
+    %% Lighting Pass
+    Z13 --> L1[Register: DeferredLightingPass]
+    L1 --> L2[Declare Read: GBuffer_Albedo]
+    L2 --> L3[Declare Read: GBuffer_Normal]
+    L3 --> L4[Declare Read: GBuffer_Material]
+    L4 --> L5[Declare Read: DepthBuffer]
+    L5 --> L6[Declare Read: ShadowMapAtlas]
+    L6 --> L7[Declare Write: HDR_SceneColor]
+    L7 --> L8[Bind Shader: deferred_lighting.comp or fullscreen.frag]
+    L8 --> L9[Upload Light Data - UBO/SSBO]
+    L9 --> L10[Configure Blend Mode: Additive]
+    L10 --> L11[Add to Pass List]
+    
+    %% Skybox/Atmosphere
+    L11 --> SK1[Register: SkyboxPass]
+    SK1 --> SK2[Declare Read: DepthBuffer]
+    SK2 --> SK3[Declare Write: HDR_SceneColor]
+    SK3 --> SK4[Bind Shader: skybox.vert/frag]
+    SK4 --> SK5[Set Depth Test: EQUAL at far plane]
+    SK5 --> SK6[Add to Pass List]
+    
+    %% Transparency Pass
+    SK6 --> TR1[Register: TransparencyPass]
+    TR1 --> TR2[Declare Read: DepthBuffer]
+    TR2 --> TR3[Declare Read/Write: HDR_SceneColor]
+    TR3 --> TR4{For Each Transparent Object - Back-to-Front}
+    TR4 --> TR5[Bind Material & Shader]
+    TR5 --> TR6[Configure Blend Mode: Alpha/Additive]
+    TR6 --> TR7[Add DrawCall to Pass]
+    TR7 --> TR8{More Objects?}
+    TR8 -->|Yes| TR4
+    TR8 -->|No| TR9[Add to Pass List]
+    
+    %% Post-Processing: Bloom
+    TR9 --> PP1[Register: BloomDownsamplePass]
+    PP1 --> PP2[Declare Read: HDR_SceneColor]
+    PP2 --> PP3[Declare Write: BloomChain_Mips - Mip0 to MipN]
+    PP3 --> PP4[Bind Shader: bloom_downsample.comp]
+    PP4 --> PP5[Add to Pass List]
+    
+    PP5 --> PP6[Register: BloomUpsamplePass]
+    PP6 --> PP7[Declare Read: BloomChain_Mips]
+    PP7 --> PP8[Declare Write: BloomChain_Mips - Upsample & Blend]
+    PP8 --> PP9[Bind Shader: bloom_upsample.comp]
+    PP9 --> PP10[Add to Pass List]
+    
+    %% Tone Mapping
+    PP10 --> PP11[Register: ToneMappingPass]
+    PP11 --> PP12[Declare Read: HDR_SceneColor]
+    PP12 --> PP13[Declare Read: BloomChain_Mips - Final Mip]
+    PP13 --> PP14[Declare Write: LDR_FinalImage]
+    PP14 --> PP15[Bind Shader: tonemap.comp/frag]
+    PP15 --> PP16[Set Tone Mapping Curve: ACES/Reinhard/etc.]
+    PP16 --> PP17[Add to Pass List]
+    
+    %% FXAA/Anti-Aliasing (Optional)
+    PP17 --> PP18[Register: FXAAPass - Optional]
+    PP18 --> PP19[Declare Read: LDR_FinalImage]
+    PP19 --> PP20[Declare Write: LDR_FinalImage]
+    PP20 --> PP21[Bind Shader: fxaa.frag]
+    PP21 --> PP22[Add to Pass List]
+    
+    %% UI Pass
+    PP22 --> UI1[Register: UIPass]
+    UI1 --> UI2[Declare Read: LDR_FinalImage - Optional Depth]
+    UI2 --> UI3[Declare Write: LDR_FinalImage]
+    UI3 --> UI4[Bind Shader: ui.vert/frag]
+    UI4 --> UI5[Set Blend Mode: Alpha]
+    UI5 --> UI6[Disable Depth Test]
+    UI6 --> UI7[Add to Pass List]
+end
+
+%% ========================================
+%% PHASE 3: GRAPH COMPILATION
+%% ========================================
+subgraph Phase3[CPU: Graph Compilation & Optimization]
+    UI7 --> COMP1[RenderGraph.compile]
+    
+    COMP1 --> COMP2[Analyze Pass Dependencies]
+    COMP2 --> COMP3[Build Directed Acyclic Graph - DAG]
+    COMP3 --> COMP4{Detect Cycles?}
+    COMP4 -->|Yes| COMP4_ERR[Log Error: Circular Dependency Detected]
+    COMP4_ERR --> ERR_HANDLER
+    COMP4 -->|No| COMP5[Topological Sort of Passes]
+    
+    COMP5 --> COMP6[Cull Unused Passes]
+    COMP6 --> COMP7[Cull Unused Resources]
+    COMP7 --> COMP8[Calculate Resource Lifetimes]
+    
+    COMP8 --> COMP9[Allocate Transient Resources]
+    COMP9 --> COMP10{For Each Virtual Resource}
+    COMP10 --> COMP11[Check if Aliasable]
+    COMP11 --> COMP12{Can Reuse Memory?}
+    COMP12 -->|Yes| COMP13[Alias with Previous Resource]
+    COMP12 -->|No| COMP14[Allocate New GPU Resource]
+    COMP14 --> COMP15{Allocation Success?}
+    COMP15 -->|Failed| COMP15_ERR[Log Error: Out of GPU Memory]
+    COMP15_ERR --> ERR_HANDLER
+    COMP15 -->|Success| COMP16[Store Handle in Resource Pool]
+    COMP13 --> COMP16
+    COMP16 --> COMP17{More Resources?}
+    COMP17 -->|Yes| COMP10
+    COMP17 -->|No| COMP18[Insert Memory Barriers]
+    
+    COMP18 --> COMP19[Analyze Resource Transitions]
+    COMP19 --> COMP20{For Each Resource Access}
+    COMP20 --> COMP21[Check Previous Layout/State]
+    COMP21 --> COMP22{Needs Transition?}
+    COMP22 -->|Yes| COMP23[Insert Pipeline Barrier]
+    COMP23 --> COMP24[Set srcStageMask & dstStageMask]
+    COMP24 --> COMP25[Set Layout Transition]
+    COMP25 --> COMP26{More Accesses?}
+    COMP22 -->|No| COMP26
+    COMP26 -->|Yes| COMP20
+    COMP26 -->|No| COMP27[Generate Final Execution Plan]
+end
+
+%% ========================================
+%% PHASE 4: COMMAND BUFFER GENERATION
+%% ========================================
+subgraph Phase4[CPU: Command Buffer Recording]
+    COMP27 --> CMD1[RenderGraph.execute]
+    CMD1 --> CMD2{For Each Pass in Execution Order}
+    
+    CMD2 --> CMD3[Allocate Command Buffer from Pool]
+    CMD3 --> CMD4{Pool Available?}
+    CMD4 -->|No| CMD4_ERR[Log Error: Command Buffer Pool Exhausted]
+    CMD4_ERR --> ERR_HANDLER
+    CMD4 -->|Yes| CMD5[Begin Command Buffer]
+    
+    CMD5 --> CMD6[Insert Debug Marker - Pass Name]
+    CMD6 --> CMD7{Pass Type?}
+    
+    %% Graphics Pass
+    CMD7 -->|Graphics| CMD8[Begin RenderPass]
+    CMD8 --> CMD9[Bind Framebuffer]
+    CMD9 --> CMD10[Set Viewport & Scissor]
+    CMD10 --> CMD11[Clear Attachments if needed]
+    CMD11 --> CMD12[Bind Pipeline]
+    CMD12 --> CMD13[Bind Descriptor Sets - Textures/UBOs]
+    CMD13 --> CMD14{For Each DrawCall}
+    CMD14 --> CMD15[Bind Vertex/Index Buffers]
+    CMD15 --> CMD16[Push Constants if needed]
+    CMD16 --> CMD17[DrawIndexed/Draw]
+    CMD17 --> CMD18{More DrawCalls?}
+    CMD18 -->|Yes| CMD14
+    CMD18 -->|No| CMD19[End RenderPass]
+    CMD19 --> CMD20[End Command Buffer]
+    
+    %% Compute Pass
+    CMD7 -->|Compute| CMD21[Bind Compute Pipeline]
+    CMD21 --> CMD22[Bind Descriptor Sets]
+    CMD22 --> CMD23[Dispatch Compute Groups]
+    CMD23 --> CMD20
+    
+    %% Transfer Pass
+    CMD7 -->|Transfer| CMD24[Copy Buffer/Image]
+    CMD24 --> CMD25[Insert Memory Barrier]
+    CMD25 --> CMD20
+    
+    CMD20 --> CMD26{More Passes?}
+    CMD26 -->|Yes| CMD2
+    CMD26 -->|No| CMD27[Submit All Command Buffers to GPU Queue]
+end
+
+%% ========================================
+%% PHASE 5: GPU SUBMISSION & SYNC
+%% ========================================
+subgraph Phase5[CPU-GPU: Submission & Synchronization]
+    CMD27 --> SUB1[Queue.submit]
+    SUB1 --> SUB2[Attach Wait Semaphore - Image Acquired]
+    SUB2 --> SUB3[Attach Signal Semaphore - Render Complete]
+    SUB3 --> SUB4[Attach Fence - Frame in Flight]
+    SUB4 --> SUB5{Submit Success?}
+    SUB5 -->|Failed| SUB5_ERR[Log Error: Queue Submit Failed]
+    SUB5_ERR --> ERR_HANDLER
+    SUB5 -->|Success| SUB6[(GPU Command Queue)]
+    
+    SUB6 --> SUB7[GPU: Begin Processing]
+end
+
+%% ========================================
+%% PHASE 6: GPU EXECUTION
+%% ========================================
+subgraph Phase6[GPU: Asynchronous Execution]
+    SUB7 --> GPU1{GPU Scheduler}
+    
+    %% Shadow Pass
+    GPU1 --> GPU2[Execute: ShadowPass]
+    GPU2 --> GPU3[Bind Shadow Pipeline]
+    GPU3 --> GPU4{For Each Cascade}
+    GPU4 --> GPU5[Set Viewport for Cascade Region]
+    GPU5 --> GPU6[Render Depth from Light POV]
+    GPU6 --> GPU7{More Cascades?}
+    GPU7 -->|Yes| GPU4
+    GPU7 -->|No| GPU8[Write to ShadowMapAtlas]
+    
+    %% Wait for Shadow Completion
+    GPU8 --> GPU9[Pipeline Barrier: Shadow to GBuffer]
+    
+    %% Depth Pre-Pass
+    GPU9 --> GPU10[Execute: DepthPrePass]
+    GPU10 --> GPU11[Early-Z Optimization]
+    GPU11 --> GPU12[Write Depth Values]
+    
+    GPU12 --> GPU13[Pipeline Barrier: Depth to GBuffer]
+    
+    %% G-Buffer Pass
+    GPU13 --> GPU14[Execute: GBufferPass]
+    GPU14 --> GPU15[Read: DepthBuffer for Early-Z Reject]
+    GPU15 --> GPU16{For Each DrawCall}
+    GPU16 --> GPU17[Sample Material Textures]
+    GPU17 --> GPU18[Write to G-Buffer MRTs]
+    GPU18 --> GPU19{More DrawCalls?}
+    GPU19 -->|Yes| GPU16
+    GPU19 -->|No| GPU20[G-Buffer Complete]
+    
+    GPU20 --> GPU21[Pipeline Barrier: GBuffer to Lighting]
+    
+    %% Lighting Pass
+    GPU21 --> GPU22[Execute: DeferredLightingPass]
+    GPU22 --> GPU23[Read: All G-Buffer Textures]
+    GPU23 --> GPU24[Read: ShadowMapAtlas]
+    GPU24 --> GPU25{For Each Pixel/Tile}
+    GPU25 --> GPU26[Reconstruct World Position from Depth]
+    GPU26 --> GPU27[Calculate PBR Lighting]
+    GPU27 --> GPU28[Sample Shadow Map with PCF]
+    GPU28 --> GPU29[Accumulate HDR Result]
+    GPU29 --> GPU30{More Pixels?}
+    GPU30 -->|Yes| GPU25
+    GPU30 -->|No| GPU31[Write to HDR_SceneColor]
+    
+    GPU31 --> GPU32[Pipeline Barrier: Lighting to Skybox]
+    
+    %% Skybox Pass
+    GPU32 --> GPU33[Execute: SkyboxPass]
+    GPU33 --> GPU34[Read: DepthBuffer]
+    GPU34 --> GPU35[Render Sky where Depth = 1.0]
+    GPU35 --> GPU36[Write to HDR_SceneColor]
+    
+    GPU36 --> GPU37[Pipeline Barrier: Skybox to Transparency]
+    
+    %% Transparency Pass
+    GPU37 --> GPU38[Execute: TransparencyPass]
+    GPU38 --> GPU39[Read: HDR_SceneColor]
+    GPU39 --> GPU40[Alpha Blend Transparent Objects]
+    GPU40 --> GPU41[Write to HDR_SceneColor]
+    
+    GPU41 --> GPU42[Pipeline Barrier: Transparency to PostFX]
+    
+    %% Bloom Downsample
+    GPU42 --> GPU43[Execute: BloomDownsamplePass]
+    GPU43 --> GPU44[Read: HDR_SceneColor]
+    GPU44 --> GPU45[Extract Bright Pixels - Threshold]
+    GPU45 --> GPU46[Generate Mip Chain - Progressive Downsample]
+    GPU46 --> GPU47[Write to BloomChain_Mips]
+    
+    GPU47 --> GPU48[Pipeline Barrier: Downsample to Upsample]
+    
+    %% Bloom Upsample
+    GPU48 --> GPU49[Execute: BloomUpsamplePass]
+    GPU49 --> GPU50[Read: BloomChain_Mips]
+    GPU50 --> GPU51[Upsample & Blur]
+    GPU51 --> GPU52[Blend Mip Levels]
+    GPU52 --> GPU53[Write Final Bloom Result]
+    
+    GPU53 --> GPU54[Pipeline Barrier: Bloom to ToneMap]
+    
+    %% Tone Mapping
+    GPU54 --> GPU55[Execute: ToneMappingPass]
+    GPU55 --> GPU56[Read: HDR_SceneColor]
+    GPU56 --> GPU57[Read: Bloom Result]
+    GPU57 --> GPU58[Apply Tone Mapping Curve]
+    GPU58 --> GPU59[Apply Gamma Correction]
+    GPU59 --> GPU60[Clamp to LDR Range]
+    GPU60 --> GPU61[Write to LDR_FinalImage]
+    
+    GPU61 --> GPU62[Pipeline Barrier: ToneMap to FXAA]
+    
+    %% FXAA (Optional)
+    GPU62 --> GPU63[Execute: FXAAPass]
+    GPU63 --> GPU64[Edge Detection & Anti-Aliasing]
+    GPU64 --> GPU65[Write to LDR_FinalImage]
+    
+    GPU65 --> GPU66[Pipeline Barrier: FXAA to UI]
+    
+    %% UI Pass
+    GPU66 --> GPU67[Execute: UIPass]
+    GPU67 --> GPU68[Read: LDR_FinalImage - Optional]
+    GPU68 --> GPU69[Render UI Quads & Text]
+    GPU69 --> GPU70[Alpha Blend UI Elements]
+    GPU70 --> GPU71[Write to LDR_FinalImage]
+    
+    GPU71 --> GPU72[All Passes Complete]
+    GPU72 --> GPU73[Signal Semaphore: Render Complete]
+end
+
+%% ========================================
+%% PHASE 7: PRESENTATION
+%% ========================================
+subgraph Phase7[CPU-GPU: Frame Presentation]
+    GPU73 --> PRES1[Wait for Render Complete Semaphore]
+    PRES1 --> PRES2[Queue.present]
+    PRES2 --> PRES3[Attach Swapchain Image]
+    PRES3 --> PRES4{Present Success?}
+    PRES4 -->|Failed - Out of Date| PRES5[Log: Swapchain Out of Date]
+    PRES5 --> PRES6[Recreate Swapchain on Next Frame]
+    PRES6 --> PRES7[VSync Wait - Monitor Refresh]
+    
+    PRES4 -->|Success| PRES7
+    PRES7 --> PRES8[Display Image on Screen]
+    PRES8 --> PRES9[Signal Fence: Frame Complete]
+end
+
+%% ========================================
+%% PHASE 8: CLEANUP & NEXT FRAME
+%% ========================================
+subgraph Phase8[CPU: Cleanup & Frame End]
+    PRES9 --> CLEAN1[Wait for Fence - Ensure GPU Done]
+    CLEAN1 --> CLEAN2[Release Transient Resources]
+    CLEAN2 --> CLEAN3[Destroy Aliased Resource Handles]
+    CLEAN3 --> CLEAN4[Reset Command Buffer Pools]
+    CLEAN4 --> CLEAN5[Update Frame Index]
+    CLEAN5 --> CLEAN6[RenderingEngine.endFrame]
+    CLEAN6 --> CLEAN7[Frame Statistics - FPS, DrawCalls, etc.]
+    CLEAN7 --> END
+end
+
+%% ========================================
+%% ERROR RECOVERY HANDLER
+%% ========================================
+ERR_HANDLER --> ERR1{Error Severity}
+ERR1 -->|Critical| ERR2[Abort Rendering]
+ERR2 --> ERR3[Log Stack Trace]
+ERR3 --> ERR4[Notify User - Render Failed]
+ERR4 --> ERR5[Fallback: Safe Mode Renderer]
+ERR5 --> END
+
+ERR1 -->|Warning| ERR6[Log Warning]
+ERR6 --> ERR7[Continue with Degraded Quality]
+ERR7 --> COMP27
+
+%% ========================================
+%% STYLING
+%% ========================================
+style A fill:#ccf,stroke:#333,stroke-width:3px
+style PRES8 fill:#cfc,stroke:#333,stroke-width:3px
+style SUB6 fill:#9f9,stroke:#333,stroke-width:2px
+style COMP1 fill:#f96,stroke:#333,stroke-width:2px
+style GPU1 fill:#ff9,stroke:#333,stroke-width:2px
+style ERR_HANDLER fill:#fcc,stroke:#333,stroke-width:3px
+
+style D fill:#ffd,stroke:#333,stroke-width:2px
+style COMP4 fill:#ffd,stroke:#333,stroke-width:2px
+style COMP12 fill:#ffd,stroke:#333,stroke-width:2px
+style COMP15 fill:#ffd,stroke:#333,stroke-width:2px
+style COMP22 fill:#ffd,stroke:#333,stroke-width:2px
+style CMD4 fill:#ffd,stroke:#333,stroke-width:2px
+style SUB5 fill:#ffd,stroke:#333,stroke-width:2px
+style PRES4 fill:#ffd,stroke:#333,stroke-width:2px
+style ERR1 fill:#ffd,stroke:#333,stroke-width:2px
+
+style X6_ERR fill:#fcc,stroke:#333,stroke-width:2px
+style Y7_ERR fill:#fcc,stroke:#333,stroke-width:2px
+style COMP4_ERR fill:#fcc,stroke:#333,stroke-width:2px
+style COMP15_ERR fill:#fcc,stroke:#333,stroke-width:2px
+style CMD4_ERR fill:#fcc,stroke:#333,stroke-width:2px
+style SUB5_ERR fill:#fcc,stroke:#333,stroke-width:2px

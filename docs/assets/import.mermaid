@@ -1,0 +1,66 @@
+%%{init: {'theme': 'neutral', 'themeVariables': { 'fontSize': '14px' }, 'flowchart': { 'curve': 'linear' } }}%%
+graph TD
+%% Entry Point
+    A[User drags 'model.fbx' into Asset Browser UI] --> B[UISystem: Capture Drop Event]
+    B --> C[EventSystem: dispatchEvent<AssetImportRequested>]
+    C --> D[AssetManager: onAssetImportRequested listener]
+
+%% Validation Phase
+    D --> E{Validate File}
+    E -->|Invalid| E1[Log Error]
+    E1 --> E2[EventSystem: dispatchEvent<AssetImportFailed>]
+    E2 --> E3[UISystem: Show Error Dialog]
+    E3 --> Z[End]
+
+    E -->|Valid| F{Check File Format}
+    F -->|Unsupported| E1
+    F -->|Supported| G[Determine AssetType & Select Importer]
+
+%% Async Processing Phase
+    G --> H[Create Import Job on Background Thread]
+    H --> I[UISystem: Show Progress Indicator]
+    I --> J[FileProcessor: Read & Validate File]
+
+    J --> K{File Readable?}
+    K -->|No| K1[Cleanup Partial Data]
+    K1 --> E1
+
+    K -->|Yes| L[Extract Data: Meshes, Materials, Textures, Nodes]
+    L --> M{Check Dependencies}
+    M -->|Missing Textures| M1[Create Missing Dependency List]
+    M1 --> M2[UISystem: Prompt User - Continue/Locate/Cancel]
+    M2 --> M3{User Choice}
+    M3 -->|Cancel| K1
+    M3 -->|Locate| M4[UISystem: File Picker Dialog]
+    M4 --> M5[Update Dependency Paths]
+    M5 --> L
+    M3 -->|Continue| N
+
+    M -->|All Found| N[IDGenerator: Generate UUIDs & Sequential IDs]
+
+%% Transaction Phase
+    N --> O{Begin Transaction}
+    O --> P[AssetDatabase: Store Metadata]
+    P --> Q{DB Write Success?}
+    Q -->|No| Q1[Rollback Transaction]
+    Q1 --> E1
+
+    Q -->|Yes| R[AssetDatabase: Store Dependency Graph]
+    R --> S[AssetCache: Store Processed Data]
+    S --> T{Cache Write Success?}
+    T -->|No| Q1
+
+    T -->|Yes| U[Commit Transaction]
+    U --> V[Set Asset State: LOADED]
+
+%% Post-Import Phase
+    V --> W[Queue Async Preview Generation]
+    W --> X[EventSystem: dispatchEvent<AssetImported>]
+    X --> Y[UISystem: Update Asset Browser - Show Asset]
+    Y --> Y1[Show Placeholder Preview]
+
+%% Async Preview
+    W --> AA[Background: Generate Preview]
+    AA --> AB[EventSystem: dispatchEvent<AssetPreviewReady>]
+    AB --> AC[UISystem: Update Asset Thumbnail]
+    AC --> Z

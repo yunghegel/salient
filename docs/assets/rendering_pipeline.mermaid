@@ -1,0 +1,45 @@
+%%{init: {'theme': 'neutral', 'themeVariables': { 'fontSize': '14px' }, 'flowchart': { 'curve': 'linear' } }}%%
+flowchart TD
+    %% Rendering Pipeline Overview (per-frame)
+    A[Frame Start] --> B[Poll Input / Events]
+    B --> C[Update Systems]
+    C --> C1[Scripts]
+    C --> C2[Physics]
+    C --> C3[Animations]
+    C --> C4[UI Logic]
+    C1 --> D
+    C2 --> D
+    C3 --> D
+    C4 --> D
+
+    D[Build Render View] --> E[Visibility Determination]
+    E --> E1[Frustum Culling]
+    E --> E2[Occlusion optional]
+    E1 --> F
+    E2 --> F
+
+    F[Gather Drawables] --> G[Sort & Batch]
+    G --> G1[Sort by Pass -> Material -> Shader -> Mesh]
+    G1 --> G2[Instancing where possible]
+    G2 --> H[Prepare GPU State]
+
+    H --> I{Render Pass}
+    I -->|Shadow Pass| I1[Render Shadow Maps]
+    I -->|Depth Prepass optional| I2[Render Depth]
+    I -->|Opaque Pass| I3[Render Opaque]
+    I -->|Transparent Pass| I4[Render Transparent back-to-front]
+    I -->|Post-Processing| I5[ToneMap, Bloom, FXAA, SSR, etc.]
+
+    I1 --> J[Write to Shadow Targets]
+    I2 --> J
+    I3 --> J
+    I4 --> J
+
+    J[Render Targets Composited] --> K[UI Overlay]
+    K --> L[Submit Commands]
+    L --> M[Swap Buffers]
+    M --> N[Frame End]
+
+    %% Error & Telemetry
+    L -.-> X[Capture GPU Timing / Stats]
+    X --> N

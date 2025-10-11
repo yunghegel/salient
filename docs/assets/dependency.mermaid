@@ -1,0 +1,44 @@
+%%{init: {'theme': 'neutral', 'themeVariables': { 'fontSize': '14px' }, 'flowchart': { 'curve': 'linear' } }}%%
+graph TD
+    A[Asset Import Begins] --> B[Parse Asset File]
+    B --> C[Extract Dependency References]
+
+    C --> D{For Each Dependency}
+    D --> E[Check Dependency Type]
+
+    E --> F{Is Sub-Asset?}
+    F -->|Yes - Texture| G[Create TextureAsset Instance]
+    F -->|Yes - Material| H[Create MaterialAsset Instance]
+    F -->|Yes - Mesh| I[Create MeshAsset Instance]
+
+    G --> J[Generate Unique ID]
+    H --> J
+    I --> J
+
+    J --> K[Add to Parent's Dependency List]
+    K --> L[Store in AssetRegistry with Ref]
+
+    F -->|No - External Ref| M{Exists in Registry?}
+    M -->|Yes| N[Get Existing Asset by Ref]
+    M -->|No| O[Search Filesystem]
+
+    O --> P{Found?}
+    P -->|No| Q[Add to Missing Dependencies]
+    P -->|Yes| R[Import External Asset Recursively]
+
+    N --> K
+    Q --> K
+    R --> K
+
+    L --> S{More Dependencies?}
+    S -->|Yes| D
+    S -->|No| T[Resolve Dependency Order - Topological Sort]
+
+    T --> U{Circular Dependency?}
+    U -->|Yes| V[Log Warning & Break Cycle]
+    U -->|No| W[Return Ordered Dependency List]
+
+    V --> W
+    W --> X[Load Dependencies in Order]
+    X --> Y[Apply Dependencies to Parent Asset]
+    Y --> Z[Asset Ready]

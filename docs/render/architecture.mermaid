@@ -1,0 +1,66 @@
+graph TD
+    subgraph "Phase 1: CPU - Frame Setup & Scene Culling (Per View)"
+        A["1.0: Engine calls RenderingEngine.renderFrame()"] --> B["1.1: For each active View (Camera), create a 'ViewContext'"];
+        B --> C["1.2: Perform Culling (Frustum, Occlusion) against the main Scene"];
+        C --> D["1.3: Generate an immutable 'RenderScene' for the View"];
+        D -- "Contains only visible objects, lights, materials for this frame" --> E;
+    end
+
+    subgraph "Phase 2: CPU - Render Graph Definition (Dynamic & Conditional)"
+        E["2.0: Create an empty RenderGraphBuilder"] --> F{"2.1: Are there any shadow-casting lights in the RenderScene?"};
+        F -- "Yes" --> G["2.1a: AddShadowMappingPasses()"];
+        G -- "Declares: WRITE to ShadowMap Atlas" --> H;
+        F -- "No" --> H;
+
+        H["2.2: AddDepthPrePass()"]
+        H -- "Declares: WRITE to SceneDepth Buffer" --> I;
+
+        I["2.3: AddGBufferPass()"]
+        I -- "Declares: READ SceneDepth, WRITE to G-Buffer (Albedo, Normals, etc.)" --> J;
+
+        J["2.4: AddLightingPass()"]
+        J -- "Declares: READ G-Buffer, Depth, ShadowMaps. WRITE to HDRSceneColor Buffer" --> K;
+
+        K["2.5: AddSkyboxPass()"]
+        K -- "Declares: READ SceneDepth. WRITE to HDRSceneColor Buffer" --> L;
+
+        L{"2.6: Is there any transparent geometry in the RenderScene?"};
+        L -- "Yes" --> M["2.6a: AddTransparentPass()"];
+        M -- "Declares: READ/WRITE HDRSceneColor & SceneDepth" --> N;
+        L -- "No" --> N;
+
+        N{"2.7: Are any Post-Processing effects enabled for this View?"};
+        N -- "Yes" --> O["2.7a: AddPostProcessingPasses(Bloom, ToneMapping)"];
+        O -- "Declares: READ HDRSceneColor, WRITE to LDRFinalImage" --> P;
+        N -- "No" --> P_alt["2.7b: AddBlitPass(HDRSceneColor -> LDRFinalImage)"];
+        P_alt --> P;
+
+        P["2.8: AddUIPass()"]
+        P -- "Declares: READ/WRITE LDRFinalImage" --> Q;
+    end
+
+    subgraph "Phase 3: CPU - Render Graph Compilation"
+        Q["3.0: RenderGraphBuilder.compile()"] --> R["3.1: Analyze resource dependencies for all declared passes"];
+        R --> S["3.2: Perform Pass Culling: Remove any pass whose output is never read by a subsequent pass"];
+        S --> T["3.3: Allocate Physical Resources: Bind virtual resources (e.g., 'HDRSceneColor') to actual GPU textures. Allocate transient textures"];
+        T --> U["3.4: Linearize the Graph: Sort passes into a final execution order"];
+        U --> V["3.5: Insert Barriers: Based on dependencies, insert resource state transition barriers between passes (e.g., TextureA from 'RenderTarget' to 'ShaderResource')"];
+        V --> W["3.6: Generate GPU Command Buffers for the final sequence of passes"];
+    end
+
+    subgraph "Phase 4: CPU to GPU Handoff"
+        W --> X["4.0: RenderingEngine.execute(CompiledGraph)"];
+        X -- "Submits all generated command buffers in a single batch" --> Y[("GPU Command Queue")];
+    end
+
+    subgraph "Phase 5: GPU - Asynchronous Execution"
+        Y --> Z["5.0: GPU pulls commands and executes the prepared work sequentially"];
+        Z --> ZA["5.1: Execute ShadowPass Command Buffer"];
+        ZA -- "GPU stalls until complete & hits Barrier 1" --> ZB["5.2: Execute GBufferPass Command Buffer"];
+        ZB -- "GPU stalls until complete & hits Barrier 2" --> ZC["5.3: Execute LightingPass Command Buffer"];
+        ZC -- "..." --> ZD["5.N: Final command buffer draws UI to the displayable image"];
+        ZD --> ZE["5.N+1: Frame is presented to the screen"];
+    end
+
+    style Y fill:#9f9,stroke:#333,stroke-width:2px
+    style Q fill:#f96,stroke:#333,stroke-width:2px

@@ -1,0 +1,27 @@
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        maven { url "https://s01.oss.sonatype.org" }
+        google()
+        gradlePluginPortal()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://jitpack.io" }
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://repo.yunghegel.org/snapshots" }
+        maven { url "https://repo.yunghegel.org/plugins" }
+    }
+}
+
+ext {
+    userHome = System.getProperty("user.home")
+}
+
+rootProject.name = 'salient'
+include(":engine")
+include(":application")
+include(":launcher")

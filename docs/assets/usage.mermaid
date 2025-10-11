@@ -1,0 +1,64 @@
+%%{init: {'theme': 'neutral', 'themeVariables': { 'fontSize': '14px' }, 'flowchart': { 'curve': 'linear' } }}%%
+graph TD
+%% Entry Point
+    A[User drags asset from Browser to Scene Viewport] --> B[UISystem: Capture Drop Event]
+    B --> C[EventSystem: dispatchEvent<CreateObjectFromAsset>]
+    C --> D[SceneManager: onCreateObjectFromAsset listener]
+
+%% Asset Retrieval
+    D --> E{Check Asset State}
+    E -->|UNLOADED| F[AssetManager: Load Asset from Database]
+    F --> G[Initialize Asset & Dependencies]
+    G --> H{Load Success?}
+    H -->|No| H1[EventSystem: dispatchEvent<LoadFailed>]
+    H1 --> H2[UISystem: Show Error]
+    H2 --> Z[End]
+
+    E -->|LOADING| I[Queue Request & Wait for Asset Ready Event]
+    I --> J[EventSystem: Wait for AssetLoaded Event]
+    J --> E
+
+    E -->|LOADED| K[AssetCache: Get Asset Data]
+    H -->|Yes| K
+
+    K --> L{Asset in Cache?}
+    L -->|No| M[Load from Database to Cache]
+    M --> K
+
+    L -->|Yes| N[Determine Asset Complexity]
+
+%% GameObject Creation
+    N --> O{Is Complex Model?}
+    O -->|Yes - Multi-Node| P[Create Root GameObject]
+    P --> Q[Recursively Process Node Hierarchy]
+    Q --> R[For Each Node: Create Child GameObject]
+    R --> S[Set Transform from Node Data]
+    S --> T[Create Components for Node]
+
+    O -->|No - Simple Asset| U[Create Single GameObject]
+    U --> T
+
+%% Component Setup
+    T --> V{Required Components}
+    V -->|Mesh| W1[Add MeshRenderer Component]
+    V -->|Material| W2[Add Material Component]
+    V -->|Collider| W3[Add Collider Component]
+    V -->|Custom| W4[Add Custom Components from Asset Metadata]
+
+    W1 --> X[Resolve Asset Dependencies]
+    W2 --> X
+    W3 --> X
+    W4 --> X
+
+    X --> Y{For Each Dependency}
+    Y --> Y1[Get Dependency Asset from Registry]
+    Y1 --> Y2[Apply to Component via applyDependency]
+    Y2 --> Y3{More Dependencies?}
+    Y3 -->|Yes| Y
+    Y3 -->|No| AA
+
+    AA[Initialize All Components] --> AB[Add GameObject to Scene Graph]
+    AB --> AC[EventSystem: dispatchEvent<GameObjectCreated>]
+    AC --> AD[Select GameObject in Hierarchy]
+    AD --> AE[UISystem: Update Scene View & Properties Panel]
+    AE --> Z

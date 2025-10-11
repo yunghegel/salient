@@ -1,0 +1,190 @@
+buildscript {
+    repositories { mavenCentral() }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$serializationPluginVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion" apply false
+    id 'org.graalvm.buildtools.native' version '0.10.3' apply false
+}
+group = 'dev.yunghegel'
+version = '1.0-SNAPSHOT'
+
+def asset_dir = rootDir.path + "/assets"
+
+subprojects {
+
+    apply plugin: 'kotlin'
+    apply plugin: 'kotlinx-serialization'
+    apply plugin: 'java-library'
+
+    sourceCompatibility = 17
+    targetCompatibility = 17
+
+
+    repositories {
+        mavenCentral()
+        google()
+        flatDir {
+            dirs rootProject.file('libs')
+        }
+        mavenLocal()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+        mavenCentral()
+        maven { url "https://s01.oss.sonatype.org" }
+        google()
+        gradlePluginPortal()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://jitpack.io" }
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven {
+            name "snapshots"
+            url "https://repository.jamiecrown.dev/snapshots"
+        }
+        maven {
+            name "releases"
+            url "https://repository.jamiecrown.dev/releases"
+        }
+    }
+
+
+    dependencies {
+//        testImplementation "org.jetbrains.kotlin:kotlin-test"
+        implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+
+        implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
+        implementation("com.github.adamko-dev:json5-kotlin:2.1.0")
+        implementation("io.github.xn32:json5k:0.3.0")
+        implementation "com.charleskorn.kaml:kaml:$kamlVersion"
+
+        implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+        implementation "dev.jamiecrown.gdx:state:0.0.1"
+//          implementation platform("dev.jamiecrown.gdx:0.0.2")
+        implementation "dev.jamiecrown.gdx:state:0.0.1"
+
+
+    }
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+        compileJava {
+            options.release = 17
+            options.fork = true
+            options.incremental = true
+            options.encoding = 'UTF-8'
+        }
+        withSourcesJar()
+    }
+
+    // Shared GraalVM Native Image defaults (picked up by any subproject that applies the plugin)
+    plugins.withId('org.graalvm.buildtools.native') {
+        graalvmNative {
+            binaries {
+                all {
+                    resources {
+                        autodetect()
+                    }
+                    // Reasonable defaults that work for most desktop apps
+                    buildArgs.addAll([
+                        "--no-fallback",
+                        "--install-exit-handlers",
+                        "--report-unsupported-elements-at-runtime"
+                    ])
+                }
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src']
+            }
+            kotlin {
+                // Use conventional Kotlin source directory
+                srcDirs = ['src']
+            }
+            resources {
+                srcDirs = ['res']
+            }
+        }
+        test {
+            java {
+                srcDirs = ['test']
+            }
+            resources {
+                srcDirs = [asset_dir]
+            }
+            kotlin {
+                srcDirs = ['test']
+            }
+        }
+    }
+}
+
+
+
+
+// Distribution tasks
+ext {
+    distributionDir = file("${rootDir}/distribution")
+}
+
+tasks.register('prepareDistributionDir') {
+    group = 'distribution'
+    description = 'Create distribution directory if it does not exist'
+    doLast {
+        if (!distributionDir.exists()) {
+            boolean created = distributionDir.mkdirs()
+            println "[DEBUG_LOG] Created distribution directory at ${distributionDir} -> ${created}"
+        } else {
+            println "[DEBUG_LOG] Distribution directory already exists at ${distributionDir}"
+        }
+    }
+}
+
+tasks.register('distributeNativeImage', Copy) {
+    group = 'distribution'
+    description = 'Copy the native launcher executable into the distribution directory'
+    dependsOn(":launcher:nativeCompile", 'prepareDistributionDir')
+
+    // Source: where GraalVM Native Image places the built binary
+    from("${rootDir}/launcher/build/native/nativeCompile")
+    // Match Unix (no extension) and Windows (.exe)
+    include('salient-launcher*')
+
+    // Destination: root-level distribution directory
+    into(distributionDir)
+
+    doFirst {
+        println "[DEBUG_LOG] Copying native image from ${rootDir}/launcher/build/native/nativeCompile to ${distributionDir}"
+    }
+    doLast {
+        // Ensure executables are marked as such on Unix-like systems
+        fileTree(distributionDir).matching { include 'salient-launcher*' }.files.each { f ->
+            try {
+                f.setExecutable(true, false)
+                println "[DEBUG_LOG] Marked ${f.name} as executable"
+            } catch (Throwable t) {
+                println "[DEBUG_LOG] Could not set executable bit on ${f.name}: ${t.message}"
+            }
+        }
+    }
+}
+
+// Aggregate task
+tasks.register('distribute') {
+    group = 'distribution'
+    description = "Build and stage distributable artifacts into the 'distribution' directory"
+    dependsOn('distributeNativeImage')
+}
+
+

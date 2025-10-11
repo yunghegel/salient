@@ -1,0 +1,50 @@
+%%{init: {'theme': 'neutral', 'themeVariables': { 'fontSize': '14px' } }}%%
+stateDiagram-v2
+    [*] --> UNLOADED: Asset Created/Referenced
+
+    UNLOADED --> LOADING: load() called
+    LOADING --> LOADED: Import/Load Success
+    LOADING --> FAILED: Import/Load Error
+    LOADING --> UNLOADED: Cancel Request
+
+    LOADED --> MODIFYING: User Edits Asset
+    MODIFYING --> LOADED: Save Changes
+    MODIFYING --> LOADED: Discard Changes
+
+    LOADED --> RELOADING: Hot-Reload Triggered
+    RELOADING --> LOADED: Reload Success
+    RELOADING --> FAILED: Reload Error
+
+    LOADED --> UNLOADING: Explicit Unload/Cache Eviction
+    UNLOADING --> UNLOADED: Cleanup Complete
+
+    FAILED --> LOADING: Retry Import
+    FAILED --> UNLOADED: Clear Error
+
+    LOADED --> [*]: Asset Deleted
+    UNLOADED --> [*]: Asset Deleted
+    FAILED --> [*]: Asset Deleted
+
+    note right of LOADING
+        - Async file I/O
+        - Progress events dispatched
+        - Cancellable
+    end note
+
+    note right of LOADED
+        - Data in cache
+        - Ready for use
+        - Can be modified
+    end note
+
+    note right of FAILED
+        - Error logged
+        - User notified
+        - Retry available
+    end note
+
+    note right of RELOADING
+        - Preserves references
+        - Updates cache
+        - Notifies dependents
+    end note

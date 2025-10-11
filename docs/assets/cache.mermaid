@@ -1,0 +1,39 @@
+%%{init: {'theme': 'neutral', 'themeVariables': { 'fontSize': '14px' }, 'flowchart': { 'curve': 'linear' } }}%%
+graph TD
+    A[Event Source] --> B[EventSystem: dispatchEvent]
+    B --> C{Event Type}
+
+    C -->|Immediate| D[Get Listeners for Event Type]
+    C -->|Queued| E[Add to Event Queue]
+    E --> F[Process Queue Next Frame]
+    F --> D
+
+    D --> G{Has Listeners?}
+    G -->|No| Z[End]
+    G -->|Yes| H[Sort by Priority if specified]
+
+    H --> I{For Each Listener}
+    I --> J[Invoke Listener Callback]
+    J --> K{Event Cancellable?}
+
+    K -->|Yes| L{Event Cancelled?}
+    L -->|Yes| M[Stop Propagation]
+    M --> Z
+    L -->|No| N{More Listeners?}
+
+    K -->|No| N
+    N -->|Yes| I
+    N -->|No| O{Event Bubbles?}
+
+    O -->|Yes| P[Get Parent Context]
+    P --> Q{Has Parent?}
+    Q -->|Yes| D
+    Q -->|No| Z
+
+    O -->|No| Z
+
+%% Error Handling
+    J -.->|Exception| R[Catch Error]
+    R --> S[Log Error]
+    S --> T[Dispatch ErrorEvent]
+    T --> N

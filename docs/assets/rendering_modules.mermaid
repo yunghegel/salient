@@ -1,0 +1,82 @@
+%%{init: {'theme': 'neutral', 'themeVariables': { 'fontSize': '14px' } }}%%
+classDiagram
+    class RenderingEngine {
+        +render(scene: Scene)
+        +updateCamera(camera: Camera)
+        +setRenderSettings(settings: RenderSettings)
+        -renderer: Renderer
+        -shaderManager: ShaderManager
+        -camera: Camera
+        -materialSystem: MaterialSystem
+        -meshSystem: MeshSystem
+        -postFX: PostFX
+        -renderTargets: RenderTargets
+    }
+
+    class Renderer {
+        +beginFrame()
+        +submit(drawCall: DrawCall)
+        +endFrame()
+        -commandBuffer: CommandBuffer
+        -pipelineState: PipelineState
+    }
+
+    class ShaderManager {
+        +get(shaderId: String): Shader
+        +reloadAll()
+        -cache: Map~String, Shader~
+    }
+
+    class MaterialSystem {
+        +resolve(material: Material): Shader
+        +bind(material: Material)
+        -parameters: UniformBuffer
+    }
+
+    class MeshSystem {
+        +upload(mesh: Mesh)
+        +draw(mesh: Mesh, instances: int)
+        -vertexLayouts: Map~String, VertexLayout~
+    }
+
+    class PostFX {
+        +apply(stack: List~Effect~, source: Texture, target: Texture)
+        -effects: List~Effect~
+    }
+
+    class RenderTargets {
+        +get(name: String): FrameBuffer
+        +resize(width: int, height: int)
+        -gBuffer: FrameBuffer
+        -hdrBuffer: FrameBuffer
+        -uiBuffer: FrameBuffer
+    }
+
+    class Camera {
+        +view: Matrix4
+        +projection: Matrix4
+        +frustum: Frustum
+    }
+
+    class DrawCall {
+        +mesh: Mesh
+        +material: Material
+        +transform: Matrix4
+        +pass: RenderPass
+        +sortKey: long
+    }
+
+    RenderingEngine --> Renderer
+    RenderingEngine --> ShaderManager
+    RenderingEngine --> Camera
+    RenderingEngine --> MaterialSystem
+    RenderingEngine --> MeshSystem
+    RenderingEngine --> PostFX
+    RenderingEngine --> RenderTargets
+
+    MaterialSystem --> ShaderManager : queries
+    Renderer --> RenderTargets : writes
+    Renderer --> MeshSystem : uses
+    Renderer --> MaterialSystem : binds
+    PostFX --> RenderTargets : reads writes
+    Camera --> RenderingEngine : updated by

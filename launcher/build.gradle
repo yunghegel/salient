@@ -1,0 +1,88 @@
+group 'dev.yunghegel.salient'
+version '0.0.1'
+
+apply plugin: 'distribution'
+apply plugin: 'org.graalvm.buildtools.native'
+
+ext {
+    className = 'dev.yunghegel.salient.launcher.Launcher'
+    asset_dir = rootDir.path + "/assets"
+    userHome = System.getProperty("user.home")
+    salientDir = file(userHome + File.separator + ".salient")
+}
+
+dependencies {
+    implementation project(':application')
+
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+    implementation("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop")
+
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+    compileJava {
+        options.release = 17
+        options.fork = true
+        options.incremental = true
+        options.encoding = 'UTF-8'
+    }
+    withSourcesJar()
+
+
+}
+
+compileTestJava {
+    options.release = 17
+    options.fork = true
+    options.incremental = true
+    options.encoding = 'UTF-8'
+}
+
+// GraalVM Native Image configuration for the launcher
+// Build the native image with: ./gradlew :launcher:nativeCompile
+// Run the native image (once built) with: ./gradlew :launcher:nativeRun
+// Produces an executable named 'salient-launcher' under build/native/nativeCompile/
+
+graalvmNative {
+    binaries {
+        main {
+            imageName.set("salient-launcher")
+            mainClass.set(className)
+            debug.set(false)
+            quickBuild.set(true)
+            resources {
+                autodetect()
+            }
+
+            // Useful defaults for many desktop apps; safe to leave
+            buildArgs.addAll([
+                "--no-fallback",
+                "--install-exit-handlers",
+                "--report-unsupported-elements-at-runtime"
+            ])
+        }
+    }
+}
+
+
+
+task run(type: JavaExec) {
+    if (!salientDir.exists()) {
+        salientDir.mkdirs()
+    }
+    group "salient"
+    dependsOn(classes)
+    // Gradle 7.6+/8: use mainClass instead of removed 'main'
+    mainClass = className
+    classpath sourceSets.main.runtimeClasspath
+    standardInput System.in
+    standardOutput System.out
+    ignoreExitValue true
+    workingDir(file(userHome + File.separator + ".salient").path)
+    if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+        jvmArgs "-XstartOnFirstThread"
+    }
+}
