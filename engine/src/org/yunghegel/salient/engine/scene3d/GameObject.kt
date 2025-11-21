@@ -5,7 +5,6 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.math.Matrix4
-import imgui.stb_.TrueType.tag
 import org.yunghegel.gdx.utils.data.EnumBitmask
 import org.yunghegel.gdx.utils.data.EnumMask
 import org.yunghegel.gdx.utils.ext.*

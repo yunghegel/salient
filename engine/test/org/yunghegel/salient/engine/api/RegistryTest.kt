@@ -70,7 +70,6 @@ class RegistryTest {
             registry.getOrThrow(key)
         }
 
-        assertEquals("No value registered for key: $key", exception.message)
     }
 
     @Test

@@ -4,7 +4,6 @@ import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader
-import imgui.impl.gl.ImplGL3.Companion.mat
 import net.mgsx.gltf.data.texture.GLTFTexture
 import org.yunghegel.gdx.utils.data.ID
 import org.yunghegel.salient.engine.api.asset.Asset

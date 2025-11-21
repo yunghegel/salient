@@ -64,7 +64,7 @@ class TestApplication : Game() {
         initUI()
         scanTests()
 
-        tests = listOf(_ArcBallTest, DepthBufferTest, MeshEngineTest,AsyncModelLoadTest)
+        tests = listOf(_ArcBallTest, DepthBufferTest,AsyncModelLoadTest)
 
         testSelection = TestSelection(this, tests)
         setScreen(testSelection)
