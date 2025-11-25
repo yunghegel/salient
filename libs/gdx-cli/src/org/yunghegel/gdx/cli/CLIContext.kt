@@ -110,9 +110,16 @@ class CLIContext {
                     this.values.computeIfAbsent(namespace) { HashMap() }[cliVal.accessor.name] = cliVal
 
                 } else {
-                    if (prop.javaField?.type?.isPrimitive == true) {
-                        if (prop.javaField!!.canAccess(obj)) {
-                            Type.fromClass(prop.javaField!!.type)?.let {
+                    val javaField = prop.javaField
+                    if (javaField != null && javaField.type.isPrimitive) {
+                        val isStatic = java.lang.reflect.Modifier.isStatic(javaField.modifiers)
+                        if (isStatic) {
+                            // Skip static fields like InjectionContext.loggingEnabled
+                            continue
+                        }
+
+                        if (javaField.canAccess(obj)) {
+                            Type.fromClass(javaField.type)?.let {
                                 val accessor: KAccessor = object : KAccessor {
                                     override fun get(): Any {
                                         return prop.getter.call(obj) as Any
@@ -129,14 +136,13 @@ class CLIContext {
                                         get() = prop.returnType.classifier as KClass<*>
                                 }
                                 val cliVal = CLIValue(accessor, Value(it, ""))
-                                this.values.computeIfAbsent(obj::class.simpleName!!.lowercase()) { HashMap() }[cliVal.accessor.name] = cliVal
+                                this.values
+                                    .computeIfAbsent(obj::class.simpleName!!.lowercase()) { HashMap() }[cliVal.accessor.name] = cliVal
                             }
-
                         }
                     }
-
-
                 }
+
 
 
             }

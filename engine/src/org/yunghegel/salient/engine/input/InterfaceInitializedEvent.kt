@@ -1,4 +1,4 @@
-package org.yunghegel.salient.engine
+package org.yunghegel.salient.engine.input
 
 import org.greenrobot.eventbus.Subscribe
 import org.yunghegel.salient.engine.events.Bus

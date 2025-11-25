@@ -1,7 +1,6 @@
 package types
 
 import com.badlogic.gdx.ApplicationAdapter
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import org.yunghegel.salient.engine.ui.UI
@@ -16,7 +15,7 @@ abstract class BaseTest(override var name: String) : ApplicationAdapter(), Test 
 
     fun createDebugCtx() {
         fontBatch = SpriteBatch()
-        font = UI.font
+        font = UI.default
         debug.initialized = true
     }
 

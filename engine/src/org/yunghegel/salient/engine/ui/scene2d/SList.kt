@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import ktx.math.component1
 import ktx.math.component2
 import org.yunghegel.gdx.utils.ext.toGdxArray
-import org.yunghegel.salient.engine.events.autoemit
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.scene2d.SList.SListListener
 

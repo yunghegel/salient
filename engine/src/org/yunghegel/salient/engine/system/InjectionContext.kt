@@ -15,11 +15,45 @@ import kotlin.reflect.KClass
 object InjectionContext : Disposable {
     @Suppress("LeakingThis")
     private val providers = createProvidersMap()
+    
+    /**
+     * Controls whether injection operations should be logged.
+     * When enabled, logs provider registration, injection attempts, and disposal operations.
+     */
+    var loggingEnabled: Boolean
+    
+    /**
+     * Logs a message if logging is enabled.
+     */
+    internal fun logInfo(message: String) {
+        if (loggingEnabled) {
+            info("InjectionContext: $message")
+        }
+    }
+    
+    /**
+     * Logs a debug message if logging is enabled.
+     */
+    internal fun logDebug(message: String) {
+        if (loggingEnabled) {
+            debug("InjectionContext: $message")
+        }
+    }
+    
+    /**
+     * Logs an error message if logging is enabled.
+     */
+    internal fun logError(message: String) {
+        if (loggingEnabled) {
+            error("InjectionContext: $message")
+        }
+    }
 
     init {
         // Context should be injectable:
         @Suppress("LeakingThis")
         bindSingleton(this)
+        loggingEnabled = true
     }
 
     /**
@@ -40,7 +74,13 @@ object InjectionContext : Disposable {
      * @return instance of the class with the selected type if a provider is present in the context.
      * @throws InjectionException if no provider is registered for the selected type.
      */
-    inline fun <reified Type : Any> inject(): Type = getProvider(Type::class.java)()
+    inline fun <reified Type : Any> inject(): Type {
+        val instance = getProvider(Type::class.java)()
+        if (loggingEnabled) {
+            debug("InjectionContext: Successfully injected instance of ${Type::class.java}")
+        }
+        return instance
+    }
 
     /**
      * Extracts provider of instances of the selected type.
@@ -61,8 +101,10 @@ object InjectionContext : Disposable {
     fun <Type> getProvider(forClass: Class<Type>): () -> Type {
         val provider = providers[forClass]
         return if (provider == null) {
+            logError("No provider registered for class: $forClass")
             throw InjectionException("No provider registered for class: $forClass")
         } else {
+            logDebug("Retrieved provider for class: $forClass")
             provider as () -> Type
         }
     }
@@ -76,8 +118,12 @@ object InjectionContext : Disposable {
      * @see bindSingleton
      */
     fun setProvider(forClass: Class<*>, provider: () -> Any) {
-        forClass !in providers || throw InjectionException("Provider already defined for class: $forClass")
+           if (forClass in providers) {
+               error("Provider for class $forClass is already defined.")
+               return
+           }
         providers[forClass] = provider
+        logInfo("Registered provider for class: $forClass")
     }
 
     /**
@@ -87,7 +133,15 @@ object InjectionContext : Disposable {
      * @see remove
      */
     @Suppress("UNCHECKED_CAST")
-    fun <Type> removeProvider(ofClass: Class<Type>): (() -> Type)? = providers.remove(ofClass) as (() -> Type)?
+    fun <Type> removeProvider(ofClass: Class<Type>): (() -> Type)? {
+        val removedProvider = providers.remove(ofClass) as (() -> Type)?
+        if (removedProvider != null) {
+            logInfo("Removed provider for class: $ofClass")
+        } else {
+            logDebug("No provider found to remove for class: $ofClass")
+        }
+        return removedProvider
+    }
 
     /**
      * Removes singleton or provider of instances of the selected type registered in the [Context].
@@ -213,8 +267,11 @@ object InjectionContext : Disposable {
      * injectable with [provider] and [inject].
      */
     fun clear() {
+        logInfo("Clearing all providers from InjectionContext")
+        val providerCount = providers.size
         providers.clear()
         bindSingleton(this)
+        logDebug("Cleared $providerCount providers, re-registered InjectionContext")
     }
 
     /**
@@ -230,15 +287,22 @@ object InjectionContext : Disposable {
      * @see clear
      */
     override fun dispose() {
+        logInfo("Starting disposal of InjectionContext")
         providers.remove(InjectionContext::class.java)
-        providers.values.filterIsInstance<Disposable>().forEach { provider ->
+        val disposableProviders = providers.values.filterIsInstance<Disposable>()
+        logDebug("Found ${disposableProviders.size} disposable providers")
+        
+        disposableProviders.forEach { provider ->
             try {
                 provider.dispose()
+                logDebug("Successfully disposed provider: $provider")
             } catch (error: Exception) {
+                logError("Unable to dispose of component: $provider - ${error.message}")
                 Gdx.app.error("KTX", "Unable to dispose of component: $provider.", error)
             }
         }
         clear()
+        logInfo("InjectionContext disposal completed")
     }
 }
 
@@ -277,7 +341,9 @@ class InjectionException(message: String, cause: Throwable? = null) : RuntimeExc
 
 inline fun <reified T:Any> inject() =
    try { InjectionContext.inject<T>() } catch (e:Exception) {
-       info("Injection failed for ${T::class.simpleName} - ${e.message}")
+       if (InjectionContext.loggingEnabled) {
+           info("InjectionContext: Injection failed for ${T::class.simpleName} - ${e.message}")
+       }
        newInstance(T::class)
    }
 

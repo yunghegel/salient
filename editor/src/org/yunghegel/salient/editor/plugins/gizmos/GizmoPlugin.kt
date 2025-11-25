@@ -2,9 +2,9 @@ package org.yunghegel.salient.editor.plugins.gizmos
 
 import com.badlogic.ashley.core.Engine
 import org.yunghegel.salient.engine.system.InjectionContext
-import org.yunghegel.salient.editor.app.Salient.Companion.addSystem
-import org.yunghegel.salient.editor.app.Salient.Companion.buffers
+
 import org.yunghegel.salient.editor.app.salient
+import org.yunghegel.salient.editor.modules.buffers
 import org.yunghegel.salient.editor.plugins.gizmos.systems.GizmoSystem
 import org.yunghegel.salient.editor.plugins.gizmos.tools.PlacementTool
 import org.yunghegel.salient.editor.plugins.gizmos.tools.RotateTool

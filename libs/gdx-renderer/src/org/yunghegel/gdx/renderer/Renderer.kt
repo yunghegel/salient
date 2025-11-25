@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.GdxRuntimeException
 import com.badlogic.gdx.utils.ScreenUtils
+import org.yunghegel.gdx.renderer.env.DirectionalLight
 import org.yunghegel.gdx.renderer.env.Light
 import org.yunghegel.gdx.renderer.mrt.TextureAttachment
 import org.yunghegel.gdx.renderer.mrt.TextureAttachment.Companion.toFbo
@@ -52,12 +53,13 @@ class Renderer : Disposable {
         for (i in 0 until 10) {
             modelBuilder.begin()
 
-            val light = Light()
+            val light = DirectionalLight()
             light.color[MathUtils.random(.1f), MathUtils.random(.1f)] = MathUtils.random(.1f)
             light.position[MathUtils.random(-10f, 10f), MathUtils.random(10f, 15f)] = MathUtils.random(-10f, 10f)
             light.vy = MathUtils.random(10f, 20f)
             light.vx = MathUtils.random(-10f, 10f)
             light.vz = MathUtils.random(-10f, 10f)
+            light.direction.set(light.position.cpy().scl(-1f).nor())
 
             val meshPartBuilder: MeshPartBuilder = modelBuilder.part(
                 "light",

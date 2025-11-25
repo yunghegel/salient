@@ -1,6 +1,5 @@
 package org.yunghegel.salient.editor.scene
 
-import com.badlogic.gdx.Gdx
 import com.charleskorn.kaml.Yaml
 import org.yunghegel.gdx.utils.ext.addIfNotPresent
 import org.yunghegel.salient.editor.asset.AssetManager
@@ -9,7 +8,6 @@ import org.yunghegel.salient.editor.project.ProjectManager
 import org.yunghegel.salient.engine.LOAD_SCENE
 import org.yunghegel.salient.engine.api.Default
 import org.yunghegel.salient.engine.api.EditorSceneManager
-import org.yunghegel.salient.engine.api.asset.type.ModelAsset
 import org.yunghegel.salient.engine.api.dto.SceneDTO
 import org.yunghegel.salient.engine.api.model.SceneHandle
 import org.yunghegel.salient.engine.events.Bus.post

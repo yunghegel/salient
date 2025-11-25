@@ -1,4 +1,8 @@
 package org.yunghegel.salient.engine.events
 
-class BaseEvent {
+open class BaseEvent {
+
+    val message : String
+        get() = this::class.simpleName ?: "BaseEvent"
+
 }

@@ -9,11 +9,12 @@ import com.badlogic.gdx.utils.OrderedSet
 import com.ray3k.stripe.PopTable
 import ktx.actors.onChange
 import org.yunghegel.gdx.utils.ext.padHorizontal
+import org.yunghegel.salient.engine.input.Buttons
 import org.yunghegel.salient.editor.scene.GameObjectSelectionManager
 import org.yunghegel.salient.editor.scene.SceneGraph
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.api.flags.GameObjectFlag
-import org.yunghegel.salient.engine.input.Input
+import org.yunghegel.salient.engine.input.Keys
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.component.LightComponent
 import org.yunghegel.salient.engine.scene3d.component.MaterialsComponent
@@ -123,7 +124,7 @@ class SceneGraphTree(private var graph: SceneGraph) : TreeWidget<TreeNode<GameOb
 
             var doubleClick = {tapCount==2}
 
-            var rightClick = button == Input.Buttons.RIGHT
+            var rightClick = button == Buttons.RIGHT
 
             var key = -1
 
@@ -138,7 +139,7 @@ class SceneGraphTree(private var graph: SceneGraph) : TreeWidget<TreeNode<GameOb
                     }
                 }
 
-                if (key == Input.Keys.SHIFT_LEFT) {
+                if (key == Keys.SHIFT_LEFT) {
                     if (selection.multiple) {
                         selection.add(node)
                     }

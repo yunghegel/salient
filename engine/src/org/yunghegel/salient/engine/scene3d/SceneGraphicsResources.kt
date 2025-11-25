@@ -9,13 +9,14 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport
 import org.yunghegel.salient.engine.graphics.debug.DebugContext
 import org.yunghegel.salient.engine.helpers.BlinnPhongBatch
 import org.yunghegel.salient.engine.helpers.DepthBatch
+import org.yunghegel.salient.engine.helpers.PBRBatch
 import org.yunghegel.salient.engine.helpers.WireBatch
 
 interface SceneGraphicsResources {
 
     val modelBatch: ModelBatch
     val blinnPhongBatch : BlinnPhongBatch
-    val pbrBatch : ModelBatch
+    val pbrBatch : PBRBatch
     val depthBatch : DepthBatch
     val wireBatch : WireBatch
     val perspectiveCamera: PerspectiveCamera

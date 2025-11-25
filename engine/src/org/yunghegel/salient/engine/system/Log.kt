@@ -153,7 +153,7 @@ fun event(event: BaseEvent) {
 }
 
 fun emitEvent(emission: String) {
-    Log.log(emission, LogLevel.Event)
+    Log.log(emission.toString(), LogLevel.Event)
 }
 
 

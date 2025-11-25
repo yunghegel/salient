@@ -3,16 +3,8 @@ package org.yunghegel.salient.engine.ui.widgets.menu
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Touchable
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
-import com.kotcrab.vis.ui.widget.PopupMenu
-import com.ray3k.stripe.PopTable
 import com.ray3k.stripe.PopTableClickListener
-import ktx.actors.onKey
-import org.yunghegel.salient.engine.input.Input
-import org.yunghegel.salient.engine.ui.UI
-import org.yunghegel.salient.engine.ui.pop
-import java.awt.SystemColor.menu
 
 open class ContextMenu() : PopTableClickListener() {
 

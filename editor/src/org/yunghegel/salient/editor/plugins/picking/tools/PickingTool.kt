@@ -7,17 +7,18 @@ import org.yunghegel.gdx.utils.selection.Pickable
 import org.yunghegel.salient.editor.input.ViewportController
 import org.yunghegel.salient.editor.input.delegateInput
 import org.yunghegel.salient.editor.input.undelegateInput
+import org.yunghegel.salient.engine.input.Buttons
 import org.yunghegel.salient.editor.plugins.intersect.tools.IntersectorTool
 import org.yunghegel.salient.editor.plugins.picking.systems.PickingSystem
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.api.tool.MouseTool
 import org.yunghegel.salient.engine.graphics.RenderUsage
 import org.yunghegel.salient.engine.graphics.util.DebugDrawer
-import org.yunghegel.salient.engine.input.Input
+import org.yunghegel.salient.engine.input.Keys
 import org.yunghegel.salient.engine.ui.UI
 import org.yunghegel.salient.engine.ui.widgets.OptionMenu
 
-class PickingTool(val pickingSystem: PickingSystem) : MouseTool("picking_tool", Input.Keys.S) {
+class PickingTool(val pickingSystem: PickingSystem) : MouseTool("picking_tool", Keys.S) {
 
 
 
@@ -52,7 +53,7 @@ class PickingTool(val pickingSystem: PickingSystem) : MouseTool("picking_tool", 
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         pickingSystem.pick(screenX.toFloat(),screenY.toFloat(),button,key,isDoubleClick)
-        if (button == Input.Buttons.RIGHT) menu.showMenu(UI,screenX.toFloat(),screenY.toFloat())
+        if (button == Buttons.RIGHT) menu.showMenu(UI,screenX.toFloat(),screenY.toFloat())
         return super.touchDown(screenX, screenY, pointer, button)
     }
 

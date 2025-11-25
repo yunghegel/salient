@@ -21,7 +21,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import ktx.actors.setPosition
 import net.mgsx.gltf.scene3d.shaders.PBRShaderConfig
 import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider
 
@@ -34,7 +33,6 @@ import org.yunghegel.salient.engine.graphics.shapes.utility.Grid
 import org.yunghegel.salient.engine.graphics.shapes.utility.RotationGizmoShape
 import org.yunghegel.salient.engine.helpers.SampleModels
 import org.yunghegel.salient.engine.ui.UI
-import org.yunghegel.salient.engine.ui.layout.PanelWindow
 import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.scene2d.SWindow
 import org.yunghegel.salient.engine.ui.widgets.viewport.Compass
@@ -145,7 +143,7 @@ class TestBundle() {
         _root = STable()
         _root.setFillParent(true)
         spriteBatch = SpriteBatch()
-        font = UI.font
+        font = UI.default
         stage.addActor(_root)
         _root.pad(20f)
         _root.align(Align.topLeft)

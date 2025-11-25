@@ -8,11 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.ray3k.stripe.PopTable
-import org.yunghegel.gdx.utils.ext.label
 import org.yunghegel.gdx.utils.ext.toOpenGLCoords
 import org.yunghegel.gdx.utils.ext.topRight
-import org.yunghegel.salient.engine.Pipeline
-import org.yunghegel.salient.engine.State
+import org.yunghegel.salient.engine.GraphicsModule
 import org.yunghegel.salient.engine.system.Netgraph
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.scene2d.SImageButton
@@ -47,7 +45,7 @@ class ViewportPanel(val viewport : ScreenViewport) : STable() {
 
     val compass : Compass = Compass(inject())
 
-    val pipeline : Pipeline = inject()
+    val gfxModule : GraphicsModule = inject()
 
 
     val tools = Tools()

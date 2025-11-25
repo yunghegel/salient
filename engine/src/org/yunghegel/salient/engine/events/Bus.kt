@@ -3,9 +3,14 @@ package org.yunghegel.salient.engine.events
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.EventBusBuilder
 import org.yunghegel.gdx.utils.reflection.annotatedWith
+import org.yunghegel.salient.engine.events.Bus.Config.eventBusBuilder
+import org.yunghegel.salient.engine.events.Bus.emit
 import org.yunghegel.salient.engine.system.Log
+import org.yunghegel.salient.engine.system.debug
 import org.yunghegel.salient.engine.system.emitEvent
+import org.yunghegel.salient.engine.system.error
 import org.yunghegel.salient.engine.system.event
+import java.util.logging.Level
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -39,13 +44,24 @@ object Bus {
 
     object Config {
 
-        val eventBusBuilder: EventBusBuilder = EventBus.builder()
+        val eventBusBuilder: EventBusBuilder = EventBus.builder().apply {
+                this.logger(object : org.greenrobot.eventbus.Logger {
 
-        init {
-            eventBusBuilder.logNoSubscriberMessages(false)
-            eventBusBuilder.sendNoSubscriberEvent(false)
-            eventBusBuilder.logger(EventLog())
+                    override fun log(level: Level?, msg: String?) {
+                        debug("${level?.name} $msg")
+                    }
+
+                    override fun log(level: Level?, msg: String?, th: Throwable?) {
+                        error("${level?.name} $msg $th.message")
+                    }
+                })
+                logNoSubscriberMessages(true)
+                logSubscriberExceptions(true)
+
+            }
         }
+
+
 
     }
 
@@ -89,4 +105,3 @@ object Bus {
     }
 
 
-}

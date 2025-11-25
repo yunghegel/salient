@@ -1,10 +1,10 @@
 package org.yunghegel.salient.engine.api.tool
 
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.math.Vector2
 import ktx.collections.GdxArray
-import org.yunghegel.salient.engine.input.Input
 
 
 abstract class MultipleInputTool(name: String, val maxPoints: Int = 1) : MouseTool(name) {

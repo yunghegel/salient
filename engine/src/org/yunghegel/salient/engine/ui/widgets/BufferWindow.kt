@@ -1,5 +1,6 @@
 package org.yunghegel.salient.engine.ui.widgets
 
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.Touchable
@@ -8,9 +9,9 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.actors.onKeyDown
 import org.yunghegel.gdx.utils.ext.textureDrawable
 import org.yunghegel.gdx.utils.temporal
-import org.yunghegel.salient.engine.input.Input
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.UI
+import org.yunghegel.salient.engine.ui.UI.SInput
 import org.yunghegel.salient.engine.ui.scene2d.SImage
 import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.scene2d.SWindow

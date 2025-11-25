@@ -13,7 +13,7 @@ import org.yunghegel.gdx.utils.ext.delta
 import org.yunghegel.gdx.utils.selection.Pickable
 import org.yunghegel.gdx.utils.selection.Picker
 import org.yunghegel.gdx.utils.selection.PickerShader
-import org.yunghegel.salient.editor.app.pipeline
+import org.yunghegel.salient.editor.modules.buffers
 import org.yunghegel.salient.editor.plugins.BaseSystem
 import org.yunghegel.salient.editor.plugins.intersect.tools.IntersectorTool
 import org.yunghegel.salient.editor.plugins.picking.PickablesBag
@@ -63,7 +63,7 @@ open class PickingSystem : BaseSystem("picking_system",8,Family.one(PickableComp
                 }
             }
         })
-        engine.buffers["picking_buffer"] = picker.fbo
+        buffers["picking_buffer"] = picker.fbo
     }
 
     override fun update(deltaTime: Float) {

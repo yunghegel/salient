@@ -15,12 +15,22 @@ ext {
 dependencies {
 
     implementation project(":editor")
-    implementation project(":tests")
+    api project(":tests")
 //    testImplementation project(":tests")
     packages.each { pkg->
         api project("$pkg.value")
     }
 
+}
+
+jar {
+    dependsOn(project(":tests").jar)
+    dependsOn(project(":editor").jar)
+    dependsOn(project(":engine").jar)
+
+    project(":libs").subprojects.each { lib->
+        dependsOn(lib.jar)
+    }
 }
 
 sourceSets {

@@ -6,7 +6,7 @@ import org.yunghegel.salient.engine.api.asset.type.ModelAsset
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.model.ProjectHandle
 import org.yunghegel.salient.engine.graphics.GFX
-import org.yunghegel.salient.engine.input.Input
+import org.yunghegel.salient.editor.modules.InputModule
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.component.ModelComponent
 import org.yunghegel.salient.engine.system.file.Filepath
@@ -29,8 +29,7 @@ object Mock {
     fun initializeTestEnv() {
         singleton(scene)
         singleton(project)
-        listOf(GFX, Input).forEach { module ->
-            module.initialize()
+        listOf(GFX, InputModule).forEach { module ->
         }
     }
 

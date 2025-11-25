@@ -18,4 +18,13 @@ processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDir("assets")
+        }
+    }
+}
+
+
 

@@ -9,9 +9,8 @@ import org.yunghegel.gdx.utils.data.EnumBitmask
 import org.yunghegel.gdx.utils.data.EnumMask
 import org.yunghegel.gdx.utils.ext.*
 import org.yunghegel.gdx.utils.ui.Hoverable
-import org.yunghegel.salient.engine.Pipeline
+import org.yunghegel.salient.engine.GraphicsModule
 import org.yunghegel.salient.engine.api.Store
-import org.yunghegel.salient.engine.api.Tagged
 import org.yunghegel.salient.engine.api.UpdateRoutine
 import org.yunghegel.salient.engine.api.dto.GameObjectDTO
 import org.yunghegel.salient.engine.api.dto.component.MaterialComponentDTO
@@ -83,7 +82,7 @@ open class GameObject(name: String, transform: Matrix4 = Matrix4(), val scene: E
 
     override var id: Int = getUniqueID()
 
-    val pipeline: Pipeline by lazy { inject() }
+    val gfxModule: GraphicsModule by lazy { inject() }
 
     val components: List<BaseComponent>
         get() = getComponents().filterIsInstance<BaseComponent>()

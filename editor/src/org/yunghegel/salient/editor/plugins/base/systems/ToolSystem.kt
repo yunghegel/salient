@@ -2,23 +2,27 @@ package org.yunghegel.salient.editor.plugins.base.systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.Family
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import org.yunghegel.gdx.utils.ext.clearDepth
-import org.yunghegel.salient.editor.app.Salient.Companion.once
-import org.yunghegel.salient.editor.app.salient
+import org.yunghegel.salient.editor.modules.state
 import org.yunghegel.salient.editor.plugins.BaseSystem
-import org.yunghegel.salient.engine.State
+import org.yunghegel.salient.editor.plugins.rendering.State
+import org.yunghegel.salient.engine.UIModule
 import org.yunghegel.salient.engine.api.tool.InputTool
 import org.yunghegel.salient.engine.graphics.RenderUsage
 import org.yunghegel.salient.engine.api.tool.ToolComponent
 import org.yunghegel.salient.engine.system.Netgraph
+import org.yunghegel.salient.engine.system.inject
 
-class ToolSystem : BaseSystem("ToolSystem", State.AFTER_COLOR_PASS, Family.one(ToolComponent::class.java).get()) {
+class ToolSystem : BaseSystem("ToolSystem", org.yunghegel.salient.editor.plugins.rendering.State.AFTER_COLOR_PASS, Family.one(ToolComponent::class.java).get()) {
 
     val tools = mutableListOf<InputTool>()
 
-    val buf = engine.buildBuffer("tool_buffer")
+    val buf = gfx.buildBuffer("tool_buffer")
+    val gui : UIModule by lazy { inject() }
+
 
     init {
         Netgraph.add("total tools:") { tools.size.toString() }
@@ -40,12 +44,12 @@ class ToolSystem : BaseSystem("ToolSystem", State.AFTER_COLOR_PASS, Family.one(T
 
         with(sceneContext) {
 
-            salient {
-                once(state = State.AFTER_COLOR_PASS) {
+
+                if(state == State.AFTER_COLOR_PASS) {
 //                    pass(buf) {
 //                        clearScreen(Color.CLEAR)
                         clearDepth()
-                        gui.updateviewport()
+                        gui.viewport.update(Gdx.graphics.width, Gdx.graphics.height, true)
                         shapeRenderer.begin()
                         shapeRenderer.projectionMatrix = perspectiveCamera.combined
                         blinnPhongBatch.begin(perspectiveCamera)
@@ -57,7 +61,7 @@ class ToolSystem : BaseSystem("ToolSystem", State.AFTER_COLOR_PASS, Family.one(T
                         shapeRenderer.end()
 //                    }.draw(spriteBatch)
                 }
-            }
+
         }
 
 

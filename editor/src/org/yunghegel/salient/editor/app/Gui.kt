@@ -24,7 +24,7 @@ import org.yunghegel.salient.editor.scene.ObjectFactory
 import org.yunghegel.salient.editor.scene.Scene
 import org.yunghegel.salient.editor.ui.AppBar
 import org.yunghegel.salient.editor.ui.ViewportContextMenu
-import org.yunghegel.salient.editor.ui.ViewportSplit
+import org.yunghegel.salient.engine.ui.widgets.viewport.ViewportSplit
 import org.yunghegel.salient.editor.ui.assets.AssetsView
 import org.yunghegel.salient.editor.ui.assets.browser.AssetBrowser
 import org.yunghegel.salient.editor.ui.data.ProfilerPanel
@@ -85,7 +85,6 @@ class Gui : EditorFrame() {
     val salient: Salient = inject()
 
     val viewportSplit: ViewportSplit
-
     init {
         setFillParent(true)
 
@@ -157,9 +156,9 @@ class Gui : EditorFrame() {
             resumeHotkeys()
             stage.keyboardFocus=viewportWidget
             stage.scrollFocus=viewportWidget
-            
+
         }
-        viewportSplit = ViewportSplit(viewportWidget, centerContent)
+        viewportSplit = ViewportSplit(viewportWidget)
 
         notifications = Notifications(UI, viewportWidget)
         notificationsView = NotificationsView(notifications)

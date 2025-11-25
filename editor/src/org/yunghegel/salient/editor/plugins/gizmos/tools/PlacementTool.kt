@@ -19,14 +19,18 @@ import org.yunghegel.gdx.utils.ext.*
 import org.yunghegel.salient.editor.app.Gui
 import org.yunghegel.salient.editor.input.delegateInput
 import org.yunghegel.salient.editor.input.undelegateInput
+import org.yunghegel.salient.engine.input.Buttons
 import org.yunghegel.salient.editor.plugins.intersect.lib.IntersectionQuery
 import org.yunghegel.salient.editor.plugins.intersect.tools.IntersectorTool
 import org.yunghegel.salient.editor.scene.Scene
-import org.yunghegel.salient.engine.Pipeline
-import org.yunghegel.salient.engine.State
+import org.yunghegel.salient.editor.modules.GFXModule
+import org.yunghegel.salient.editor.modules.buffers
+import org.yunghegel.salient.editor.plugins.rendering.State
+import org.yunghegel.salient.editor.render.RenderingPlugin
+import org.yunghegel.salient.editor.render.systems.RenderingSystem
 import org.yunghegel.salient.engine.api.asset.type.ModelAsset
 import org.yunghegel.salient.engine.graphics.shapes.primitives.Cylinder
-import org.yunghegel.salient.engine.input.Input
+import org.yunghegel.salient.engine.input.Keys
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.scene3d.SceneContext
 import org.yunghegel.salient.engine.scene3d.component.ModelComponent
@@ -41,7 +45,8 @@ class PlacementTool : MouseTool("placement_tool") {
     var ghostMat = Material()
     val context : SceneContext by lazy { inject() }
     var instance : ModelInstance ? = null
-    val pipeline : Pipeline = inject()
+    val gfxModule : GFXModule = inject()
+    val renderingSystem : RenderingSystem = inject()
 
     private val updateRoutine : Entity
 
@@ -49,10 +54,28 @@ class PlacementTool : MouseTool("placement_tool") {
         ghostMat.set(PBRColorAttribute.createBaseColorFactor(Color.WHITE.cpy().alpha(0.5f)))
         ghostMat.set(BlendingAttribute(true,0.5f))
         ghostMat.set(IntAttribute.createCullFace(GL30.GL_NONE))
+        renderingSystem.addRenderFunction(7, shoulddRender =  {active})  { delta ->
+            val fbo = buffers["placement_tool"]!!
+            with(context) {
+                update(delta)
+                updatePosition()
+                (UI.root as Gui).updateviewport()
+                debugDrawer.renderer.color = Color.WHITE.cpy().alpha(0.7f)
+                debugDrawer.begin()
+                debugDrawer.drawWireDisc(intersection?.intersection ?: Vector3.Zero, Vector3.Y, state.radius)
+                debugDrawer.end()
+                batch.begin(camera)
+                glEnable(GL30.GL_BLEND)
+                glBlendMode(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA)
+                instance?.let {
+                    batch.render(it,context)
+                }
+                batch.end()
+            }
+        }
 
-
-        updateRoutine = pipeline.createRoutine(State.COLOR_PASS,"placement_tool", { !active }) { delta ->
-            val fbo = pipeline.buffers["placement_tool"]!!
+        updateRoutine = gfxModule.createRoutine(State.COLOR_PASS,"placement_tool", { !active }) { delta ->
+            val fbo = buffers["placement_tool"]!!
             with(context) {
                     update(delta)
                     updatePosition()
@@ -153,13 +176,13 @@ class PlacementTool : MouseTool("placement_tool") {
             mat.set(BlendingAttribute(true,0.8f))
             mat.set(IntAttribute.createCullFace(GL30.GL_NONE))
         }
-        pipeline.push(updateRoutine)
+        gfxModule.push(updateRoutine)
         activate()
     }
 
     fun stop() {
         state.reset()
-        pipeline.pull(updateRoutine)
+        gfxModule.pull(updateRoutine)
         deactivate()
     }
 
@@ -217,13 +240,13 @@ class PlacementTool : MouseTool("placement_tool") {
 
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        if (button == Input.Buttons.RIGHT) {
+        if (button == Buttons.RIGHT) {
             if (active) {
                 stop()
             }
         }
 
-        if (button == Input.Buttons.LEFT) {
+        if (button == Buttons.LEFT) {
             if (active) {
                 placeNewGameObject()
                 stop()
@@ -234,7 +257,7 @@ class PlacementTool : MouseTool("placement_tool") {
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        if (active && !Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+        if (active && !Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
             stop()
         } else {
             if (active) {

@@ -105,6 +105,8 @@ repositories {
     maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots/" }
     maven { url  "https://jitpack.io" }
     maven { url "https://plugins.gradle.org/m2/" }
+    maven { url "https://cenntral.sonatype.org/repos/maven-snapshots" }
+
 }
 
 allprojects {
@@ -157,6 +159,11 @@ subprojects {
             kotlin {
                 srcDirs = ['src']
             }
+            resources {
+
+                srcDirs = ['res']
+
+            }
         }
         test {
             java {
@@ -165,7 +172,16 @@ subprojects {
             kotlin {
                 srcDirs = ['test']
             }
+            resources {
+
+                srcDirs = ['res']
+
+            }
         }
+
+
+
+
     }
     kotlin {
         jvmToolchain(11)

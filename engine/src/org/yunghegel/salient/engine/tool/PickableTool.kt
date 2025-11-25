@@ -37,10 +37,9 @@ abstract class PickableTool(name: String, val picker: Picker) : MouseTool(name) 
     }
 
 
-    override fun render(modelBatch: ModelBatch, environment: Environment) {
+    override fun render(batch: ModelBatch, environment: Environment) {
         if (active) {
-                if (environment != null) modelBatch.render(handles, environment)
-                else modelBatch.render(handles)
+            batch.render(handles, environment)
         }
         with(sceneContext) {
             picker.texture?.draw(spriteBatch)

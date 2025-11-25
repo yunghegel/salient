@@ -1,6 +1,7 @@
 package org.yunghegel.salient.engine.ui
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.math.Vector2
@@ -20,16 +21,15 @@ import com.ray3k.stripe.FreeTypeSkin
 import org.yunghegel.salient.engine.system.InjectionContext
 import ktx.scene2d.Scene2DSkin
 import org.yunghegel.gdx.utils.ext.lazyMutable
+import org.yunghegel.salient.engine.InputModule
 import org.yunghegel.salient.engine.UIModule
 import org.yunghegel.salient.engine.api.properties.Resizable
-import org.yunghegel.salient.engine.input.Input
 import org.yunghegel.salient.engine.system.info
+import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.system.provide
 import org.yunghegel.salient.engine.system.singleton
 import org.yunghegel.salient.engine.ui.layout.EditorFrame
-import org.yunghegel.salient.engine.ui.scene2d.SDialog
 import org.yunghegel.salient.engine.ui.scene2d.SPopup
-import org.yunghegel.salient.engine.ui.widgets.Result
 import org.yunghegel.salient.engine.ui.widgets.notif.Notifications
 
 object UI : UIModule(), Resizable {
@@ -40,10 +40,12 @@ object UI : UIModule(), Resizable {
     lateinit var goNotoUniversal : Font
     lateinit var dejaVuSansMono : Font
 
-    lateinit var font : BitmapFont
+    lateinit var default : BitmapFont
     lateinit var mono : BitmapFont
     var notifications : Notifications? = null
 
+
+    val SInput : InputModule by lazy { inject()}
 
     var loaded = false
         private set
@@ -58,12 +60,13 @@ object UI : UIModule(), Resizable {
 
     var touchFocusActor : Actor? = null
     var scrollFocusActor : Actor? = null
+    override val priority: Int
+        get() = 0
 
     override val registry: InjectionContext.() -> Unit = {
         if(!loaded) init()
 
         bindSingleton(skin)
-        bindSingleton(font)
         info("UI dependencies initialized for use ;")
     }
 
@@ -71,9 +74,9 @@ object UI : UIModule(), Resizable {
         if(loaded) return
         loaded = true
         this.skin = loadSkin("skin/uiskin.json")
-        font = skin.getFont("default")
+        default = skin.getFont("default")
         mono = skin.getFont("mono")
-        font.data.markupEnabled = true
+        default.data.markupEnabled = true
         mono.data.markupEnabled = true
         VisUI.load(skin)
         Scene2DSkin.defaultSkin = skin
@@ -157,9 +160,10 @@ object UI : UIModule(), Resizable {
     object DialogStage : Stage()  {
 
         private val activeDialogs = mutableListOf<SPopup>()
+        val input : Input = Gdx.input
 
         fun popup(show: Boolean = true, build: SPopup.PopupBuilder.() -> Unit): SPopup {
-            Input.pauseExcept(this)
+            SInput.pauseExcept(this)
             val builder = SPopup.PopupBuilder()
             builder.build()
             val popup = builder.create()
@@ -168,9 +172,9 @@ object UI : UIModule(), Resizable {
         }
 
         fun showDialog(dialog: SPopup) {
-            Input.pauseExcept(this)
+            SInput.pauseExcept(this)
             dialog.closed = {
-                Input.resumeExcept(this)
+                SInput.resumeExcept(this)
             }
             dialog.show(this)
         }

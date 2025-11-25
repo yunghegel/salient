@@ -5,8 +5,6 @@ import ktx.collections.GdxArray
 import ktx.collections.toGdxArray
 import org.yunghegel.gdx.cli.CommandLine
 import org.yunghegel.gdx.cli.util.*
-import org.yunghegel.gdx.cli.util.StdOut.writeLn
-import org.yunghegel.salient.engine.State
 import org.yunghegel.salient.engine.api.EditorProjectManager
 import org.yunghegel.salient.engine.events.lifecycle.onEditorInitialized
 import org.yunghegel.salient.engine.system.inject

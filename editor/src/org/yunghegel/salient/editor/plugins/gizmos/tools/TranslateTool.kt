@@ -18,12 +18,12 @@ import org.yunghegel.salient.editor.plugins.gizmos.systems.GizmoSystem
 import org.yunghegel.salient.engine.graphics.RenderUsage
 import org.yunghegel.salient.engine.graphics.TransformState
 import org.yunghegel.salient.engine.helpers.TextRenderer.camera
-import org.yunghegel.salient.engine.input.Input
+import org.yunghegel.salient.engine.input.Keys
 import org.yunghegel.salient.engine.scene3d.GameObject
 
 
 class TranslateTool(system : GizmoSystem) : TransformGizmo<GameObject, TranslateTool.TranslateHandle>(system,"translate_tool",
-    Input.Keys.T) {
+    Keys.T) {
 
 
 

@@ -4,10 +4,9 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import ktx.app.clearScreen
+import org.yunghegel.salient.engine.GraphicsModule
 import org.yunghegel.salient.engine.graphics.debug.AFTER_DEPTH
 import org.yunghegel.salient.engine.graphics.debug.DebugDrawable
-import org.yunghegel.salient.engine.Pipeline
-import org.yunghegel.salient.engine.State
 import org.yunghegel.salient.engine.api.properties.Resizable
 import org.yunghegel.salient.engine.api.ecs.EntityComponent
 import org.yunghegel.salient.engine.api.scene.EditorScene
@@ -23,7 +22,7 @@ class SceneRenderer<E:EditorScene,G:EditorSceneGraph>(val scene : E) : EditorSce
 
 //    val depthBatch : DepthBatch = inject()
 //    val debugContext : DebugContext by lazy { inject ()}
-    val pipeline: Pipeline = inject()
+    val gfxModule: GraphicsModule    = inject()
 
 
     var depthFbo = GenFrameBuffer( Gdx.graphics.width, Gdx.graphics.height,true)
@@ -35,7 +34,7 @@ class SceneRenderer<E:EditorScene,G:EditorSceneGraph>(val scene : E) : EditorSce
     override fun renderGraph(scene: E, graph:G, context: SceneContext) {
         renderDepth(scene, graph.root, context)
         renderColor(scene, graph.root, context)
-        renderDebug(scene, graph.root, context)
+//        renderDebug(scene, graph.root, context)
     }
 
     fun renderDepth(scene: E,context : SceneContext) {
@@ -47,7 +46,7 @@ class SceneRenderer<E:EditorScene,G:EditorSceneGraph>(val scene : E) : EditorSce
     }
 
     fun renderDebug(scene: E,context : SceneContext) {
-        renderDebug(scene, scene.graph.root, context)
+//        renderDebug(scene, scene.graph.root, context)
     }
 
     fun renderDepth(scene: E, go: GameObject, sceneContext: SceneContext) {
@@ -66,26 +65,26 @@ class SceneRenderer<E:EditorScene,G:EditorSceneGraph>(val scene : E) : EditorSce
         batch.end()
     }
 
-    private fun renderDebug(scene: E, go: GameObject, sceneContext: SceneContext) {
-        go.components.forEach { cmp ->
-            if (cmp is DebugDrawable && (cmp.shouldDraw || go.has("DEBUG_ALL"))) {
-                if (cmp.has(AFTER_DEPTH)) pipeline.once(State.COLOR_PASS, func = {
-                    debugContext.start(cmp.mask)
-                    cmp.renderDebug(debugContext)
-                    debugContext.end(cmp.mask)
-                }) else {
-                    pipeline.once(State.BEFORE_COLOR_PASS,func= {
-                        debugContext.start(cmp.mask)
-                        cmp.renderDebug(debugContext)
-                        debugContext.end(cmp.mask)
-
-                    })
-                }
-
-            }
-        }
-        go.children.forEach { renderDebug(scene, it, sceneContext) }
-    }
+//    private fun renderDebug(scene: E, go: GameObject, sceneContext: SceneContext) {
+//        go.components.forEach { cmp ->
+//            if (cmp is DebugDrawable && (cmp.shouldDraw || go.has("DEBUG_ALL"))) {
+//                if (cmp.has(AFTER_DEPTH)) gfxModule.once(State.COLOR_PASS, func = {
+//                    debugContext.start(cmp.mask)
+//                    cmp.renderDebug(debugContext)
+//                    debugContext.end(cmp.mask)
+//                }) else {
+//                    gfxModule.once(State.BEFORE_COLOR_PASS,func= {
+//                        debugContext.start(cmp.mask)
+//                        cmp.renderDebug(debugContext)
+//                        debugContext.end(cmp.mask)
+//
+//                    })
+//                }
+//
+//            }
+//        }
+//        go.children.forEach { renderDebug(scene, it, sceneContext) }
+//    }
 
     override fun updateGraph(scene: E, go: GameObject, context: SceneContext) {
         go.components.filterIsInstance<EntityComponent<*>>().forEach { cmp ->

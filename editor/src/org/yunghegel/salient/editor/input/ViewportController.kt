@@ -10,14 +10,15 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import org.yunghegel.gdx.utils.data.EnumBitmask
 import org.yunghegel.gdx.utils.ext.distanceFalloff
 import org.yunghegel.gdx.utils.ext.eachApply
-import org.yunghegel.salient.editor.app.stage
-import org.yunghegel.salient.editor.app.ui
+import org.yunghegel.salient.editor.modules.ui
+
 import org.yunghegel.salient.editor.plugins.picking.systems.HoverSystem
 import org.yunghegel.salient.engine.input.Control
 import org.yunghegel.salient.engine.input.Control.*
@@ -231,6 +232,7 @@ class ViewportController : DragListener() {
 
 
     override fun keyDown(event: InputEvent?, keycode: Int): Boolean {
+        val stage : Stage = inject()
         this.key = keycode
         stage.keyboardFocus = actor
         processKey(keycode)

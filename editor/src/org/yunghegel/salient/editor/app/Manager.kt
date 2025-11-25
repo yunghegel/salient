@@ -27,7 +27,11 @@ class Manager : ApplicationManager<Project,Scene,ProjectManager,SceneManager,Ass
         provide {
             projectManager.currentProject ?: projectManager.createDefault().also { projectManager.initialize(it) }
         }
-
     }
+
+        fun component1(): ProjectManager = projectManager
+        fun component2(): SceneManager = sceneManager
+        fun component3(): AssetManager = assetManager
+
 
 }

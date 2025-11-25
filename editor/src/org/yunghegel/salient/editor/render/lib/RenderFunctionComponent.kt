@@ -1,4 +1,4 @@
-package org.yunghegel.salient.editor.render
+package org.yunghegel.salient.editor.render.lib
 
 import com.badlogic.ashley.core.Component
 

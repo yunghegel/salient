@@ -5,9 +5,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.Selection
 import ktx.actors.onClick
 import ktx.collections.GdxArray
 import mobx.core.autorun
-import org.yunghegel.gdx.utils.data.EnumBitmask
 import org.yunghegel.salient.editor.app.salient
-import org.yunghegel.salient.engine.events.scene.onGameObjectSelected
+import org.yunghegel.salient.editor.modules.buffers
 import org.yunghegel.salient.engine.events.scene.onSingleGameObjectSelected
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.system.inject
@@ -18,7 +17,6 @@ import org.yunghegel.salient.engine.ui.scene2d.STable
 import org.yunghegel.salient.engine.ui.scene2d.STextButton
 import org.yunghegel.salient.engine.ui.widgets.BitmaskConfigWidget
 import org.yunghegel.salient.engine.ui.widgets.BufferWindow
-import org.yunghegel.salient.engine.ui.widgets.FlagsEditor
 
 class SelectionView : ObjectInspector<GameObject>("Selection","settings") {
 
@@ -58,7 +56,7 @@ class SelectionView : ObjectInspector<GameObject>("Selection","settings") {
         add(makeFlagsBlock(obj)).growX().pad(15f).row()
 
         salient {
-            pipeline.buffers.forEach { entry ->
+           buffers.forEach { entry ->
                 val pass = STextButton(entry.key)
                 val bufferView = BufferWindow(entry.key)
                 entry.value?.let { fbo ->

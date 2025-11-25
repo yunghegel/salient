@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.FlushablePool
 import com.badlogic.gdx.utils.Pool
-import org.yunghegel.salient.engine.AutoremoveEntiy
 import org.yunghegel.salient.engine.api.ecs.BaseComponent
 import org.yunghegel.salient.engine.api.ecs.ObjectEntity
 import kotlin.reflect.KClass
@@ -92,21 +91,11 @@ object Pools {
 
     val entityPool = EntityPool()
 
-    val autotoremoveEntityPool = object : Pool<AutoremoveEntiy>() {
 
-            override fun newObject(): AutoremoveEntiy {
-                return AutoremoveEntiy()
-            }
-
-            override fun reset(entity: AutoremoveEntiy) {
-                entity.removeAll()
-            }
-    }
 
     init {
         entityPool.fill(16)
-        autotoremoveEntityPool.fill(16)
-        
+
     }
 
 

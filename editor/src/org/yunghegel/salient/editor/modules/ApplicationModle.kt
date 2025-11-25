@@ -1,4 +1,4 @@
-package org.yunghegel.salient.editor.app
+package org.yunghegel.salient.editor.modules
 
 import com.charleskorn.kaml.Yaml
 import ktx.reflect.Reflection
@@ -26,6 +26,7 @@ import org.yunghegel.salient.engine.events.lifecycle.onEditorInitialized
 import org.yunghegel.salient.engine.events.scene.SceneDiscoveryEvent
 import org.yunghegel.salient.engine.helpers.encodestring
 import org.yunghegel.salient.engine.system.*
+import org.yunghegel.salient.engine.system.InjectionContext.bind
 import org.yunghegel.salient.engine.system.file.Filepath.Companion.pathOf
 import org.yunghegel.salient.engine.system.file.Paths
 import org.yunghegel.salient.engine.ui.UI
@@ -33,7 +34,6 @@ import org.yunghegel.salient.engine.ui.widgets.notif.AlertStrategy
 import org.yunghegel.salient.engine.ui.widgets.notif.alert
 import org.yunghegel.salient.engine.ui.widgets.notif.notify
 
-typealias engine = Salient.Companion
 
 typealias ui = UI
 
@@ -41,13 +41,10 @@ typealias scene = Scene
 
 typealias stage = UI
 
-typealias pipeline = Salient.Companion
-
-typealias State = Pair<Project, Scene>
 
 
-class App : AppModule() {
-
+class ApplicationModle() : AppModule() {
+    override val priority: Int = 10
     internal val projectManager: ProjectManager = ProjectManager()
     internal val sceneManager: SceneManager = SceneManager()
     internal val assetManager: AssetManager = AssetManager()
@@ -59,9 +56,12 @@ class App : AppModule() {
     @OptIn(Reflection::class)
     override val registry: InjectionContext.() -> Unit = {
         bindSingleton(actionHistory)
-        this.bind<EditorProjectManager<*,*>>(EditorProjectManager::class, ProjectManager::class){ projectManager }
+        this.bind<EditorProjectManager<*,*>>({ projectManager })
+        bindSingleton(projectManager)
         bindSingleton(sceneManager)
         bindSingleton(assetManager)
+        bindSingleton(this@ApplicationModle)
+        bind<AppModule> { this@ApplicationModle as AppModule }
 
     }
 
@@ -79,7 +79,7 @@ class App : AppModule() {
         }
     }
 
-    fun bootstrap() : State{
+    fun bootstrap() : Pair<Project, Scene> {
         profile("bootstrap app state") {
             InjectionContext.bind(EditorProject::class, Project::class) {
                 projectManager.currentProject ?: projectManager.createDefault().also { projectManager.initialize(it) }
@@ -88,7 +88,6 @@ class App : AppModule() {
 
 
             ensureDirectoryStructure()
-            state++
 
             var project: Project by notnull()
             var scene: Scene by notnull()
@@ -126,35 +125,13 @@ class App : AppModule() {
                     }
                 }
             }
-
-//        meta = fetchMeta().conf {
-//            if (lastLoadedProject != null) {
-//                debug("Reloading last loaded project by configuration - ${lastLoadedProject!!.name}")
-//                project = projectManager.loadProject(lastLoadedProject!!.path)
-//                projectManager.initialize(project)
-//                rebuildIndexes(project, this).nullOrNotNull {
-//                    notNull { last ->
-//                        sceneManager.loadScene(last.path,true).also { scene = it }
-//                    }
-//                    isNull { bootstrapDefaultScene = true }
-//                }
-////                if (lastLoadedScene != null) scene = sceneManager.loadScene(this.lastLoadedScene!!.path,true)
-//            } else {
-//                bootstrapDefaultProject = true
-//                bootstrapDefaultScene = true
-//            }
-//        }.also { meta ->
-//            if (meta.bootstrapDefaultProject) project =  projectManager.createDefault().also { projectManager.initialize(it) }.also { debug("Bootstrapped default project for fresh configuration") }
-//            if (meta.bootstrapDefaultScene) scene = sceneManager.createDefault().also {
-//                sceneManager.initialize(it, true).also { debug("Bootstrapped default project for fresh configuration") } }
-//        }
             singleton(meta)
         }
-        return State(project, scene)
+        return Pair(project, project.currentScene!!)
     }
 
     private fun ensureDirectoryStructure() {
-        state = VALIDATE_DIRECTORIES action {
+
             debug("Ensuring Directory Structure:")
             debug("Salient Home: ${Paths.SALIENT_HOME}")
             debug("Projects Directory: ${Paths.PROJECTS_DIR}")
@@ -181,7 +158,7 @@ class App : AppModule() {
                 debug("Created Default Project Assets Directory")
             }
             true
-        }
+
 
 
     }
@@ -194,7 +171,6 @@ class App : AppModule() {
     }
 
     fun projectIndices() : List<ProjectHandle> {
-        state = DISCOVER_PROJECTS
         val projects = mutableListOf<ProjectHandle>()
         profile("discover projects") {
             Paths.PROJECTS_DIR.children.forEach { t, u ->
@@ -209,7 +185,6 @@ class App : AppModule() {
         }
 
     fun sceneIndices(project: ProjectHandle): List<SceneHandle> {
-        state = PROJECT_SCENE_INDEX_DISCOVERY
         val scenes = mutableListOf<SceneHandle>()
         profile("discover scenes") {
             project.file.child("scenes").children.filter { it.value.isDirectory }.forEach {
@@ -229,7 +204,7 @@ class App : AppModule() {
     fun rebuildIndexes(project: Project, appMeta: Meta): SceneHandle? {
         profile("rebuild directory indices") {
 
-            state = PROJECT_SCENE_INDEX_DISCOVERY doing {
+
                 project.file.child("scenes").children.filter { it.value.isDirectory }.forEach {
                     it.value.list().filter { it.extension() == "scene" }.forEach { file ->
                         ({ SceneHandle(file.nameWithoutExtension(), file.pathOf()) }.let {
@@ -238,7 +213,7 @@ class App : AppModule() {
                         })
                     }
                 }
-            }
+
 
             val refs = mutableListOf<AssetHandle>()
 
@@ -261,7 +236,7 @@ class App : AppModule() {
 
 
         }
-        var mostRecentScene = project.sceneIndex.maxByOrNull { it.file.lastModified }
+        val mostRecentScene = project.sceneIndex.maxByOrNull { it.file.lastModified }
         mostRecentScene?.let { handle -> debug("Discovered most recent scene: ${handle.name}") }
         return mostRecentScene
     }

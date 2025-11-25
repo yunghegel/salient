@@ -1,5 +1,6 @@
 package org.yunghegel.salient.engine.api.tool
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
@@ -81,7 +82,7 @@ class ToolGroup(var handler: ToolGroupHandler) : InputMultiplexer() {
         if (activeTool != null) activeTool!!.render(batch)
     }
 
-    fun update(deltaTime: Float = GFX.deltaTime) {
+    fun update(deltaTime: Float = Gdx.graphics.deltaTime) {
         if (activeTool != null) activeTool!!.update(deltaTime)
     }
 

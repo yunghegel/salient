@@ -27,28 +27,19 @@ import org.yunghegel.salient.engine.api.scene.EditorScene
 import org.yunghegel.salient.engine.api.scene.SceneEnvironment
 import org.yunghegel.salient.engine.graphics.BasicRenderer
 import org.yunghegel.salient.engine.graphics.GFX
+import org.yunghegel.salient.engine.graphics.GraphicsContext
 import org.yunghegel.salient.engine.graphics.SharedGraphicsResources
 import org.yunghegel.salient.engine.helpers.BlinnPhongBatch
 import org.yunghegel.salient.engine.helpers.DepthBatch
+import org.yunghegel.salient.engine.helpers.PBRBatch
 import org.yunghegel.salient.engine.helpers.WireBatch
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.system.register
 import org.yunghegel.salient.engine.system.singleton
 
 
-class SceneContext(private var scene:EditorScene) : SceneEnvironment(), Disposable, SceneGraphicsResources, SharedGraphicsResources by GFX {
+class SceneContext(private var scene:EditorScene) : SceneEnvironment(), Disposable, GraphicsContext by GFX {
 
-    override val modelBatch: ModelBatch
-    override val depthBatch : DepthBatch
-    override val wireBatch : WireBatch
-    override val perspectiveCamera: PerspectiveCamera
-    override val orthographicCamera: OrthographicCamera
-    override val viewport: ScreenViewport
-    override val debugContext : DebugContext
-    override val shapeCache : ShapeCache
-    override val blinnPhongBatch: BlinnPhongBatch
-    override val environment : Environment
-    override val pbrBatch: ModelBatch
 
     val renderer : BasicRenderer
 
@@ -60,24 +51,10 @@ class SceneContext(private var scene:EditorScene) : SceneEnvironment(), Disposab
 
     init {
 
-        modelBatch = ModelBatch(PBRShaderProvider(PBRShaderProvider.createDefaultConfig()), SceneRenderableSorter())
-        depthBatch = DepthBatch(PBRDepthShaderProvider(PBRDepthShaderProvider.createDefaultConfig()))
-        pbrBatch = ModelBatch(PBRShaderProvider(PBRShaderProvider.createDefaultConfig()), SceneRenderableSorter())
-        blinnPhongBatch = BlinnPhongBatch()
-        environment = Environment()
-        wireBatch = WireBatch()
-        orthographicCamera = OrthographicCamera(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
-        perspectiveCamera = PerspectiveCamera(  67f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat()).apply {
-            near = 0.1f
-            far = 150f
-            position.set(2.5f, 2.5f, 2.5f)
-            lookAt(0f, 0f, 0f)
-        }
+
 
         current = perspectiveCamera
-        viewport = ScreenViewport(perspectiveCamera)
-        shapeCache = ShapeCache()
-        debugContext = DebugContext(inject(), perspectiveCamera, inject(), inject(), modelBatch,shapeCache)
+
         renderer= BasicRenderer(perspectiveCamera,this)
         initLighting()
         supplyDependencies()
@@ -85,18 +62,10 @@ class SceneContext(private var scene:EditorScene) : SceneEnvironment(), Disposab
 
 
     fun supplyDependencies() {
-        singleton(modelBatch)
-        singleton(depthBatch)
-        singleton(perspectiveCamera)
-        singleton(orthographicCamera)
-        singleton(viewport)
-        singleton(debugContext)
-        singleton(wireBatch)
-        singleton(shapeCache)
+
         singleton<Viewport>(viewport)
 
         register {
-            bind(SceneGraphicsResources::class) { this }
 //            bind(Camera::class) {
 //                if (current is OrthographicCamera) {
 //                    orthographicCamera

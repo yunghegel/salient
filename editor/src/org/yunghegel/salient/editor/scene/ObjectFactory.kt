@@ -2,7 +2,6 @@ package org.yunghegel.salient.editor.scene
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
-import org.yunghegel.salient.editor.app.State
 import org.yunghegel.salient.editor.asset.AssetManager
 import org.yunghegel.salient.editor.project.ProjectManager
 import org.yunghegel.salient.engine.api.asset.Asset
@@ -18,9 +17,9 @@ import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.ui.widgets.value.ReflectionBasedEditor.AccessorRegistry.name
 
 object ObjectFactory {
-
-    val state: State
-        get() = inject()
+//
+//    val state: State
+//        get() = inject()
 
     val assetManager : AssetManager
         get() = inject()
@@ -31,18 +30,18 @@ object ObjectFactory {
     val sceneManager : SceneManager
         get() = inject()
 
-
-    fun importModel(path: FileHandle) {
-        val (project, scene) = state
-        val handle : AssetHandle = assetManager.createHandle(path)
-        assetManager.indexHandle(handle,project)
-        val asset = assetManager.includeAsset(handle,scene)
-        val go = newGameObject(path.nameWithoutExtension(),scene)
-        val modelComponent = ModelComponent(handle,go)
-        go.add(modelComponent)
-
-        val mats = go[MaterialsComponent::class]?.value
-    }
+//
+//    fun importModel(path: FileHandle) {
+//        val (project, scene) = state
+//        val handle : AssetHandle = assetManager.createHandle(path)
+//        assetManager.indexHandle(handle,project)
+//        val asset = assetManager.includeAsset(handle,scene)
+//        val go = newGameObject(path.nameWithoutExtension(),scene)
+//        val modelComponent = ModelComponent(handle,go)
+//        go.add(modelComponent)
+//
+//        val mats = go[MaterialsComponent::class]?.value
+//    }
 
     fun createPrimitive(primitive: Primitive,scene: Scene) {
         val go = newGameObject(primitive.name,scene)

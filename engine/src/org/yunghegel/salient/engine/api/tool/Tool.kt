@@ -24,8 +24,8 @@ interface Tool : Named {
 
     val actor: Actor
         get() {
-            if (icon == null) return SLabel(name)
-            else return ToolButton(icon!!, this).apply {
+            return if (icon == null) SLabel(name)
+            else ToolButton(icon!!, this).apply {
                 onChange {
                     if (active) {
                         active = false

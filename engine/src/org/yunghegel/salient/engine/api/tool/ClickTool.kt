@@ -1,10 +1,12 @@
 package org.yunghegel.salient.engine.api.tool
 
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.math.Vector2
-import org.yunghegel.salient.engine.input.Input
+import com.badlogic.gdx.scenes.scene2d.ui.Button
+import org.yunghegel.salient.engine.system.InjectionContext.inject
 
 
-abstract class ClickTool(name: String) : MouseTool(name) {
+abstract class ClickTool(name: String, val input : Input = inject()) : MouseTool(name) {
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (button == Input.Buttons.LEFT) {

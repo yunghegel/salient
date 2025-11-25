@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g3d.Shader
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 
 class ShaderPrefix(var prefix: String,val renderable: Renderable) {
-    val setters : MutableList<(Shader,Renderable)->Unit>
+    val setters : MutableList<(Shader,Renderable?)->Unit>
 
     constructor(renderable: Renderable) : this("",renderable)
 
@@ -31,12 +31,20 @@ class ShaderPrefix(var prefix: String,val renderable: Renderable) {
 
         renderable.meshPart.mesh.vertexAttributes.forEach {
             vertexAttribute -> appendDefine(resolveAttribute(vertexAttribute.alias))
+            println(vertexAttribute.alias)
+
         }
         println(prefix)
         return this
     }
 
     fun processTextureAttributes() : ShaderPrefix {
+
+        renderable.material.forEach { attribute ->
+            println(attribute.type)
+        }
+
+
         renderable.material.forEach {
             attribute -> if(attribute is TextureAttribute){
                 appendDefine(Attribute.getAttributeAlias(attribute.type) + "Flag")

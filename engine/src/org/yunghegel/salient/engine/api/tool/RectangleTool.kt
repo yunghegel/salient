@@ -1,10 +1,10 @@
 package org.yunghegel.salient.engine.api.tool
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.math.Vector2
-import org.yunghegel.salient.engine.input.Input
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min

@@ -4,125 +4,125 @@ import com.badlogic.gdx.Gdx
 
 import org.yunghegel.gdx.utils.State
 import org.yunghegel.gdx.utils.StateMachine
-import org.yunghegel.gdx.utils.ext.inc
 import org.yunghegel.gdx.utils.ext.ref
 import org.yunghegel.gdx.utils.ext.watch
+import org.yunghegel.salient.engine.events.BaseEvent
 import org.yunghegel.salient.engine.events.Bus
+import org.yunghegel.salient.engine.events.Event
 import org.yunghegel.salient.engine.system.profile
 import java.time.Instant
-import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 
 enum class Phase : State<Phase>  {
 
-    _STARTUP {
+    STARTUP {
         
 
         override fun transition(to: Phase) {
             println("Transitioning from $this to $to")
         }
     },
-    _LOAD_SETTINGS{
+    LOAD_SETTINGS {
         
 
         override fun transition(to: Phase) {
             println("Transitioning from $this to $to")
         }
     },
-    _VALIDATE_DIRECTORIES {
+    VALIDATE_DIRECTORIES {
         
 
         override fun transition(to: Phase) {
             println("Transitioning from $this to $to")
         }
     },
-    _DISCOVER_PROJECTS {
+    DISCOVER_PROJECTS {
         
 
         override fun transition(to: Phase) {
             println("Transitioning from $this to $to")
         }
     },
-    _LOAD_PROJECT {
+    LOAD_PROJECT {
         
 
         override fun transition(to: Phase) {
             println("Transitioning from $this to $to")
         }
     },
-    _PROJECT_ASSET_INDEX_DISCOVERY {
+    PROJECT_ASSET_INDEX_DISCOVERY {
         
 
         override fun transition(to: Phase) {
             println("Transitioning from $this to $to")
         }
     },
-    _PROJECT_SCENE_INDEX_DISCOVERY {
+    PROJECT_SCENE_INDEX_DISCOVERY {
         
 
         override fun transition(to: Phase) {
             println("Transitioning from $this to $to")
         }
     },
-    _INITIALIZE_PROJECT {
+    INITIALIZE_PROJECT {
         
 
         override fun transition(to: Phase) {
             println("Transitioning from $this to $to")
         }
     },
-    _DISCOVER_SCENE {
+    DISCOVER_SCENE {
         
 
         override fun transition(to: Phase) {
             println("Transitioning from $this to $to")
         }
     },
-    _LOAD_SCENE {
+    LOAD_SCENE {
         
 
         override fun transition(to: Phase) {
             println("Transitioning from $this to $to")
         }
     },
-    _SCENE_ASSET_INDEX_DISCOVERY {
+    SCENE_ASSET_INDEX_DISCOVERY {
         
 
         override fun transition(to: Phase) {
             println("Transitioning from $this to $to")
         }
     },
-    _LOAD_SCENE_ASSETS  {
+    LOAD_SCENE_ASSETS  {
         
 
         override fun transition(to: Phase) {
             println("Transitioning from $this to $to")
         }
     },
-    _BUILD_SCENE_GRAPH {
+    BUILD_SCENE_GRAPH {
         
 
         override fun transition(to: Phase) {
             println("Transitioning from $this to $to")
         }
     },
-    _INITIALIZE_SCENE {
+    INITIALIZE_SCENE {
         
 
         override fun transition(to: Phase) {
             println("Transitioning from $this to $to")
         }
     },
-    _LOAD_PLUGINS_AND_SYSTEMS {
+    LOAD_PLUGINS_AND_SYSTEMS {
         
 
         override fun transition(to: Phase) {
             println("Transitioning from $this to $to")
         }
     },
-    _STARTUP_COMPLETE {
+    STARTUP_COMPLETE {
         
 
         override fun transition(to: Phase) {
@@ -172,22 +172,22 @@ enum class Phase : State<Phase>  {
 
 @Suppress()
 
-val STARTUP = Phase._STARTUP
-val LOAD_SETTINGS = Phase._LOAD_SETTINGS
-val VALIDATE_DIRECTORIES = Phase._VALIDATE_DIRECTORIES
-val DISCOVER_PROJECTS = Phase._DISCOVER_PROJECTS
-val LOAD_PROJECT = Phase._LOAD_PROJECT
-val PROJECT_ASSET_INDEX_DISCOVERY = Phase._PROJECT_ASSET_INDEX_DISCOVERY
-val PROJECT_SCENE_INDEX_DISCOVERY = Phase._PROJECT_SCENE_INDEX_DISCOVERY
-val INITIALIZE_PROJECT = Phase._INITIALIZE_PROJECT
-val DISCOVER_SCENE = Phase._DISCOVER_SCENE
-val LOAD_SCENE = Phase._LOAD_SCENE
-val SCENE_ASSET_INDEX_DISCOVERY = Phase._SCENE_ASSET_INDEX_DISCOVERY
-val LOAD_SCENE_ASSETS = Phase._LOAD_SCENE_ASSETS
-val BUILD_SCENE_GRAPH = Phase._BUILD_SCENE_GRAPH
-val INITIALIZE_SCENE = Phase._INITIALIZE_SCENE
-val LOAD_PLUGINS_AND_SYSTEMS = Phase._LOAD_PLUGINS_AND_SYSTEMS
-val STARTUP_COMPLETE = Phase._STARTUP_COMPLETE
+val STARTUP = Phase.STARTUP
+val LOAD_SETTINGS = Phase.LOAD_SETTINGS
+val VALIDATE_DIRECTORIES = Phase.VALIDATE_DIRECTORIES
+val DISCOVER_PROJECTS = Phase.DISCOVER_PROJECTS
+val LOAD_PROJECT = Phase.LOAD_PROJECT
+val PROJECT_ASSET_INDEX_DISCOVERY = Phase.PROJECT_ASSET_INDEX_DISCOVERY
+val PROJECT_SCENE_INDEX_DISCOVERY = Phase.PROJECT_SCENE_INDEX_DISCOVERY
+val INITIALIZE_PROJECT = Phase.INITIALIZE_PROJECT
+val DISCOVER_SCENE = Phase.DISCOVER_SCENE
+val LOAD_SCENE = Phase.LOAD_SCENE
+val SCENE_ASSET_INDEX_DISCOVERY = Phase.SCENE_ASSET_INDEX_DISCOVERY
+val LOAD_SCENE_ASSETS = Phase.LOAD_SCENE_ASSETS
+val BUILD_SCENE_GRAPH = Phase.BUILD_SCENE_GRAPH
+val INITIALIZE_SCENE = Phase.INITIALIZE_SCENE
+val LOAD_PLUGINS_AND_SYSTEMS = Phase.LOAD_PLUGINS_AND_SYSTEMS
+val STARTUP_COMPLETE = Phase.STARTUP_COMPLETE
 
 
 
@@ -217,11 +217,13 @@ infix fun Phase.doing(action: (Float) -> Unit) : Phase {
 data class StateSetAction(val state: Phase, val action: () -> Unit)
 
 
-object Startup : StateMachine<Phase>(Phase._STARTUP), ReadWriteProperty<Any?, Phase> {
+object Startup : StateMachine<Phase>(Phase.STARTUP), ReadWriteProperty<Any?, Phase> {
 
 
 
-    override var state: Phase by ref(Phase._STARTUP)
+    override var state: Phase by ref(Phase.STARTUP)
+
+    val stateMap = mutableMapOf<Phase, StateMetaData>()
 
     data class StateMetaData(val phase: Phase) {
         val time = Instant.now()
@@ -234,6 +236,7 @@ object Startup : StateMachine<Phase>(Phase._STARTUP), ReadWriteProperty<Any?, Ph
     init {
         watch(::state) {
             Bus.post(PhaseChangedEvent(it))
+            stateMap[it] = StateMetaData(it)
         }
 
 
@@ -259,7 +262,7 @@ object Startup : StateMachine<Phase>(Phase._STARTUP), ReadWriteProperty<Any?, Ph
 }
 class StartupTracker : ReadWriteProperty<Any?, Phase> {
 
-    var phase : Phase by ref(Phase._STARTUP)
+    var phase : Phase by ref(Phase.STARTUP)
 
 
 
@@ -292,10 +295,12 @@ class StartupTracker : ReadWriteProperty<Any?, Phase> {
 
 
 }
+@Event("phase_changed", params = [Phase::class])
+class PhaseChangedEvent(val phase: Phase, onChange: Listener = Listener { e -> println("") }) : BaseEvent() {
 
-class PhaseChangedEvent(val phase: Phase) {
 
-        interface Listener {
+
+        fun interface Listener {
             fun onPhaseChanged(event: PhaseChangedEvent)
         }
 

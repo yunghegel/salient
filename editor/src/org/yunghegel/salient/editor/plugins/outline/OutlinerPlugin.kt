@@ -3,13 +3,12 @@ package org.yunghegel.salient.editor.plugins.outline
 import com.badlogic.ashley.core.Engine
 import org.yunghegel.salient.engine.system.InjectionContext
 import org.yunghegel.salient.core.graphics.util.OutlineDepth
-import org.yunghegel.salient.editor.app.Salient.Companion.addSystem
 import org.yunghegel.salient.editor.app.salient
+import org.yunghegel.salient.editor.modules.buffers
 import org.yunghegel.salient.editor.plugins.outline.lib.Outliner
 import org.yunghegel.salient.editor.plugins.outline.systems.OutlineSystem
 import org.yunghegel.salient.engine.api.plugin.Plugin
 import org.yunghegel.salient.engine.api.ecs.System
-import org.yunghegel.salient.engine.api.tool.InputTool
 import org.yunghegel.salient.engine.api.tool.Tool
 
 class OutlinerPlugin : Plugin {
@@ -35,7 +34,7 @@ class OutlinerPlugin : Plugin {
     override fun init(engine: Engine) {
         salient {
             addSystem(outlineSystem)
-            pipeline.buffers["outline"] = outlineSystem.outlinefbo
+           buffers["outline"] = outlineSystem.outlinefbo
         }
     }
 

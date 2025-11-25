@@ -4,7 +4,6 @@ import org.yunghegel.gdx.cli.CommandSet
 import org.yunghegel.gdx.cli.arg.Cmd
 import org.yunghegel.gdx.cli.arg.Namespace
 import org.yunghegel.gdx.cli.util.StdOut
-import org.yunghegel.salient.editor.app.State
 import org.yunghegel.salient.editor.project.Project
 import org.yunghegel.salient.editor.project.ProjectManager
 import org.yunghegel.salient.engine.system.inject

@@ -1,32 +1,23 @@
 package org.yunghegel.salient.engine.api.tool
 
+import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.Family
-import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.PerspectiveCamera
-import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.graphics.g3d.Environment
-import com.badlogic.gdx.graphics.g3d.ModelBatch
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.Viewport
-import ktx.actors.onChange
-import org.yunghegel.gdx.utils.data.EnumBitmask
 import org.yunghegel.gdx.utils.data.Named
-import org.yunghegel.salient.engine.Pipeline
+import org.yunghegel.salient.engine.GraphicsModule
 import org.yunghegel.salient.engine.events.Bus.post
 import org.yunghegel.salient.engine.events.ToolLoadedEvent
 import org.yunghegel.salient.engine.graphics.GridConfig
 import org.yunghegel.salient.engine.graphics.RenderUsage
 import org.yunghegel.salient.engine.graphics.util.DebugDrawer
 import org.yunghegel.salient.engine.scene3d.SceneContext
-import org.yunghegel.salient.engine.system.debug
 import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.ui.UI
-import org.yunghegel.salient.engine.ui.scene2d.SImageButton
 import kotlin.math.abs
 
 
@@ -39,7 +30,7 @@ abstract class InputTool(name: String, key: Int = -1) : AbstractTool(name), Name
         usage.forEach { renderMask.set(it, true) }
     }
 
-    val engine: Pipeline by lazy { inject() }
+    val engine: Engine  by lazy { inject() }
 
     init {
         post(ToolLoadedEvent(this))
@@ -51,7 +42,7 @@ abstract class InputTool(name: String, key: Int = -1) : AbstractTool(name), Name
 
     var activator: Family? = null
 
-    val camera: PerspectiveCamera by lazy { inject() }
+    open val camera: Camera by lazy { inject() }
 
     val debugDrawer: DebugDrawer by lazy { inject() }
 

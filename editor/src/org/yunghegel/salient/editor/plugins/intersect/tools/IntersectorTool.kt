@@ -1,7 +1,6 @@
 package org.yunghegel.salient.editor.plugins.intersect.tools
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Plane
@@ -9,18 +8,14 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import org.yunghegel.gdx.utils.Pools
-import org.yunghegel.gdx.utils.ext.int
 import org.yunghegel.salient.editor.app.Gui
 import org.yunghegel.salient.editor.input.ViewportController
 import org.yunghegel.salient.editor.input.delegateInput
 import org.yunghegel.salient.editor.input.undelegateInput
 import org.yunghegel.salient.editor.plugins.intersect.lib.IntersectionQuery
-import org.yunghegel.salient.engine.helpers.TextRenderer.camera
-import org.yunghegel.salient.engine.system.Netgraph
 import org.yunghegel.salient.engine.system.inject
 import org.yunghegel.salient.engine.api.tool.ClickTool
-import org.yunghegel.salient.engine.input.Input
-import org.yunghegel.salient.engine.ui.UI
+import org.yunghegel.salient.engine.input.Keys
 
 class IntersectorTool : ClickTool("intersector_tool") {
 
@@ -54,7 +49,7 @@ class IntersectorTool : ClickTool("intersector_tool") {
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        if(key == Input.Keys.CONTROL_LEFT) {
+        if(key == Keys.CONTROL_LEFT) {
             viewportcontroller.moveTo(lastResult?.intersection ?: Vector3.Zero ,1f)
         }
         return super.touchDown(screenX, screenY, pointer, button)

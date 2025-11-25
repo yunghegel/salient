@@ -46,7 +46,7 @@ open class TestApplication (val autoExit : Boolean = true, val render: (Any?)->U
         Lwjgl3Application(this, create(conf))
     }
 
-    companion object : Lwjgl3ApplicationConfiguration() {
+    companion object Config : Lwjgl3ApplicationConfiguration() {
         fun create(conf: Lwjgl3ApplicationConfiguration.()->Unit = {}) = Lwjgl3ApplicationConfiguration().apply {
             setTitle("Test Application")
             setWindowedMode(800, 600)

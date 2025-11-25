@@ -17,9 +17,11 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
     implementation("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop") {
+    }
+    implementation "io.github.quillraven.fleks:Fleks:$fleksVersion"
 //        exclude redundant natives
 
-    }
+
     implementation "org.apache.commons:commons-lang3:$apacheCommonsVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"

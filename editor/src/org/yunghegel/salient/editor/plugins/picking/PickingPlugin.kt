@@ -2,15 +2,14 @@ package org.yunghegel.salient.editor.plugins.picking
 
 import com.badlogic.ashley.core.Engine
 import org.yunghegel.salient.engine.system.InjectionContext
-import org.yunghegel.salient.editor.app.Salient.Companion.addSystem
 import org.yunghegel.salient.editor.app.salient
+import org.yunghegel.salient.editor.modules.buffers
 import org.yunghegel.salient.editor.plugins.picking.systems.HoverSystem
 import org.yunghegel.salient.editor.plugins.picking.systems.PickingSystem
 import org.yunghegel.salient.editor.plugins.picking.tools.HoverTool
 import org.yunghegel.salient.editor.plugins.picking.tools.PickingTool
 import org.yunghegel.salient.engine.api.ecs.System
 import org.yunghegel.salient.engine.api.plugin.Plugin
-import org.yunghegel.salient.engine.api.tool.InputTool
 import org.yunghegel.salient.engine.api.tool.Tool
 import org.yunghegel.salient.engine.scene3d.GameObject
 
@@ -26,7 +25,7 @@ class PickingPlugin : Plugin {
 
     override val systems: MutableList<System<*,*>> = mutableListOf(pickingSystem,hoverSystem)
 
-    override val tools: MutableList<Tool> = mutableListOf(pickerTool)
+    override val tools: MutableList<Tool> = mutableListOf(pickerTool,hoverTool)
 
     override val registry: InjectionContext.() -> Unit = {
         bindSingleton(pickingSystem)
@@ -39,9 +38,7 @@ class PickingPlugin : Plugin {
 
     override fun init(engine: Engine) {
         salient {
-            addSystem(pickingSystem)
-            addSystem(hoverSystem)
-            pipeline.buffers["picking"] = pickingSystem.picker.fbo
+            buffers["picking"] = pickingSystem.picker.fbo
             gui.viewportWidget.tools.createTool("select",pickerTool,true)
         }
 

@@ -1,31 +1,31 @@
-package org.yunghegel.salient.editor.render
+package org.yunghegel.salient.editor.render.lib
 
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
-import com.badlogic.gdx.graphics.glutils.GLFrameBuffer.FrameBufferBuilder
+import com.badlogic.gdx.graphics.glutils.GLFrameBuffer
 import org.lwjgl.opengl.GL30
+import org.yunghegel.salient.engine.api.tool.InputTool
 import org.yunghegel.salient.engine.graphics.GFX
 import org.yunghegel.salient.engine.graphics.util.attach
 import org.yunghegel.salient.engine.system.inject
-import org.yunghegel.salient.engine.api.tool.InputTool
 
 class FrameBuffers : InputTool("fbo_tool") {
 
-    val cache : MutableMap<String,FrameBuffer> = mutableMapOf()
+    val cache : MutableMap<String, FrameBuffer> = mutableMapOf()
 
     val batch : SpriteBatch = inject()
 
 
-    private var builder : FrameBufferBuilder? = null
+    private var builder : GLFrameBuffer.FrameBufferBuilder? = null
 
     fun getTexture(name:String) : Texture? {
         return cache[name]?.colorBufferTexture
     }
 
     private fun startbuild(width:Int, height:Int) {
-        builder = FrameBufferBuilder(width, height)
+        builder = GLFrameBuffer.FrameBufferBuilder(width, height)
     }
 
     fun addColor(internalFormat: Int,format:Int,type:Int) {

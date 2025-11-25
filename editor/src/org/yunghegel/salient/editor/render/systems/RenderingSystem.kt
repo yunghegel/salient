@@ -1,9 +1,9 @@
 package org.yunghegel.salient.editor.render.systems
 
 import org.yunghegel.salient.editor.plugins.BaseSystem
-import org.yunghegel.salient.editor.render.RenderFunction
+import org.yunghegel.salient.editor.render.lib.RenderFunction
 
-open class RenderingSystem(val pipeline: Int) : BaseSystem("rendering_system",pipeline,) {
+open class RenderingSystem() : BaseSystem("rendering_sy,9)stem",9) {
 
     private val renderFunctions = mutableListOf<RenderFunction>()
     private val renderFunctionsDebug = mutableListOf<RenderFunction>()
@@ -21,11 +21,11 @@ open class RenderingSystem(val pipeline: Int) : BaseSystem("rendering_system",pi
         STANDARD,DEBUG,DEBUG_ONLY
     }
 
-    fun addRenderFunction(prio:Int,debug:Boolean = false, renderFunction: (Float) -> Unit) {
-        if (debug) renderFunctionsDebug.add(RenderFunction(renderFunction, prio)).also {
+    fun addRenderFunction(prio:Int,debug:Boolean = false, shoulddRender: () -> Boolean = { true }, renderFunction: (Float) -> Unit) {
+        if (debug) renderFunctionsDebug.add(RenderFunction(prio, shoulddRender, renderFunction, )).also {
             renderFunctionsDebug.sort()
         }
-        else renderFunctions.add(RenderFunction(renderFunction, prio)).also {
+        else renderFunctions.add(RenderFunction(prio, shoulddRender, renderFunction,)).also {
             renderFunctions.sort()
         }
     }
@@ -45,7 +45,7 @@ open class RenderingSystem(val pipeline: Int) : BaseSystem("rendering_system",pi
     }
 
     open fun render(deltaTime: Float) {
-        renderFunctions.forEach { it.render(deltaTime) }
+        renderFunctions.sortedByDescending { it.priority }.forEach { it.render(deltaTime) }
     }
 
     open fun renderDebug(deltaTime: Float) {

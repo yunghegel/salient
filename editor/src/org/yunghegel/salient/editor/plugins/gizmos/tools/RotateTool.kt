@@ -17,14 +17,14 @@ import org.yunghegel.salient.editor.plugins.gizmos.lib.GizmoModels
 import org.yunghegel.salient.editor.plugins.gizmos.lib.transform.TransformGizmo
 import org.yunghegel.salient.editor.plugins.gizmos.systems.GizmoSystem
 import org.yunghegel.salient.engine.graphics.RenderUsage
-import org.yunghegel.salient.engine.input.Input
+import org.yunghegel.salient.engine.input.Keys
 import org.yunghegel.salient.engine.scene3d.GameObject
 import org.yunghegel.salient.engine.system.inject
 import kotlin.math.atan2
 
 
 class RotateTool( system: GizmoSystem) : TransformGizmo<GameObject, RotateTool.RotateHandle>(system,"rotate_tool",
-    Input.Keys.R) {
+    Keys.R) {
 
     private var a = Vector3()
     private var b = Vector3()

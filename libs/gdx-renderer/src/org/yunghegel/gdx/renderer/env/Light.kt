@@ -3,7 +3,7 @@ package org.yunghegel.gdx.renderer.env
 import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.math.Vector3
 
-open class Light {
+open class Light(val alias: String) {
 
     var position: Vector3 = Vector3()
     var color: Vector3 = Vector3()

@@ -6,6 +6,7 @@ import net.mgsx.gltf.scene3d.shaders.PBREmissiveShaderProvider.createConfig
 import org.yunghegel.gdx.utils.ext.inc
 import org.yunghegel.gdx.utils.ext.resolve
 import org.yunghegel.salient.editor.app.Salient
+import org.yunghegel.salient.editor.app.Main
 import org.yunghegel.salient.editor.app.configs.Settings
 import org.yunghegel.salient.engine.LOAD_SETTINGS
 import org.yunghegel.salient.engine.STARTUP
@@ -55,21 +56,11 @@ object DesktopLauncher {
         val config = createConfig()
         config.setWindowListener(nativeService)
         val opts = LaunchOptions(args)
-        ClasspathScanner.scan("org.yunghegel.salient.engine").forEach { info ->
-            info.iterateProperties { fields, methods, interfaces ->
-                StringBuilder().apply {
-                    append("Class: ${info.name}\n")
-                    append("Fields: ${fields.joinToString { it.name }}\n")
-                    append("Methods: ${methods.joinToString { it.name }}\n")
-                    append("Interfaces: ${interfaces.joinToString { it.simpleName }}\n")
-                    println(toString())
-                }
-            }
-        }
 
-        Lwjgl3Application(Salient(), config).apply {
+        val app = Lwjgl3Application(Main, config).apply {
             addLifecycleListener(nativeService)
         }
+
     }
 
 

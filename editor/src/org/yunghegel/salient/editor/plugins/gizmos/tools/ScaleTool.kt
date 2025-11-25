@@ -16,11 +16,11 @@ import org.yunghegel.salient.editor.plugins.gizmos.lib.GizmoModels
 import org.yunghegel.salient.editor.plugins.gizmos.lib.transform.TransformGizmo
 import org.yunghegel.salient.editor.plugins.gizmos.systems.GizmoSystem
 import org.yunghegel.salient.engine.graphics.RenderUsage
-import org.yunghegel.salient.engine.input.Input
+import org.yunghegel.salient.engine.input.Keys
 import org.yunghegel.salient.engine.scene3d.GameObject
 
 
-class ScaleTool(system : GizmoSystem) : TransformGizmo<GameObject, ScaleTool.ScaleHandle>(system,"scale_tool", Input.Keys.H) {
+class ScaleTool(system : GizmoSystem) : TransformGizmo<GameObject, ScaleTool.ScaleHandle>(system,"scale_tool", Keys.H) {
 
 
     private val lastPos = Vector3()

@@ -59,5 +59,16 @@ open class SceneHandle(override val name: String, override val file: Filepath, @
 
     }
 
+    override fun hashCode(): Int {
+        var result = serializerid ?: 0
+        result = 31 * result + id
+        result = 31 * result + name.hashCode()
+        result = 31 * result + file.hashCode()
+        result = 31 * result + (serialuuid?.hashCode() ?: 0)
+        result = 31 * result + (proj?.hashCode() ?: 0)
+        result = 31 * result + uuid.hashCode()
+        return result
+    }
+
 
 }

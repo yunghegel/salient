@@ -8,8 +8,8 @@ import org.yunghegel.salient.engine.api.tool.ComponentTool
 
 class OutlineTool(val system: OutlineSystem) : ComponentTool<RenderableComponent>("outline_tool",RenderableComponent::class.java) {
 
-    override fun useComponent(component: RenderableComponent) {
-
+    override fun useComponent(component: RenderableComponent, entity: Entity) {
+        applyOutline(entity)
     }
 
     override fun activate() {

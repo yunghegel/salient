@@ -3,7 +3,6 @@ package org.yunghegel.salient.editor.asset
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g3d.Material
-import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -26,7 +25,6 @@ import org.yunghegel.salient.engine.*
 import org.yunghegel.salient.engine.api.asset.Asset
 import org.yunghegel.salient.engine.api.asset.EditorAssetManager
 import org.yunghegel.salient.engine.api.asset.Extras
-import org.yunghegel.salient.engine.api.asset.locateAsset
 import org.yunghegel.salient.engine.api.asset.type.*
 import org.yunghegel.salient.engine.api.model.AssetHandle
 import org.yunghegel.salient.engine.api.scene.EditorScene.Companion.folder
@@ -53,12 +51,16 @@ class AssetManager() : EditorAssetManager<Project, Scene> {
 
     init {
         setLoaders()
+        debug("ASSET MANAGER INITIALIZED")
 
         AssetType.entries.each { type ->
             assetRegistry[type] = GdxArray()
         }
 
-        singleton(storage)
+        // Only register AssetStorage if not already registered
+        if (!InjectionContext.contains(AssetStorage::class)) {
+            singleton(storage)
+        }
     }
 
     private fun setLoaders() {

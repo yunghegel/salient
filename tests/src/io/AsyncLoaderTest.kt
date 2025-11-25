@@ -14,8 +14,8 @@ import ktx.async.schedule
 import net.mgsx.gltf.loaders.gltf.GLTFAssetLoader
 import net.mgsx.gltf.scene3d.scene.SceneAsset
 import org.yunghegel.gdx.utils.ext.instance
-import org.yunghegel.salient.editor.app.App
 import org.yunghegel.salient.editor.asset.AssetManager
+import org.yunghegel.salient.editor.modules.ApplicationModle
 import org.yunghegel.salient.editor.project.Project
 import org.yunghegel.salient.editor.project.ProjectManager
 import org.yunghegel.salient.editor.scene.Scene
@@ -34,7 +34,7 @@ import kotlin.time.measureTime
 class AsyncLoaderTest : Lwjgl3Test() {
 
     val assets = AssetManager()
-    val app = App()
+    val app = ApplicationModle()
 
     var time :Duration = Duration.ZERO
     val assetStorage = AssetStorage(asyncContext = newAsyncContext(threads = 2))
